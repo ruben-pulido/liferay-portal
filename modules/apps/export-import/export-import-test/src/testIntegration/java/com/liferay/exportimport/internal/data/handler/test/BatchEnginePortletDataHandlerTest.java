@@ -61,6 +61,7 @@ import com.liferay.object.field.builder.TextObjectFieldBuilder;
 import com.liferay.object.field.setting.builder.ObjectFieldSettingBuilder;
 import com.liferay.object.field.util.ObjectFieldUtil;
 import com.liferay.object.model.ObjectDefinition;
+import com.liferay.object.model.ObjectDefinitionSetting;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectRelationship;
@@ -1702,7 +1703,7 @@ public class BatchEnginePortletDataHandlerTest {
 
 	@FeatureFlag("LPD-34594")
 	@Test
-	public void testGetDescriptionAndTagWithRootObjectHierarchy()
+	public void testGetDescriptionAndTagWithObjectDefinitionHierarchy()
 		throws Exception {
 
 		Tree tree = TreeTestUtil.createObjectDefinitionTree(
@@ -1716,14 +1717,14 @@ public class BatchEnginePortletDataHandlerTest {
 				"AAA", new String[0]
 			).build());
 
-		ObjectDefinition objectDefinition =
+		ObjectDefinition objectDefinitionA =
 			_objectDefinitionLocalService.getObjectDefinition(
 				TestPropsValues.getCompanyId(), "C_A");
 
 		PortletDataHandler portletDataHandler =
 			_portletDataHandlerProvider.provide(
 				TestPropsValues.getCompanyId(),
-				objectDefinition.getPortletId());
+				objectDefinitionA.getPortletId());
 
 		String description = portletDataHandler.getDescription(
 			LocaleUtil.getDefault());
@@ -2043,6 +2044,81 @@ public class BatchEnginePortletDataHandlerTest {
 	public void testIsConfigurationEnabled() throws Exception {
 		_testIsConfigurationEnabled(false);
 		_testIsConfigurationEnabled(true);
+	}
+
+	@FeatureFlag("LPD-34594")
+	@Test
+	public void testIsHiddenWithObjectDefinitionHierarchy() throws Exception {
+
+		// Allow standalone object entry setting is disabled
+
+		TreeTestUtil.createObjectDefinitionTree(
+			_objectDefinitionLocalService, _objectRelationshipLocalService,
+			true,
+			LinkedHashMapBuilder.put(
+				"A", new String[] {"AA"}
+			).put(
+				"AA", new String[] {"AAA"}
+			).put(
+				"AAA", new String[0]
+			).build());
+
+		ObjectDefinition objectDefinitionA =
+			_objectDefinitionLocalService.getObjectDefinition(
+				TestPropsValues.getCompanyId(), "C_A");
+
+		PortletDataHandler portletDataHandler =
+			_portletDataHandlerProvider.provide(
+				TestPropsValues.getCompanyId(),
+				objectDefinitionA.getPortletId());
+
+		Assert.assertFalse(portletDataHandler.isHidden());
+
+		ObjectDefinition objectDefinitionAA =
+			_objectDefinitionLocalService.getObjectDefinition(
+				TestPropsValues.getCompanyId(), "C_AA");
+
+		ObjectDefinitionSetting objectDefinitionSetting =
+			_objectDefinitionSettingLocalService.fetchObjectDefinitionSetting(
+				objectDefinitionAA.getObjectDefinitionId(),
+				ObjectDefinitionSettingConstants.
+					NAME_ALLOW_STANDALONE_OBJECT_ENTRY);
+
+		objectDefinitionSetting.setValue(StringPool.FALSE);
+
+		objectDefinitionSetting =
+			_objectDefinitionSettingLocalService.updateObjectDefinitionSetting(
+				objectDefinitionSetting);
+
+		_objectDefinitionLocalService.deployObjectDefinition(
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectDefinitionAA.getObjectDefinitionId()));
+
+		portletDataHandler = _portletDataHandlerProvider.provide(
+			TestPropsValues.getCompanyId(), objectDefinitionAA.getPortletId());
+
+		Assert.assertTrue(portletDataHandler.isHidden());
+
+		// Allow standalone object entry setting is enabled
+
+		objectDefinitionSetting.setValue(StringPool.TRUE);
+
+		_objectDefinitionSettingLocalService.updateObjectDefinitionSetting(
+			objectDefinitionSetting);
+
+		_objectDefinitionLocalService.deployObjectDefinition(
+			_objectDefinitionLocalService.getObjectDefinition(
+				objectDefinitionAA.getObjectDefinitionId()));
+
+		portletDataHandler = _portletDataHandlerProvider.provide(
+			TestPropsValues.getCompanyId(), objectDefinitionAA.getPortletId());
+
+		Assert.assertFalse(portletDataHandler.isHidden());
+
+		TreeTestUtil.deleteObjectDefinitionHierarchy(
+			_objectDefinitionLocalService,
+			new String[] {"C_A", "C_AA", "C_AAA"}, _objectEntryLocalService,
+			_objectRelationshipLocalService);
 	}
 
 	@Test

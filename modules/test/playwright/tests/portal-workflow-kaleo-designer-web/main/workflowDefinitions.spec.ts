@@ -129,22 +129,27 @@ test('LPD-49034 Custom Workflow Action Client Extension not working when the ass
 				.getByText('Approved')
 		).toBeVisible();
 	}).toPass({
-		intervals: [1000],
-		timeout: 5000,
+		intervals: [2000],
+		timeout: 15000,
 	});
 
 	const journalArticleTitle2 = getRandomString();
 
 	await journalPage.goToCreateArticle();
 
-	await journalPage.fillArticleData(journalArticleTitle2, getRandomString());
+	await journalPage.articleTitleInput.fill(journalArticleTitle2);
+
+	await page
+		.locator('[data-qa-id="content"]')
+		.getByRole('textbox', {name: 'Rich Text Editor'})
+		.fill(getRandomString());
 
 	const row = page
 		.frameLocator('iframe[title="Select Basic Web Content"]')
 		.locator('.list-group-item', {hasText: journalArticleTitle1});
 
 	await expect(async () => {
-		await journalEditArticlePage.openRelatedAsset('Basic Web Content');
+		await journalEditArticlePage.openRelatedAsset();
 
 		await expect(page.getByText('Select Basic Web Content')).toBeVisible({
 			timeout: 3000,
@@ -169,8 +174,8 @@ test('LPD-49034 Custom Workflow Action Client Extension not working when the ass
 				.getByText('Approved')
 		).toBeVisible();
 	}).toPass({
-		intervals: [1000],
-		timeout: 5000,
+		intervals: [2000],
+		timeout: 15000,
 	});
 
 	await workflowPage.goto(site.friendlyUrlPath);

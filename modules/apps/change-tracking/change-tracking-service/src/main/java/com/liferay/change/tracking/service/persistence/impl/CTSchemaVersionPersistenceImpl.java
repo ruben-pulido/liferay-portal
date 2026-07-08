@@ -69,8 +69,9 @@ public class CTSchemaVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTSchemaVersion>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CTSchemaVersion, NoSuchSchemaVersionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the ct schema versions where companyId = &#63;.
@@ -111,16 +112,8 @@ public class CTSchemaVersionPersistenceImpl
 			OrderByComparator<CTSchemaVersion> orderByComparator)
 		throws NoSuchSchemaVersionException {
 
-		CTSchemaVersion ctSchemaVersion = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ctSchemaVersion != null) {
-			return ctSchemaVersion;
-		}
-
-		throw new NoSuchSchemaVersionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -360,7 +353,7 @@ public class CTSchemaVersionPersistenceImpl
 				_SQL_SELECT_CTSCHEMAVERSION_WHERE,
 				_SQL_COUNT_CTSCHEMAVERSION_WHERE,
 				CTSchemaVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ctSchemaVersion.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CTSchemaVersion::getCompanyId));
@@ -419,13 +412,10 @@ public class CTSchemaVersionPersistenceImpl
 	private static final String _SQL_COUNT_CTSCHEMAVERSION_WHERE =
 		"SELECT COUNT(ctSchemaVersion) FROM CTSchemaVersion ctSchemaVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTSchemaVersion exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:525026113
+// LIFERAY-SERVICE-BUILDER-HASH:803332916

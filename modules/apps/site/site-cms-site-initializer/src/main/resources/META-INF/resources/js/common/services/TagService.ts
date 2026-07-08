@@ -29,7 +29,9 @@ async function createTag({
 		};
 	}
 
-	const url = `/o/headless-admin-taxonomy/v1.0/sites/${cmsGroupId}/keywords`;
+	const groupId = assetLibraryId ?? cmsGroupId;
+
+	const url = `/o/headless-admin-taxonomy/v1.0/sites/${groupId}/keywords`;
 
 	const {data, error} = await ApiHelper.get<{items: Tag[]}>(
 		`${url}?filter=name eq '${name}'`
@@ -39,7 +41,7 @@ async function createTag({
 		throw new Error(error);
 	}
 
-	const tag = data?.items[0];
+	const tag = data?.items.find((item) => item.name === name);
 
 	if (tag) {
 		if (assetLibraryId) {
@@ -50,6 +52,12 @@ async function createTag({
 	}
 
 	return ApiHelper.post<Tag>(url, requestBody);
+}
+
+async function getTags(siteId: number | string) {
+	return ApiHelper.get<{
+		items: {assetLibraries: {id: number}[]; id: string; name: string}[];
+	}>(`/o/headless-admin-taxonomy/v1.0/sites/${siteId}/keywords`);
 }
 
 async function getCommonTags(selectedData: IBulkActionFDSData) {
@@ -66,4 +74,5 @@ async function getCommonTags(selectedData: IBulkActionFDSData) {
 export default {
 	createTag,
 	getCommonTags,
+	getTags,
 };

@@ -2,7 +2,7 @@
 definition {
 
 	property browser.chrome.version = "139.0";
-	property custom.properties = "feature.flag.LPD-35013=false";
+	property custom.properties = "feature.flag.LPD-35013=false${line.separator}feature.flag.LPD-57655=false";
 	property osgi.modules.includes = "wiki";
 	property portal.release = "false";
 	property portal.upstream = "true";
@@ -186,23 +186,6 @@ definition {
 				wikiPageContent = "Wiki Page Content${num}",
 				wikiPageTitle = "Wiki Page Title${num}");
 		}
-	}
-
-	@description = "This test ensures that the wiki widget follows W3C accessibility standards."
-	@ignore = "true"
-	@priority = 4
-	test WidgetFollowsAccessibilityStandards {
-		JSONLayout.addWidgetToPublicLayout(
-			column = 1,
-			groupName = "Guest",
-			layoutName = "Wiki Test Page",
-			widgetName = "Wiki Display");
-
-		Navigator.openSitePage(
-			pageName = "Wiki Test Page",
-			siteName = "Guest");
-
-		AssertAccessible();
 	}
 
 }

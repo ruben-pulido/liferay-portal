@@ -109,15 +109,15 @@ public class CacheFieldEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CacheFieldEntry newCacheFieldEntry = _persistence.create(pk);
+		CacheFieldEntry newCacheFieldEntry = addCacheFieldEntry();
 
 		newCacheFieldEntry.setGroupId(RandomTestUtil.nextLong());
 
 		newCacheFieldEntry.setName(RandomTestUtil.randomString());
 
-		_cacheFieldEntries.add(_persistence.update(newCacheFieldEntry));
+		newCacheFieldEntry = _persistence.update(newCacheFieldEntry);
+
+		_cacheFieldEntries.add(newCacheFieldEntry);
 
 		CacheFieldEntry existingCacheFieldEntry = _persistence.findByPrimaryKey(
 			newCacheFieldEntry.getPrimaryKey());
@@ -403,4 +403,4 @@ public class CacheFieldEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:46505529
+// LIFERAY-SERVICE-BUILDER-HASH:532498380

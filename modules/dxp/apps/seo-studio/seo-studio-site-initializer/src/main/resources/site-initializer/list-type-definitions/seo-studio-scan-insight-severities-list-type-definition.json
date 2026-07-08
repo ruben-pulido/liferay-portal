@@ -2,26 +2,20 @@
 	"externalReferenceCode": "L_SEO_STUDIO_SCAN_INSIGHT_SEVERITIES",
 	"listTypeEntries": [
 		{
-			"externalReferenceCode": "SEO_STUDIO_SCAN_INSIGHT_SEVERITY_CRITICAL",
-			"key": "critical",
-			"name": "Critical",
-			"system": true
-		},
-		{
-			"externalReferenceCode": "SEO_STUDIO_SCAN_INSIGHT_SEVERITY_HIGH",
-			"key": "high",
+			"externalReferenceCode": "HIGH",
+			"key": "3",
 			"name": "High",
 			"system": true
 		},
 		{
-			"externalReferenceCode": "SEO_STUDIO_SCAN_INSIGHT_SEVERITY_LOW",
-			"key": "low",
+			"externalReferenceCode": "LOW",
+			"key": "1",
 			"name": "Low",
 			"system": true
 		},
 		{
-			"externalReferenceCode": "SEO_STUDIO_SCAN_INSIGHT_SEVERITY_MEDIUM",
-			"key": "medium",
+			"externalReferenceCode": "MEDIUM",
+			"key": "2",
 			"name": "Medium",
 			"system": true
 		}

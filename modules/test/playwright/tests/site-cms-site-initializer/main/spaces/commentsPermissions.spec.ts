@@ -28,17 +28,18 @@ const test = mergeTests(
 
 test(
 	'Comment actions are restricted to users with permission over the content',
-	{tag: '@LPD-90003'},
-	async ({apiHelpers, contentsPage, page, spaceSummaryPage}) => {
+	{tag: ['@LPD-90003', '@LPD-93064']},
+	async ({apiHelpers, contentsPage, page}) => {
 		const spaceName = getRandomString();
 		const commentBody = getRandomString();
 		const contentTitle = 'Untitled Asset';
 
-		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-			name: spaceName,
-			settings: {},
-			type: 'Space',
-		});
+		const assetLibrary =
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: spaceName,
+				settings: {},
+				type: 'Space',
+			});
 
 		await contentsPage.goto();
 
@@ -65,7 +66,6 @@ test(
 		await expect(comment.getByTitle('actions')).toBeVisible();
 
 		const spaceAdmin = await apiHelpers.headlessAdminUser.postUserAccount();
-		const spaceAdminFullName = `${spaceAdmin.givenName} ${spaceAdmin.familyName}`;
 
 		userData[spaceAdmin.alternateName] = {
 			name: spaceAdmin.givenName,
@@ -75,7 +75,6 @@ test(
 
 		const spaceMember =
 			await apiHelpers.headlessAdminUser.postUserAccount();
-		const spaceMemberFullName = `${spaceMember.givenName} ${spaceMember.familyName}`;
 
 		userData[spaceMember.alternateName] = {
 			name: spaceMember.givenName,
@@ -83,13 +82,19 @@ test(
 			surname: spaceMember.familyName,
 		};
 
-		await spaceSummaryPage.goto(spaceName);
-		await spaceSummaryPage.addUserOrUserGroup(spaceAdminFullName, 'users');
-		await spaceSummaryPage.addRoleToSpaceMember(
-			'Space Administrator',
-			spaceAdminFullName
+		await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccount(
+			assetLibrary.externalReferenceCode,
+			spaceAdmin.externalReferenceCode
 		);
-		await spaceSummaryPage.addUserOrUserGroup(spaceMemberFullName, 'users');
+		await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccountRoles(
+			assetLibrary.externalReferenceCode,
+			spaceAdmin.externalReferenceCode,
+			['Asset Library Administrator']
+		);
+		await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccount(
+			assetLibrary.externalReferenceCode,
+			spaceMember.externalReferenceCode
+		);
 
 		const contentRow = page
 			.locator('.fds table tbody tr')
@@ -97,8 +102,6 @@ test(
 
 		await test.step('Space Administrator can edit and delete the admin comment', async () => {
 			await performUserSwitchViaApi(page, spaceAdmin.alternateName);
-
-			await spaceSummaryPage.goto(spaceName);
 
 			await contentsPage.goto();
 
@@ -112,8 +115,6 @@ test(
 
 		await test.step('Space Member cannot edit or delete the admin comment', async () => {
 			await performUserSwitchViaApi(page, spaceMember.alternateName);
-
-			await spaceSummaryPage.goto(spaceName);
 
 			await page.goto(PORTLET_URLS.cmsContents);
 

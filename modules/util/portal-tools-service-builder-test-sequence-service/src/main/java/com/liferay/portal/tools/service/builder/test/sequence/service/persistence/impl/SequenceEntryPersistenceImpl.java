@@ -74,8 +74,9 @@ public class SequenceEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SequenceEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<SequenceEntry, NoSuchSequenceEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the sequence entries where uuid = &#63;.
@@ -115,16 +116,8 @@ public class SequenceEntryPersistenceImpl
 			String uuid, OrderByComparator<SequenceEntry> orderByComparator)
 		throws NoSuchSequenceEntryException {
 
-		SequenceEntry sequenceEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (sequenceEntry != null) {
-			return sequenceEntry;
-		}
-
-		throw new NoSuchSequenceEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -165,8 +158,9 @@ public class SequenceEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<SequenceEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<SequenceEntry, NoSuchSequenceEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the sequence entries where uuid = &#63; and companyId = &#63;.
@@ -209,16 +203,8 @@ public class SequenceEntryPersistenceImpl
 			OrderByComparator<SequenceEntry> orderByComparator)
 		throws NoSuchSequenceEntryException {
 
-		SequenceEntry sequenceEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (sequenceEntry != null) {
-			return sequenceEntry;
-		}
-
-		throw new NoSuchSequenceEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -477,10 +463,11 @@ public class SequenceEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_SEQUENCEENTRY_WHERE, _SQL_COUNT_SEQUENCEENTRY_WHERE,
-			SequenceEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SequenceEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"sequenceEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, SequenceEntry::getUuid));
+				"sequenceEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, SequenceEntry::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -503,9 +490,10 @@ public class SequenceEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SEQUENCEENTRY_WHERE, _SQL_COUNT_SEQUENCEENTRY_WHERE,
 				SequenceEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"sequenceEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SequenceEntry::getUuid),
+					"sequenceEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, SequenceEntry::getUuid),
 				new FinderColumn<>(
 					"sequenceEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, SequenceEntry::getCompanyId));
@@ -564,9 +552,6 @@ public class SequenceEntryPersistenceImpl
 	private static final String _SQL_COUNT_SEQUENCEENTRY_WHERE =
 		"SELECT COUNT(sequenceEntry) FROM SequenceEntry sequenceEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SequenceEntry exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -576,4 +561,4 @@ public class SequenceEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1738657982
+// LIFERAY-SERVICE-BUILDER-HASH:774227761

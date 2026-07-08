@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItemFileEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItemFileEntry,
+		 NoSuchVirtualOrderItemFileEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order item file entries where uuid = &#63;.
@@ -125,16 +125,8 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				orderByComparator)
 		throws NoSuchVirtualOrderItemFileEntryException {
 
-		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (commerceVirtualOrderItemFileEntry != null) {
-			return commerceVirtualOrderItemFileEntry;
-		}
-
-		throw new NoSuchVirtualOrderItemFileEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,8 +169,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceVirtualOrderItemFileEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CommerceVirtualOrderItemFileEntry,
+		 NoSuchVirtualOrderItemFileEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce virtual order item file entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchVirtualOrderItemFileEntryException</code> if it could not be found.
@@ -193,22 +187,8 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			String uuid, long groupId)
 		throws NoSuchVirtualOrderItemFileEntryException {
 
-		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
-			fetchByUUID_G(uuid, groupId);
-
-		if (commerceVirtualOrderItemFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchVirtualOrderItemFileEntryException(message);
-		}
-
-		return commerceVirtualOrderItemFileEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -258,8 +238,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItemFileEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItemFileEntry,
+		 NoSuchVirtualOrderItemFileEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order item file entries where uuid = &#63; and companyId = &#63;.
@@ -303,16 +285,8 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				orderByComparator)
 		throws NoSuchVirtualOrderItemFileEntryException {
 
-		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (commerceVirtualOrderItemFileEntry != null) {
-			return commerceVirtualOrderItemFileEntry;
-		}
-
-		throw new NoSuchVirtualOrderItemFileEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,8 +332,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItemFileEntry>
-		_collectionPersistenceFinderByCommerceVirtualOrderItemId;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItemFileEntry,
+		 NoSuchVirtualOrderItemFileEntryException>
+			_collectionPersistenceFinderByCommerceVirtualOrderItemId;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order item file entries where commerceVirtualOrderItemId = &#63;.
@@ -404,19 +380,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 					orderByComparator)
 		throws NoSuchVirtualOrderItemFileEntryException {
 
-		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
-			fetchByCommerceVirtualOrderItemId_First(
-				commerceVirtualOrderItemId, orderByComparator);
-
-		if (commerceVirtualOrderItemFileEntry != null) {
-			return commerceVirtualOrderItemFileEntry;
-		}
-
-		throw new NoSuchVirtualOrderItemFileEntryException(
-			_collectionPersistenceFinderByCommerceVirtualOrderItemId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceVirtualOrderItemId}));
+		return _collectionPersistenceFinderByCommerceVirtualOrderItemId.
+			findFirst(
+				finderCache, new Object[] {commerceVirtualOrderItemId},
+				orderByComparator);
 	}
 
 	/**
@@ -466,8 +433,10 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			finderCache, new Object[] {commerceVirtualOrderItemId});
 	}
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItemFileEntry>
-		_collectionPersistenceFinderByC_F;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItemFileEntry,
+		 NoSuchVirtualOrderItemFileEntryException>
+			_collectionPersistenceFinderByC_F;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order item file entries where commerceVirtualOrderItemId = &#63; and fileEntryId = &#63;.
@@ -511,18 +480,9 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				orderByComparator)
 		throws NoSuchVirtualOrderItemFileEntryException {
 
-		CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry =
-			fetchByC_F_First(
-				commerceVirtualOrderItemId, fileEntryId, orderByComparator);
-
-		if (commerceVirtualOrderItemFileEntry != null) {
-			return commerceVirtualOrderItemFileEntry;
-		}
-
-		throw new NoSuchVirtualOrderItemFileEntryException(
-			_collectionPersistenceFinderByC_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {commerceVirtualOrderItemId, fileEntryId}));
+		return _collectionPersistenceFinderByC_F.findFirst(
+			finderCache, new Object[] {commerceVirtualOrderItemId, fileEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -808,6 +768,11 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceVirtualOrderItemFileEntryId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY;
 	}
@@ -842,9 +807,9 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			_SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 			_SQL_COUNT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 			CommerceVirtualOrderItemFileEntryModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commerceVirtualOrderItemFileEntry.", "uuid",
+				"commerceVirtualOrderItemFileEntry.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommerceVirtualOrderItemFileEntry::getUuid));
 
@@ -858,7 +823,7 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				CommerceVirtualOrderItemFileEntry::getGroupId),
 			_SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"commerceVirtualOrderItemFileEntry.", "uuid",
+				"commerceVirtualOrderItemFileEntry.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommerceVirtualOrderItemFileEntry::getUuid),
 			new FinderColumn<>(
@@ -888,9 +853,9 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				_SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 				_SQL_COUNT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 				CommerceVirtualOrderItemFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commerceVirtualOrderItemFileEntry.", "uuid",
+					"commerceVirtualOrderItemFileEntry.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceVirtualOrderItemFileEntry::getUuid),
 				new FinderColumn<>(
@@ -923,7 +888,7 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 				_SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 				_SQL_COUNT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 				CommerceVirtualOrderItemFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceVirtualOrderItemFileEntry.",
 					"commerceVirtualOrderItemId", FinderColumn.Type.LONG, "=",
@@ -955,7 +920,7 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 			_SQL_SELECT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 			_SQL_COUNT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE,
 			CommerceVirtualOrderItemFileEntryModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceVirtualOrderItemFileEntry.",
 				"commerceVirtualOrderItemId", FinderColumn.Type.LONG, "=", true,
@@ -1024,12 +989,6 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 		_SQL_COUNT_COMMERCEVIRTUALORDERITEMFILEENTRY_WHERE =
 			"SELECT COUNT(commerceVirtualOrderItemFileEntry) FROM CommerceVirtualOrderItemFileEntry commerceVirtualOrderItemFileEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceVirtualOrderItemFileEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceVirtualOrderItemFileEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "commerceVirtualOrderItemFileEntryId"});
 
@@ -1039,4 +998,4 @@ public class CommerceVirtualOrderItemFileEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-820517142
+// LIFERAY-SERVICE-BUILDER-HASH:48083712

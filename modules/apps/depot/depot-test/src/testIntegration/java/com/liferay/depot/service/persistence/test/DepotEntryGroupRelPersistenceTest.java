@@ -112,11 +112,7 @@ public class DepotEntryGroupRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DepotEntryGroupRel newDepotEntryGroupRel = _persistence.create(pk);
-
-		newDepotEntryGroupRel.setMvccVersion(RandomTestUtil.nextLong());
+		DepotEntryGroupRel newDepotEntryGroupRel = addDepotEntryGroupRel();
 
 		newDepotEntryGroupRel.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -147,7 +143,9 @@ public class DepotEntryGroupRelPersistenceTest {
 
 		newDepotEntryGroupRel.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_depotEntryGroupRels.add(_persistence.update(newDepotEntryGroupRel));
+		newDepotEntryGroupRel = _persistence.update(newDepotEntryGroupRel);
+
+		_depotEntryGroupRels.add(newDepotEntryGroupRel);
 
 		DepotEntryGroupRel existingDepotEntryGroupRel =
 			_persistence.findByPrimaryKey(
@@ -616,8 +614,6 @@ public class DepotEntryGroupRelPersistenceTest {
 
 		DepotEntryGroupRel depotEntryGroupRel = _persistence.create(pk);
 
-		depotEntryGroupRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		depotEntryGroupRel.setCtCollectionId(RandomTestUtil.nextLong());
 
 		depotEntryGroupRel.setUuid(RandomTestUtil.randomString());
@@ -658,4 +654,4 @@ public class DepotEntryGroupRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:409011754
+// LIFERAY-SERVICE-BUILDER-HASH:-248444641

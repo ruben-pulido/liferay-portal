@@ -13,7 +13,6 @@ import com.liferay.list.type.model.impl.ListTypeEntryModelImpl;
 import com.liferay.list.type.service.persistence.ListTypeEntryPersistence;
 import com.liferay.list.type.service.persistence.ListTypeEntryUtil;
 import com.liferay.list.type.service.persistence.impl.constants.ListTypePersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -21,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -91,8 +88,9 @@ public class ListTypeEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ListTypeEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ListTypeEntry, NoSuchListTypeEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the list type entries where uuid = &#63;.
@@ -132,16 +130,8 @@ public class ListTypeEntryPersistenceImpl
 			String uuid, OrderByComparator<ListTypeEntry> orderByComparator)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (listTypeEntry != null) {
-			return listTypeEntry;
-		}
-
-		throw new NoSuchListTypeEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -182,8 +172,9 @@ public class ListTypeEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ListTypeEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ListTypeEntry, NoSuchListTypeEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the list type entries where uuid = &#63; and companyId = &#63;.
@@ -226,16 +217,8 @@ public class ListTypeEntryPersistenceImpl
 			OrderByComparator<ListTypeEntry> orderByComparator)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (listTypeEntry != null) {
-			return listTypeEntry;
-		}
-
-		throw new NoSuchListTypeEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -280,8 +263,9 @@ public class ListTypeEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ListTypeEntry>
-		_collectionPersistenceFinderByListTypeEntryId;
+	private CollectionPersistenceFinder
+		<ListTypeEntry, NoSuchListTypeEntryException>
+			_collectionPersistenceFinderByListTypeEntryId;
 
 	/**
 	 * Returns an ordered range of all the list type entries where listTypeEntryId = &#63;.
@@ -322,23 +306,9 @@ public class ListTypeEntryPersistenceImpl
 			OrderByComparator<ListTypeEntry> orderByComparator)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByListTypeEntryId_First(
-			listTypeEntryId, orderByComparator);
-
-		if (listTypeEntry != null) {
-			return listTypeEntry;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("listTypeEntryId=");
-		sb.append(listTypeEntryId);
-
-		sb.append("}");
-
-		throw new NoSuchListTypeEntryException(sb.toString());
+		return _collectionPersistenceFinderByListTypeEntryId.findFirst(
+			finderCache, new Object[] {new long[] {listTypeEntryId}},
+			orderByComparator);
 	}
 
 	/**
@@ -420,8 +390,9 @@ public class ListTypeEntryPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(listTypeEntryIds)});
 	}
 
-	private CollectionPersistenceFinder<ListTypeEntry>
-		_collectionPersistenceFinderByListTypeDefinitionId;
+	private CollectionPersistenceFinder
+		<ListTypeEntry, NoSuchListTypeEntryException>
+			_collectionPersistenceFinderByListTypeDefinitionId;
 
 	/**
 	 * Returns an ordered range of all the list type entries where listTypeDefinitionId = &#63;.
@@ -462,23 +433,9 @@ public class ListTypeEntryPersistenceImpl
 			OrderByComparator<ListTypeEntry> orderByComparator)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByListTypeDefinitionId_First(
-			listTypeDefinitionId, orderByComparator);
-
-		if (listTypeEntry != null) {
-			return listTypeEntry;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("listTypeDefinitionId=");
-		sb.append(listTypeDefinitionId);
-
-		sb.append("}");
-
-		throw new NoSuchListTypeEntryException(sb.toString());
+		return _collectionPersistenceFinderByListTypeDefinitionId.findFirst(
+			finderCache, new Object[] {new long[] {listTypeDefinitionId}},
+			orderByComparator);
 	}
 
 	/**
@@ -560,8 +517,9 @@ public class ListTypeEntryPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(listTypeDefinitionIds)});
 	}
 
-	private CollectionPersistenceFinder<ListTypeEntry>
-		_collectionPersistenceFinderByC_U;
+	private CollectionPersistenceFinder
+		<ListTypeEntry, NoSuchListTypeEntryException>
+			_collectionPersistenceFinderByC_U;
 
 	/**
 	 * Returns an ordered range of all the list type entries where companyId = &#63; and userId = &#63;.
@@ -604,16 +562,8 @@ public class ListTypeEntryPersistenceImpl
 			OrderByComparator<ListTypeEntry> orderByComparator)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByC_U_First(
-			companyId, userId, orderByComparator);
-
-		if (listTypeEntry != null) {
-			return listTypeEntry;
-		}
-
-		throw new NoSuchListTypeEntryException(
-			_collectionPersistenceFinderByC_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId}));
+		return _collectionPersistenceFinderByC_U.findFirst(
+			finderCache, new Object[] {companyId, userId}, orderByComparator);
 	}
 
 	/**
@@ -658,7 +608,7 @@ public class ListTypeEntryPersistenceImpl
 			finderCache, new Object[] {companyId, userId});
 	}
 
-	private UniquePersistenceFinder<ListTypeEntry>
+	private UniquePersistenceFinder<ListTypeEntry, NoSuchListTypeEntryException>
 		_uniquePersistenceFinderByLTDI_K;
 
 	/**
@@ -673,22 +623,8 @@ public class ListTypeEntryPersistenceImpl
 	public ListTypeEntry findByLTDI_K(long listTypeDefinitionId, String key)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByLTDI_K(listTypeDefinitionId, key);
-
-		if (listTypeEntry == null) {
-			String message =
-				_uniquePersistenceFinderByLTDI_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {listTypeDefinitionId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchListTypeEntryException(message);
-		}
-
-		return listTypeEntry;
+		return _uniquePersistenceFinderByLTDI_K.find(
+			finderCache, new Object[] {listTypeDefinitionId, key});
 	}
 
 	/**
@@ -737,7 +673,7 @@ public class ListTypeEntryPersistenceImpl
 			finderCache, new Object[] {listTypeDefinitionId, key});
 	}
 
-	private UniquePersistenceFinder<ListTypeEntry>
+	private UniquePersistenceFinder<ListTypeEntry, NoSuchListTypeEntryException>
 		_uniquePersistenceFinderByERC_C_LTDI;
 
 	/**
@@ -755,25 +691,11 @@ public class ListTypeEntryPersistenceImpl
 			long listTypeDefinitionId)
 		throws NoSuchListTypeEntryException {
 
-		ListTypeEntry listTypeEntry = fetchByERC_C_LTDI(
-			externalReferenceCode, companyId, listTypeDefinitionId);
-
-		if (listTypeEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C_LTDI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						externalReferenceCode, companyId, listTypeDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchListTypeEntryException(message);
-		}
-
-		return listTypeEntry;
+		return _uniquePersistenceFinderByERC_C_LTDI.find(
+			finderCache,
+			new Object[] {
+				externalReferenceCode, companyId, listTypeDefinitionId
+			});
 	}
 
 	/**
@@ -1118,10 +1040,11 @@ public class ListTypeEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_LISTTYPEENTRY_WHERE, _SQL_COUNT_LISTTYPEENTRY_WHERE,
-			ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"listTypeEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ListTypeEntry::getUuid));
+				"listTypeEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ListTypeEntry::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1144,9 +1067,10 @@ public class ListTypeEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_LISTTYPEENTRY_WHERE, _SQL_COUNT_LISTTYPEENTRY_WHERE,
 				ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"listTypeEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ListTypeEntry::getUuid),
+					"listTypeEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, ListTypeEntry::getUuid),
 				new FinderColumn<>(
 					"listTypeEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ListTypeEntry::getCompanyId));
@@ -1175,6 +1099,7 @@ public class ListTypeEntryPersistenceImpl
 					new String[] {"listTypeEntryId"}, false),
 				_SQL_SELECT_LISTTYPEENTRY_WHERE, _SQL_COUNT_LISTTYPEENTRY_WHERE,
 				ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new ArrayableFinderColumn<>(
 					"listTypeEntry.", "listTypeEntryId", FinderColumn.Type.LONG,
 					"=", false, true, true, ListTypeEntry::getListTypeEntryId));
@@ -1203,6 +1128,7 @@ public class ListTypeEntryPersistenceImpl
 					new String[] {"listTypeDefinitionId"}, false),
 				_SQL_SELECT_LISTTYPEENTRY_WHERE, _SQL_COUNT_LISTTYPEENTRY_WHERE,
 				ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new ArrayableFinderColumn<>(
 					"listTypeEntry.", "listTypeDefinitionId",
 					FinderColumn.Type.LONG, "=", false, true, true,
@@ -1227,7 +1153,8 @@ public class ListTypeEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "userId"}, false),
 			_SQL_SELECT_LISTTYPEENTRY_WHERE, _SQL_COUNT_LISTTYPEENTRY_WHERE,
-			ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ListTypeEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"listTypeEntry.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, ListTypeEntry::getCompanyId),
@@ -1249,8 +1176,8 @@ public class ListTypeEntryPersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				ListTypeEntry::getListTypeDefinitionId),
 			new FinderColumn<>(
-				"listTypeEntry.", "key", FinderColumn.Type.STRING, "=", true,
-				true, ListTypeEntry::getKey));
+				"listTypeEntry.", "key", "key_", FinderColumn.Type.STRING, "=",
+				true, true, ListTypeEntry::getKey));
 
 		_uniquePersistenceFinderByERC_C_LTDI = new UniquePersistenceFinder<>(
 			this,
@@ -1334,12 +1261,6 @@ public class ListTypeEntryPersistenceImpl
 	private static final String _SQL_COUNT_LISTTYPEENTRY_WHERE =
 		"SELECT COUNT(listTypeEntry) FROM ListTypeEntry listTypeEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ListTypeEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ListTypeEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "key", "system", "type"});
 
@@ -1349,4 +1270,4 @@ public class ListTypeEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-749978389
+// LIFERAY-SERVICE-BUILDER-HASH:1907130449

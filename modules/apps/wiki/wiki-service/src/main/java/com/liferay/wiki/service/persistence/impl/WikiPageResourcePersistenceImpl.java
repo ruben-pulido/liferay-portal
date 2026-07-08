@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -83,8 +81,9 @@ public class WikiPageResourcePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<WikiPageResource>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<WikiPageResource, NoSuchPageResourceException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the wiki page resources where uuid = &#63;.
@@ -124,16 +123,8 @@ public class WikiPageResourcePersistenceImpl
 			String uuid, OrderByComparator<WikiPageResource> orderByComparator)
 		throws NoSuchPageResourceException {
 
-		WikiPageResource wikiPageResource = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (wikiPageResource != null) {
-			return wikiPageResource;
-		}
-
-		throw new NoSuchPageResourceException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class WikiPageResourcePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<WikiPageResource>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<WikiPageResource, NoSuchPageResourceException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the wiki page resource where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchPageResourceException</code> if it could not be found.
@@ -189,21 +181,8 @@ public class WikiPageResourcePersistenceImpl
 	public WikiPageResource findByUUID_G(String uuid, long groupId)
 		throws NoSuchPageResourceException {
 
-		WikiPageResource wikiPageResource = fetchByUUID_G(uuid, groupId);
-
-		if (wikiPageResource == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageResourceException(message);
-		}
-
-		return wikiPageResource;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -251,8 +230,9 @@ public class WikiPageResourcePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<WikiPageResource>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<WikiPageResource, NoSuchPageResourceException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the wiki page resources where uuid = &#63; and companyId = &#63;.
@@ -295,16 +275,8 @@ public class WikiPageResourcePersistenceImpl
 			OrderByComparator<WikiPageResource> orderByComparator)
 		throws NoSuchPageResourceException {
 
-		WikiPageResource wikiPageResource = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (wikiPageResource != null) {
-			return wikiPageResource;
-		}
-
-		throw new NoSuchPageResourceException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -349,8 +321,9 @@ public class WikiPageResourcePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<WikiPageResource>
-		_uniquePersistenceFinderByN_T;
+	private UniquePersistenceFinder
+		<WikiPageResource, NoSuchPageResourceException>
+			_uniquePersistenceFinderByN_T;
 
 	/**
 	 * Returns the wiki page resource where nodeId = &#63; and title = &#63; or throws a <code>NoSuchPageResourceException</code> if it could not be found.
@@ -364,21 +337,8 @@ public class WikiPageResourcePersistenceImpl
 	public WikiPageResource findByN_T(long nodeId, String title)
 		throws NoSuchPageResourceException {
 
-		WikiPageResource wikiPageResource = fetchByN_T(nodeId, title);
-
-		if (wikiPageResource == null) {
-			String message =
-				_uniquePersistenceFinderByN_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {nodeId, title});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageResourceException(message);
-		}
-
-		return wikiPageResource;
+		return _uniquePersistenceFinderByN_T.find(
+			finderCache, new Object[] {nodeId, title});
 	}
 
 	/**
@@ -715,9 +675,10 @@ public class WikiPageResourcePersistenceImpl
 			_SQL_SELECT_WIKIPAGERESOURCE_WHERE,
 			_SQL_COUNT_WIKIPAGERESOURCE_WHERE,
 			WikiPageResourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"wikiPageResource.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, WikiPageResource::getUuid));
+				"wikiPageResource.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, WikiPageResource::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -729,8 +690,8 @@ public class WikiPageResourcePersistenceImpl
 				WikiPageResource::getGroupId),
 			_SQL_SELECT_WIKIPAGERESOURCE_WHERE, "",
 			new FinderColumn<>(
-				"wikiPageResource.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, WikiPageResource::getUuid),
+				"wikiPageResource.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, WikiPageResource::getUuid),
 			new FinderColumn<>(
 				"wikiPageResource.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, WikiPageResource::getGroupId));
@@ -757,10 +718,11 @@ public class WikiPageResourcePersistenceImpl
 				_SQL_SELECT_WIKIPAGERESOURCE_WHERE,
 				_SQL_COUNT_WIKIPAGERESOURCE_WHERE,
 				WikiPageResourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"wikiPageResource.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, WikiPageResource::getUuid),
+					"wikiPageResource.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					WikiPageResource::getUuid),
 				new FinderColumn<>(
 					"wikiPageResource.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, WikiPageResource::getCompanyId));
@@ -838,12 +800,6 @@ public class WikiPageResourcePersistenceImpl
 	private static final String _SQL_COUNT_WIKIPAGERESOURCE_WHERE =
 		"SELECT COUNT(wikiPageResource) FROM WikiPageResource wikiPageResource WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WikiPageResource exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WikiPageResourcePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -853,4 +809,4 @@ public class WikiPageResourcePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1641807344
+// LIFERAY-SERVICE-BUILDER-HASH:-1254033631

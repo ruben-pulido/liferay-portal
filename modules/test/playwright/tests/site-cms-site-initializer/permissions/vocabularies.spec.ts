@@ -8,9 +8,11 @@ import {expect, mergeTests} from '@playwright/test';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
+import {DataApiHelpers} from '../../../helpers/ApiHelpers';
 import getRandomString from '../../../utils/getRandomString';
+import {performUserSwitchViaApi} from '../../../utils/performLogin';
 import {PORTLET_URLS} from '../../../utils/portletUrls';
-import {addRoleMemberAndSwitch} from '../main/spaces/helpers/roleMembership';
+import {registerUserCredentials} from '../main/spaces/helpers/roleMembership';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
 
 const test = mergeTests(
@@ -23,30 +25,99 @@ const test = mergeTests(
 	loginTest()
 );
 
-test(
-	'A Space Content Reviewer cannot access the Vocabularies admin page',
-	{tag: '@LPD-89497'},
-	async ({apiHelpers, page, spaceSummaryPage}) => {
-		const spaceName = getRandomString();
-
+async function createSpaceMember(
+	apiHelpers: DataApiHelpers,
+	spaceRoleNames: string[] = []
+) {
+	const assetLibrary =
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-			name: spaceName,
+			name: getRandomString(),
 			settings: {},
 			type: 'Space',
 		});
 
-		await addRoleMemberAndSwitch({
-			apiHelpers,
-			page,
-			role: 'Space Content Reviewer',
-			spaceName,
-			spaceSummaryPage,
-		});
+	const user = await apiHelpers.headlessAdminUser.postUserAccount();
+
+	registerUserCredentials(user);
+
+	await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccount(
+		assetLibrary.externalReferenceCode,
+		user.externalReferenceCode
+	);
+
+	if (spaceRoleNames.length) {
+		await apiHelpers.headlessAssetLibrary.putAssetLibraryUserAccountRoles(
+			assetLibrary.externalReferenceCode,
+			user.externalReferenceCode,
+			spaceRoleNames
+		);
+	}
+
+	return {assetLibrary, user};
+}
+
+test(
+	'A Space Content Reviewer cannot access the Vocabularies admin page',
+	{tag: ['@LPD-89497', '@LPD-93287']},
+	async ({apiHelpers, page}) => {
+		const {user} = await createSpaceMember(apiHelpers, [
+			'Asset Library Content Reviewer',
+		]);
+
+		await performUserSwitchViaApi(page, user.alternateName);
 
 		await page.goto(PORTLET_URLS.cmsVocabularies);
 
 		await expect(
 			page.getByRole('heading', {name: 'Categorization'})
 		).toBeHidden();
+	}
+);
+
+test(
+	'A Space Content Reviewer does not see the Vocabulary Quick Action on the CMS Home Page',
+	{tag: ['@LPD-90072', '@LPD-93287']},
+	async ({apiHelpers, homePage, page}) => {
+		const {user} = await createSpaceMember(apiHelpers, [
+			'Asset Library Content Reviewer',
+		]);
+
+		await performUserSwitchViaApi(page, user.alternateName);
+
+		await homePage.goto();
+
+		await expect(
+			page.getByRole('heading', {name: 'Quick Actions'})
+		).toBeVisible();
+
+		await expect(homePage.vocabularyButton).toBeHidden();
+	}
+);
+
+test(
+	'A CMS Administrator sees the Vocabulary Quick Action on the CMS Home Page',
+	{tag: ['@LPD-90072', '@LPD-93287']},
+	async ({apiHelpers, homePage, page}) => {
+		const {user} = await createSpaceMember(apiHelpers);
+
+		const cmsAdministratorRole =
+			await apiHelpers.headlessAdminUser.getRoleByName(
+				'CMS Administrator'
+			);
+
+		await apiHelpers.headlessAdminUser.postRoleUserAccountAssociation(
+			cmsAdministratorRole.id,
+			Number(user.id)
+		);
+
+		await performUserSwitchViaApi(page, user.alternateName);
+
+		await homePage.goto();
+
+		await expect(
+			page.getByRole('heading', {name: 'Quick Actions'})
+		).toBeVisible();
+
+		await expect(homePage.vocabularyButton).toBeVisible();
 	}
 );

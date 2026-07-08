@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -71,7 +69,7 @@ public class MFATimeBasedOTPEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<MFATimeBasedOTPEntry>
+	private UniquePersistenceFinder<MFATimeBasedOTPEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByUserId;
 
 	/**
@@ -85,21 +83,8 @@ public class MFATimeBasedOTPEntryPersistenceImpl
 	public MFATimeBasedOTPEntry findByUserId(long userId)
 		throws NoSuchEntryException {
 
-		MFATimeBasedOTPEntry mfaTimeBasedOTPEntry = fetchByUserId(userId);
-
-		if (mfaTimeBasedOTPEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUserId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return mfaTimeBasedOTPEntry;
+		return _uniquePersistenceFinderByUserId.find(
+			finderCache, new Object[] {userId});
 	}
 
 	/**
@@ -410,16 +395,10 @@ public class MFATimeBasedOTPEntryPersistenceImpl
 	private static final String _SQL_SELECT_MFATIMEBASEDOTPENTRY_WHERE =
 		"SELECT mfaTimeBasedOTPEntry FROM MFATimeBasedOTPEntry mfaTimeBasedOTPEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MFATimeBasedOTPEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MFATimeBasedOTPEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-957206044
+// LIFERAY-SERVICE-BUILDER-HASH:-1957435868

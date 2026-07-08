@@ -20,12 +20,14 @@ import com.liferay.info.field.InfoFieldValue;
 import com.liferay.info.field.RelatedInfoFieldValue;
 import com.liferay.info.field.type.DateInfoFieldType;
 import com.liferay.info.field.type.DateTimeInfoFieldType;
+import com.liferay.info.field.type.EmailInfoFieldType;
 import com.liferay.info.field.type.FileInfoFieldType;
 import com.liferay.info.field.type.InfoFieldType;
 import com.liferay.info.field.type.LongTextInfoFieldType;
 import com.liferay.info.field.type.MultiselectInfoFieldType;
 import com.liferay.info.field.type.NumberInfoFieldType;
 import com.liferay.info.field.type.OptionInfoFieldType;
+import com.liferay.info.field.type.PhoneNumberInfoFieldType;
 import com.liferay.info.field.type.PicklistMultiselectInfoFieldType;
 import com.liferay.info.field.type.PicklistSelectInfoFieldType;
 import com.liferay.info.field.type.RelationshipInfoFieldType;
@@ -57,27 +59,32 @@ import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.InfoFormException;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.GroupedModel;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.service.CountryLocalService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Constants;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PropsValues;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TempFileEntryUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -97,7 +104,9 @@ import java.time.temporal.TemporalAccessor;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -402,6 +411,14 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		return inputTemplateNode;
 	}
 
+	private void _addEmailInfoFieldTypeInputTemplateNodeAttributes(
+		InfoField infoField, InputTemplateNode inputTemplateNode) {
+
+		inputTemplateNode.addAttribute(
+			"preferredDomains",
+			infoField.getAttribute(EmailInfoFieldType.PREFERRED_DOMAINS));
+	}
+
 	private void _addFileInfoFieldTypeInputTemplateNodeAttributes(
 		FragmentEntryLink fragmentEntryLink, long groupId,
 		HttpServletRequest httpServletRequest, InfoField infoField,
@@ -450,8 +467,7 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			}
 		}
 
-		inputTemplateNode.addAttribute(
-			"fileNameI18n", _jsonFactory.createJSONObject(fileNameI18n));
+		inputTemplateNode.addAttribute("fileNameI18n", fileNameI18n);
 
 		inputTemplateNode.addAttribute("groupId", groupId);
 
@@ -482,8 +498,7 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 			}
 		}
 
-		inputTemplateNode.addAttribute(
-			"previewURLI18n", _jsonFactory.createJSONObject(previewURLI18n));
+		inputTemplateNode.addAttribute("previewURLI18n", previewURLI18n);
 
 		boolean selectFromDocumentLibrary = false;
 
@@ -527,7 +542,11 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		InputTemplateNode inputTemplateNode, String label, Locale locale,
 		Locale siteDefaultLocale, String value, Map<Locale, String> valueI18n) {
 
-		if (infoField.getInfoFieldType() instanceof FileInfoFieldType) {
+		if (infoField.getInfoFieldType() instanceof EmailInfoFieldType) {
+			_addEmailInfoFieldTypeInputTemplateNodeAttributes(
+				infoField, inputTemplateNode);
+		}
+		else if (infoField.getInfoFieldType() instanceof FileInfoFieldType) {
 			_addFileInfoFieldTypeInputTemplateNodeAttributes(
 				fragmentEntryLink, groupId, httpServletRequest, infoField,
 				inputTemplateNode, value, valueI18n);
@@ -549,6 +568,12 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 				infoField, inputTemplateNode);
 		}
 		else if (infoField.getInfoFieldType() instanceof
+					PhoneNumberInfoFieldType) {
+
+			_addPhoneNumberInfoFieldTypeInputTemplateNodeAttributes(
+				infoField, inputTemplateNode, locale);
+		}
+		else if (infoField.getInfoFieldType() instanceof
 					RelationshipInfoFieldType) {
 
 			_addRelationshipInfoFieldTypeInputTemplateNodeAttributes(
@@ -564,9 +589,7 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		}
 
 		inputTemplateNode.addAttribute(
-			"availableLanguageIds",
-			_jsonFactory.createJSONArray(
-				LocaleUtil.toLanguageIds(availableLocales)));
+			"availableLanguageIds", LocaleUtil.toLanguageIds(availableLocales));
 		inputTemplateNode.addAttribute(
 			"defaultLanguageId", LocaleUtil.toLanguageId(siteDefaultLocale));
 
@@ -718,6 +741,19 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		}
 	}
 
+	private void _addPhoneNumberInfoFieldTypeInputTemplateNodeAttributes(
+		InfoField infoField, InputTemplateNode inputTemplateNode,
+		Locale locale) {
+
+		inputTemplateNode.addAttribute("countries", _getCountries(locale));
+		inputTemplateNode.addAttribute(
+			"country",
+			infoField.getAttribute(PhoneNumberInfoFieldType.COUNTRY));
+		inputTemplateNode.addAttribute(
+			"countrySource",
+			infoField.getAttribute(PhoneNumberInfoFieldType.COUNTRY_SOURCE));
+	}
+
 	private void _addRelationshipInfoFieldTypeInputTemplateNodeAttributes(
 		InfoField infoField, InputTemplateNode inputTemplateNode, String label,
 		String value) {
@@ -819,6 +855,67 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		sb.setIndex(sb.index() - 1);
 
 		return sb.toString();
+	}
+
+	private List<Map<String, Object>> _getCountries(Locale locale) {
+		ServiceContext serviceContext =
+			ServiceContextThreadLocal.getServiceContext();
+
+		if (serviceContext == null) {
+			return Collections.emptyList();
+		}
+
+		long companyId = serviceContext.getCompanyId();
+
+		if (companyId == 0) {
+			return Collections.emptyList();
+		}
+
+		Set<String> a2s = new HashSet<>();
+
+		for (String languageId : PropsValues.LOCALES) {
+			Locale availableLocale = LocaleUtil.fromLanguageId(
+				languageId, false);
+
+			String a2 = availableLocale.getCountry();
+
+			if (Validator.isNotNull(a2)) {
+				a2s.add(a2);
+			}
+		}
+
+		List<Map<String, Object>> countries = new ArrayList<>();
+
+		String languageId = LocaleUtil.toLanguageId(locale);
+
+		for (Country country :
+				_countryLocalService.getCompanyCountries(companyId, true)) {
+
+			String a2 = country.getA2();
+
+			if (!a2s.contains(a2)) {
+				continue;
+			}
+
+			String idd = country.getIdd();
+
+			if (Validator.isNull(idd)) {
+				continue;
+			}
+
+			countries.add(
+				HashMapBuilder.<String, Object>put(
+					"a2", a2
+				).put(
+					"name", country.getTitle(languageId)
+				).put(
+					"prefix", idd
+				).build());
+		}
+
+		return ListUtil.sort(
+			countries,
+			Comparator.comparing(country -> (String)country.get("name")));
 	}
 
 	private Locale _getCurrentLocale(
@@ -1340,6 +1437,9 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 		FragmentEntryInputTemplateNodeContextHelperImpl.class);
 
 	@Reference
+	private CountryLocalService _countryLocalService;
+
+	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
 	@Reference
@@ -1356,9 +1456,6 @@ public class FragmentEntryInputTemplateNodeContextHelperImpl
 
 	@Reference
 	private ItemSelector _itemSelector;
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Language _language;

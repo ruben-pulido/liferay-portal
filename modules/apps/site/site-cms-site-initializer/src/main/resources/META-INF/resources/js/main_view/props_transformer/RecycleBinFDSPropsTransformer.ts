@@ -7,6 +7,7 @@ import {
 	IBulkActionItem,
 	IInternalRenderer,
 } from '@liferay/frontend-data-set-web';
+import {getCMSItemSelectorGroupedFilters} from '@liferay/frontend-js-item-selector-web';
 import {sub} from 'frontend-js-web';
 
 import {
@@ -54,7 +55,13 @@ export default function RecycleBinFDSPropsTransformer({
 					type: 'internal',
 				} as IInternalRenderer,
 				{
-					component: SimpleActionLinkRenderer,
+					component: (props: any) =>
+						SimpleActionLinkRenderer({
+							...props,
+							systemIconLabel: Liferay.Language.get(
+								'system-default-structure'
+							),
+						}),
 					name: 'simpleActionLinkTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
@@ -70,6 +77,7 @@ export default function RecycleBinFDSPropsTransformer({
 				} as IInternalRenderer,
 			],
 		},
+		groupedFilters: getCMSItemSelectorGroupedFilters('scopeGroupId'),
 		hideManagementBarInEmptyState: true,
 		itemsActions: itemsActions.map((action) => {
 			if (action?.data?.id === 'actionLink') {

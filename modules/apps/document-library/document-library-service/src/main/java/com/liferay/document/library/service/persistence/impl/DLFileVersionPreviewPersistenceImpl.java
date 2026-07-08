@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -80,8 +78,9 @@ public class DLFileVersionPreviewPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DLFileVersionPreview>
-		_collectionPersistenceFinderByFileEntryId;
+	private CollectionPersistenceFinder
+		<DLFileVersionPreview, NoSuchFileVersionPreviewException>
+			_collectionPersistenceFinderByFileEntryId;
 
 	/**
 	 * Returns an ordered range of all the dl file version previews where fileEntryId = &#63;.
@@ -122,16 +121,8 @@ public class DLFileVersionPreviewPersistenceImpl
 			OrderByComparator<DLFileVersionPreview> orderByComparator)
 		throws NoSuchFileVersionPreviewException {
 
-		DLFileVersionPreview dlFileVersionPreview = fetchByFileEntryId_First(
-			fileEntryId, orderByComparator);
-
-		if (dlFileVersionPreview != null) {
-			return dlFileVersionPreview;
-		}
-
-		throw new NoSuchFileVersionPreviewException(
-			_collectionPersistenceFinderByFileEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {fileEntryId}));
+		return _collectionPersistenceFinderByFileEntryId.findFirst(
+			finderCache, new Object[] {fileEntryId}, orderByComparator);
 	}
 
 	/**
@@ -173,8 +164,9 @@ public class DLFileVersionPreviewPersistenceImpl
 			finderCache, new Object[] {fileEntryId});
 	}
 
-	private CollectionPersistenceFinder<DLFileVersionPreview>
-		_collectionPersistenceFinderByFileVersionId;
+	private CollectionPersistenceFinder
+		<DLFileVersionPreview, NoSuchFileVersionPreviewException>
+			_collectionPersistenceFinderByFileVersionId;
 
 	/**
 	 * Returns an ordered range of all the dl file version previews where fileVersionId = &#63;.
@@ -215,16 +207,8 @@ public class DLFileVersionPreviewPersistenceImpl
 			OrderByComparator<DLFileVersionPreview> orderByComparator)
 		throws NoSuchFileVersionPreviewException {
 
-		DLFileVersionPreview dlFileVersionPreview = fetchByFileVersionId_First(
-			fileVersionId, orderByComparator);
-
-		if (dlFileVersionPreview != null) {
-			return dlFileVersionPreview;
-		}
-
-		throw new NoSuchFileVersionPreviewException(
-			_collectionPersistenceFinderByFileVersionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {fileVersionId}));
+		return _collectionPersistenceFinderByFileVersionId.findFirst(
+			finderCache, new Object[] {fileVersionId}, orderByComparator);
 	}
 
 	/**
@@ -266,8 +250,9 @@ public class DLFileVersionPreviewPersistenceImpl
 			finderCache, new Object[] {fileVersionId});
 	}
 
-	private UniquePersistenceFinder<DLFileVersionPreview>
-		_uniquePersistenceFinderByF_F;
+	private UniquePersistenceFinder
+		<DLFileVersionPreview, NoSuchFileVersionPreviewException>
+			_uniquePersistenceFinderByF_F;
 
 	/**
 	 * Returns the dl file version preview where fileEntryId = &#63; and fileVersionId = &#63; or throws a <code>NoSuchFileVersionPreviewException</code> if it could not be found.
@@ -281,23 +266,8 @@ public class DLFileVersionPreviewPersistenceImpl
 	public DLFileVersionPreview findByF_F(long fileEntryId, long fileVersionId)
 		throws NoSuchFileVersionPreviewException {
 
-		DLFileVersionPreview dlFileVersionPreview = fetchByF_F(
-			fileEntryId, fileVersionId);
-
-		if (dlFileVersionPreview == null) {
-			String message =
-				_uniquePersistenceFinderByF_F.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {fileEntryId, fileVersionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileVersionPreviewException(message);
-		}
-
-		return dlFileVersionPreview;
+		return _uniquePersistenceFinderByF_F.find(
+			finderCache, new Object[] {fileEntryId, fileVersionId});
 	}
 
 	/**
@@ -348,8 +318,9 @@ public class DLFileVersionPreviewPersistenceImpl
 			finderCache, new Object[] {fileEntryId, fileVersionId});
 	}
 
-	private UniquePersistenceFinder<DLFileVersionPreview>
-		_uniquePersistenceFinderByF_F_P;
+	private UniquePersistenceFinder
+		<DLFileVersionPreview, NoSuchFileVersionPreviewException>
+			_uniquePersistenceFinderByF_F_P;
 
 	/**
 	 * Returns the dl file version preview where fileEntryId = &#63; and fileVersionId = &#63; and previewStatus = &#63; or throws a <code>NoSuchFileVersionPreviewException</code> if it could not be found.
@@ -365,23 +336,9 @@ public class DLFileVersionPreviewPersistenceImpl
 			long fileEntryId, long fileVersionId, int previewStatus)
 		throws NoSuchFileVersionPreviewException {
 
-		DLFileVersionPreview dlFileVersionPreview = fetchByF_F_P(
-			fileEntryId, fileVersionId, previewStatus);
-
-		if (dlFileVersionPreview == null) {
-			String message =
-				_uniquePersistenceFinderByF_F_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {fileEntryId, fileVersionId, previewStatus});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileVersionPreviewException(message);
-		}
-
-		return dlFileVersionPreview;
+		return _uniquePersistenceFinderByF_F_P.find(
+			finderCache,
+			new Object[] {fileEntryId, fileVersionId, previewStatus});
 	}
 
 	/**
@@ -717,7 +674,7 @@ public class DLFileVersionPreviewPersistenceImpl
 				_SQL_SELECT_DLFILEVERSIONPREVIEW_WHERE,
 				_SQL_COUNT_DLFILEVERSIONPREVIEW_WHERE,
 				DLFileVersionPreviewModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"dlFileVersionPreview.", "fileEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -746,7 +703,7 @@ public class DLFileVersionPreviewPersistenceImpl
 				_SQL_SELECT_DLFILEVERSIONPREVIEW_WHERE,
 				_SQL_COUNT_DLFILEVERSIONPREVIEW_WHERE,
 				DLFileVersionPreviewModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"dlFileVersionPreview.", "fileVersionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -851,16 +808,10 @@ public class DLFileVersionPreviewPersistenceImpl
 	private static final String _SQL_COUNT_DLFILEVERSIONPREVIEW_WHERE =
 		"SELECT COUNT(dlFileVersionPreview) FROM DLFileVersionPreview dlFileVersionPreview WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DLFileVersionPreview exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DLFileVersionPreviewPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2118428802
+// LIFERAY-SERVICE-BUILDER-HASH:709830624

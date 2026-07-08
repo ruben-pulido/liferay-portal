@@ -73,8 +73,9 @@ public class ContactsLayoutTemplatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ContactsLayoutTemplate>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<ContactsLayoutTemplate, NoSuchContactsLayoutTemplateException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the contacts layout templates where groupId = &#63;.
@@ -115,16 +116,8 @@ public class ContactsLayoutTemplatePersistenceImpl
 			OrderByComparator<ContactsLayoutTemplate> orderByComparator)
 		throws NoSuchContactsLayoutTemplateException {
 
-		ContactsLayoutTemplate contactsLayoutTemplate = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (contactsLayoutTemplate != null) {
-			return contactsLayoutTemplate;
-		}
-
-		throw new NoSuchContactsLayoutTemplateException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -166,8 +159,9 @@ public class ContactsLayoutTemplatePersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<ContactsLayoutTemplate>
-		_collectionPersistenceFinderByG_T;
+	private CollectionPersistenceFinder
+		<ContactsLayoutTemplate, NoSuchContactsLayoutTemplateException>
+			_collectionPersistenceFinderByG_T;
 
 	/**
 	 * Returns an ordered range of all the contacts layout templates where groupId = &#63; and type = &#63;.
@@ -210,16 +204,8 @@ public class ContactsLayoutTemplatePersistenceImpl
 			OrderByComparator<ContactsLayoutTemplate> orderByComparator)
 		throws NoSuchContactsLayoutTemplateException {
 
-		ContactsLayoutTemplate contactsLayoutTemplate = fetchByG_T_First(
-			groupId, type, orderByComparator);
-
-		if (contactsLayoutTemplate != null) {
-			return contactsLayoutTemplate;
-		}
-
-		throw new NoSuchContactsLayoutTemplateException(
-			_collectionPersistenceFinderByG_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, type}));
+		return _collectionPersistenceFinderByG_T.findFirst(
+			finderCache, new Object[] {groupId, type}, orderByComparator);
 	}
 
 	/**
@@ -485,7 +471,7 @@ public class ContactsLayoutTemplatePersistenceImpl
 				_SQL_SELECT_CONTACTSLAYOUTTEMPLATE_WHERE,
 				_SQL_COUNT_CONTACTSLAYOUTTEMPLATE_WHERE,
 				ContactsLayoutTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"contactsLayoutTemplate.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -512,13 +498,14 @@ public class ContactsLayoutTemplatePersistenceImpl
 			_SQL_SELECT_CONTACTSLAYOUTTEMPLATE_WHERE,
 			_SQL_COUNT_CONTACTSLAYOUTTEMPLATE_WHERE,
 			ContactsLayoutTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"contactsLayoutTemplate.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, ContactsLayoutTemplate::getGroupId),
 			new FinderColumn<>(
-				"contactsLayoutTemplate.", "type", FinderColumn.Type.INTEGER,
-				"=", true, true, ContactsLayoutTemplate::getType));
+				"contactsLayoutTemplate.", "type", "type_",
+				FinderColumn.Type.INTEGER, "=", true, true,
+				ContactsLayoutTemplate::getType));
 
 		ContactsLayoutTemplateUtil.setPersistence(this);
 	}
@@ -574,9 +561,6 @@ public class ContactsLayoutTemplatePersistenceImpl
 	private static final String _SQL_COUNT_CONTACTSLAYOUTTEMPLATE_WHERE =
 		"SELECT COUNT(contactsLayoutTemplate) FROM ContactsLayoutTemplate contactsLayoutTemplate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ContactsLayoutTemplate exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"settings", "type"});
 
@@ -586,4 +570,4 @@ public class ContactsLayoutTemplatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1553323870
+// LIFERAY-SERVICE-BUILDER-HASH:-1323218574

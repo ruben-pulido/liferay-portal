@@ -13,6 +13,7 @@ import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 
+import com.liferay.jenkins.results.parser.Environment;
 import com.liferay.jenkins.results.parser.JenkinsResultsParserUtil;
 import com.liferay.jenkins.results.parser.ParallelExecutor;
 
@@ -57,7 +58,7 @@ public class TestrayCloudBucket {
 		return getInstance(name);
 	}
 
-	public static TestrayCloudBucket getInstance(String name) {
+	public static synchronized TestrayCloudBucket getInstance(String name) {
 		if (JenkinsResultsParserUtil.isNullOrEmpty(name)) {
 			name = DEFAULT_BUCKET_NAME;
 		}
@@ -82,7 +83,7 @@ public class TestrayCloudBucket {
 			return _hasGoogleApplicationCredentials;
 		}
 
-		String googleApplicationCredentials = System.getenv(
+		String googleApplicationCredentials = Environment.get(
 			"GOOGLE_APPLICATION_CREDENTIALS");
 
 		if (JenkinsResultsParserUtil.isNullOrEmpty(

@@ -2,6 +2,7 @@
 definition {
 
 	property browser.chrome.version = "139.0";
+	property portal.acceptance = "true";
 	property portal.release = "true";
 	property portal.suite.search.engine = "elasticsearch8,opensearch2";
 	property portal.upstream = "true";
@@ -321,13 +322,13 @@ definition {
 		task ("Configure Analytics Cloud") {
 			ACUtils.launchAC();
 
-			ACSettings.takeTokenFromAnalyticsCloud();
+			ACUtils.takeTokenFromAnalyticsCloud();
 
 			TestCase.setUpPortalInstance();
 
 			ACUtils.launchDXP();
 
-			var propertyName = ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Guest");
+			var propertyName = ACUtils.connectDXPtoAnalyticsCloud(siteName = "Guest");
 		}
 
 		task ("Add Web Content Articles to search") {
@@ -418,13 +419,13 @@ definition {
 		task ("Configure Analytics Cloud") {
 			ACUtils.launchAC();
 
-			ACSettings.takeTokenFromAnalyticsCloud();
+			ACUtils.takeTokenFromAnalyticsCloud();
 
 			TestCase.setUpPortalInstance();
 
 			ACUtils.launchDXP();
 
-			var propertyName = ACDXPSettings.connectDXPtoAnalyticsCloud(siteName = "Guest");
+			var propertyName = ACUtils.connectDXPtoAnalyticsCloud(siteName = "Guest");
 		}
 
 		task ("Create Apple Pie and Apple Strudel Web Contents and translate Apple Strudel") {

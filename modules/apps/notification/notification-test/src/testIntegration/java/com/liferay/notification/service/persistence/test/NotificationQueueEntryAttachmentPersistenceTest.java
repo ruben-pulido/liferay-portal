@@ -114,13 +114,8 @@ public class NotificationQueueEntryAttachmentPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		NotificationQueueEntryAttachment newNotificationQueueEntryAttachment =
-			_persistence.create(pk);
-
-		newNotificationQueueEntryAttachment.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addNotificationQueueEntryAttachment();
 
 		newNotificationQueueEntryAttachment.setCompanyId(
 			RandomTestUtil.nextLong());
@@ -131,8 +126,11 @@ public class NotificationQueueEntryAttachmentPersistenceTest {
 		newNotificationQueueEntryAttachment.setNotificationQueueEntryId(
 			RandomTestUtil.nextLong());
 
+		newNotificationQueueEntryAttachment = _persistence.update(
+			newNotificationQueueEntryAttachment);
+
 		_notificationQueueEntryAttachments.add(
-			_persistence.update(newNotificationQueueEntryAttachment));
+			newNotificationQueueEntryAttachment);
 
 		NotificationQueueEntryAttachment
 			existingNotificationQueueEntryAttachment =
@@ -466,9 +464,6 @@ public class NotificationQueueEntryAttachmentPersistenceTest {
 		NotificationQueueEntryAttachment notificationQueueEntryAttachment =
 			_persistence.create(pk);
 
-		notificationQueueEntryAttachment.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		notificationQueueEntryAttachment.setCompanyId(
 			RandomTestUtil.nextLong());
 
@@ -491,4 +486,4 @@ public class NotificationQueueEntryAttachmentPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-848920429
+// LIFERAY-SERVICE-BUILDER-HASH:229843851

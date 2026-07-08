@@ -12,7 +12,6 @@ import com.liferay.document.library.kernel.model.DLFileEntryTypeTable;
 import com.liferay.document.library.kernel.service.persistence.DLFileEntryTypePersistence;
 import com.liferay.document.library.kernel.service.persistence.DLFileEntryTypeUtil;
 import com.liferay.document.library.kernel.service.persistence.DLFolderPersistence;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -23,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -97,8 +94,9 @@ public class DLFileEntryTypePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DLFileEntryType>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the document library file entry types where uuid = &#63;.
@@ -138,16 +136,9 @@ public class DLFileEntryTypePersistenceImpl
 			String uuid, OrderByComparator<DLFileEntryType> orderByComparator)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (dlFileEntryType != null) {
-			return dlFileEntryType;
-		}
-
-		throw new NoSuchFileEntryTypeException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -189,8 +180,9 @@ public class DLFileEntryTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DLFileEntryType>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the document library file entry type where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchFileEntryTypeException</code> if it could not be found.
@@ -204,21 +196,8 @@ public class DLFileEntryTypePersistenceImpl
 	public DLFileEntryType findByUUID_G(String uuid, long groupId)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByUUID_G(uuid, groupId);
-
-		if (dlFileEntryType == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryTypeException(message);
-		}
-
-		return dlFileEntryType;
+		return _uniquePersistenceFinderByUUID_G.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -267,8 +246,9 @@ public class DLFileEntryTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntryType>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the document library file entry types where uuid = &#63; and companyId = &#63;.
@@ -311,16 +291,9 @@ public class DLFileEntryTypePersistenceImpl
 			OrderByComparator<DLFileEntryType> orderByComparator)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (dlFileEntryType != null) {
-			return dlFileEntryType;
-		}
-
-		throw new NoSuchFileEntryTypeException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -366,8 +339,9 @@ public class DLFileEntryTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntryType>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the document library file entry types where groupId = &#63;.
@@ -408,23 +382,9 @@ public class DLFileEntryTypePersistenceImpl
 			long groupId, OrderByComparator<DLFileEntryType> orderByComparator)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (dlFileEntryType != null) {
-			return dlFileEntryType;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchFileEntryTypeException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {new long[] {groupId}}, orderByComparator);
 	}
 
 	/**
@@ -584,8 +544,9 @@ public class DLFileEntryTypePersistenceImpl
 			groupIds);
 	}
 
-	private CollectionPersistenceFinder<DLFileEntryType>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the document library file entry types where companyId = &#63;.
@@ -626,16 +587,9 @@ public class DLFileEntryTypePersistenceImpl
 			OrderByComparator<DLFileEntryType> orderByComparator)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (dlFileEntryType != null) {
-			return dlFileEntryType;
-		}
-
-		throw new NoSuchFileEntryTypeException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -677,8 +631,9 @@ public class DLFileEntryTypePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<DLFileEntryType>
-		_uniquePersistenceFinderByG_DDI;
+	private UniquePersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_uniquePersistenceFinderByG_DDI;
 
 	/**
 	 * Returns the document library file entry type where groupId = &#63; and dataDefinitionId = &#63; or throws a <code>NoSuchFileEntryTypeException</code> if it could not be found.
@@ -692,23 +647,9 @@ public class DLFileEntryTypePersistenceImpl
 	public DLFileEntryType findByG_DDI(long groupId, long dataDefinitionId)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByG_DDI(
-			groupId, dataDefinitionId);
-
-		if (dlFileEntryType == null) {
-			String message =
-				_uniquePersistenceFinderByG_DDI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, dataDefinitionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryTypeException(message);
-		}
-
-		return dlFileEntryType;
+		return _uniquePersistenceFinderByG_DDI.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, dataDefinitionId});
 	}
 
 	/**
@@ -759,8 +700,9 @@ public class DLFileEntryTypePersistenceImpl
 			new Object[] {groupId, dataDefinitionId});
 	}
 
-	private UniquePersistenceFinder<DLFileEntryType>
-		_uniquePersistenceFinderByG_F;
+	private UniquePersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_uniquePersistenceFinderByG_F;
 
 	/**
 	 * Returns the document library file entry type where groupId = &#63; and fileEntryTypeKey = &#63; or throws a <code>NoSuchFileEntryTypeException</code> if it could not be found.
@@ -774,22 +716,9 @@ public class DLFileEntryTypePersistenceImpl
 	public DLFileEntryType findByG_F(long groupId, String fileEntryTypeKey)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByG_F(groupId, fileEntryTypeKey);
-
-		if (dlFileEntryType == null) {
-			String message =
-				_uniquePersistenceFinderByG_F.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, fileEntryTypeKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryTypeException(message);
-		}
-
-		return dlFileEntryType;
+		return _uniquePersistenceFinderByG_F.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, fileEntryTypeKey});
 	}
 
 	/**
@@ -839,8 +768,9 @@ public class DLFileEntryTypePersistenceImpl
 			new Object[] {groupId, fileEntryTypeKey});
 	}
 
-	private UniquePersistenceFinder<DLFileEntryType>
-		_uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder
+		<DLFileEntryType, NoSuchFileEntryTypeException>
+			_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the document library file entry type where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchFileEntryTypeException</code> if it could not be found.
@@ -855,23 +785,9 @@ public class DLFileEntryTypePersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchFileEntryTypeException {
 
-		DLFileEntryType dlFileEntryType = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (dlFileEntryType == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryTypeException(message);
-		}
-
-		return dlFileEntryType;
+		return _uniquePersistenceFinderByERC_G.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1669,9 +1585,10 @@ public class DLFileEntryTypePersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_DLFILEENTRYTYPE_WHERE, _SQL_COUNT_DLFILEENTRYTYPE_WHERE,
 			DLFileEntryTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"dlFileEntryType.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileEntryType::getUuid));
+				"dlFileEntryType.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DLFileEntryType::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1683,8 +1600,8 @@ public class DLFileEntryTypePersistenceImpl
 				DLFileEntryType::getGroupId),
 			_SQL_SELECT_DLFILEENTRYTYPE_WHERE, "",
 			new FinderColumn<>(
-				"dlFileEntryType.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileEntryType::getUuid),
+				"dlFileEntryType.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DLFileEntryType::getUuid),
 			new FinderColumn<>(
 				"dlFileEntryType.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, DLFileEntryType::getGroupId));
@@ -1711,10 +1628,11 @@ public class DLFileEntryTypePersistenceImpl
 				_SQL_SELECT_DLFILEENTRYTYPE_WHERE,
 				_SQL_COUNT_DLFILEENTRYTYPE_WHERE,
 				DLFileEntryTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"dlFileEntryType.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, DLFileEntryType::getUuid),
+					"dlFileEntryType.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					DLFileEntryType::getUuid),
 				new FinderColumn<>(
 					"dlFileEntryType.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileEntryType::getCompanyId));
@@ -1741,17 +1659,7 @@ public class DLFileEntryTypePersistenceImpl
 				_SQL_SELECT_DLFILEENTRYTYPE_WHERE,
 				_SQL_COUNT_DLFILEENTRYTYPE_WHERE,
 				DLFileEntryTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryTypeImpl.class, DLFileEntryType.class,
-					"dlFileEntryType", "DLFileEntryType",
-					"dlFileEntryType.fileEntryTypeId",
-					"SELECT DISTINCT {dlFileEntryType.*} FROM DLFileEntryType dlFileEntryType WHERE ",
-					"SELECT {DLFileEntryType.*} FROM (SELECT DISTINCT dlFileEntryType.fileEntryTypeId FROM DLFileEntryType dlFileEntryType WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntryType ON TEMP_TABLE.fileEntryTypeId = DLFileEntryType.fileEntryTypeId",
-					"SELECT COUNT(DISTINCT dlFileEntryType.fileEntryTypeId) AS COUNT_VALUE FROM DLFileEntryType dlFileEntryType WHERE ",
-					DLFileEntryTypeModelImpl.ORDER_BY_SQL,
-					DLFileEntryTypeModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"dlFileEntryType.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, DLFileEntryType::getGroupId));
@@ -1778,7 +1686,7 @@ public class DLFileEntryTypePersistenceImpl
 				_SQL_SELECT_DLFILEENTRYTYPE_WHERE,
 				_SQL_COUNT_DLFILEENTRYTYPE_WHERE,
 				DLFileEntryTypeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"dlFileEntryType.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileEntryType::getCompanyId));
@@ -1863,12 +1771,6 @@ public class DLFileEntryTypePersistenceImpl
 	private static final String _SQL_COUNT_DLFILEENTRYTYPE_WHERE =
 		"SELECT COUNT(dlFileEntryType) FROM DLFileEntryType dlFileEntryType WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DLFileEntryType exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DLFileEntryTypePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1878,4 +1780,4 @@ public class DLFileEntryTypePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-617365398
+// LIFERAY-SERVICE-BUILDER-HASH:-106791065

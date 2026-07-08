@@ -13,12 +13,7 @@ Resolve a single test failure end-to-end.
 
 ## Preconditions
 
-Verify all of these once at the start of the run. Fail fast with a clear message if any is missing.
-
-- The current working directory is a git checkout of `liferay-portal`.
-- The working tree is clean (`git status --porcelain` is empty).
-- The checkout is on `master`.
-- The Liferay portal is running (required for `Java Integration`, `Playwright`, and `Poshi`). Start it if it is not.
+- Tomcat is running (required for `Java Integration`, `Playwright`, and `Poshi`). Start it if it is not.
 
 ## Input
 
@@ -36,8 +31,9 @@ When `${ARGUMENTS}` is anything else, resolve it to a case result ID by followin
 
 ### Failure Data
 
-Fetched at the start of the run by following [`references/testray.md`](references/testray.md), which covers authentication, name-to-ID resolution, and how to derive each field. When a test name was passed and the resolution aborts, surface the reason and ask the user to retry with the case result ID directly. When the case result is already `PASSED`, skip the workflow and exit with `Verdict: No fix needed`. Otherwise, the procedure returns these fields:
+Fetched at the start of the run by following [`references/testray.md`](references/testray.md), which covers authentication, name-to-ID resolution, and how to derive each field. When a test name was passed and the resolution aborts, surface the reason and ask the user to retry with the case result ID directly. When the case result is already `PASSED`, skip the workflow and exit with `Verdict: No fix needed`. When it is `BLOCKED` — a tester deliberately flagged it, so it must not be autofixed — skip the workflow and exit reporting that the case is blocked. Otherwise, the procedure returns these fields:
 
+- **buildSha** — commit the failing build was tested against.
 - **errorTrace** — error trace produced by the test framework.
 - **failureDate** — timestamp when the case result was recorded, used to scope the duplicate-ticket check in **Claim the Failure**.
 - **firstFailSha** — first commit where the test failed (may be `null` when the case has no recorded failure history).
@@ -80,7 +76,7 @@ The elapsed time of the run, formatted as `<minutes>m <seconds>s`.
 
 The Task created in **Claim the Failure** is the persistent ticket of record for every verdict. Update it at the end of the run based on the verdict:
 
-- **Bug in portal** — invoke the `jira-bug` skill to create a separate Bug describing the regression. The title summarizes the regression. The description carries the failing test name, the trace, and the reproduction steps derived from the test scenario. Link the Bug to the Task with the **Fix** issue link type so the Task surfaces it as **is fixed by**. Return the Bug URL alongside the Task URL.
+- **Bug in portal** — invoke the `jira-bug` skill to create a separate Bug describing the regression. The title summarizes the regression. The description carries the failing test name, the trace, and the reproduction steps derived from the test scenario. Do **not** add the `claude-test-fix` label to the Bug — that label belongs to the Task alone, so the duplicate-ticket check in **Claim the Failure** matches one ticket per failure. Link the Bug to the Task with the **Fix** issue link type so the Task surfaces it as **is fixed by**. Return the Bug URL alongside the Task URL.
 
 - **Outdated test** — return the Task URL.
 
@@ -125,7 +121,15 @@ Commit `<short-sha>` ("<subject>") <one or two sentences>.
 
 ### Claim the Failure
 
-1. Check Jira for an LPD ticket whose summary contains `<test-name>`, is labeled `claude-test-fix`, and was **created on or after `<failureDate>`**. A ticket matching those criteria already covers this failure (in progress when still open, already shipped when resolved), so skip it; if there are other candidates, retry with the next one.
+1. Check Jira for an LPD ticket whose summary contains `<test-name>` and is labeled `claude-test-fix`. Decide whether it already covers this failure by its state:
+
+	- **Unresolved** (Open, In Progress, or any nonresolved state) → claimed, skip. Someone is already working on it.
+	- **Resolved** → find the ticket's PR by following the `pr` skill's rules for where it is recorded, derive its fix commit, and test whether it already reached the build that failed, judging by `git merge-base --is-ancestor <fixSha> <buildSha>`:
+		- **Fix commit is an ancestor of `<buildSha>`** → the fix was already present when this build ran, yet the test still failed, so it does not cover this occurrence → proceed.
+		- **Fix commit is not yet in `<buildSha>`** → Testray has not retested since the fix merged, so the failure is already addressed → skip.
+		- **No fix commit found** (test-only ticket, unmerged commit, or a nonfixing resolution) → fall back to the resolution date: resolved before `<failureDate>` proceeds, resolved on or after skips.
+
+	When skipping and other candidates remain, retry with the next one.
 
 1. Invoke the `jira-task` skill with summary `<test-name>` and a description that names the case result ID, the source build, and the failure trace excerpt. Add the `claude-test-fix` label.
 

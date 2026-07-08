@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -74,7 +72,7 @@ public class AnnouncementsFlagPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AnnouncementsFlag>
+	private CollectionPersistenceFinder<AnnouncementsFlag, NoSuchFlagException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -116,16 +114,9 @@ public class AnnouncementsFlagPersistenceImpl
 			OrderByComparator<AnnouncementsFlag> orderByComparator)
 		throws NoSuchFlagException {
 
-		AnnouncementsFlag announcementsFlag = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (announcementsFlag != null) {
-			return announcementsFlag;
-		}
-
-		throw new NoSuchFlagException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -168,7 +159,7 @@ public class AnnouncementsFlagPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<AnnouncementsFlag>
+	private CollectionPersistenceFinder<AnnouncementsFlag, NoSuchFlagException>
 		_collectionPersistenceFinderByEntryId;
 
 	/**
@@ -210,16 +201,9 @@ public class AnnouncementsFlagPersistenceImpl
 			OrderByComparator<AnnouncementsFlag> orderByComparator)
 		throws NoSuchFlagException {
 
-		AnnouncementsFlag announcementsFlag = fetchByEntryId_First(
-			entryId, orderByComparator);
-
-		if (announcementsFlag != null) {
-			return announcementsFlag;
-		}
-
-		throw new NoSuchFlagException(
-			_collectionPersistenceFinderByEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId}));
+		return _collectionPersistenceFinderByEntryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {entryId},
+			orderByComparator);
 	}
 
 	/**
@@ -261,7 +245,7 @@ public class AnnouncementsFlagPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {entryId});
 	}
 
-	private UniquePersistenceFinder<AnnouncementsFlag>
+	private UniquePersistenceFinder<AnnouncementsFlag, NoSuchFlagException>
 		_uniquePersistenceFinderByU_E_V;
 
 	/**
@@ -277,23 +261,9 @@ public class AnnouncementsFlagPersistenceImpl
 	public AnnouncementsFlag findByU_E_V(long userId, long entryId, int value)
 		throws NoSuchFlagException {
 
-		AnnouncementsFlag announcementsFlag = fetchByU_E_V(
-			userId, entryId, value);
-
-		if (announcementsFlag == null) {
-			String message =
-				_uniquePersistenceFinderByU_E_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, entryId, value});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFlagException(message);
-		}
-
-		return announcementsFlag;
+		return _uniquePersistenceFinderByU_E_V.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId, entryId, value});
 	}
 
 	/**
@@ -626,7 +596,7 @@ public class AnnouncementsFlagPersistenceImpl
 				_SQL_SELECT_ANNOUNCEMENTSFLAG_WHERE,
 				_SQL_COUNT_ANNOUNCEMENTSFLAG_WHERE,
 				AnnouncementsFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"announcementsFlag.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, AnnouncementsFlag::getCompanyId));
@@ -653,7 +623,7 @@ public class AnnouncementsFlagPersistenceImpl
 				_SQL_SELECT_ANNOUNCEMENTSFLAG_WHERE,
 				_SQL_COUNT_ANNOUNCEMENTSFLAG_WHERE,
 				AnnouncementsFlagModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"announcementsFlag.", "entryId", FinderColumn.Type.LONG,
 					"=", true, true, AnnouncementsFlag::getEntryId));
@@ -701,16 +671,10 @@ public class AnnouncementsFlagPersistenceImpl
 	private static final String _SQL_COUNT_ANNOUNCEMENTSFLAG_WHERE =
 		"SELECT COUNT(announcementsFlag) FROM AnnouncementsFlag announcementsFlag WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AnnouncementsFlag exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AnnouncementsFlagPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1910695575
+// LIFERAY-SERVICE-BUILDER-HASH:-1895006592

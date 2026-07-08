@@ -116,13 +116,8 @@ public class CommercePriceListChannelRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommercePriceListChannelRel newCommercePriceListChannelRel =
-			_persistence.create(pk);
-
-		newCommercePriceListChannelRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommercePriceListChannelRel();
 
 		newCommercePriceListChannelRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -152,8 +147,10 @@ public class CommercePriceListChannelRelPersistenceTest {
 		newCommercePriceListChannelRel.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_commercePriceListChannelRels.add(
-			_persistence.update(newCommercePriceListChannelRel));
+		newCommercePriceListChannelRel = _persistence.update(
+			newCommercePriceListChannelRel);
+
+		_commercePriceListChannelRels.add(newCommercePriceListChannelRel);
 
 		CommercePriceListChannelRel existingCommercePriceListChannelRel =
 			_persistence.findByPrimaryKey(
@@ -604,8 +601,6 @@ public class CommercePriceListChannelRelPersistenceTest {
 		CommercePriceListChannelRel commercePriceListChannelRel =
 			_persistence.create(pk);
 
-		commercePriceListChannelRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		commercePriceListChannelRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -644,4 +639,4 @@ public class CommercePriceListChannelRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1679925345
+// LIFERAY-SERVICE-BUILDER-HASH:894732922

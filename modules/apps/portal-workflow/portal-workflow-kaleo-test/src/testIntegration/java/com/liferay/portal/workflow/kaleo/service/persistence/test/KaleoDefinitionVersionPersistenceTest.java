@@ -115,12 +115,8 @@ public class KaleoDefinitionVersionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoDefinitionVersion newKaleoDefinitionVersion = _persistence.create(
-			pk);
-
-		newKaleoDefinitionVersion.setMvccVersion(RandomTestUtil.nextLong());
+		KaleoDefinitionVersion newKaleoDefinitionVersion =
+			addKaleoDefinitionVersion();
 
 		newKaleoDefinitionVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -161,8 +157,10 @@ public class KaleoDefinitionVersionPersistenceTest {
 
 		newKaleoDefinitionVersion.setStatusDate(RandomTestUtil.nextDate());
 
-		_kaleoDefinitionVersions.add(
-			_persistence.update(newKaleoDefinitionVersion));
+		newKaleoDefinitionVersion = _persistence.update(
+			newKaleoDefinitionVersion);
+
+		_kaleoDefinitionVersions.add(newKaleoDefinitionVersion);
 
 		KaleoDefinitionVersion existingKaleoDefinitionVersion =
 			_persistence.findByPrimaryKey(
@@ -613,8 +611,6 @@ public class KaleoDefinitionVersionPersistenceTest {
 
 		KaleoDefinitionVersion kaleoDefinitionVersion = _persistence.create(pk);
 
-		kaleoDefinitionVersion.setMvccVersion(RandomTestUtil.nextLong());
-
 		kaleoDefinitionVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kaleoDefinitionVersion.setGroupId(RandomTestUtil.nextLong());
@@ -664,4 +660,4 @@ public class KaleoDefinitionVersionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1480478202
+// LIFERAY-SERVICE-BUILDER-HASH:670101364

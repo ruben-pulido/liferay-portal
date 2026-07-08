@@ -8,13 +8,17 @@ package com.liferay.site.cms.site.initializer.internal.display.context;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.configuration.DLConfiguration;
 import com.liferay.frontend.data.set.model.FDSActionDropdownItem;
-import com.liferay.object.model.ObjectEntryFolder;
+import com.liferay.object.constants.ObjectEntryFolderConstants;
 import com.liferay.object.service.ObjectDefinitionService;
-import com.liferay.object.service.ObjectDefinitionSettingLocalService;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.LayoutLocalServiceUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -37,20 +41,30 @@ public class ViewHomeRecentAssetsSectionDisplayContext
 		DepotEntryLocalService depotEntryLocalService,
 		DLConfiguration dlConfiguration, GroupLocalService groupLocalService,
 		HttpServletRequest httpServletRequest, Language language,
-		ObjectDefinitionService objectDefinitionService,
-		ObjectDefinitionSettingLocalService objectDefinitionSettingLocalService,
-		ModelResourcePermission<ObjectEntryFolder>
-			objectEntryFolderModelResourcePermission,
-		Portal portal,
+		ObjectDefinitionService objectDefinitionService, Portal portal,
 		TranslationInfoItemFieldValuesExporterRegistry
 			translationInfoItemFieldValuesExporterRegistry) {
 
 		super(
 			depotEntryLocalService, dlConfiguration, groupLocalService,
-			httpServletRequest, language, objectDefinitionService,
-			objectDefinitionSettingLocalService,
-			objectEntryFolderModelResourcePermission, portal,
+			httpServletRequest, language, objectDefinitionService, portal,
 			translationInfoItemFieldValuesExporterRegistry);
+	}
+
+	@Override
+	public Map<String, Object> getAdditionalProps() {
+		Map<String, Object> additionalProps = super.getAdditionalProps();
+
+		try {
+			additionalProps.put("breadcrumbProps", getBreadcrumbProps());
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		return additionalProps;
 	}
 
 	public String getAssetsAllURL() throws PortalException {
@@ -58,6 +72,24 @@ public class ViewHomeRecentAssetsSectionDisplayContext
 			LayoutLocalServiceUtil.getLayoutByFriendlyURL(
 				themeDisplay.getScopeGroupId(), false, "/all"),
 			themeDisplay);
+	}
+
+	@Override
+	public Map<String, Object> getBreadcrumbProps() throws PortalException {
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		Layout layout = LayoutLocalServiceUtil.getLayoutByFriendlyURL(
+			themeDisplay.getScopeGroupId(), false, "/all");
+
+		addBreadcrumbItem(
+			jsonArray, false, null,
+			layout.getName(themeDisplay.getLocale(), true));
+
+		return HashMapBuilder.<String, Object>put(
+			"breadcrumbItems", jsonArray
+		).put(
+			"hideSpace", true
+		).build();
 	}
 
 	@Override
@@ -90,8 +122,15 @@ public class ViewHomeRecentAssetsSectionDisplayContext
 	protected String getCMSSectionFilterString() {
 		return appendStatus(
 			appendGroupIds(
-				"cmsKind eq 'object' and (cmsSection eq 'contents' or " +
-					"cmsSection eq 'files')"));
+				StringBundler.concat(
+					"(cmsSection eq 'contents' or cmsSection eq 'files') and ",
+					"objectDefinitionExternalReferenceCode ne '",
+					ObjectEntryFolderConstants.
+						EXTERNAL_REFERENCE_CODE_OBJECT_ENTRY_FOLDER,
+					"' and rootDescendantNode eq false")));
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ViewHomeRecentAssetsSectionDisplayContext.class);
 
 }

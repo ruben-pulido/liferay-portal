@@ -55,29 +55,33 @@ public class ObjectEntryFolderModelDocumentContributorTest {
 	public void testContribute() throws Exception {
 		_testContribute(
 			HashMapBuilder.put(
-				"cms_kind", "folder"
-			).put(
 				"cms_root", "true"
 			).put(
 				"cms_section", "contents"
+			).put(
+				"objectDefinitionExternalReferenceCode",
+				ObjectEntryFolderConstants.
+					EXTERNAL_REFERENCE_CODE_OBJECT_ENTRY_FOLDER
 			).build(),
 			ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_CONTENTS);
 		_testContribute(
 			HashMapBuilder.put(
-				"cms_kind", "folder"
-			).put(
 				"cms_root", "true"
 			).put(
 				"cms_section", "files"
+			).put(
+				"objectDefinitionExternalReferenceCode",
+				ObjectEntryFolderConstants.
+					EXTERNAL_REFERENCE_CODE_OBJECT_ENTRY_FOLDER
 			).build(),
 			ObjectEntryFolderConstants.EXTERNAL_REFERENCE_CODE_FILES);
 		_testContribute(
 			HashMapBuilder.put(
-				"cms_kind", StringPool.BLANK
-			).put(
 				"cms_root", StringPool.BLANK
 			).put(
 				"cms_section", StringPool.BLANK
+			).put(
+				"objectDefinitionExternalReferenceCode", StringPool.BLANK
 			).build(),
 			null);
 	}

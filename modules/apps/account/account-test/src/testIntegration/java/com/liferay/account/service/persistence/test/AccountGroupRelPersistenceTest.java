@@ -111,11 +111,7 @@ public class AccountGroupRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AccountGroupRel newAccountGroupRel = _persistence.create(pk);
-
-		newAccountGroupRel.setMvccVersion(RandomTestUtil.nextLong());
+		AccountGroupRel newAccountGroupRel = addAccountGroupRel();
 
 		newAccountGroupRel.setCompanyId(RandomTestUtil.nextLong());
 
@@ -133,7 +129,9 @@ public class AccountGroupRelPersistenceTest {
 
 		newAccountGroupRel.setClassPK(RandomTestUtil.nextLong());
 
-		_accountGroupRels.add(_persistence.update(newAccountGroupRel));
+		newAccountGroupRel = _persistence.update(newAccountGroupRel);
+
+		_accountGroupRels.add(newAccountGroupRel);
 
 		AccountGroupRel existingAccountGroupRel = _persistence.findByPrimaryKey(
 			newAccountGroupRel.getPrimaryKey());
@@ -522,8 +520,6 @@ public class AccountGroupRelPersistenceTest {
 
 		AccountGroupRel accountGroupRel = _persistence.create(pk);
 
-		accountGroupRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		accountGroupRel.setCompanyId(RandomTestUtil.nextLong());
 
 		accountGroupRel.setUserId(RandomTestUtil.nextLong());
@@ -551,4 +547,4 @@ public class AccountGroupRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1537546041
+// LIFERAY-SERVICE-BUILDER-HASH:-1804310193

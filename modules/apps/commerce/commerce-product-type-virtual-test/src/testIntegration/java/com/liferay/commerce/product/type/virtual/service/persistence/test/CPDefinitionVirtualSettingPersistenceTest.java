@@ -116,12 +116,8 @@ public class CPDefinitionVirtualSettingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPDefinitionVirtualSetting newCPDefinitionVirtualSetting =
-			_persistence.create(pk);
-
-		newCPDefinitionVirtualSetting.setMvccVersion(RandomTestUtil.nextLong());
+			addCPDefinitionVirtualSetting();
 
 		newCPDefinitionVirtualSetting.setUuid(RandomTestUtil.randomString());
 
@@ -175,8 +171,10 @@ public class CPDefinitionVirtualSettingPersistenceTest {
 		newCPDefinitionVirtualSetting.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_cpDefinitionVirtualSettings.add(
-			_persistence.update(newCPDefinitionVirtualSetting));
+		newCPDefinitionVirtualSetting = _persistence.update(
+			newCPDefinitionVirtualSetting);
+
+		_cpDefinitionVirtualSettings.add(newCPDefinitionVirtualSetting);
 
 		CPDefinitionVirtualSetting existingCPDefinitionVirtualSetting =
 			_persistence.findByPrimaryKey(
@@ -669,8 +667,6 @@ public class CPDefinitionVirtualSettingPersistenceTest {
 		CPDefinitionVirtualSetting cpDefinitionVirtualSetting =
 			_persistence.create(pk);
 
-		cpDefinitionVirtualSetting.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpDefinitionVirtualSetting.setUuid(RandomTestUtil.randomString());
 
 		cpDefinitionVirtualSetting.setGroupId(RandomTestUtil.nextLong());
@@ -729,4 +725,4 @@ public class CPDefinitionVirtualSettingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1686151303
+// LIFERAY-SERVICE-BUILDER-HASH:1037519849

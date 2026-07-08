@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -96,8 +94,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63;.
@@ -138,16 +137,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -189,8 +180,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<ClientExtensionEntryRel>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the client extension entry rel where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchClientExtensionEntryRelException</code> if it could not be found.
@@ -204,22 +196,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 	public ClientExtensionEntryRel findByUUID_G(String uuid, long groupId)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByUUID_G(
-			uuid, groupId);
-
-		if (clientExtensionEntryRel == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchClientExtensionEntryRelException(message);
-		}
-
-		return clientExtensionEntryRel;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -268,8 +246,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where uuid = &#63; and companyId = &#63;.
@@ -312,16 +291,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -366,8 +337,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByType;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByType;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where type = &#63;.
@@ -408,16 +380,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByType_First(
-			type, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByType.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type}));
+		return _collectionPersistenceFinderByType.findFirst(
+			finderCache, new Object[] {type}, orderByComparator);
 	}
 
 	/**
@@ -459,8 +423,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {type});
 	}
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByC_CETERC;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByC_CETERC;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where companyId = &#63; and cetExternalReferenceCode = &#63;.
@@ -503,17 +468,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByC_CETERC_First(
-			companyId, cetExternalReferenceCode, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByC_CETERC.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, cetExternalReferenceCode}));
+		return _collectionPersistenceFinderByC_CETERC.findFirst(
+			finderCache, new Object[] {companyId, cetExternalReferenceCode},
+			orderByComparator);
 	}
 
 	/**
@@ -563,8 +520,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {companyId, cetExternalReferenceCode});
 	}
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63;.
@@ -607,16 +565,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -662,8 +613,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<ClientExtensionEntryRel>
-		_collectionPersistenceFinderByC_C_T;
+	private CollectionPersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_collectionPersistenceFinderByC_C_T;
 
 	/**
 	 * Returns an ordered range of all the client extension entry rels where classNameId = &#63; and classPK = &#63; and type = &#63;.
@@ -708,17 +660,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			OrderByComparator<ClientExtensionEntryRel> orderByComparator)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByC_C_T_First(
-			classNameId, classPK, type, orderByComparator);
-
-		if (clientExtensionEntryRel != null) {
-			return clientExtensionEntryRel;
-		}
-
-		throw new NoSuchClientExtensionEntryRelException(
-			_collectionPersistenceFinderByC_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, type}));
+		return _collectionPersistenceFinderByC_C_T.findFirst(
+			finderCache, new Object[] {classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -767,8 +711,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, type});
 	}
 
-	private UniquePersistenceFinder<ClientExtensionEntryRel>
-		_uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder
+		<ClientExtensionEntryRel, NoSuchClientExtensionEntryRelException>
+			_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the client extension entry rel where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchClientExtensionEntryRelException</code> if it could not be found.
@@ -783,23 +728,8 @@ public class ClientExtensionEntryRelPersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchClientExtensionEntryRelException {
 
-		ClientExtensionEntryRel clientExtensionEntryRel = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (clientExtensionEntryRel == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchClientExtensionEntryRelException(message);
-		}
-
-		return clientExtensionEntryRel;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1260,10 +1190,11 @@ public class ClientExtensionEntryRelPersistenceImpl
 			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"clientExtensionEntryRel.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, ClientExtensionEntryRel::getUuid));
+				"clientExtensionEntryRel.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ClientExtensionEntryRel::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1275,8 +1206,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 				ClientExtensionEntryRel::getGroupId),
 			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE, "",
 			new FinderColumn<>(
-				"clientExtensionEntryRel.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, ClientExtensionEntryRel::getUuid),
+				"clientExtensionEntryRel.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ClientExtensionEntryRel::getUuid),
 			new FinderColumn<>(
 				"clientExtensionEntryRel.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, ClientExtensionEntryRel::getGroupId));
@@ -1303,9 +1235,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 				_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 				_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 				ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"clientExtensionEntryRel.", "uuid",
+					"clientExtensionEntryRel.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					ClientExtensionEntryRel::getUuid),
 				new FinderColumn<>(
@@ -1333,10 +1265,11 @@ public class ClientExtensionEntryRelPersistenceImpl
 			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"clientExtensionEntryRel.", "type", FinderColumn.Type.STRING,
-				"=", true, true, ClientExtensionEntryRel::getType));
+				"clientExtensionEntryRel.", "type", "type_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ClientExtensionEntryRel::getType));
 
 		_collectionPersistenceFinderByC_CETERC =
 			new CollectionPersistenceFinder<>(
@@ -1364,7 +1297,7 @@ public class ClientExtensionEntryRelPersistenceImpl
 				_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 				_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 				ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"clientExtensionEntryRel.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1395,7 +1328,7 @@ public class ClientExtensionEntryRelPersistenceImpl
 			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"clientExtensionEntryRel.", "classNameId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -1433,7 +1366,7 @@ public class ClientExtensionEntryRelPersistenceImpl
 			_SQL_SELECT_CLIENTEXTENSIONENTRYREL_WHERE,
 			_SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE,
 			ClientExtensionEntryRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"clientExtensionEntryRel.", "classNameId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -1442,8 +1375,9 @@ public class ClientExtensionEntryRelPersistenceImpl
 				"clientExtensionEntryRel.", "classPK", FinderColumn.Type.LONG,
 				"=", true, true, ClientExtensionEntryRel::getClassPK),
 			new FinderColumn<>(
-				"clientExtensionEntryRel.", "type", FinderColumn.Type.STRING,
-				"=", true, true, ClientExtensionEntryRel::getType));
+				"clientExtensionEntryRel.", "type", "type_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ClientExtensionEntryRel::getType));
 
 		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
 			this,
@@ -1520,12 +1454,6 @@ public class ClientExtensionEntryRelPersistenceImpl
 	private static final String _SQL_COUNT_CLIENTEXTENSIONENTRYREL_WHERE =
 		"SELECT COUNT(clientExtensionEntryRel) FROM ClientExtensionEntryRel clientExtensionEntryRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ClientExtensionEntryRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ClientExtensionEntryRelPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -1535,4 +1463,4 @@ public class ClientExtensionEntryRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2075713686
+// LIFERAY-SERVICE-BUILDER-HASH:-1103283352

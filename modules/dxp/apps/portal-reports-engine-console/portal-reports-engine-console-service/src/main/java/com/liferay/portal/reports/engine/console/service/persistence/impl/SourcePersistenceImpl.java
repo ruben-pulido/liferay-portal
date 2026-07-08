@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,7 +79,7 @@ public class SourcePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Source>
+	private CollectionPersistenceFinder<Source, NoSuchSourceException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -121,15 +119,8 @@ public class SourcePersistenceImpl
 			String uuid, OrderByComparator<Source> orderByComparator)
 		throws NoSuchSourceException {
 
-		Source source = fetchByUuid_First(uuid, orderByComparator);
-
-		if (source != null) {
-			return source;
-		}
-
-		throw new NoSuchSourceException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +161,8 @@ public class SourcePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<Source> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<Source, NoSuchSourceException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the source where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchSourceException</code> if it could not be found.
@@ -184,21 +176,8 @@ public class SourcePersistenceImpl
 	public Source findByUUID_G(String uuid, long groupId)
 		throws NoSuchSourceException {
 
-		Source source = fetchByUUID_G(uuid, groupId);
-
-		if (source == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSourceException(message);
-		}
-
-		return source;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -246,7 +225,7 @@ public class SourcePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<Source>
+	private CollectionPersistenceFinder<Source, NoSuchSourceException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -289,15 +268,8 @@ public class SourcePersistenceImpl
 			OrderByComparator<Source> orderByComparator)
 		throws NoSuchSourceException {
 
-		Source source = fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (source != null) {
-			return source;
-		}
-
-		throw new NoSuchSourceException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -342,7 +314,7 @@ public class SourcePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<Source>
+	private FilterCollectionPersistenceFinder<Source, NoSuchSourceException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -382,15 +354,8 @@ public class SourcePersistenceImpl
 			long groupId, OrderByComparator<Source> orderByComparator)
 		throws NoSuchSourceException {
 
-		Source source = fetchByGroupId_First(groupId, orderByComparator);
-
-		if (source != null) {
-			return source;
-		}
-
-		throw new NoSuchSourceException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -466,7 +431,7 @@ public class SourcePersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<Source>
+	private CollectionPersistenceFinder<Source, NoSuchSourceException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -506,15 +471,8 @@ public class SourcePersistenceImpl
 			long companyId, OrderByComparator<Source> orderByComparator)
 		throws NoSuchSourceException {
 
-		Source source = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (source != null) {
-			return source;
-		}
-
-		throw new NoSuchSourceException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -786,10 +744,10 @@ public class SourcePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_SOURCE_WHERE, _SQL_COUNT_SOURCE_WHERE,
-			SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"source.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Source::getUuid));
+				"source.", "uuid", "uuid_", FinderColumn.Type.STRING, "=", true,
+				true, Source::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -800,8 +758,8 @@ public class SourcePersistenceImpl
 				convertNullFunction(Source::getUuid), Source::getGroupId),
 			_SQL_SELECT_SOURCE_WHERE, "",
 			new FinderColumn<>(
-				"source.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Source::getUuid),
+				"source.", "uuid", "uuid_", FinderColumn.Type.STRING, "=", true,
+				true, Source::getUuid),
 			new FinderColumn<>(
 				"source.", "groupId", FinderColumn.Type.LONG, "=", true, true,
 				Source::getGroupId));
@@ -826,10 +784,11 @@ public class SourcePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_SOURCE_WHERE, _SQL_COUNT_SOURCE_WHERE,
-				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"source.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, Source::getUuid),
+					"source.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Source::getUuid),
 				new FinderColumn<>(
 					"source.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Source::getCompanyId));
@@ -854,16 +813,8 @@ public class SourcePersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_SOURCE_WHERE, _SQL_COUNT_SOURCE_WHERE,
-				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SourceImpl.class, Source.class, "source", "Reports_Source",
-					"source.sourceId",
-					"SELECT DISTINCT {source.*} FROM Reports_Source source WHERE ",
-					"SELECT {Reports_Source.*} FROM (SELECT DISTINCT source.sourceId FROM Reports_Source source WHERE ",
-					") TEMP_TABLE INNER JOIN Reports_Source ON TEMP_TABLE.sourceId = Reports_Source.sourceId",
-					"SELECT COUNT(DISTINCT source.sourceId) AS COUNT_VALUE FROM Reports_Source source WHERE ",
-					SourceModelImpl.ORDER_BY_SQL,
-					SourceModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"source.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, Source::getGroupId));
@@ -888,7 +839,8 @@ public class SourcePersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_SOURCE_WHERE, _SQL_COUNT_SOURCE_WHERE,
-				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				SourceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"source.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Source::getCompanyId));
@@ -947,12 +899,6 @@ public class SourcePersistenceImpl
 	private static final String _SQL_COUNT_SOURCE_WHERE =
 		"SELECT COUNT(source) FROM Source source WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Source exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SourcePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -962,4 +908,4 @@ public class SourcePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1212960456
+// LIFERAY-SERVICE-BUILDER-HASH:-479778666

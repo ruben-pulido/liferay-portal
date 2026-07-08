@@ -112,11 +112,7 @@ public class AccountEntryUserRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AccountEntryUserRel newAccountEntryUserRel = _persistence.create(pk);
-
-		newAccountEntryUserRel.setMvccVersion(RandomTestUtil.nextLong());
+		AccountEntryUserRel newAccountEntryUserRel = addAccountEntryUserRel();
 
 		newAccountEntryUserRel.setCompanyId(RandomTestUtil.nextLong());
 
@@ -124,7 +120,9 @@ public class AccountEntryUserRelPersistenceTest {
 
 		newAccountEntryUserRel.setAccountUserId(RandomTestUtil.nextLong());
 
-		_accountEntryUserRels.add(_persistence.update(newAccountEntryUserRel));
+		newAccountEntryUserRel = _persistence.update(newAccountEntryUserRel);
+
+		_accountEntryUserRels.add(newAccountEntryUserRel);
 
 		AccountEntryUserRel existingAccountEntryUserRel =
 			_persistence.findByPrimaryKey(
@@ -498,8 +496,6 @@ public class AccountEntryUserRelPersistenceTest {
 
 		AccountEntryUserRel accountEntryUserRel = _persistence.create(pk);
 
-		accountEntryUserRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		accountEntryUserRel.setCompanyId(RandomTestUtil.nextLong());
 
 		accountEntryUserRel.setAccountEntryId(RandomTestUtil.nextLong());
@@ -517,4 +513,4 @@ public class AccountEntryUserRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-468447410
+// LIFERAY-SERVICE-BUILDER-HASH:-1944329820

@@ -7,18 +7,20 @@ import {expect, mergeTests} from '@playwright/test';
 
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
+import {isolatedChannelTest} from '../../../fixtures/isolatedChannelTest';
 import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginAnalyticsCloudTest} from '../../../fixtures/loginAnalyticsCloudTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../../utils/getRandomString';
-import {syncAnalyticsCloud} from '../../analytics-settings-web/main/utils/analytics-settings';
+import {syncAnalyticsCloudViaAPI} from '../../analytics-settings-web/main/utils/analytics-settings';
 
 const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPS-178052': {enabled: true},
 	}),
+	isolatedChannelTest,
 	isolatedSiteTest,
 	loginAnalyticsCloudTest(),
 	loginTest()
@@ -27,12 +29,12 @@ const test = mergeTests(
 test(
 	'Switching the Content Performance panel language does not change the user locale',
 	{tag: '@LPS-110920'},
-	async ({apiHelpers, page, site}) => {
-		await syncAnalyticsCloud({
+	async ({analyticsChannel, apiHelpers, page, project, site}) => {
+		await syncAnalyticsCloudViaAPI({
 			apiHelpers,
-			channelName: 'My Property - ' + getRandomString(),
-			page,
-			siteName: site.name,
+			channel: analyticsChannel,
+			project,
+			siteId: Number(site.id),
 		});
 
 		const layout = await apiHelpers.headlessDelivery.createSitePage({

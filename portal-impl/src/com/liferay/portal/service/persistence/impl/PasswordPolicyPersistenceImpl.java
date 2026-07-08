@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPasswordPolicyException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PasswordPolicy;
 import com.liferay.portal.kernel.model.PasswordPolicyTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -71,8 +69,9 @@ public class PasswordPolicyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<PasswordPolicy>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<PasswordPolicy, NoSuchPasswordPolicyException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the password policies where uuid = &#63;.
@@ -112,16 +111,9 @@ public class PasswordPolicyPersistenceImpl
 			String uuid, OrderByComparator<PasswordPolicy> orderByComparator)
 		throws NoSuchPasswordPolicyException {
 
-		PasswordPolicy passwordPolicy = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (passwordPolicy != null) {
-			return passwordPolicy;
-		}
-
-		throw new NoSuchPasswordPolicyException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -198,8 +190,9 @@ public class PasswordPolicyPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<PasswordPolicy>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<PasswordPolicy, NoSuchPasswordPolicyException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the password policies where uuid = &#63; and companyId = &#63;.
@@ -242,16 +235,9 @@ public class PasswordPolicyPersistenceImpl
 			OrderByComparator<PasswordPolicy> orderByComparator)
 		throws NoSuchPasswordPolicyException {
 
-		PasswordPolicy passwordPolicy = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (passwordPolicy != null) {
-			return passwordPolicy;
-		}
-
-		throw new NoSuchPasswordPolicyException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -335,8 +321,9 @@ public class PasswordPolicyPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<PasswordPolicy>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<PasswordPolicy, NoSuchPasswordPolicyException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the password policies where companyId = &#63;.
@@ -376,16 +363,9 @@ public class PasswordPolicyPersistenceImpl
 			long companyId, OrderByComparator<PasswordPolicy> orderByComparator)
 		throws NoSuchPasswordPolicyException {
 
-		PasswordPolicy passwordPolicy = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (passwordPolicy != null) {
-			return passwordPolicy;
-		}
-
-		throw new NoSuchPasswordPolicyException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -463,8 +443,9 @@ public class PasswordPolicyPersistenceImpl
 			companyId, 0);
 	}
 
-	private UniquePersistenceFinder<PasswordPolicy>
-		_uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder
+		<PasswordPolicy, NoSuchPasswordPolicyException>
+			_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the password policy where companyId = &#63; and name = &#63; or throws a <code>NoSuchPasswordPolicyException</code> if it could not be found.
@@ -478,21 +459,8 @@ public class PasswordPolicyPersistenceImpl
 	public PasswordPolicy findByC_N(long companyId, String name)
 		throws NoSuchPasswordPolicyException {
 
-		PasswordPolicy passwordPolicy = fetchByC_N(companyId, name);
-
-		if (passwordPolicy == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPasswordPolicyException(message);
-		}
-
-		return passwordPolicy;
+		return _uniquePersistenceFinderByC_N.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
 	/**
@@ -784,19 +752,11 @@ public class PasswordPolicyPersistenceImpl
 				_SQL_SELECT_PASSWORDPOLICY_WHERE,
 				_SQL_COUNT_PASSWORDPOLICY_WHERE,
 				PasswordPolicyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PasswordPolicyImpl.class, PasswordPolicy.class,
-					"passwordPolicy", "PasswordPolicy",
-					"passwordPolicy.passwordPolicyId",
-					"SELECT DISTINCT {passwordPolicy.*} FROM PasswordPolicy passwordPolicy WHERE ",
-					"SELECT {PasswordPolicy.*} FROM (SELECT DISTINCT passwordPolicy.passwordPolicyId FROM PasswordPolicy passwordPolicy WHERE ",
-					") TEMP_TABLE INNER JOIN PasswordPolicy ON TEMP_TABLE.passwordPolicyId = PasswordPolicy.passwordPolicyId",
-					"SELECT COUNT(DISTINCT passwordPolicy.passwordPolicyId) AS COUNT_VALUE FROM PasswordPolicy passwordPolicy WHERE ",
-					PasswordPolicyModelImpl.ORDER_BY_SQL,
-					PasswordPolicyModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"passwordPolicy.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, PasswordPolicy::getUuid));
+					"passwordPolicy.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					PasswordPolicy::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -820,19 +780,11 @@ public class PasswordPolicyPersistenceImpl
 				_SQL_SELECT_PASSWORDPOLICY_WHERE,
 				_SQL_COUNT_PASSWORDPOLICY_WHERE,
 				PasswordPolicyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PasswordPolicyImpl.class, PasswordPolicy.class,
-					"passwordPolicy", "PasswordPolicy",
-					"passwordPolicy.passwordPolicyId",
-					"SELECT DISTINCT {passwordPolicy.*} FROM PasswordPolicy passwordPolicy WHERE ",
-					"SELECT {PasswordPolicy.*} FROM (SELECT DISTINCT passwordPolicy.passwordPolicyId FROM PasswordPolicy passwordPolicy WHERE ",
-					") TEMP_TABLE INNER JOIN PasswordPolicy ON TEMP_TABLE.passwordPolicyId = PasswordPolicy.passwordPolicyId",
-					"SELECT COUNT(DISTINCT passwordPolicy.passwordPolicyId) AS COUNT_VALUE FROM PasswordPolicy passwordPolicy WHERE ",
-					PasswordPolicyModelImpl.ORDER_BY_SQL,
-					PasswordPolicyModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"passwordPolicy.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, PasswordPolicy::getUuid),
+					"passwordPolicy.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					PasswordPolicy::getUuid),
 				new FinderColumn<>(
 					"passwordPolicy.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, PasswordPolicy::getCompanyId));
@@ -859,16 +811,7 @@ public class PasswordPolicyPersistenceImpl
 				_SQL_SELECT_PASSWORDPOLICY_WHERE,
 				_SQL_COUNT_PASSWORDPOLICY_WHERE,
 				PasswordPolicyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PasswordPolicyImpl.class, PasswordPolicy.class,
-					"passwordPolicy", "PasswordPolicy",
-					"passwordPolicy.passwordPolicyId",
-					"SELECT DISTINCT {passwordPolicy.*} FROM PasswordPolicy passwordPolicy WHERE ",
-					"SELECT {PasswordPolicy.*} FROM (SELECT DISTINCT passwordPolicy.passwordPolicyId FROM PasswordPolicy passwordPolicy WHERE ",
-					") TEMP_TABLE INNER JOIN PasswordPolicy ON TEMP_TABLE.passwordPolicyId = PasswordPolicy.passwordPolicyId",
-					"SELECT COUNT(DISTINCT passwordPolicy.passwordPolicyId) AS COUNT_VALUE FROM PasswordPolicy passwordPolicy WHERE ",
-					PasswordPolicyModelImpl.ORDER_BY_SQL,
-					PasswordPolicyModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"passwordPolicy.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, PasswordPolicy::getCompanyId));
@@ -910,12 +853,6 @@ public class PasswordPolicyPersistenceImpl
 	private static final String _SQL_COUNT_PASSWORDPOLICY_WHERE =
 		"SELECT COUNT(passwordPolicy) FROM PasswordPolicy passwordPolicy WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PasswordPolicy exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PasswordPolicyPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -925,4 +862,4 @@ public class PasswordPolicyPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1000812834
+// LIFERAY-SERVICE-BUILDER-HASH:885189508

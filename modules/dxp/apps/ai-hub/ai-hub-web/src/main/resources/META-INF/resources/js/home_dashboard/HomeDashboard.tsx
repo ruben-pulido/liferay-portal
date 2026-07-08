@@ -6,7 +6,7 @@
 import React, {useEffect, useState} from 'react';
 
 import {getAgentDefinitions} from '../agent_definition_form/services/AgentDefinitionService';
-import {getChatbots} from '../chatbot_form/services/ChatbotService';
+import {getChatbotDefinitions} from '../chatbot_form/services/ChatbotService';
 import DashboardCard from './components/DashboardCard';
 import DashboardCardSkeleton from './components/DashboardCardSkeleton';
 
@@ -15,6 +15,7 @@ interface Entry {
 	description?: string;
 	externalReferenceCode: string;
 	title: string;
+	workflowDefinitionName?: string;
 }
 
 interface HomeDashboardProps {
@@ -34,9 +35,14 @@ function appendBackURL(url: string, backURL: string) {
 function appendEntryParams(
 	url: string,
 	externalReferenceCode: string,
-	backURL: string
+	backURL: string,
+	workflowDefinitionName?: string
 ) {
 	const params = new URLSearchParams({backURL, externalReferenceCode});
+
+	if (workflowDefinitionName) {
+		params.set('workflowDefinitionName', workflowDefinitionName);
+	}
 
 	return `${url}?${params.toString()}`;
 }
@@ -56,7 +62,7 @@ export default function HomeDashboard({
 	useEffect(() => {
 		let isMounted = true;
 
-		getAgentDefinitions()
+		getAgentDefinitions({pageSize: '4', sort: 'dateModified:desc'})
 			.then((data) => {
 				if (isMounted) {
 					setAgents(data?.items ?? []);
@@ -68,7 +74,7 @@ export default function HomeDashboard({
 				}
 			});
 
-		getChatbots()
+		getChatbotDefinitions({pageSize: '4', sort: 'dateModified:desc'})
 			.then((data) => {
 				if (isMounted) {
 					setChatbots(data?.items ?? []);
@@ -123,7 +129,8 @@ export default function HomeDashboard({
 						detailURL={appendEntryParams(
 							agentURL,
 							item.externalReferenceCode,
-							backURL
+							backURL,
+							item.workflowDefinitionName
 						)}
 						key={item.externalReferenceCode}
 						title={item.title}
@@ -156,7 +163,7 @@ export default function HomeDashboard({
 						title={item.title}
 					/>
 				)}
-				take={3}
+				take={4}
 				title={Liferay.Language.get('latest-chatbots')}
 			/>
 		</div>

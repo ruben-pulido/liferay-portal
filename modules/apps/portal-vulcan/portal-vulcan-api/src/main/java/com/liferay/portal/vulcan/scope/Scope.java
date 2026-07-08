@@ -46,6 +46,21 @@ import java.util.function.Supplier;
 @XmlRootElement(name = "Scope")
 public class Scope implements Serializable {
 
+	public static Scope of(Group group) {
+		if (group == null) {
+			return null;
+		}
+
+		return new Scope() {
+			{
+				setExternalReferenceCode(group::getExternalReferenceCode);
+				setLiveExternalReferenceCode(
+					() -> _getLiveExternalReferenceCode(group));
+				setType(() -> _getGroupType(group));
+			}
+		};
+	}
+
 	public static Scope of(Group group, Locale locale) {
 		if ((group == null) || !GroupCapabilityUtil.isSupportsScope(group)) {
 			return null;
@@ -61,6 +76,8 @@ public class Scope implements Serializable {
 					() -> NestedFieldsSupplier.supply(
 						"scope.label",
 						nestedField -> _getGroupName(group, locale)));
+				setLiveExternalReferenceCode(
+					() -> _getLiveExternalReferenceCode(group));
 				setType(() -> _getGroupType(group));
 			}
 		};
@@ -107,6 +124,9 @@ public class Scope implements Serializable {
 				getExternalReferenceCode(), scope.getExternalReferenceCode()) &&
 			Objects.equals(getKey(), scope.getKey()) &&
 			Objects.equals(getLabel(), scope.getLabel()) &&
+			Objects.equals(
+				getLiveExternalReferenceCode(),
+				scope.getLiveExternalReferenceCode()) &&
 			Objects.equals(getType(), scope.getType())) {
 
 			return true;
@@ -146,6 +166,18 @@ public class Scope implements Serializable {
 		}
 
 		return label;
+	}
+
+	@Schema(description = "The scope's live group external reference code.")
+	public String getLiveExternalReferenceCode() {
+		if (_liveExternalReferenceCodeSupplier != null) {
+			liveExternalReferenceCode =
+				_liveExternalReferenceCodeSupplier.get();
+
+			_liveExternalReferenceCodeSupplier = null;
+		}
+
+		return liveExternalReferenceCode;
 	}
 
 	@Schema(description = "The scope's type.")
@@ -242,6 +274,30 @@ public class Scope implements Serializable {
 		};
 	}
 
+	public void setLiveExternalReferenceCode(String liveExternalReferenceCode) {
+		this.liveExternalReferenceCode = liveExternalReferenceCode;
+
+		_liveExternalReferenceCodeSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setLiveExternalReferenceCode(
+		UnsafeSupplier<String, Exception>
+			liveExternalReferenceCodeUnsafeSupplier) {
+
+		_liveExternalReferenceCodeSupplier = () -> {
+			try {
+				return liveExternalReferenceCodeUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
 	public void setType(Type type) {
 		this.type = type;
 
@@ -264,7 +320,7 @@ public class Scope implements Serializable {
 	}
 
 	public String toString() {
-		StringBundler sb = new StringBundler(22);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{");
 
@@ -276,11 +332,8 @@ public class Scope implements Serializable {
 			}
 
 			sb.append("\"externalReferenceCode\": ");
-
 			sb.append("\"");
-
 			sb.append(_escape(externalReferenceCode));
-
 			sb.append("\"");
 		}
 
@@ -292,11 +345,8 @@ public class Scope implements Serializable {
 			}
 
 			sb.append("\"key\": ");
-
 			sb.append("\"");
-
 			sb.append(_escape(key));
-
 			sb.append("\"");
 		}
 
@@ -308,11 +358,21 @@ public class Scope implements Serializable {
 			}
 
 			sb.append("\"label\": ");
-
 			sb.append("\"");
-
 			sb.append(_escape(label));
+			sb.append("\"");
+		}
 
+		String liveExternalReferenceCode = getLiveExternalReferenceCode();
+
+		if (liveExternalReferenceCode != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"liveExternalReferenceCode\": ");
+			sb.append("\"");
+			sb.append(_escape(liveExternalReferenceCode));
 			sb.append("\"");
 		}
 
@@ -324,7 +384,6 @@ public class Scope implements Serializable {
 			}
 
 			sb.append("\"type\": ");
-
 			sb.append("\"");
 			sb.append(type);
 			sb.append("\"");
@@ -392,6 +451,12 @@ public class Scope implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected String label;
 
+	@GraphQLField(
+		description = "The scope's live group external reference code."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String liveExternalReferenceCode;
+
 	@GraphQLField(description = "The scope's type.")
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	protected Type type;
@@ -425,6 +490,16 @@ public class Scope implements Serializable {
 		return null;
 	}
 
+	private static String _getLiveExternalReferenceCode(Group group) {
+		Group liveGroup = group.getLiveGroup();
+
+		if (liveGroup == null) {
+			return null;
+		}
+
+		return liveGroup.getExternalReferenceCode();
+	}
+
 	private Scope() {
 	}
 
@@ -449,6 +524,9 @@ public class Scope implements Serializable {
 
 	@JsonIgnore
 	private Supplier<String> _labelSupplier;
+
+	@JsonIgnore
+	private Supplier<String> _liveExternalReferenceCodeSupplier;
 
 	@JsonIgnore
 	private Supplier<Type> _typeSupplier;

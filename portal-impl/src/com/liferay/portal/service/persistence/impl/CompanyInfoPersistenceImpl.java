@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchCompanyInfoException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CompanyInfo;
 import com.liferay.portal.kernel.model.CompanyInfoTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -62,7 +60,7 @@ public class CompanyInfoPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<CompanyInfo>
+	private UniquePersistenceFinder<CompanyInfo, NoSuchCompanyInfoException>
 		_uniquePersistenceFinderByCompanyId;
 
 	/**
@@ -76,21 +74,8 @@ public class CompanyInfoPersistenceImpl
 	public CompanyInfo findByCompanyId(long companyId)
 		throws NoSuchCompanyInfoException {
 
-		CompanyInfo companyInfo = fetchByCompanyId(companyId);
-
-		if (companyInfo == null) {
-			String message =
-				_uniquePersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCompanyInfoException(message);
-		}
-
-		return companyInfo;
+		return _uniquePersistenceFinderByCompanyId.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
 	/**
@@ -346,12 +331,6 @@ public class CompanyInfoPersistenceImpl
 	private static final String _SQL_SELECT_COMPANYINFO_WHERE =
 		"SELECT companyInfo FROM CompanyInfo companyInfo WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CompanyInfo exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CompanyInfoPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"key"});
 
@@ -361,4 +340,4 @@ public class CompanyInfoPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1489209883
+// LIFERAY-SERVICE-BUILDER-HASH:31304860

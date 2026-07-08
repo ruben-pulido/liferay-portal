@@ -109,9 +109,7 @@ public class SamlIdpSpSessionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SamlIdpSpSession newSamlIdpSpSession = _persistence.create(pk);
+		SamlIdpSpSession newSamlIdpSpSession = addSamlIdpSpSession();
 
 		newSamlIdpSpSession.setCompanyId(RandomTestUtil.nextLong());
 
@@ -127,7 +125,9 @@ public class SamlIdpSpSessionPersistenceTest {
 
 		newSamlIdpSpSession.setSamlPeerBindingId(RandomTestUtil.nextLong());
 
-		_samlIdpSpSessions.add(_persistence.update(newSamlIdpSpSession));
+		newSamlIdpSpSession = _persistence.update(newSamlIdpSpSession);
+
+		_samlIdpSpSessions.add(newSamlIdpSpSession);
 
 		SamlIdpSpSession existingSamlIdpSpSession =
 			_persistence.findByPrimaryKey(newSamlIdpSpSession.getPrimaryKey());
@@ -450,4 +450,4 @@ public class SamlIdpSpSessionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-832716217
+// LIFERAY-SERVICE-BUILDER-HASH:10343959

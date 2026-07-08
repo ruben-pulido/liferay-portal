@@ -118,13 +118,8 @@ public class CommerceInventoryBookedQuantityPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceInventoryBookedQuantity newCommerceInventoryBookedQuantity =
-			_persistence.create(pk);
-
-		newCommerceInventoryBookedQuantity.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceInventoryBookedQuantity();
 
 		newCommerceInventoryBookedQuantity.setCompanyId(
 			RandomTestUtil.nextLong());
@@ -155,8 +150,11 @@ public class CommerceInventoryBookedQuantityPersistenceTest {
 		newCommerceInventoryBookedQuantity.setUnitOfMeasureKey(
 			RandomTestUtil.randomString());
 
+		newCommerceInventoryBookedQuantity = _persistence.update(
+			newCommerceInventoryBookedQuantity);
+
 		_commerceInventoryBookedQuantities.add(
-			_persistence.update(newCommerceInventoryBookedQuantity));
+			newCommerceInventoryBookedQuantity);
 
 		CommerceInventoryBookedQuantity
 			existingCommerceInventoryBookedQuantity =
@@ -535,9 +533,6 @@ public class CommerceInventoryBookedQuantityPersistenceTest {
 		CommerceInventoryBookedQuantity commerceInventoryBookedQuantity =
 			_persistence.create(pk);
 
-		commerceInventoryBookedQuantity.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commerceInventoryBookedQuantity.setCompanyId(RandomTestUtil.nextLong());
 
 		commerceInventoryBookedQuantity.setUserId(RandomTestUtil.nextLong());
@@ -578,4 +573,4 @@ public class CommerceInventoryBookedQuantityPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-562550874
+// LIFERAY-SERVICE-BUILDER-HASH:389412273

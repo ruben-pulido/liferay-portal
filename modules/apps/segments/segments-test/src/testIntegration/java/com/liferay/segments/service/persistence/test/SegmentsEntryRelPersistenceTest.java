@@ -111,11 +111,7 @@ public class SegmentsEntryRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SegmentsEntryRel newSegmentsEntryRel = _persistence.create(pk);
-
-		newSegmentsEntryRel.setMvccVersion(RandomTestUtil.nextLong());
+		SegmentsEntryRel newSegmentsEntryRel = addSegmentsEntryRel();
 
 		newSegmentsEntryRel.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -137,7 +133,9 @@ public class SegmentsEntryRelPersistenceTest {
 
 		newSegmentsEntryRel.setClassPK(RandomTestUtil.nextLong());
 
-		_segmentsEntryRels.add(_persistence.update(newSegmentsEntryRel));
+		newSegmentsEntryRel = _persistence.update(newSegmentsEntryRel);
+
+		_segmentsEntryRels.add(newSegmentsEntryRel);
 
 		SegmentsEntryRel existingSegmentsEntryRel =
 			_persistence.findByPrimaryKey(newSegmentsEntryRel.getPrimaryKey());
@@ -536,8 +534,6 @@ public class SegmentsEntryRelPersistenceTest {
 
 		SegmentsEntryRel segmentsEntryRel = _persistence.create(pk);
 
-		segmentsEntryRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		segmentsEntryRel.setCtCollectionId(RandomTestUtil.nextLong());
 
 		segmentsEntryRel.setGroupId(RandomTestUtil.nextLong());
@@ -569,4 +565,4 @@ public class SegmentsEntryRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-192272848
+// LIFERAY-SERVICE-BUILDER-HASH:1491048524

@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,8 +93,9 @@ public class AssetCategoryPropertyPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AssetCategoryProperty>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<AssetCategoryProperty, NoSuchCategoryPropertyException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the asset category properties where companyId = &#63;.
@@ -137,16 +136,8 @@ public class AssetCategoryPropertyPersistenceImpl
 			OrderByComparator<AssetCategoryProperty> orderByComparator)
 		throws NoSuchCategoryPropertyException {
 
-		AssetCategoryProperty assetCategoryProperty = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (assetCategoryProperty != null) {
-			return assetCategoryProperty;
-		}
-
-		throw new NoSuchCategoryPropertyException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -188,8 +179,9 @@ public class AssetCategoryPropertyPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<AssetCategoryProperty>
-		_collectionPersistenceFinderByCategoryId;
+	private CollectionPersistenceFinder
+		<AssetCategoryProperty, NoSuchCategoryPropertyException>
+			_collectionPersistenceFinderByCategoryId;
 
 	/**
 	 * Returns an ordered range of all the asset category properties where categoryId = &#63;.
@@ -230,16 +222,8 @@ public class AssetCategoryPropertyPersistenceImpl
 			OrderByComparator<AssetCategoryProperty> orderByComparator)
 		throws NoSuchCategoryPropertyException {
 
-		AssetCategoryProperty assetCategoryProperty = fetchByCategoryId_First(
-			categoryId, orderByComparator);
-
-		if (assetCategoryProperty != null) {
-			return assetCategoryProperty;
-		}
-
-		throw new NoSuchCategoryPropertyException(
-			_collectionPersistenceFinderByCategoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {categoryId}));
+		return _collectionPersistenceFinderByCategoryId.findFirst(
+			finderCache, new Object[] {categoryId}, orderByComparator);
 	}
 
 	/**
@@ -281,8 +265,9 @@ public class AssetCategoryPropertyPersistenceImpl
 			finderCache, new Object[] {categoryId});
 	}
 
-	private CollectionPersistenceFinder<AssetCategoryProperty>
-		_collectionPersistenceFinderByC_K;
+	private CollectionPersistenceFinder
+		<AssetCategoryProperty, NoSuchCategoryPropertyException>
+			_collectionPersistenceFinderByC_K;
 
 	/**
 	 * Returns an ordered range of all the asset category properties where companyId = &#63; and key = &#63;.
@@ -325,16 +310,8 @@ public class AssetCategoryPropertyPersistenceImpl
 			OrderByComparator<AssetCategoryProperty> orderByComparator)
 		throws NoSuchCategoryPropertyException {
 
-		AssetCategoryProperty assetCategoryProperty = fetchByC_K_First(
-			companyId, key, orderByComparator);
-
-		if (assetCategoryProperty != null) {
-			return assetCategoryProperty;
-		}
-
-		throw new NoSuchCategoryPropertyException(
-			_collectionPersistenceFinderByC_K.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, key}));
+		return _collectionPersistenceFinderByC_K.findFirst(
+			finderCache, new Object[] {companyId, key}, orderByComparator);
 	}
 
 	/**
@@ -379,8 +356,9 @@ public class AssetCategoryPropertyPersistenceImpl
 			finderCache, new Object[] {companyId, key});
 	}
 
-	private UniquePersistenceFinder<AssetCategoryProperty>
-		_uniquePersistenceFinderByCA_K;
+	private UniquePersistenceFinder
+		<AssetCategoryProperty, NoSuchCategoryPropertyException>
+			_uniquePersistenceFinderByCA_K;
 
 	/**
 	 * Returns the asset category property where categoryId = &#63; and key = &#63; or throws a <code>NoSuchCategoryPropertyException</code> if it could not be found.
@@ -394,22 +372,8 @@ public class AssetCategoryPropertyPersistenceImpl
 	public AssetCategoryProperty findByCA_K(long categoryId, String key)
 		throws NoSuchCategoryPropertyException {
 
-		AssetCategoryProperty assetCategoryProperty = fetchByCA_K(
-			categoryId, key);
-
-		if (assetCategoryProperty == null) {
-			String message =
-				_uniquePersistenceFinderByCA_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {categoryId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCategoryPropertyException(message);
-		}
-
-		return assetCategoryProperty;
+		return _uniquePersistenceFinderByCA_K.find(
+			finderCache, new Object[] {categoryId, key});
 	}
 
 	/**
@@ -458,8 +422,9 @@ public class AssetCategoryPropertyPersistenceImpl
 			finderCache, new Object[] {categoryId, key});
 	}
 
-	private UniquePersistenceFinder<AssetCategoryProperty>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<AssetCategoryProperty, NoSuchCategoryPropertyException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the asset category property where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCategoryPropertyException</code> if it could not be found.
@@ -474,23 +439,8 @@ public class AssetCategoryPropertyPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCategoryPropertyException {
 
-		AssetCategoryProperty assetCategoryProperty = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (assetCategoryProperty == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCategoryPropertyException(message);
-		}
-
-		return assetCategoryProperty;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -931,7 +881,7 @@ public class AssetCategoryPropertyPersistenceImpl
 				_SQL_SELECT_ASSETCATEGORYPROPERTY_WHERE,
 				_SQL_COUNT_ASSETCATEGORYPROPERTY_WHERE,
 				AssetCategoryPropertyModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetCategoryProperty.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -959,7 +909,7 @@ public class AssetCategoryPropertyPersistenceImpl
 				_SQL_SELECT_ASSETCATEGORYPROPERTY_WHERE,
 				_SQL_COUNT_ASSETCATEGORYPROPERTY_WHERE,
 				AssetCategoryPropertyModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetCategoryProperty.", "categoryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -986,13 +936,14 @@ public class AssetCategoryPropertyPersistenceImpl
 			_SQL_SELECT_ASSETCATEGORYPROPERTY_WHERE,
 			_SQL_COUNT_ASSETCATEGORYPROPERTY_WHERE,
 			AssetCategoryPropertyModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"assetCategoryProperty.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, AssetCategoryProperty::getCompanyId),
 			new FinderColumn<>(
-				"assetCategoryProperty.", "key", FinderColumn.Type.STRING, "=",
-				true, true, AssetCategoryProperty::getKey));
+				"assetCategoryProperty.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				AssetCategoryProperty::getKey));
 
 		_uniquePersistenceFinderByCA_K = new UniquePersistenceFinder<>(
 			this,
@@ -1007,8 +958,9 @@ public class AssetCategoryPropertyPersistenceImpl
 				"assetCategoryProperty.", "categoryId", FinderColumn.Type.LONG,
 				"=", true, true, AssetCategoryProperty::getCategoryId),
 			new FinderColumn<>(
-				"assetCategoryProperty.", "key", FinderColumn.Type.STRING, "=",
-				true, true, AssetCategoryProperty::getKey));
+				"assetCategoryProperty.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				AssetCategoryProperty::getKey));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1086,12 +1038,6 @@ public class AssetCategoryPropertyPersistenceImpl
 	private static final String _SQL_COUNT_ASSETCATEGORYPROPERTY_WHERE =
 		"SELECT COUNT(assetCategoryProperty) FROM AssetCategoryProperty assetCategoryProperty WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AssetCategoryProperty exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AssetCategoryPropertyPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"key"});
 
@@ -1101,4 +1047,4 @@ public class AssetCategoryPropertyPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:436510295
+// LIFERAY-SERVICE-BUILDER-HASH:1755041379

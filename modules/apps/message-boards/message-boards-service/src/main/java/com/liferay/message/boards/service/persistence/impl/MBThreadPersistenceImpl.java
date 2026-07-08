@@ -13,7 +13,6 @@ import com.liferay.message.boards.model.impl.MBThreadModelImpl;
 import com.liferay.message.boards.service.persistence.MBThreadPersistence;
 import com.liferay.message.boards.service.persistence.MBThreadUtil;
 import com.liferay.message.boards.service.persistence.impl.constants.MBPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -23,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -98,7 +95,7 @@ public class MBThreadPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<MBThread>
+	private CollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -138,15 +135,8 @@ public class MBThreadPersistenceImpl
 			String uuid, OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByUuid_First(uuid, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -187,7 +177,8 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<MBThread> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<MBThread, NoSuchThreadException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the message boards thread where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchThreadException</code> if it could not be found.
@@ -201,21 +192,8 @@ public class MBThreadPersistenceImpl
 	public MBThread findByUUID_G(String uuid, long groupId)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByUUID_G(uuid, groupId);
-
-		if (mbThread == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchThreadException(message);
-		}
-
-		return mbThread;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -263,7 +241,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<MBThread>
+	private CollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -306,16 +284,8 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -360,7 +330,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -400,15 +370,8 @@ public class MBThreadPersistenceImpl
 			long groupId, OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByGroupId_First(groupId, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -484,7 +447,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private UniquePersistenceFinder<MBThread>
+	private UniquePersistenceFinder<MBThread, NoSuchThreadException>
 		_uniquePersistenceFinderByRootMessageId;
 
 	/**
@@ -498,21 +461,8 @@ public class MBThreadPersistenceImpl
 	public MBThread findByRootMessageId(long rootMessageId)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByRootMessageId(rootMessageId);
-
-		if (mbThread == null) {
-			String message =
-				_uniquePersistenceFinderByRootMessageId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {rootMessageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchThreadException(message);
-		}
-
-		return mbThread;
+		return _uniquePersistenceFinderByRootMessageId.find(
+			finderCache, new Object[] {rootMessageId});
 	}
 
 	/**
@@ -557,7 +507,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {rootMessageId});
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_C;
 
 	/**
@@ -600,26 +550,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_C_First(
-			groupId, categoryId, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", categoryId=");
-		sb.append(categoryId);
-
-		sb.append("}");
-
-		throw new NoSuchThreadException(sb.toString());
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, new long[] {categoryId}},
+			orderByComparator);
 	}
 
 	/**
@@ -783,7 +716,7 @@ public class MBThreadPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_NotC;
 
 	/**
@@ -882,16 +815,8 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_NotC_First(
-			groupId, categoryId, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByG_NotC.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, categoryId}));
+		return _collectionPersistenceFinderByG_NotC.findFirst(
+			finderCache, new Object[] {groupId, categoryId}, orderByComparator);
 	}
 
 	/**
@@ -1006,7 +931,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {groupId, categoryId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_S;
 
 	/**
@@ -1049,16 +974,8 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_S_First(
-			groupId, status, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, status}));
+		return _collectionPersistenceFinderByG_S.findFirst(
+			finderCache, new Object[] {groupId, status}, orderByComparator);
 	}
 
 	/**
@@ -1140,7 +1057,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {groupId, status}, groupId);
 	}
 
-	private CollectionPersistenceFinder<MBThread>
+	private CollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByC_P;
 
 	/**
@@ -1183,16 +1100,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByC_P_First(
-			categoryId, priority, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {categoryId, priority}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			finderCache, new Object[] {categoryId, priority},
+			orderByComparator);
 	}
 
 	/**
@@ -1238,7 +1148,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {categoryId, priority});
 	}
 
-	private CollectionPersistenceFinder<MBThread>
+	private CollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByL_P;
 
 	/**
@@ -1281,17 +1191,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByL_P_First(
-			lastPostDate, priority, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByL_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {lastPostDate, priority}));
+		return _collectionPersistenceFinderByL_P.findFirst(
+			finderCache, new Object[] {lastPostDate, priority},
+			orderByComparator);
 	}
 
 	/**
@@ -1337,7 +1239,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {lastPostDate, priority});
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_C_L;
 
 	/**
@@ -1382,17 +1284,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_C_L_First(
-			groupId, categoryId, lastPostDate, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByG_C_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, lastPostDate}));
+		return _collectionPersistenceFinderByG_C_L.findFirst(
+			finderCache, new Object[] {groupId, categoryId, lastPostDate},
+			orderByComparator);
 	}
 
 	/**
@@ -1485,7 +1379,7 @@ public class MBThreadPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_C_S;
 
 	/**
@@ -1531,29 +1425,10 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_C_S_First(
-			groupId, categoryId, status, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", categoryId=");
-		sb.append(categoryId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchThreadException(sb.toString());
+		return _collectionPersistenceFinderByG_C_S.findFirst(
+			finderCache,
+			new Object[] {groupId, new long[] {categoryId}, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1734,7 +1609,7 @@ public class MBThreadPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_C_NotS;
 
 	/**
@@ -1842,29 +1717,10 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_C_NotS_First(
-			groupId, categoryId, status, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", categoryId=");
-		sb.append(categoryId);
-
-		sb.append(", status!=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchThreadException(sb.toString());
+		return _collectionPersistenceFinderByG_C_NotS.findFirst(
+			finderCache,
+			new Object[] {groupId, new long[] {categoryId}, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2191,7 +2047,7 @@ public class MBThreadPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_NotC_S;
 
 	/**
@@ -2298,17 +2154,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_NotC_S_First(
-			groupId, categoryId, status, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByG_NotC_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, status}));
+		return _collectionPersistenceFinderByG_NotC_S.findFirst(
+			finderCache, new Object[] {groupId, categoryId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -2437,7 +2285,7 @@ public class MBThreadPersistenceImpl
 			finderCache, new Object[] {groupId, categoryId, status}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<MBThread>
+	private FilterCollectionPersistenceFinder<MBThread, NoSuchThreadException>
 		_collectionPersistenceFinderByG_NotC_NotS;
 
 	/**
@@ -2544,17 +2392,9 @@ public class MBThreadPersistenceImpl
 			OrderByComparator<MBThread> orderByComparator)
 		throws NoSuchThreadException {
 
-		MBThread mbThread = fetchByG_NotC_NotS_First(
-			groupId, categoryId, status, orderByComparator);
-
-		if (mbThread != null) {
-			return mbThread;
-		}
-
-		throw new NoSuchThreadException(
-			_collectionPersistenceFinderByG_NotC_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, categoryId, status}));
+		return _collectionPersistenceFinderByG_NotC_NotS.findFirst(
+			finderCache, new Object[] {groupId, categoryId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -3024,10 +2864,10 @@ public class MBThreadPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-			MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"mbThread.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				MBThread::getUuid));
+				"mbThread.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBThread::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -3038,8 +2878,8 @@ public class MBThreadPersistenceImpl
 				convertNullFunction(MBThread::getUuid), MBThread::getGroupId),
 			_SQL_SELECT_MBTHREAD_WHERE, "",
 			new FinderColumn<>(
-				"mbThread.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				MBThread::getUuid),
+				"mbThread.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, MBThread::getUuid),
 			new FinderColumn<>(
 				"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true, true,
 				MBThread::getGroupId));
@@ -3064,10 +2904,11 @@ public class MBThreadPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"mbThread.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, MBThread::getUuid),
+					"mbThread.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, MBThread::getUuid),
 				new FinderColumn<>(
 					"mbThread.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getCompanyId));
@@ -3093,16 +2934,7 @@ public class MBThreadPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
 				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbThread.categoryId != -1",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"mbThread.categoryId != -1", "mbThread.categoryId != -1", null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId));
@@ -3139,16 +2971,8 @@ public class MBThreadPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"groupId", "categoryId"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3173,16 +2997,8 @@ public class MBThreadPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"groupId", "categoryId"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3215,16 +3031,7 @@ public class MBThreadPersistenceImpl
 					new String[] {"groupId", "status"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
 				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"mbThread.categoryId != -1",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"mbThread.categoryId != -1", "mbThread.categoryId != -1", null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3251,7 +3058,7 @@ public class MBThreadPersistenceImpl
 				new String[] {Long.class.getName(), Double.class.getName()},
 				new String[] {"categoryId", "priority"}, false),
 			_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-			MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"mbThread.", "categoryId", FinderColumn.Type.LONG, "=", true,
 				true, MBThread::getCategoryId),
@@ -3279,7 +3086,7 @@ public class MBThreadPersistenceImpl
 				new String[] {"lastPostDate", "priority"}, false),
 			_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
 			MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"mbThread.categoryId != -1",
+			"mbThread.categoryId != -1", "mbThread.categoryId != -1", null,
 			new FinderColumn<>(
 				"mbThread.", "lastPostDate", FinderColumn.Type.DATE, "=", true,
 				true, MBThread::getLastPostDate),
@@ -3317,16 +3124,8 @@ public class MBThreadPersistenceImpl
 					new String[] {"groupId", "categoryId", "lastPostDate"},
 					false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3364,16 +3163,8 @@ public class MBThreadPersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "status"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3405,16 +3196,8 @@ public class MBThreadPersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "status"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3446,16 +3229,8 @@ public class MBThreadPersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "status"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3488,16 +3263,8 @@ public class MBThreadPersistenceImpl
 					},
 					new String[] {"groupId", "categoryId", "status"}, false),
 				_SQL_SELECT_MBTHREAD_WHERE, _SQL_COUNT_MBTHREAD_WHERE,
-				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					MBThreadImpl.class, MBThread.class, "mbThread", "MBThread",
-					"mbThread.threadId",
-					"SELECT DISTINCT {mbThread.*} FROM MBThread mbThread WHERE ",
-					"SELECT {MBThread.*} FROM (SELECT DISTINCT mbThread.threadId FROM MBThread mbThread WHERE ",
-					") TEMP_TABLE INNER JOIN MBThread ON TEMP_TABLE.threadId = MBThread.threadId",
-					"SELECT COUNT(DISTINCT mbThread.threadId) AS COUNT_VALUE FROM MBThread mbThread WHERE ",
-					MBThreadModelImpl.ORDER_BY_SQL,
-					MBThreadModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				MBThreadModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mbThread.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, MBThread::getGroupId),
@@ -3565,12 +3332,6 @@ public class MBThreadPersistenceImpl
 	private static final String _SQL_COUNT_MBTHREAD_WHERE =
 		"SELECT COUNT(mbThread) FROM MBThread mbThread WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MBThread exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MBThreadPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -3580,4 +3341,4 @@ public class MBThreadPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-377551434
+// LIFERAY-SERVICE-BUILDER-HASH:-794651765

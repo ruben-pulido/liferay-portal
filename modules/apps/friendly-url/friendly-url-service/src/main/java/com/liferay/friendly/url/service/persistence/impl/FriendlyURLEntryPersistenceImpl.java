@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -88,8 +86,9 @@ public class FriendlyURLEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FriendlyURLEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the friendly url entries where uuid = &#63;.
@@ -129,16 +128,8 @@ public class FriendlyURLEntryPersistenceImpl
 			String uuid, OrderByComparator<FriendlyURLEntry> orderByComparator)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (friendlyURLEntry != null) {
-			return friendlyURLEntry;
-		}
-
-		throw new NoSuchFriendlyURLEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -179,8 +170,9 @@ public class FriendlyURLEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<FriendlyURLEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the friendly url entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchFriendlyURLEntryException</code> if it could not be found.
@@ -194,21 +186,8 @@ public class FriendlyURLEntryPersistenceImpl
 	public FriendlyURLEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByUUID_G(uuid, groupId);
-
-		if (friendlyURLEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFriendlyURLEntryException(message);
-		}
-
-		return friendlyURLEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -256,8 +235,9 @@ public class FriendlyURLEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<FriendlyURLEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the friendly url entries where uuid = &#63; and companyId = &#63;.
@@ -300,16 +280,8 @@ public class FriendlyURLEntryPersistenceImpl
 			OrderByComparator<FriendlyURLEntry> orderByComparator)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (friendlyURLEntry != null) {
-			return friendlyURLEntry;
-		}
-
-		throw new NoSuchFriendlyURLEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -354,8 +326,9 @@ public class FriendlyURLEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<FriendlyURLEntry>
-		_collectionPersistenceFinderByG_C;
+	private CollectionPersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_collectionPersistenceFinderByG_C;
 
 	/**
 	 * Returns an ordered range of all the friendly url entries where groupId = &#63; and classNameId = &#63;.
@@ -398,16 +371,9 @@ public class FriendlyURLEntryPersistenceImpl
 			OrderByComparator<FriendlyURLEntry> orderByComparator)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByG_C_First(
-			groupId, classNameId, orderByComparator);
-
-		if (friendlyURLEntry != null) {
-			return friendlyURLEntry;
-		}
-
-		throw new NoSuchFriendlyURLEntryException(
-			_collectionPersistenceFinderByG_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, classNameId}));
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -453,8 +419,9 @@ public class FriendlyURLEntryPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<FriendlyURLEntry>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the friendly url entries where companyId = &#63; and classNameId = &#63;.
@@ -497,17 +464,9 @@ public class FriendlyURLEntryPersistenceImpl
 			OrderByComparator<FriendlyURLEntry> orderByComparator)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByC_C_First(
-			companyId, classNameId, orderByComparator);
-
-		if (friendlyURLEntry != null) {
-			return friendlyURLEntry;
-		}
-
-		throw new NoSuchFriendlyURLEntryException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {companyId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -553,8 +512,9 @@ public class FriendlyURLEntryPersistenceImpl
 			finderCache, new Object[] {companyId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<FriendlyURLEntry>
-		_collectionPersistenceFinderByG_C_C;
+	private CollectionPersistenceFinder
+		<FriendlyURLEntry, NoSuchFriendlyURLEntryException>
+			_collectionPersistenceFinderByG_C_C;
 
 	/**
 	 * Returns an ordered range of all the friendly url entries where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -599,17 +559,9 @@ public class FriendlyURLEntryPersistenceImpl
 			OrderByComparator<FriendlyURLEntry> orderByComparator)
 		throws NoSuchFriendlyURLEntryException {
 
-		FriendlyURLEntry friendlyURLEntry = fetchByG_C_C_First(
-			groupId, classNameId, classPK, orderByComparator);
-
-		if (friendlyURLEntry != null) {
-			return friendlyURLEntry;
-		}
-
-		throw new NoSuchFriendlyURLEntryException(
-			_collectionPersistenceFinderByG_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK}));
+		return _collectionPersistenceFinderByG_C_C.findFirst(
+			finderCache, new Object[] {groupId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -926,6 +878,7 @@ public class FriendlyURLEntryPersistenceImpl
 	static {
 		Set<String> ctControlColumnNames = new HashSet<String>();
 		Set<String> ctIgnoreColumnNames = new HashSet<String>();
+		Set<String> ctMergeColumnNames = new HashSet<String>();
 		Set<String> ctStrictColumnNames = new HashSet<String>();
 
 		ctControlColumnNames.add("mvccVersion");
@@ -937,12 +890,14 @@ public class FriendlyURLEntryPersistenceImpl
 		ctStrictColumnNames.add("createDate");
 		ctIgnoreColumnNames.add("modifiedDate");
 		ctStrictColumnNames.add("classNameId");
+		ctMergeColumnNames.add("parentClassPK");
 		ctStrictColumnNames.add("classPK");
 
 		_ctColumnNamesMap.put(
 			CTColumnResolutionType.CONTROL, ctControlColumnNames);
 		_ctColumnNamesMap.put(
 			CTColumnResolutionType.IGNORE, ctIgnoreColumnNames);
+		_ctColumnNamesMap.put(CTColumnResolutionType.MERGE, ctMergeColumnNames);
 		_ctColumnNamesMap.put(
 			CTColumnResolutionType.PK,
 			Collections.singleton("friendlyURLEntryId"));
@@ -977,9 +932,10 @@ public class FriendlyURLEntryPersistenceImpl
 			_SQL_SELECT_FRIENDLYURLENTRY_WHERE,
 			_SQL_COUNT_FRIENDLYURLENTRY_WHERE,
 			FriendlyURLEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"friendlyURLEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, FriendlyURLEntry::getUuid));
+				"friendlyURLEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, FriendlyURLEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -991,8 +947,8 @@ public class FriendlyURLEntryPersistenceImpl
 				FriendlyURLEntry::getGroupId),
 			_SQL_SELECT_FRIENDLYURLENTRY_WHERE, "",
 			new FinderColumn<>(
-				"friendlyURLEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, FriendlyURLEntry::getUuid),
+				"friendlyURLEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, FriendlyURLEntry::getUuid),
 			new FinderColumn<>(
 				"friendlyURLEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, FriendlyURLEntry::getGroupId));
@@ -1019,10 +975,11 @@ public class FriendlyURLEntryPersistenceImpl
 				_SQL_SELECT_FRIENDLYURLENTRY_WHERE,
 				_SQL_COUNT_FRIENDLYURLENTRY_WHERE,
 				FriendlyURLEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"friendlyURLEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, FriendlyURLEntry::getUuid),
+					"friendlyURLEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					FriendlyURLEntry::getUuid),
 				new FinderColumn<>(
 					"friendlyURLEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, FriendlyURLEntry::getCompanyId));
@@ -1048,6 +1005,7 @@ public class FriendlyURLEntryPersistenceImpl
 			_SQL_SELECT_FRIENDLYURLENTRY_WHERE,
 			_SQL_COUNT_FRIENDLYURLENTRY_WHERE,
 			FriendlyURLEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"friendlyURLEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, FriendlyURLEntry::getGroupId),
@@ -1076,6 +1034,7 @@ public class FriendlyURLEntryPersistenceImpl
 			_SQL_SELECT_FRIENDLYURLENTRY_WHERE,
 			_SQL_COUNT_FRIENDLYURLENTRY_WHERE,
 			FriendlyURLEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"friendlyURLEntry.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, FriendlyURLEntry::getCompanyId),
@@ -1110,6 +1069,7 @@ public class FriendlyURLEntryPersistenceImpl
 			_SQL_SELECT_FRIENDLYURLENTRY_WHERE,
 			_SQL_COUNT_FRIENDLYURLENTRY_WHERE,
 			FriendlyURLEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"friendlyURLEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, FriendlyURLEntry::getGroupId),
@@ -1181,12 +1141,6 @@ public class FriendlyURLEntryPersistenceImpl
 	private static final String _SQL_COUNT_FRIENDLYURLENTRY_WHERE =
 		"SELECT COUNT(friendlyURLEntry) FROM FriendlyURLEntry friendlyURLEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FriendlyURLEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FriendlyURLEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1196,4 +1150,4 @@ public class FriendlyURLEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-170919900
+// LIFERAY-SERVICE-BUILDER-HASH:-722378821

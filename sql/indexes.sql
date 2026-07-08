@@ -62,9 +62,11 @@ create unique index IX_3966DE44 on AssetVocabulary (groupId, uuid_[$COLUMN_LENGT
 create index IX_2F7F11EE on AssetVocabulary (groupId, visibilityType);
 create index IX_55F58818 on AssetVocabulary (uuid_[$COLUMN_LENGTH:75$]);
 
-create index IX_104CE969 on AssetVocabularyGroupRel (groupId, vocabularyId);
-create unique index IX_BD51FF2A on AssetVocabularyGroupRel (uuid_[$COLUMN_LENGTH:75$], groupId, ctCollectionId);
-create index IX_65F8A72B on AssetVocabularyGroupRel (vocabularyId);
+create index IX_F2A36C80 on AssetVocabularyGroupRel (groupId, depotEntryType);
+create unique index IX_672FE37E on AssetVocabularyGroupRel (groupId, uuid_[$COLUMN_LENGTH:75$], ctCollectionId);
+create index IX_DF366DD5 on AssetVocabularyGroupRel (groupId, vocabularyId, depotEntryType);
+create index IX_2FB8A59E on AssetVocabularyGroupRel (uuid_[$COLUMN_LENGTH:75$]);
+create index IX_8826797 on AssetVocabularyGroupRel (vocabularyId, depotEntryType);
 
 create unique index IX_E7B95510 on BrowserTracker (userId);
 
@@ -432,8 +434,9 @@ create index IX_93AB8545 on Team (companyId);
 create unique index IX_D424D1E4 on Team (groupId, name[$COLUMN_LENGTH:75$], ctCollectionId);
 create unique index IX_1AAF62D7 on Team (uuid_[$COLUMN_LENGTH:75$], groupId, ctCollectionId);
 
-create index IX_DAD135B4 on Ticket (classNameId, classPK, companyId, type_);
 create index IX_1E8DFB2E on Ticket (classNameId, classPK, type_);
+create index IX_8BACD0AA on Ticket (companyId, classNameId, classPK, type_);
+create index IX_3AFCAA8B on Ticket (companyId, type_, emailAddress[$COLUMN_LENGTH:254$]);
 create unique index IX_B2468446 on Ticket (key_[$COLUMN_LENGTH:255$]);
 
 create unique index IX_544FAE0D on UserGroup (companyId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);

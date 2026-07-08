@@ -809,6 +809,14 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("model", additionalAssertFieldName)) {
+				if (agentDefinition.getModel() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("outputVariable", additionalAssertFieldName)) {
 				if (agentDefinition.getOutputVariable() == null) {
 					valid = false;
@@ -819,6 +827,14 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 
 			if (Objects.equals("status", additionalAssertFieldName)) {
 				if (agentDefinition.getStatus() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("system", additionalAssertFieldName)) {
+				if (agentDefinition.getSystem() == null) {
 					valid = false;
 				}
 
@@ -1041,6 +1057,17 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("model", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						agentDefinition1.getModel(),
+						agentDefinition2.getModel())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("outputVariable", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						agentDefinition1.getOutputVariable(),
@@ -1056,6 +1083,17 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 				if (!Objects.deepEquals(
 						agentDefinition1.getStatus(),
 						agentDefinition2.getStatus())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("system", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						agentDefinition1.getSystem(),
+						agentDefinition2.getSystem())) {
 
 					return false;
 				}
@@ -1318,12 +1356,22 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("model")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("outputVariable")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
 		if (entityFieldName.equals("status")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
+		if (entityFieldName.equals("system")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
@@ -1479,6 +1527,7 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
+				system = RandomTestUtil.randomBoolean();
 				title = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				version = RandomTestUtil.randomInt();
 				workflowDefinitionName = StringUtil.toLowerCase(
@@ -1733,4 +1782,4 @@ public abstract class BaseAgentDefinitionResourceTestCase {
 		_agentDefinitionResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:949541681
+// LIFERAY-REST-BUILDER-HASH:-357511421

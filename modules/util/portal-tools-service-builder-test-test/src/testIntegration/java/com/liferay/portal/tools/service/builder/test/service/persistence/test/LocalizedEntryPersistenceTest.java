@@ -109,13 +109,13 @@ public class LocalizedEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		LocalizedEntry newLocalizedEntry = _persistence.create(pk);
+		LocalizedEntry newLocalizedEntry = addLocalizedEntry();
 
 		newLocalizedEntry.setDefaultLanguageId(RandomTestUtil.randomString());
 
-		_localizedEntries.add(_persistence.update(newLocalizedEntry));
+		newLocalizedEntry = _persistence.update(newLocalizedEntry);
+
+		_localizedEntries.add(newLocalizedEntry);
 
 		LocalizedEntry existingLocalizedEntry = _persistence.findByPrimaryKey(
 			newLocalizedEntry.getPrimaryKey());
@@ -389,4 +389,4 @@ public class LocalizedEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-405518983
+// LIFERAY-SERVICE-BUILDER-HASH:970680991

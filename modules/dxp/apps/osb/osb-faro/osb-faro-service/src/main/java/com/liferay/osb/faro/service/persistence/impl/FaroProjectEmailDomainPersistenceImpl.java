@@ -70,8 +70,9 @@ public class FaroProjectEmailDomainPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FaroProjectEmailDomain>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<FaroProjectEmailDomain, NoSuchFaroProjectEmailDomainException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the faro project email domains where groupId = &#63;.
@@ -112,16 +113,8 @@ public class FaroProjectEmailDomainPersistenceImpl
 			OrderByComparator<FaroProjectEmailDomain> orderByComparator)
 		throws NoSuchFaroProjectEmailDomainException {
 
-		FaroProjectEmailDomain faroProjectEmailDomain = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (faroProjectEmailDomain != null) {
-			return faroProjectEmailDomain;
-		}
-
-		throw new NoSuchFaroProjectEmailDomainException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -163,8 +156,9 @@ public class FaroProjectEmailDomainPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<FaroProjectEmailDomain>
-		_collectionPersistenceFinderByFaroProjectId;
+	private CollectionPersistenceFinder
+		<FaroProjectEmailDomain, NoSuchFaroProjectEmailDomainException>
+			_collectionPersistenceFinderByFaroProjectId;
 
 	/**
 	 * Returns an ordered range of all the faro project email domains where faroProjectId = &#63;.
@@ -205,16 +199,8 @@ public class FaroProjectEmailDomainPersistenceImpl
 			OrderByComparator<FaroProjectEmailDomain> orderByComparator)
 		throws NoSuchFaroProjectEmailDomainException {
 
-		FaroProjectEmailDomain faroProjectEmailDomain =
-			fetchByFaroProjectId_First(faroProjectId, orderByComparator);
-
-		if (faroProjectEmailDomain != null) {
-			return faroProjectEmailDomain;
-		}
-
-		throw new NoSuchFaroProjectEmailDomainException(
-			_collectionPersistenceFinderByFaroProjectId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {faroProjectId}));
+		return _collectionPersistenceFinderByFaroProjectId.findFirst(
+			finderCache, new Object[] {faroProjectId}, orderByComparator);
 	}
 
 	/**
@@ -465,7 +451,7 @@ public class FaroProjectEmailDomainPersistenceImpl
 				_SQL_SELECT_FAROPROJECTEMAILDOMAIN_WHERE,
 				_SQL_COUNT_FAROPROJECTEMAILDOMAIN_WHERE,
 				FaroProjectEmailDomainModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"faroProjectEmailDomain.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -494,7 +480,7 @@ public class FaroProjectEmailDomainPersistenceImpl
 				_SQL_SELECT_FAROPROJECTEMAILDOMAIN_WHERE,
 				_SQL_COUNT_FAROPROJECTEMAILDOMAIN_WHERE,
 				FaroProjectEmailDomainModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"faroProjectEmailDomain.", "faroProjectId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -554,13 +540,10 @@ public class FaroProjectEmailDomainPersistenceImpl
 	private static final String _SQL_COUNT_FAROPROJECTEMAILDOMAIN_WHERE =
 		"SELECT COUNT(faroProjectEmailDomain) FROM FaroProjectEmailDomain faroProjectEmailDomain WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FaroProjectEmailDomain exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:323337721
+// LIFERAY-SERVICE-BUILDER-HASH:-841058803

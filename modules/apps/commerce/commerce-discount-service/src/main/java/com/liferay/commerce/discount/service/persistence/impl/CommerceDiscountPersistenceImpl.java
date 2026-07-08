@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class CommerceDiscountPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce discounts where uuid = &#63;.
@@ -131,16 +130,8 @@ public class CommerceDiscountPersistenceImpl
 			String uuid, OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -215,8 +206,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce discounts where uuid = &#63; and companyId = &#63;.
@@ -259,16 +251,8 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -350,8 +334,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce discounts where companyId = &#63;.
@@ -392,16 +377,8 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -477,8 +454,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByC_C;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce discounts where companyId = &#63; and couponCode = &#63;.
@@ -521,17 +499,9 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByC_C_First(
-			companyId, couponCode, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, couponCode}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {companyId, couponCode},
+			orderByComparator);
 	}
 
 	/**
@@ -614,8 +584,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {companyId, couponCode}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByLtD_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the commerce discounts where displayDate &lt; &#63; and status = &#63;.
@@ -714,16 +685,8 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByLtD_S_First(
-			displayDate, status, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
+		return _collectionPersistenceFinderByLtD_S.findFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -840,8 +803,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {displayDate, status});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByLtE_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByLtE_S;
 
 	/**
 	 * Returns all the commerce discounts where expirationDate &lt; &#63; and status = &#63;.
@@ -940,17 +904,9 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByLtE_S_First(
-			expirationDate, status, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByLtE_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {expirationDate, status}));
+		return _collectionPersistenceFinderByLtE_S.findFirst(
+			finderCache, new Object[] {expirationDate, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1068,7 +1024,7 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {expirationDate, status});
 	}
 
-	private UniquePersistenceFinder<CommerceDiscount>
+	private UniquePersistenceFinder<CommerceDiscount, NoSuchDiscountException>
 		_uniquePersistenceFinderByC_C_A;
 
 	/**
@@ -1085,23 +1041,8 @@ public class CommerceDiscountPersistenceImpl
 			long companyId, String couponCode, boolean active)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByC_C_A(
-			companyId, couponCode, active);
-
-		if (commerceDiscount == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, couponCode, active});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDiscountException(message);
-		}
-
-		return commerceDiscount;
+		return _uniquePersistenceFinderByC_C_A.find(
+			finderCache, new Object[] {companyId, couponCode, active});
 	}
 
 	/**
@@ -1156,8 +1097,9 @@ public class CommerceDiscountPersistenceImpl
 			finderCache, new Object[] {companyId, couponCode, active});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceDiscount>
-		_collectionPersistenceFinderByC_L_A_S;
+	private FilterCollectionPersistenceFinder
+		<CommerceDiscount, NoSuchDiscountException>
+			_collectionPersistenceFinderByC_L_A_S;
 
 	/**
 	 * Returns an ordered range of all the commerce discounts where companyId = &#63; and level = &#63; and active = &#63; and status = &#63;.
@@ -1204,17 +1146,9 @@ public class CommerceDiscountPersistenceImpl
 			OrderByComparator<CommerceDiscount> orderByComparator)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByC_L_A_S_First(
-			companyId, level, active, status, orderByComparator);
-
-		if (commerceDiscount != null) {
-			return commerceDiscount;
-		}
-
-		throw new NoSuchDiscountException(
-			_collectionPersistenceFinderByC_L_A_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, level, active, status}));
+		return _collectionPersistenceFinderByC_L_A_S.findFirst(
+			finderCache, new Object[] {companyId, level, active, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1314,7 +1248,7 @@ public class CommerceDiscountPersistenceImpl
 			companyId, 0);
 	}
 
-	private UniquePersistenceFinder<CommerceDiscount>
+	private UniquePersistenceFinder<CommerceDiscount, NoSuchDiscountException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1330,23 +1264,8 @@ public class CommerceDiscountPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchDiscountException {
 
-		CommerceDiscount commerceDiscount = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceDiscount == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDiscountException(message);
-		}
-
-		return commerceDiscount;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1710,20 +1629,11 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceDiscount.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceDiscount::getUuid));
+					"commerceDiscount.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceDiscount::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1747,20 +1657,11 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"commerceDiscount.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceDiscount::getUuid),
+					"commerceDiscount.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceDiscount::getUuid),
 				new FinderColumn<>(
 					"commerceDiscount.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceDiscount::getCompanyId));
@@ -1787,17 +1688,7 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceDiscount.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceDiscount::getCompanyId));
@@ -1825,17 +1716,7 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceDiscount.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceDiscount::getCompanyId),
@@ -1864,17 +1745,7 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceDiscount.", "displayDate", FinderColumn.Type.DATE,
 					"<", true, true, CommerceDiscount::getDisplayDate),
@@ -1903,17 +1774,7 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceDiscount.", "expirationDate",
 					FinderColumn.Type.DATE, "<", true, true,
@@ -1942,8 +1803,9 @@ public class CommerceDiscountPersistenceImpl
 				"commerceDiscount.", "couponCode", FinderColumn.Type.STRING,
 				"=", false, true, CommerceDiscount::getCouponCode),
 			new FinderColumn<>(
-				"commerceDiscount.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceDiscount::isActive));
+				"commerceDiscount.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceDiscount::isActive));
 
 		_collectionPersistenceFinderByC_L_A_S =
 			new FilterCollectionPersistenceFinder<>(
@@ -1983,26 +1845,18 @@ public class CommerceDiscountPersistenceImpl
 				_SQL_SELECT_COMMERCEDISCOUNT_WHERE,
 				_SQL_COUNT_COMMERCEDISCOUNT_WHERE,
 				CommerceDiscountModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceDiscountImpl.class, CommerceDiscount.class,
-					"commerceDiscount", "CommerceDiscount",
-					"commerceDiscount.commerceDiscountId",
-					"SELECT DISTINCT {commerceDiscount.*} FROM CommerceDiscount commerceDiscount WHERE ",
-					"SELECT {CommerceDiscount.*} FROM (SELECT DISTINCT commerceDiscount.commerceDiscountId FROM CommerceDiscount commerceDiscount WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceDiscount ON TEMP_TABLE.commerceDiscountId = CommerceDiscount.commerceDiscountId",
-					"SELECT COUNT(DISTINCT commerceDiscount.commerceDiscountId) AS COUNT_VALUE FROM CommerceDiscount commerceDiscount WHERE ",
-					CommerceDiscountModelImpl.ORDER_BY_SQL,
-					CommerceDiscountModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"commerceDiscount.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceDiscount::getCompanyId),
 				new FinderColumn<>(
-					"commerceDiscount.", "level", FinderColumn.Type.STRING, "=",
-					true, true, CommerceDiscount::getLevel),
+					"commerceDiscount.", "level", "levelType",
+					FinderColumn.Type.STRING, "=", true, true,
+					CommerceDiscount::getLevel),
 				new FinderColumn<>(
-					"commerceDiscount.", "active", FinderColumn.Type.BOOLEAN,
-					"=", true, true, CommerceDiscount::isActive),
+					"commerceDiscount.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					CommerceDiscount::isActive),
 				new FinderColumn<>(
 					"commerceDiscount.", "status", FinderColumn.Type.INTEGER,
 					"=", true, true, CommerceDiscount::getStatus));
@@ -2079,12 +1933,6 @@ public class CommerceDiscountPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEDISCOUNT_WHERE =
 		"SELECT COUNT(commerceDiscount) FROM CommerceDiscount commerceDiscount WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceDiscount exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceDiscountPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "level", "active"});
 
@@ -2094,4 +1942,4 @@ public class CommerceDiscountPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1278159083
+// LIFERAY-SERVICE-BUILDER-HASH:-1066991629

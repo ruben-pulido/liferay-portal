@@ -112,12 +112,8 @@ public class ObjectViewFilterColumnPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectViewFilterColumn newObjectViewFilterColumn = _persistence.create(
-			pk);
-
-		newObjectViewFilterColumn.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectViewFilterColumn newObjectViewFilterColumn =
+			addObjectViewFilterColumn();
 
 		newObjectViewFilterColumn.setUuid(RandomTestUtil.randomString());
 
@@ -140,8 +136,10 @@ public class ObjectViewFilterColumnPersistenceTest {
 		newObjectViewFilterColumn.setObjectFieldName(
 			RandomTestUtil.randomString());
 
-		_objectViewFilterColumns.add(
-			_persistence.update(newObjectViewFilterColumn));
+		newObjectViewFilterColumn = _persistence.update(
+			newObjectViewFilterColumn);
+
+		_objectViewFilterColumns.add(newObjectViewFilterColumn);
 
 		ObjectViewFilterColumn existingObjectViewFilterColumn =
 			_persistence.findByPrimaryKey(
@@ -499,8 +497,6 @@ public class ObjectViewFilterColumnPersistenceTest {
 
 		ObjectViewFilterColumn objectViewFilterColumn = _persistence.create(pk);
 
-		objectViewFilterColumn.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectViewFilterColumn.setUuid(RandomTestUtil.randomString());
 
 		objectViewFilterColumn.setCompanyId(RandomTestUtil.nextLong());
@@ -534,4 +530,4 @@ public class ObjectViewFilterColumnPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2067194707
+// LIFERAY-SERVICE-BUILDER-HASH:1854775932

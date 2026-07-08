@@ -20,6 +20,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.BaseModelSearchResult;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -63,7 +64,8 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 
 		return assetCategoryLocalService.addCategory(
 			null, getUserId(), groupId, parentCategoryId, titleMap,
-			descriptionMap, vocabularyId, categoryProperties, serviceContext);
+			descriptionMap, vocabularyId, false, categoryProperties,
+			serviceContext);
 	}
 
 	@Override
@@ -85,17 +87,23 @@ public class AssetCategoryServiceImpl extends AssetCategoryServiceBaseImpl {
 	public AssetCategory addCategory(
 			String externalReferenceCode, long groupId, long parentCategoryId,
 			Map<Locale, String> titleMap, Map<Locale, String> descriptionMap,
-			long vocabularyId, String[] categoryProperties,
+			long vocabularyId, boolean system, String[] categoryProperties,
 			ServiceContext serviceContext)
 		throws PortalException {
 
+		PermissionChecker permissionChecker = getPermissionChecker();
+
 		AssetCategoryPermission.check(
-			getPermissionChecker(), groupId, parentCategoryId,
+			permissionChecker, groupId, parentCategoryId,
 			ActionKeys.ADD_CATEGORY);
+
+		if (system && !permissionChecker.isCompanyAdmin()) {
+			throw new PrincipalException.MustBeCompanyAdmin(getUserId());
+		}
 
 		return assetCategoryLocalService.addCategory(
 			externalReferenceCode, getUserId(), groupId, parentCategoryId,
-			titleMap, descriptionMap, vocabularyId, categoryProperties,
+			titleMap, descriptionMap, vocabularyId, system, categoryProperties,
 			serviceContext);
 	}
 

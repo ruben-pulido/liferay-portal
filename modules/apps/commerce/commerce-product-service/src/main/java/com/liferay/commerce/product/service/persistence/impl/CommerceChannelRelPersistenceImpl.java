@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class CommerceChannelRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceChannelRel>
-		_collectionPersistenceFinderByCommerceChannelId;
+	private CollectionPersistenceFinder
+		<CommerceChannelRel, NoSuchChannelRelException>
+			_collectionPersistenceFinderByCommerceChannelId;
 
 	/**
 	 * Returns an ordered range of all the commerce channel rels where commerceChannelId = &#63;.
@@ -124,18 +123,8 @@ public class CommerceChannelRelPersistenceImpl
 			OrderByComparator<CommerceChannelRel> orderByComparator)
 		throws NoSuchChannelRelException {
 
-		CommerceChannelRel commerceChannelRel = fetchByCommerceChannelId_First(
-			commerceChannelId, orderByComparator);
-
-		if (commerceChannelRel != null) {
-			return commerceChannelRel;
-		}
-
-		throw new NoSuchChannelRelException(
-			_collectionPersistenceFinderByCommerceChannelId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceChannelId}));
+		return _collectionPersistenceFinderByCommerceChannelId.findFirst(
+			finderCache, new Object[] {commerceChannelId}, orderByComparator);
 	}
 
 	/**
@@ -177,8 +166,9 @@ public class CommerceChannelRelPersistenceImpl
 			finderCache, new Object[] {commerceChannelId});
 	}
 
-	private CollectionPersistenceFinder<CommerceChannelRel>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommerceChannelRel, NoSuchChannelRelException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce channel rels where classNameId = &#63; and classPK = &#63;.
@@ -221,16 +211,9 @@ public class CommerceChannelRelPersistenceImpl
 			OrderByComparator<CommerceChannelRel> orderByComparator)
 		throws NoSuchChannelRelException {
 
-		CommerceChannelRel commerceChannelRel = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (commerceChannelRel != null) {
-			return commerceChannelRel;
-		}
-
-		throw new NoSuchChannelRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -276,8 +259,9 @@ public class CommerceChannelRelPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<CommerceChannelRel>
-		_uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder
+		<CommerceChannelRel, NoSuchChannelRelException>
+			_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns the commerce channel rel where classNameId = &#63; and classPK = &#63; and commerceChannelId = &#63; or throws a <code>NoSuchChannelRelException</code> if it could not be found.
@@ -293,23 +277,9 @@ public class CommerceChannelRelPersistenceImpl
 			long classNameId, long classPK, long commerceChannelId)
 		throws NoSuchChannelRelException {
 
-		CommerceChannelRel commerceChannelRel = fetchByC_C_C(
-			classNameId, classPK, commerceChannelId);
-
-		if (commerceChannelRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, commerceChannelId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchChannelRelException(message);
-		}
-
-		return commerceChannelRel;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache,
+			new Object[] {classNameId, classPK, commerceChannelId});
 	}
 
 	/**
@@ -674,7 +644,7 @@ public class CommerceChannelRelPersistenceImpl
 				_SQL_SELECT_COMMERCECHANNELREL_WHERE,
 				_SQL_COUNT_COMMERCECHANNELREL_WHERE,
 				CommerceChannelRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"commerceChannelRel.", "commerceChannelId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -701,6 +671,7 @@ public class CommerceChannelRelPersistenceImpl
 			_SQL_SELECT_COMMERCECHANNELREL_WHERE,
 			_SQL_COUNT_COMMERCECHANNELREL_WHERE,
 			CommerceChannelRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceChannelRel.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CommerceChannelRel::getClassNameId),
@@ -789,16 +760,10 @@ public class CommerceChannelRelPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCECHANNELREL_WHERE =
 		"SELECT COUNT(commerceChannelRel) FROM CommerceChannelRel commerceChannelRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceChannelRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceChannelRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-522842932
+// LIFERAY-SERVICE-BUILDER-HASH:-60715514

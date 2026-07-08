@@ -108,11 +108,7 @@ public class PatcherBuildRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		PatcherBuildRel newPatcherBuildRel = _persistence.create(pk);
-
-		newPatcherBuildRel.setMvccVersion(RandomTestUtil.nextLong());
+		PatcherBuildRel newPatcherBuildRel = addPatcherBuildRel();
 
 		newPatcherBuildRel.setCompanyId(RandomTestUtil.nextLong());
 
@@ -120,7 +116,9 @@ public class PatcherBuildRelPersistenceTest {
 
 		newPatcherBuildRel.setParentPatcherBuildId(RandomTestUtil.nextLong());
 
-		_patcherBuildRels.add(_persistence.update(newPatcherBuildRel));
+		newPatcherBuildRel = _persistence.update(newPatcherBuildRel);
+
+		_patcherBuildRels.add(newPatcherBuildRel);
 
 		PatcherBuildRel existingPatcherBuildRel = _persistence.findByPrimaryKey(
 			newPatcherBuildRel.getPrimaryKey());
@@ -406,8 +404,6 @@ public class PatcherBuildRelPersistenceTest {
 
 		PatcherBuildRel patcherBuildRel = _persistence.create(pk);
 
-		patcherBuildRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		patcherBuildRel.setCompanyId(RandomTestUtil.nextLong());
 
 		patcherBuildRel.setChildPatcherBuildId(RandomTestUtil.nextLong());
@@ -425,4 +421,4 @@ public class PatcherBuildRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:818177988
+// LIFERAY-SERVICE-BUILDER-HASH:-1194142089

@@ -7,6 +7,7 @@ import {Page, expect} from '@playwright/test';
 
 import {ApiHelpers} from '../../../../helpers/ApiHelpers';
 import {liferayConfig} from '../../../../liferay.config';
+import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
 import {PORTLET_URLS} from '../../../../utils/portletUrls';
 import {waitForAlert} from '../../../../utils/waitForAlert';
@@ -98,6 +99,8 @@ export async function enableCommerceChannel({
 	const commerceChannelSwitchButton = channel.locator('.toggle-switch-check');
 
 	await commerceChannelSwitchButton.click();
+
+	await expect(channel.locator('td:nth-child(2)')).not.toHaveText('-');
 }
 
 export async function expectPropertyColumn({
@@ -125,19 +128,30 @@ export async function findChannel({
 	channelName: string;
 	page: Page;
 }): Promise<any> {
-	const managementBar = page.locator('.management-bar').filter({
-		has: page.locator('input[placeholder="Search"]:not([disabled])'),
-	});
+	const searchInput = page.getByRole('textbox', {name: 'Search'}).first();
 
-	await managementBar.getByPlaceholder('Search').fill(channelName);
+	const clearButton = page.getByRole('button', {name: 'Clear'}).first();
 
-	await managementBar.getByRole('button', {name: 'Search'}).click();
+	if (await clearButton.isVisible()) {
+		await searchInput.clear();
 
-	await expect(page.getByRole('cell', {name: channelName})).toBeVisible({
-		timeout: 100 * 1000,
-	});
+		await clickAndExpectToBeHidden({
+			target: clearButton,
+			trigger: clearButton,
+		});
+	}
 
-	return await page.locator('table.table tbody tr:first-child');
+	await searchInput.fill(channelName);
+
+	await page.getByRole('button', {name: 'Search'}).first().click();
+
+	await expect(page.locator('table.table tbody tr')).toHaveCount(1);
+
+	await expect(
+		page.getByRole('cell', {exact: true, name: channelName})
+	).toBeVisible();
+
+	return page.locator('table.table tbody tr:first-child');
 }
 
 export async function goToAnalyticsCloudInstanceSettings(page: Page) {
@@ -157,9 +171,7 @@ export async function goToSettingsStep({
 }) {
 	await goToAnalyticsCloudInstanceSettings(page);
 
-	const menuBar = await page.locator('.menubar');
-
-	await menuBar.getByText(stepName).click();
+	await page.getByRole('menuitem', {name: stepName}).click();
 }
 
 export async function syncAllContacts(page: Page) {
@@ -178,30 +190,99 @@ export async function syncAllContacts(page: Page) {
 	}
 }
 
+export async function syncAnalyticsCloudViaAPI({
+	apiHelpers,
+	channel,
+	channelName,
+	project,
+	siteId,
+	syncedOrganizationIds,
+	syncedUserGroupIds,
+}: {
+	apiHelpers: ApiHelpers;
+	channel?: any;
+	channelName?: string;
+	project?: any;
+	siteId?: number;
+	syncedOrganizationIds?: number[];
+	syncedUserGroupIds?: number[];
+}): Promise<{
+	channel: any;
+	project: any;
+}> {
+	if (!channel) {
+		({channel, project} = await createChannel({
+			apiHelpers,
+			channelName,
+		}));
+	}
+
+	const connectionToken =
+		await apiHelpers.jsonWebServicesOSBFaro.fetchDataSourceConnectionToken(
+			project.groupId
+		);
+
+	await apiHelpers.analyticsSettingsRest.postDataSource(connectionToken);
+
+	if (siteId !== undefined) {
+		await apiHelpers.analyticsSettingsRest.syncSitesToChannel(channel.id, [
+			siteId,
+		]);
+	}
+
+	if (syncedOrganizationIds?.length) {
+		await apiHelpers.analyticsSettingsRest.putContactsConfiguration({
+			syncedOrganizationIds,
+		});
+	}
+	else if (syncedUserGroupIds?.length) {
+		await apiHelpers.analyticsSettingsRest.putContactsConfiguration({
+			syncedUserGroupIds,
+		});
+	}
+	else {
+		await apiHelpers.analyticsSettingsRest.putContactsConfiguration({
+			syncAllAccounts: true,
+			syncAllContacts: true,
+		});
+	}
+
+	return {
+		channel,
+		project,
+	};
+}
+
 export async function syncAnalyticsCloud({
 	apiHelpers,
+	channel,
 	channelName,
 	commerceChannelName,
 	organizationName,
 	page,
+	project,
 	siteName,
 	userGroupName,
 }: {
 	apiHelpers: ApiHelpers;
-	channelName: string;
+	channel?: any;
+	channelName?: string;
 	commerceChannelName?: string;
 	organizationName?: string;
 	page: Page;
+	project?: any;
 	siteName?: string;
 	userGroupName?: string;
 }): Promise<{
 	channel: any;
 	project: any;
 }> {
-	const {channel, project} = await createChannel({
-		apiHelpers,
-		channelName,
-	});
+	if (!channel) {
+		({channel, project} = await createChannel({
+			apiHelpers,
+			channelName,
+		}));
+	}
 
 	const {token} = await createDataSource(page);
 
@@ -214,15 +295,22 @@ export async function syncAnalyticsCloud({
 	await connectToAnalyticsCloud(page, {token});
 
 	await toggleSiteSync({
-		channelName,
+		channelName: channel.name,
 		page,
 		siteName,
 	});
 
 	if (commerceChannelName) {
-		await enableCommerceChannel({channelName, page});
+		await enableCommerceChannel({
+			channelName: channel.name,
+			page,
+		});
 
-		await syncCommerce({channelName, commerceChannelName, page});
+		await syncCommerce({
+			channelName: channel.name,
+			commerceChannelName,
+			page,
+		});
 	}
 
 	await goNextStep(page);
@@ -240,7 +328,7 @@ export async function syncAnalyticsCloud({
 
 	await goNextStep(page);
 
-	const nextButton = await page.getByRole('button', {
+	const nextButton = page.getByRole('button', {
 		exact: true,
 		name: 'Next',
 	});
@@ -250,6 +338,11 @@ export async function syncAnalyticsCloud({
 	}
 
 	await page.getByRole('button', {name: 'Finish'}).click();
+
+	await waitForAlert(
+		page,
+		'Success:DXP has successfully connected to Analytics Cloud. You will begin to see data as activities occur on your sites.'
+	);
 
 	return {
 		channel,
@@ -307,9 +400,10 @@ export async function syncCommerce({
 }) {
 	const channel = await findChannel({channelName, page});
 
-	const assignButton = await channel.locator('button');
-
-	await assignButton.click();
+	await clickAndExpectToBeVisible({
+		target: page.getByRole('dialog'),
+		trigger: channel.locator("[role='assign-button']"),
+	});
 
 	await switchToTab({page, tabName: TabName.Channel});
 
@@ -322,9 +416,9 @@ export async function syncCommerce({
 
 	await expect(page.locator('span[data-testid="loading"]')).toBeHidden();
 
-	const channelTable = await page.locator('[data-testid="channel"]');
+	const channelTable = page.locator('[data-testid="channel"]');
 
-	expect(channelTable).toBeVisible();
+	await expect(channelTable).toBeVisible();
 
 	const checkbox = channelTable.locator(
 		'tbody tr:first-child input[type="checkbox"]'
@@ -363,9 +457,9 @@ export async function toggleSiteSync({
 
 	await expect(page.locator('span[data-testid="loading"]')).toBeHidden();
 
-	const sitesTable = await page.locator('[data-testid="sites"]');
+	const sitesTable = page.locator('[data-testid="sites"]');
 
-	expect(sitesTable).toBeVisible();
+	await expect(sitesTable).toBeVisible();
 
 	const siteRow = sitesTable.locator('tbody tr').filter({hasText: siteName});
 
@@ -385,7 +479,7 @@ export async function toggleSiteSync({
 	await waitForAlert(page, 'Properties settings have been saved.');
 }
 
-export async function goNextStep(page) {
+export async function goNextStep(page: Page) {
 	await page.getByRole('button', {exact: true, name: 'Next'}).click();
 }
 

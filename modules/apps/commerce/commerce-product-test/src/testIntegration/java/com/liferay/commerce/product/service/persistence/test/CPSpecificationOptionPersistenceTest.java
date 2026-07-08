@@ -116,12 +116,8 @@ public class CPSpecificationOptionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CPSpecificationOption newCPSpecificationOption = _persistence.create(
-			pk);
-
-		newCPSpecificationOption.setMvccVersion(RandomTestUtil.nextLong());
+		CPSpecificationOption newCPSpecificationOption =
+			addCPSpecificationOption();
 
 		newCPSpecificationOption.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -157,8 +153,10 @@ public class CPSpecificationOptionPersistenceTest {
 
 		newCPSpecificationOption.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_cpSpecificationOptions.add(
-			_persistence.update(newCPSpecificationOption));
+		newCPSpecificationOption = _persistence.update(
+			newCPSpecificationOption);
+
+		_cpSpecificationOptions.add(newCPSpecificationOption);
 
 		CPSpecificationOption existingCPSpecificationOption =
 			_persistence.findByPrimaryKey(
@@ -660,8 +658,6 @@ public class CPSpecificationOptionPersistenceTest {
 
 		CPSpecificationOption cpSpecificationOption = _persistence.create(pk);
 
-		cpSpecificationOption.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpSpecificationOption.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpSpecificationOption.setUuid(RandomTestUtil.randomString());
@@ -706,4 +702,4 @@ public class CPSpecificationOptionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-887121174
+// LIFERAY-SERVICE-BUILDER-HASH:2142805974

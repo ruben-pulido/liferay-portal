@@ -1,0 +1,24 @@
+{
+	"properties": {
+		"fields": {
+			"description": "Fields to include in the response. Pass only the fields the user actually needs.",
+			"items": {
+				"enum": [
+					"array",
+					"boolean",
+					"integer",
+					"number",
+					"object1",
+					"object2",
+					"readOnly",
+					"string"
+				],
+				"type": "string"
+			},
+			"type": "array"
+		}
+	},
+	"required": [
+	],
+	"type": "object"
+}

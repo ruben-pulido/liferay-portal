@@ -77,8 +77,9 @@ public class LayoutSEOEntryCustomMetaTagPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutSEOEntryCustomMetaTag>
-		_collectionPersistenceFinderByG_L;
+	private CollectionPersistenceFinder
+		<LayoutSEOEntryCustomMetaTag, NoSuchEntryCustomMetaTagException>
+			_collectionPersistenceFinderByG_L;
 
 	/**
 	 * Returns an ordered range of all the layout seo entry custom meta tags where groupId = &#63; and layoutSEOEntryId = &#63;.
@@ -121,17 +122,9 @@ public class LayoutSEOEntryCustomMetaTagPersistenceImpl
 			OrderByComparator<LayoutSEOEntryCustomMetaTag> orderByComparator)
 		throws NoSuchEntryCustomMetaTagException {
 
-		LayoutSEOEntryCustomMetaTag layoutSEOEntryCustomMetaTag =
-			fetchByG_L_First(groupId, layoutSEOEntryId, orderByComparator);
-
-		if (layoutSEOEntryCustomMetaTag != null) {
-			return layoutSEOEntryCustomMetaTag;
-		}
-
-		throw new NoSuchEntryCustomMetaTagException(
-			_collectionPersistenceFinderByG_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, layoutSEOEntryId}));
+		return _collectionPersistenceFinderByG_L.findFirst(
+			finderCache, new Object[] {groupId, layoutSEOEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -463,7 +456,7 @@ public class LayoutSEOEntryCustomMetaTagPersistenceImpl
 			_SQL_SELECT_LAYOUTSEOENTRYCUSTOMMETATAG_WHERE,
 			_SQL_COUNT_LAYOUTSEOENTRYCUSTOMMETATAG_WHERE,
 			LayoutSEOEntryCustomMetaTagModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"layoutSEOEntryCustomMetaTag.", "groupId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -531,13 +524,10 @@ public class LayoutSEOEntryCustomMetaTagPersistenceImpl
 	private static final String _SQL_COUNT_LAYOUTSEOENTRYCUSTOMMETATAG_WHERE =
 		"SELECT COUNT(layoutSEOEntryCustomMetaTag) FROM LayoutSEOEntryCustomMetaTag layoutSEOEntryCustomMetaTag WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutSEOEntryCustomMetaTag exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1280445603
+// LIFERAY-SERVICE-BUILDER-HASH:-583380150

@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -84,8 +82,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceNotificationTemplate>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce notification templates where uuid = &#63;.
@@ -126,16 +125,8 @@ public class CommerceNotificationTemplatePersistenceImpl
 			OrderByComparator<CommerceNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (commerceNotificationTemplate != null) {
-			return commerceNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,8 +168,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceNotificationTemplate>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce notification template where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchNotificationTemplateException</code> if it could not be found.
@@ -192,22 +184,8 @@ public class CommerceNotificationTemplatePersistenceImpl
 	public CommerceNotificationTemplate findByUUID_G(String uuid, long groupId)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByUUID_G(uuid, groupId);
-
-		if (commerceNotificationTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotificationTemplateException(message);
-		}
-
-		return commerceNotificationTemplate;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -257,8 +235,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceNotificationTemplate>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce notification templates where uuid = &#63; and companyId = &#63;.
@@ -301,16 +280,8 @@ public class CommerceNotificationTemplatePersistenceImpl
 			OrderByComparator<CommerceNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (commerceNotificationTemplate != null) {
-			return commerceNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -355,8 +326,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceNotificationTemplate>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce notification templates where groupId = &#63;.
@@ -397,16 +369,8 @@ public class CommerceNotificationTemplatePersistenceImpl
 			OrderByComparator<CommerceNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByGroupId_First(groupId, orderByComparator);
-
-		if (commerceNotificationTemplate != null) {
-			return commerceNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -483,8 +447,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceNotificationTemplate>
-		_collectionPersistenceFinderByG_E;
+	private FilterCollectionPersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByG_E;
 
 	/**
 	 * Returns an ordered range of all the commerce notification templates where groupId = &#63; and enabled = &#63;.
@@ -527,16 +492,8 @@ public class CommerceNotificationTemplatePersistenceImpl
 			OrderByComparator<CommerceNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByG_E_First(groupId, enabled, orderByComparator);
-
-		if (commerceNotificationTemplate != null) {
-			return commerceNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByG_E.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, enabled}));
+		return _collectionPersistenceFinderByG_E.findFirst(
+			finderCache, new Object[] {groupId, enabled}, orderByComparator);
 	}
 
 	/**
@@ -618,8 +575,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			finderCache, new Object[] {groupId, enabled}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceNotificationTemplate>
-		_collectionPersistenceFinderByG_T_E;
+	private FilterCollectionPersistenceFinder
+		<CommerceNotificationTemplate, NoSuchNotificationTemplateException>
+			_collectionPersistenceFinderByG_T_E;
 
 	/**
 	 * Returns an ordered range of all the commerce notification templates where groupId = &#63; and type = &#63; and enabled = &#63;.
@@ -664,17 +622,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			OrderByComparator<CommerceNotificationTemplate> orderByComparator)
 		throws NoSuchNotificationTemplateException {
 
-		CommerceNotificationTemplate commerceNotificationTemplate =
-			fetchByG_T_E_First(groupId, type, enabled, orderByComparator);
-
-		if (commerceNotificationTemplate != null) {
-			return commerceNotificationTemplate;
-		}
-
-		throw new NoSuchNotificationTemplateException(
-			_collectionPersistenceFinderByG_T_E.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, type, enabled}));
+		return _collectionPersistenceFinderByG_T_E.findFirst(
+			finderCache, new Object[] {groupId, type, enabled},
+			orderByComparator);
 	}
 
 	/**
@@ -1029,9 +979,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 			_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 			_SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 			CommerceNotificationTemplateModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commerceNotificationTemplate.", "uuid",
+				"commerceNotificationTemplate.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommerceNotificationTemplate::getUuid));
 
@@ -1045,7 +995,7 @@ public class CommerceNotificationTemplatePersistenceImpl
 				CommerceNotificationTemplate::getGroupId),
 			_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE, "",
 			new FinderColumn<>(
-				"commerceNotificationTemplate.", "uuid",
+				"commerceNotificationTemplate.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommerceNotificationTemplate::getUuid),
 			new FinderColumn<>(
@@ -1075,9 +1025,9 @@ public class CommerceNotificationTemplatePersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				CommerceNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commerceNotificationTemplate.", "uuid",
+					"commerceNotificationTemplate.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceNotificationTemplate::getUuid),
 				new FinderColumn<>(
@@ -1107,20 +1057,7 @@ public class CommerceNotificationTemplatePersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				CommerceNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceNotificationTemplateImpl.class,
-					CommerceNotificationTemplate.class,
-					"commerceNotificationTemplate",
-					"CommerceNotificationTemplate",
-					"commerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT DISTINCT {commerceNotificationTemplate.*} FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					"SELECT {CommerceNotificationTemplate.*} FROM (SELECT DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceNotificationTemplate ON TEMP_TABLE.commerceNotificationTemplateId = CommerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT COUNT(DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId) AS COUNT_VALUE FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					CommerceNotificationTemplateModelImpl.ORDER_BY_SQL,
-					CommerceNotificationTemplateModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationTemplate.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1152,20 +1089,7 @@ public class CommerceNotificationTemplatePersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				CommerceNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceNotificationTemplateImpl.class,
-					CommerceNotificationTemplate.class,
-					"commerceNotificationTemplate",
-					"CommerceNotificationTemplate",
-					"commerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT DISTINCT {commerceNotificationTemplate.*} FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					"SELECT {CommerceNotificationTemplate.*} FROM (SELECT DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceNotificationTemplate ON TEMP_TABLE.commerceNotificationTemplateId = CommerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT COUNT(DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId) AS COUNT_VALUE FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					CommerceNotificationTemplateModelImpl.ORDER_BY_SQL,
-					CommerceNotificationTemplateModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationTemplate.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1206,26 +1130,13 @@ public class CommerceNotificationTemplatePersistenceImpl
 				_SQL_SELECT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				_SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE,
 				CommerceNotificationTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceNotificationTemplateImpl.class,
-					CommerceNotificationTemplate.class,
-					"commerceNotificationTemplate",
-					"CommerceNotificationTemplate",
-					"commerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT DISTINCT {commerceNotificationTemplate.*} FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					"SELECT {CommerceNotificationTemplate.*} FROM (SELECT DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceNotificationTemplate ON TEMP_TABLE.commerceNotificationTemplateId = CommerceNotificationTemplate.commerceNotificationTemplateId",
-					"SELECT COUNT(DISTINCT commerceNotificationTemplate.commerceNotificationTemplateId) AS COUNT_VALUE FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ",
-					CommerceNotificationTemplateModelImpl.ORDER_BY_SQL,
-					CommerceNotificationTemplateModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceNotificationTemplate.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
 					CommerceNotificationTemplate::getGroupId),
 				new FinderColumn<>(
-					"commerceNotificationTemplate.", "type",
+					"commerceNotificationTemplate.", "type", "type_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceNotificationTemplate::getType),
 				new FinderColumn<>(
@@ -1288,12 +1199,6 @@ public class CommerceNotificationTemplatePersistenceImpl
 	private static final String _SQL_COUNT_COMMERCENOTIFICATIONTEMPLATE_WHERE =
 		"SELECT COUNT(commerceNotificationTemplate) FROM CommerceNotificationTemplate commerceNotificationTemplate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceNotificationTemplate exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceNotificationTemplatePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "from", "to", "type"});
 
@@ -1303,4 +1208,4 @@ public class CommerceNotificationTemplatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1410060361
+// LIFERAY-SERVICE-BUILDER-HASH:1757453336

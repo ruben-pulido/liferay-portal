@@ -63,4 +63,29 @@ export class HeadlessAdminWorkflowApiHelper {
 			}
 		);
 	}
+
+	async postWorkflowDefinitionUpdateActive(
+		name: string,
+		version: string,
+		active: boolean
+	) {
+		return this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/workflow-definitions/update-active?active=${active}&name=${encodeURIComponent(name)}&version=${encodeURIComponent(version)}`,
+			{data: {}}
+		);
+	}
+
+	async postWorkflowTaskChangeTransition(
+		workflowTaskId: number,
+		transitionName: string
+	) {
+		return await this.apiHelpers.post(
+			`${this.apiHelpers.baseUrl}${this.basePath}/workflow-tasks/${workflowTaskId}/change-transition`,
+			{
+				data: {
+					transitionName,
+				},
+			}
+		);
+	}
 }

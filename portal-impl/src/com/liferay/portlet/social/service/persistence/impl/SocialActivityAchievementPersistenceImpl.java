@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelperUtil;
@@ -72,8 +70,9 @@ public class SocialActivityAchievementPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SocialActivityAchievement>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the social activity achievements where groupId = &#63;.
@@ -114,16 +113,9 @@ public class SocialActivityAchievementPersistenceImpl
 			OrderByComparator<SocialActivityAchievement> orderByComparator)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement =
-			fetchByGroupId_First(groupId, orderByComparator);
-
-		if (socialActivityAchievement != null) {
-			return socialActivityAchievement;
-		}
-
-		throw new NoSuchActivityAchievementException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -166,8 +158,9 @@ public class SocialActivityAchievementPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivityAchievement>
-		_collectionPersistenceFinderByG_U;
+	private CollectionPersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_collectionPersistenceFinderByG_U;
 
 	/**
 	 * Returns an ordered range of all the social activity achievements where groupId = &#63; and userId = &#63;.
@@ -210,16 +203,9 @@ public class SocialActivityAchievementPersistenceImpl
 			OrderByComparator<SocialActivityAchievement> orderByComparator)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement = fetchByG_U_First(
-			groupId, userId, orderByComparator);
-
-		if (socialActivityAchievement != null) {
-			return socialActivityAchievement;
-		}
-
-		throw new NoSuchActivityAchievementException(
-			_collectionPersistenceFinderByG_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, userId}));
+		return _collectionPersistenceFinderByG_U.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId, userId},
+			orderByComparator);
 	}
 
 	/**
@@ -265,8 +251,9 @@ public class SocialActivityAchievementPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId, userId});
 	}
 
-	private CollectionPersistenceFinder<SocialActivityAchievement>
-		_collectionPersistenceFinderByG_N;
+	private CollectionPersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_collectionPersistenceFinderByG_N;
 
 	/**
 	 * Returns an ordered range of all the social activity achievements where groupId = &#63; and name = &#63;.
@@ -309,16 +296,9 @@ public class SocialActivityAchievementPersistenceImpl
 			OrderByComparator<SocialActivityAchievement> orderByComparator)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement = fetchByG_N_First(
-			groupId, name, orderByComparator);
-
-		if (socialActivityAchievement != null) {
-			return socialActivityAchievement;
-		}
-
-		throw new NoSuchActivityAchievementException(
-			_collectionPersistenceFinderByG_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name}));
+		return _collectionPersistenceFinderByG_N.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -364,8 +344,9 @@ public class SocialActivityAchievementPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId, name});
 	}
 
-	private CollectionPersistenceFinder<SocialActivityAchievement>
-		_collectionPersistenceFinderByG_F;
+	private CollectionPersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_collectionPersistenceFinderByG_F;
 
 	/**
 	 * Returns an ordered range of all the social activity achievements where groupId = &#63; and firstInGroup = &#63;.
@@ -409,17 +390,9 @@ public class SocialActivityAchievementPersistenceImpl
 			OrderByComparator<SocialActivityAchievement> orderByComparator)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement = fetchByG_F_First(
-			groupId, firstInGroup, orderByComparator);
-
-		if (socialActivityAchievement != null) {
-			return socialActivityAchievement;
-		}
-
-		throw new NoSuchActivityAchievementException(
-			_collectionPersistenceFinderByG_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, firstInGroup}));
+		return _collectionPersistenceFinderByG_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, firstInGroup}, orderByComparator);
 	}
 
 	/**
@@ -467,8 +440,9 @@ public class SocialActivityAchievementPersistenceImpl
 			new Object[] {groupId, firstInGroup});
 	}
 
-	private UniquePersistenceFinder<SocialActivityAchievement>
-		_uniquePersistenceFinderByG_U_N;
+	private UniquePersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_uniquePersistenceFinderByG_U_N;
 
 	/**
 	 * Returns the social activity achievement where groupId = &#63; and userId = &#63; and name = &#63; or throws a <code>NoSuchActivityAchievementException</code> if it could not be found.
@@ -484,23 +458,9 @@ public class SocialActivityAchievementPersistenceImpl
 			long groupId, long userId, String name)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement = fetchByG_U_N(
-			groupId, userId, name);
-
-		if (socialActivityAchievement == null) {
-			String message =
-				_uniquePersistenceFinderByG_U_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, userId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchActivityAchievementException(message);
-		}
-
-		return socialActivityAchievement;
+		return _uniquePersistenceFinderByG_U_N.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, userId, name});
 	}
 
 	/**
@@ -555,8 +515,9 @@ public class SocialActivityAchievementPersistenceImpl
 			new Object[] {groupId, userId, name});
 	}
 
-	private CollectionPersistenceFinder<SocialActivityAchievement>
-		_collectionPersistenceFinderByG_U_F;
+	private CollectionPersistenceFinder
+		<SocialActivityAchievement, NoSuchActivityAchievementException>
+			_collectionPersistenceFinderByG_U_F;
 
 	/**
 	 * Returns an ordered range of all the social activity achievements where groupId = &#63; and userId = &#63; and firstInGroup = &#63;.
@@ -602,18 +563,9 @@ public class SocialActivityAchievementPersistenceImpl
 			OrderByComparator<SocialActivityAchievement> orderByComparator)
 		throws NoSuchActivityAchievementException {
 
-		SocialActivityAchievement socialActivityAchievement =
-			fetchByG_U_F_First(
-				groupId, userId, firstInGroup, orderByComparator);
-
-		if (socialActivityAchievement != null) {
-			return socialActivityAchievement;
-		}
-
-		throw new NoSuchActivityAchievementException(
-			_collectionPersistenceFinderByG_U_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, userId, firstInGroup}));
+		return _collectionPersistenceFinderByG_U_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, userId, firstInGroup}, orderByComparator);
 	}
 
 	/**
@@ -945,7 +897,7 @@ public class SocialActivityAchievementPersistenceImpl
 				_SQL_SELECT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 				_SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 				SocialActivityAchievementModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"socialActivityAchievement.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -972,7 +924,7 @@ public class SocialActivityAchievementPersistenceImpl
 			_SQL_SELECT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			_SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			SocialActivityAchievementModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"socialActivityAchievement.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, SocialActivityAchievement::getGroupId),
@@ -1001,7 +953,7 @@ public class SocialActivityAchievementPersistenceImpl
 			_SQL_SELECT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			_SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			SocialActivityAchievementModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"socialActivityAchievement.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, SocialActivityAchievement::getGroupId),
@@ -1030,7 +982,7 @@ public class SocialActivityAchievementPersistenceImpl
 			_SQL_SELECT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			_SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			SocialActivityAchievementModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"socialActivityAchievement.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, SocialActivityAchievement::getGroupId),
@@ -1089,7 +1041,7 @@ public class SocialActivityAchievementPersistenceImpl
 			_SQL_SELECT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			_SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE,
 			SocialActivityAchievementModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"socialActivityAchievement.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, SocialActivityAchievement::getGroupId),
@@ -1123,16 +1075,10 @@ public class SocialActivityAchievementPersistenceImpl
 	private static final String _SQL_COUNT_SOCIALACTIVITYACHIEVEMENT_WHERE =
 		"SELECT COUNT(socialActivityAchievement) FROM SocialActivityAchievement socialActivityAchievement WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SocialActivityAchievement exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SocialActivityAchievementPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2093439929
+// LIFERAY-SERVICE-BUILDER-HASH:2053757869

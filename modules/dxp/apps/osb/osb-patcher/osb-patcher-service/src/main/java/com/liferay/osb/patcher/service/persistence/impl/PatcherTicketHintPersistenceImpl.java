@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -72,8 +70,9 @@ public class PatcherTicketHintPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<PatcherTicketHint>
-		_uniquePersistenceFinderByPatcherProductVersionId;
+	private UniquePersistenceFinder
+		<PatcherTicketHint, NoSuchPatcherTicketHintException>
+			_uniquePersistenceFinderByPatcherProductVersionId;
 
 	/**
 	 * Returns the patcher ticket hint where patcherProductVersionId = &#63; or throws a <code>NoSuchPatcherTicketHintException</code> if it could not be found.
@@ -87,24 +86,8 @@ public class PatcherTicketHintPersistenceImpl
 			long patcherProductVersionId)
 		throws NoSuchPatcherTicketHintException {
 
-		PatcherTicketHint patcherTicketHint = fetchByPatcherProductVersionId(
-			patcherProductVersionId);
-
-		if (patcherTicketHint == null) {
-			String message =
-				_uniquePersistenceFinderByPatcherProductVersionId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {patcherProductVersionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherTicketHintException(message);
-		}
-
-		return patcherTicketHint;
+		return _uniquePersistenceFinderByPatcherProductVersionId.find(
+			finderCache, new Object[] {patcherProductVersionId});
 	}
 
 	/**
@@ -418,16 +401,10 @@ public class PatcherTicketHintPersistenceImpl
 	private static final String _SQL_SELECT_PATCHERTICKETHINT_WHERE =
 		"SELECT patcherTicketHint FROM PatcherTicketHint patcherTicketHint WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PatcherTicketHint exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PatcherTicketHintPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:585746567
+// LIFERAY-SERVICE-BUILDER-HASH:-39386897

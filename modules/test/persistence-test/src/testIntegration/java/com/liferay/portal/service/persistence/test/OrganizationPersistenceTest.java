@@ -111,11 +111,7 @@ public class OrganizationPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Organization newOrganization = _persistence.create(pk);
-
-		newOrganization.setMvccVersion(RandomTestUtil.nextLong());
+		Organization newOrganization = addOrganization();
 
 		newOrganization.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -155,7 +151,9 @@ public class OrganizationPersistenceTest {
 
 		newOrganization.setStatus(RandomTestUtil.nextInt());
 
-		_organizations.add(_persistence.update(newOrganization));
+		newOrganization = _persistence.update(newOrganization);
+
+		_organizations.add(newOrganization);
 
 		Organization existingOrganization = _persistence.findByPrimaryKey(
 			newOrganization.getPrimaryKey());
@@ -663,8 +661,6 @@ public class OrganizationPersistenceTest {
 
 		Organization organization = _persistence.create(pk);
 
-		organization.setMvccVersion(RandomTestUtil.nextLong());
-
 		organization.setCtCollectionId(RandomTestUtil.nextLong());
 
 		organization.setUuid(RandomTestUtil.randomString());
@@ -713,4 +709,4 @@ public class OrganizationPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1696261332
+// LIFERAY-SERVICE-BUILDER-HASH:-2096060988

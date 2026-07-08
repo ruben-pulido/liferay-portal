@@ -10,7 +10,7 @@ import ClaySticker from '@clayui/sticker';
 import {ItemSelector} from '@liferay/frontend-js-item-selector-web';
 import {openToast} from 'frontend-js-components-web';
 import {sub} from 'frontend-js-web';
-import React, {useEffect, useId, useState} from 'react';
+import React, {useEffect, useId, useMemo, useState} from 'react';
 
 import {InputGroupWithSelect} from '../../common/components/InputGroupWithSelect';
 import ConnectedSiteService from '../../common/services/ConnectedSiteService';
@@ -22,6 +22,10 @@ enum ConnectableKind {
 	SITES = 'sites',
 	SITE_TEMPLATES = 'site-templates',
 }
+
+const SITES_API_URL = `${location.origin}/o/headless-admin-site/v1.0/sites`;
+
+const SITE_TEMPLATES_API_URL = `${location.origin}/o/headless-admin-site/v1.0/site-templates`;
 
 const showErrorMessage = (message: string) => {
 	openToast({
@@ -39,10 +43,17 @@ const showSuccessMessage = (message: string) => {
 
 const isSiteTemplate = (site: Site) => site.type === SITE_TEMPLATE_TYPE;
 
-const getConnectionLabel = (site: Site) =>
-	isSiteTemplate(site)
-		? `${site.descriptiveName} (${Liferay.Language.get('site-template')})`
-		: site.descriptiveName;
+const getConnectionLabel = (site: Site) => {
+	if (isSiteTemplate(site)) {
+		return `${site.descriptiveName} (${Liferay.Language.get('site-template')})`;
+	}
+
+	if (site.stagingType === 'STAGING') {
+		return `${site.descriptiveName} (${Liferay.Language.get('staging')})`;
+	}
+
+	return site.descriptiveName;
+};
 
 const ConnectableActions = ({
 	externalReferenceCode,
@@ -163,6 +174,40 @@ const ConnectableSelector = ({
 					(kind === ConnectableKind.SITE_TEMPLATES)
 		);
 
+	const sitesAPIURL = useMemo(() => {
+		const url = new URL(SITES_API_URL);
+
+		url.searchParams.set('active', 'true');
+
+		connections
+			.filter((connection) => !isSiteTemplate(connection))
+			.forEach((connection) =>
+				url.searchParams.append(
+					'excludedExternalReferenceCodes',
+					connection.externalReferenceCode
+				)
+			);
+
+		return url.toString();
+	}, [connections]);
+
+	const siteTemplatesAPIURL = useMemo(() => {
+		const url = new URL(SITE_TEMPLATES_API_URL);
+
+		url.searchParams.set('active', 'true');
+
+		connections
+			.filter((connection) => isSiteTemplate(connection))
+			.forEach((connection) =>
+				url.searchParams.append(
+					'excludedSiteExternalReferenceCodes',
+					connection.externalReferenceCode
+				)
+			);
+
+		return url.toString();
+	}, [connections]);
+
 	const resetSelection = () => {
 		setSite(undefined);
 		setSiteTemplate(undefined);
@@ -249,10 +294,10 @@ const ConnectableSelector = ({
 				>
 					{kind === ConnectableKind.SITES ? (
 						<ItemSelector
-							apiURL={`${location.origin}/o/headless-admin-site/v1.0/sites?active=true`}
+							apiURL={sitesAPIURL}
 							id="connectableSelector"
 							items={site ? [site] : []}
-							key="sites"
+							key={sitesAPIURL}
 							onItemsChange={(items: Site[]) => {
 								if (items.length) {
 									const item = items[0];
@@ -272,11 +317,24 @@ const ConnectableSelector = ({
 						>
 							{(item: Site) => (
 								<ItemSelector.Item
+									className="align-items-center d-flex"
 									key={item.id}
 									textValue={Liferay.Util.escapeHTML(
 										item.descriptiveName
 									)}
 								>
+									<ClaySticker
+										className="c-mr-2"
+										displayType="secondary"
+										shape="circle"
+										size="sm"
+									>
+										<ClaySticker.Image
+											alt=""
+											src={item.logo}
+										/>
+									</ClaySticker>
+
 									{Liferay.Util.escapeHTML(
 										item.descriptiveName
 									)}
@@ -285,10 +343,10 @@ const ConnectableSelector = ({
 						</ItemSelector>
 					) : (
 						<ItemSelector
-							apiURL={`${location.origin}/o/headless-admin-site/v1.0/site-templates?active=true`}
+							apiURL={siteTemplatesAPIURL}
 							id="connectableSelector"
 							items={siteTemplate ? [siteTemplate] : []}
-							key="site-templates"
+							key={siteTemplatesAPIURL}
 							onItemsChange={(items: SiteTemplate[]) => {
 								if (items.length) {
 									const item = items[0];
@@ -311,11 +369,24 @@ const ConnectableSelector = ({
 						>
 							{(item: SiteTemplate) => (
 								<ItemSelector.Item
+									className="align-items-center d-flex"
 									key={item.id}
 									textValue={Liferay.Util.escapeHTML(
 										item.name
 									)}
 								>
+									<ClaySticker
+										className="c-mr-2"
+										displayType="secondary"
+										shape="circle"
+										size="sm"
+									>
+										<ClaySticker.Image
+											alt=""
+											src={item.logo}
+										/>
+									</ClaySticker>
+
 									{Liferay.Util.escapeHTML(item.name)}
 								</ItemSelector.Item>
 							)}

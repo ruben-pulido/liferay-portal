@@ -249,9 +249,7 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			CommerceOrder commerceOrder)
 		throws PortalException {
 
-		if ((commerceOrder != null) &&
-			FeatureFlagManagerUtil.isEnabled("LPD-20379")) {
-
+		if (commerceOrder != null) {
 			LayoutDisplayPageObjectProvider<?> layoutDisplayPageObjectProvider =
 				_getLayoutDisplayPageObjectProvider(commerceOrder);
 
@@ -439,24 +437,6 @@ public class CommerceOrderHttpHelperImpl implements CommerceOrderHttpHelper {
 			else {
 				portletURL.setParameter(
 					"continueAsGuest", Boolean.TRUE.toString());
-
-				Cookie cookie = new Cookie(
-					CookiesConstants.NAME_COMMERCE_CONTINUE_AS_GUEST,
-					Boolean.TRUE.toString());
-
-				String domain = CookiesManagerUtil.getDomain(
-					httpServletRequest);
-
-				if (Validator.isNotNull(domain)) {
-					cookie.setDomain(domain);
-				}
-
-				cookie.setMaxAge(CookiesConstants.MAX_AGE);
-
-				CookiesManagerUtil.addCookie(
-					CookiesConstants.CONSENT_TYPE_NECESSARY, cookie,
-					httpServletRequest, themeDisplay.getResponse());
-
 				portletURL.setParameter(
 					"redirect", checkoutPortletURL.toString());
 			}

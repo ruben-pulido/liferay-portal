@@ -11,6 +11,7 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectEntryService;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
+import com.liferay.portal.kernel.exception.RoleAssignmentException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -30,8 +31,10 @@ import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
 import com.liferay.portal.vulcan.dto.converter.DefaultDTOConverterContext;
 import com.liferay.portal.vulcan.pagination.Page;
+import com.liferay.site.dsr.site.initializer.constants.DSRRoleConstants;
 import com.liferay.site.dsr.site.initializer.constants.DSRTicketConstants;
 
+import java.util.Date;
 import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
@@ -103,25 +106,61 @@ public class InvitedMemberResourceImpl extends BaseInvitedMemberResourceImpl {
 
 		ObjectEntry objectEntry = _getObjectEntry(roomId);
 
-		Ticket ticket = _getTicket(
-			_groupService.getGroup(
-				MapUtil.getLong(objectEntry.getValues(), "siteId")),
-			objectEntry, invitedMemberId);
+		Group group = _groupService.getGroup(
+			MapUtil.getLong(objectEntry.getValues(), "siteId"));
 
-		if (invitedMember.getRoleKey() == null) {
+		Ticket ticket = _getTicket(group, objectEntry, invitedMemberId);
+
+		if ((invitedMember.getMembershipExpirationDate() == null) &&
+			(invitedMember.getRoleKey() == null)) {
+
 			return _toInvitedMember(ticket);
 		}
+
+		_checkPermission(group, invitedMember.getRoleKey());
 
 		JSONObject jsonObject = _jsonFactory.createJSONObject(
 			ticket.getExtraInfo());
 
-		jsonObject.put("roleKey", invitedMember.getRoleKey());
+		if (invitedMember.getMembershipExpirationDate() != null) {
+			Date membershipExpirationDate =
+				invitedMember.getMembershipExpirationDate();
+
+			jsonObject.put(
+				"membershipExpirationDate", membershipExpirationDate.getTime());
+		}
+		else {
+			jsonObject.remove("membershipExpirationDate");
+		}
+
+		if (invitedMember.getRoleKey() != null) {
+			jsonObject.put("roleKey", invitedMember.getRoleKey());
+		}
 
 		ticket.setExtraInfo(jsonObject.toString());
 
 		ticket = _ticketLocalService.updateTicket(ticket);
 
 		return _toInvitedMember(ticket);
+	}
+
+	private void _checkPermission(Group group, String roleKey)
+		throws Exception {
+
+		if (!Objects.equals(
+				roleKey, DSRRoleConstants.NAME_DSR_ROOM_COLLABORATOR)) {
+
+			return;
+		}
+
+		PermissionChecker permissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		if (!permissionChecker.isGroupAdmin(group.getGroupId()) &&
+			!permissionChecker.isGroupOwner(group.getGroupId())) {
+
+			throw new RoleAssignmentException();
+		}
 	}
 
 	private ObjectEntry _getObjectEntry(long roomId) throws Exception {

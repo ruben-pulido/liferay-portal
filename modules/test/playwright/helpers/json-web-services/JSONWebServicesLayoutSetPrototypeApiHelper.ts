@@ -7,6 +7,7 @@ import {liferayConfig} from '../../liferay.config';
 import {ApiHelpers} from '../ApiHelpers';
 
 export type LayoutSetPrototype = {
+	active: boolean;
 	companyId: string;
 	layoutSetPrototypeId: string;
 	nameCurrentValue: string;
@@ -60,21 +61,21 @@ export class JSONWebServicesLayoutSetPrototypeApiHelper {
 	}
 
 	async addLayoutSetPrototypes({
+		active = true,
 		layoutsUpdateable = true,
 		name,
 		url = liferayConfig.environment.baseUrl,
 	}: {
+		active?: boolean;
 		layoutsUpdateable?: boolean;
 		name: string;
 		url?: string;
 	}): Promise<LayoutSetPrototype> {
 		const urlSearchParams = new URLSearchParams();
 
-		const booleanTrue: boolean = true;
-
 		urlSearchParams.append('name', name);
 		urlSearchParams.append('description', '');
-		urlSearchParams.append('active', booleanTrue.toString());
+		urlSearchParams.append('active', active.toString());
 		urlSearchParams.append(
 			'layoutsUpdateable',
 			layoutsUpdateable.toString()

@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -89,7 +87,7 @@ public class ObjectEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -130,15 +128,8 @@ public class ObjectEntryPersistenceImpl
 			String uuid, OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByUuid_First(uuid, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -179,7 +170,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<ObjectEntry>
+	private UniquePersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -194,21 +185,8 @@ public class ObjectEntryPersistenceImpl
 	public ObjectEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByUUID_G(uuid, groupId);
-
-		if (objectEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryException(message);
-		}
-
-		return objectEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -256,7 +234,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -300,16 +278,8 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -354,7 +324,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<ObjectEntry>
+	private UniquePersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_uniquePersistenceFinderByHeadObjectEntryId;
 
 	/**
@@ -368,23 +338,8 @@ public class ObjectEntryPersistenceImpl
 	public ObjectEntry findByHeadObjectEntryId(long headObjectEntryId)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByHeadObjectEntryId(headObjectEntryId);
-
-		if (objectEntry == null) {
-			String message =
-				_uniquePersistenceFinderByHeadObjectEntryId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {headObjectEntryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryException(message);
-		}
-
-		return objectEntry;
+		return _uniquePersistenceFinderByHeadObjectEntryId.find(
+			finderCache, new Object[] {headObjectEntryId});
 	}
 
 	/**
@@ -429,7 +384,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {headObjectEntryId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByObjectDefinitionId;
 
 	/**
@@ -471,18 +426,8 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByObjectDefinitionId_First(
-			objectDefinitionId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByObjectDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId}));
+		return _collectionPersistenceFinderByObjectDefinitionId.findFirst(
+			finderCache, new Object[] {objectDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -524,7 +469,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByG_ODI;
 
 	/**
@@ -568,17 +513,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByG_ODI_First(
-			groupId, objectDefinitionId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByG_ODI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, objectDefinitionId}));
+		return _collectionPersistenceFinderByG_ODI.findFirst(
+			finderCache, new Object[] {groupId, objectDefinitionId},
+			orderByComparator);
 	}
 
 	/**
@@ -624,7 +561,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {groupId, objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByG_OEFI;
 
 	/**
@@ -668,17 +605,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByG_OEFI_First(
-			groupId, objectEntryFolderId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByG_OEFI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, objectEntryFolderId}));
+		return _collectionPersistenceFinderByG_OEFI.findFirst(
+			finderCache, new Object[] {groupId, objectEntryFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -724,7 +653,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {groupId, objectEntryFolderId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByU_ODI;
 
 	/**
@@ -768,17 +697,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByU_ODI_First(
-			userId, objectDefinitionId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByU_ODI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, objectDefinitionId}));
+		return _collectionPersistenceFinderByU_ODI.findFirst(
+			finderCache, new Object[] {userId, objectDefinitionId},
+			orderByComparator);
 	}
 
 	/**
@@ -824,7 +745,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {userId, objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByODI_NotS;
 
 	/**
@@ -927,17 +848,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByODI_NotS_First(
-			objectDefinitionId, status, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByODI_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, status}));
+		return _collectionPersistenceFinderByODI_NotS.findFirst(
+			finderCache, new Object[] {objectDefinitionId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -983,7 +896,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, status});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByROEI_NotS;
 
 	/**
@@ -1086,17 +999,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByROEI_NotS_First(
-			rootObjectEntryId, status, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByROEI_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {rootObjectEntryId, status}));
+		return _collectionPersistenceFinderByROEI_NotS.findFirst(
+			finderCache, new Object[] {rootObjectEntryId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1142,7 +1047,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {rootObjectEntryId, status});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByG_C_OEFI;
 
 	/**
@@ -1188,17 +1093,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByG_C_OEFI_First(
-			groupId, companyId, objectEntryFolderId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByG_C_OEFI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, objectEntryFolderId}));
+		return _collectionPersistenceFinderByG_C_OEFI.findFirst(
+			finderCache, new Object[] {groupId, companyId, objectEntryFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -1253,7 +1150,7 @@ public class ObjectEntryPersistenceImpl
 			new Object[] {groupId, companyId, objectEntryFolderId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByG_ODI_S;
 
 	/**
@@ -1299,17 +1196,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByG_ODI_S_First(
-			groupId, objectDefinitionId, status, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByG_ODI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, objectDefinitionId, status}));
+		return _collectionPersistenceFinderByG_ODI_S.findFirst(
+			finderCache, new Object[] {groupId, objectDefinitionId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1362,7 +1251,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {groupId, objectDefinitionId, status});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntry>
+	private CollectionPersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_collectionPersistenceFinderByU_GtCD_ODI;
 
 	/**
@@ -1473,17 +1362,9 @@ public class ObjectEntryPersistenceImpl
 			OrderByComparator<ObjectEntry> orderByComparator)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByU_GtCD_ODI_First(
-			userId, createDate, objectDefinitionId, orderByComparator);
-
-		if (objectEntry != null) {
-			return objectEntry;
-		}
-
-		throw new NoSuchObjectEntryException(
-			_collectionPersistenceFinderByU_GtCD_ODI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, createDate, objectDefinitionId}));
+		return _collectionPersistenceFinderByU_GtCD_ODI.findFirst(
+			finderCache, new Object[] {userId, createDate, objectDefinitionId},
+			orderByComparator);
 	}
 
 	/**
@@ -1536,7 +1417,7 @@ public class ObjectEntryPersistenceImpl
 			finderCache, new Object[] {userId, createDate, objectDefinitionId});
 	}
 
-	private UniquePersistenceFinder<ObjectEntry>
+	private UniquePersistenceFinder<ObjectEntry, NoSuchObjectEntryException>
 		_uniquePersistenceFinderByERC_G_C_ODI;
 
 	/**
@@ -1555,26 +1436,11 @@ public class ObjectEntryPersistenceImpl
 			long objectDefinitionId)
 		throws NoSuchObjectEntryException {
 
-		ObjectEntry objectEntry = fetchByERC_G_C_ODI(
-			externalReferenceCode, groupId, companyId, objectDefinitionId);
-
-		if (objectEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G_C_ODI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						externalReferenceCode, groupId, companyId,
-						objectDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryException(message);
-		}
-
-		return objectEntry;
+		return _uniquePersistenceFinderByERC_G_C_ODI.find(
+			finderCache,
+			new Object[] {
+				externalReferenceCode, groupId, companyId, objectDefinitionId
+			});
 	}
 
 	/**
@@ -1917,10 +1783,11 @@ public class ObjectEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
-			ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"objectEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectEntry::getUuid));
+				"objectEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ObjectEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1932,8 +1799,8 @@ public class ObjectEntryPersistenceImpl
 				ObjectEntry::getGroupId),
 			_SQL_SELECT_OBJECTENTRY_WHERE, "",
 			new FinderColumn<>(
-				"objectEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectEntry::getUuid),
+				"objectEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ObjectEntry::getUuid),
 			new FinderColumn<>(
 				"objectEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, ObjectEntry::getGroupId));
@@ -1959,9 +1826,10 @@ public class ObjectEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"objectEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, ObjectEntry::getUuid),
+					"objectEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, ObjectEntry::getUuid),
 				new FinderColumn<>(
 					"objectEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectEntry::getCompanyId));
@@ -2005,6 +1873,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2031,6 +1901,7 @@ public class ObjectEntryPersistenceImpl
 			_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 			ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 			"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+			"objectEntry.objectEntryId = objectEntry.headObjectEntryId", null,
 			new FinderColumn<>(
 				"objectEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, ObjectEntry::getGroupId),
@@ -2060,6 +1931,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectEntry::getGroupId),
@@ -2089,6 +1962,7 @@ public class ObjectEntryPersistenceImpl
 			_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 			ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 			"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+			"objectEntry.objectEntryId = objectEntry.headObjectEntryId", null,
 			new FinderColumn<>(
 				"objectEntry.", "userId", FinderColumn.Type.LONG, "=", true,
 				true, ObjectEntry::getUserId),
@@ -2117,6 +1991,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2146,6 +2022,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "rootObjectEntryId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntry::getRootObjectEntryId),
@@ -2192,6 +2070,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectEntry::getGroupId),
@@ -2235,6 +2115,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectEntry::getGroupId),
@@ -2271,6 +2153,8 @@ public class ObjectEntryPersistenceImpl
 				_SQL_SELECT_OBJECTENTRY_WHERE, _SQL_COUNT_OBJECTENTRY_WHERE,
 				ObjectEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				"objectEntry.objectEntryId = objectEntry.headObjectEntryId",
+				null,
 				new FinderColumn<>(
 					"objectEntry.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, ObjectEntry::getUserId),
@@ -2367,12 +2251,6 @@ public class ObjectEntryPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTENTRY_WHERE =
 		"SELECT COUNT(objectEntry) FROM ObjectEntry objectEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2382,4 +2260,4 @@ public class ObjectEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:196498480
+// LIFERAY-SERVICE-BUILDER-HASH:-1937264170

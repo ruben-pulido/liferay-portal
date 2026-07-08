@@ -11,8 +11,34 @@ const CHATBOT_BASE_URI = '/o/ai-hub/chatbots';
 
 const CHATBOT_BY_ERC_URI = `${CHATBOT_BASE_URI}/by-external-reference-code/`;
 
-async function getChatbots() {
-	const response = await fetch(CHATBOT_BASE_URI, {
+const HEADERS = new Headers({
+	'Accept': 'application/json',
+	'Accept-Language': Liferay.ThemeDisplay.getBCP47LanguageId(),
+	'Content-Type': 'application/json',
+});
+
+async function disassociateChatbotFromAgentDefinition(
+	chatbotERC: string,
+	agentERC: string
+) {
+	return fetch(
+		`${CHATBOT_BY_ERC_URI}${chatbotERC}/agentDefinitionsToChatbots/${agentERC}/disassociate`,
+		{
+			headers: HEADERS,
+			method: 'POST',
+		}
+	);
+}
+
+async function getChatbotDefinitions(params?: Record<string, string>) {
+	const queryString = params ? new URLSearchParams(params).toString() : '';
+
+	const url = queryString
+		? `${CHATBOT_BASE_URI}?${queryString}`
+		: CHATBOT_BASE_URI;
+
+	const response = await fetch(url, {
+		headers: HEADERS,
 		method: 'GET',
 	});
 
@@ -23,10 +49,11 @@ async function getChatbots() {
 	return response.json();
 }
 
-async function getChatbot(externalReferenceCode: string) {
+async function getChatbotDefinition(externalReferenceCode: string) {
 	const response = await fetch(
 		`${CHATBOT_BY_ERC_URI}${externalReferenceCode}?nestedFields=agentDefinitionsToChatbots`,
 		{
+			headers: HEADERS,
 			method: 'GET',
 		}
 	);
@@ -38,23 +65,23 @@ async function getChatbot(externalReferenceCode: string) {
 	return response.json();
 }
 
-async function postChatbot(chatbot: Chatbot) {
+async function postChatbotDefinition(chatbot: Chatbot) {
 	const response = await fetch(CHATBOT_BASE_URI, {
 		body: JSON.stringify(chatbot),
-		headers: {
-			'Content-Type': 'application/json',
-		},
+		headers: HEADERS,
 		method: 'POST',
 	});
 
 	if (!response.ok) {
-		throw new Error();
+		const {message, title} = await response.json().catch(() => ({}));
+
+		throw new Error(title || message || '');
 	}
 
 	return response.json();
 }
 
-async function putChatbot(
+async function putChatbotDefinition(
 	existingExternalReferenceCode: string,
 	chatbot: Chatbot
 ) {
@@ -62,28 +89,18 @@ async function putChatbot(
 		`${CHATBOT_BY_ERC_URI}${existingExternalReferenceCode}`,
 		{
 			body: JSON.stringify(chatbot),
-			headers: {
-				'Content-Type': 'application/json',
-			},
+			headers: HEADERS,
 			method: 'PUT',
 		}
 	);
 
 	if (!response.ok) {
-		throw new Error();
+		const {message, title} = await response.json().catch(() => ({}));
+
+		throw new Error(title || message || '');
 	}
 
 	return response.json();
-}
-
-async function deleteChatbotAgentDefinitionRelationship(
-	chatbotERC: string,
-	agentERC: string
-) {
-	return fetch(
-		`${CHATBOT_BY_ERC_URI}${chatbotERC}/agentDefinitionsToChatbots/${agentERC}`,
-		{method: 'DELETE'}
-	);
 }
 
 async function putChatbotAgentDefinitionRelationship(
@@ -92,15 +109,18 @@ async function putChatbotAgentDefinitionRelationship(
 ) {
 	return fetch(
 		`${CHATBOT_BY_ERC_URI}${chatbotERC}/agentDefinitionsToChatbots/${agentERC}`,
-		{method: 'PUT'}
+		{
+			headers: HEADERS,
+			method: 'PUT',
+		}
 	);
 }
 
 export {
-	deleteChatbotAgentDefinitionRelationship,
-	getChatbot,
-	getChatbots,
-	postChatbot,
-	putChatbot,
+	disassociateChatbotFromAgentDefinition,
+	getChatbotDefinition,
+	getChatbotDefinitions,
+	postChatbotDefinition,
 	putChatbotAgentDefinitionRelationship,
+	putChatbotDefinition,
 };

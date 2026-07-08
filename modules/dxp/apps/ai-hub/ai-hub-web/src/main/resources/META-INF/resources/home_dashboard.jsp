@@ -13,7 +13,7 @@ HomeDashboardDisplayContext homeDashboardDisplayContext = (HomeDashboardDisplayC
 
 <c:if test="<%= themeDisplay.isSignedIn() %>">
 	<aui:style type="text/css">
-		.bg-gradient--blue-white {
+		.ai-hub {
 			display: none;
 		}
 	</aui:style>
@@ -44,4 +44,14 @@ HomeDashboardDisplayContext homeDashboardDisplayContext = (HomeDashboardDisplayC
 			props="<%= homeDashboardDisplayContext.getReactData() %>"
 		/>
 	</div>
+</c:if>
+
+<c:if test='<%= SessionMessages.contains(request, "userAdded") %>'>
+	<aui:script>
+		Liferay.Util.openToast({
+			message:
+				'<liferay-ui:message key="thank-you-for-creating-an-account" /> <liferay-ui:message key="use-your-password-to-login" />',
+			type: 'success',
+		});
+	</aui:script>
 </c:if>

@@ -9,8 +9,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -63,8 +61,9 @@ public class CacheReplicatorEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CacheReplicatorEntry>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CacheReplicatorEntry, NoSuchCacheReplicatorEntryException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cache replicator entries where companyId = &#63;.
@@ -105,16 +104,8 @@ public class CacheReplicatorEntryPersistenceImpl
 			OrderByComparator<CacheReplicatorEntry> orderByComparator)
 		throws NoSuchCacheReplicatorEntryException {
 
-		CacheReplicatorEntry cacheReplicatorEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (cacheReplicatorEntry != null) {
-			return cacheReplicatorEntry;
-		}
-
-		throw new NoSuchCacheReplicatorEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -156,8 +147,9 @@ public class CacheReplicatorEntryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<CacheReplicatorEntry>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<CacheReplicatorEntry, NoSuchCacheReplicatorEntryException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the cache replicator entry where name = &#63; or throws a <code>NoSuchCacheReplicatorEntryException</code> if it could not be found.
@@ -170,21 +162,8 @@ public class CacheReplicatorEntryPersistenceImpl
 	public CacheReplicatorEntry findByName(String name)
 		throws NoSuchCacheReplicatorEntryException {
 
-		CacheReplicatorEntry cacheReplicatorEntry = fetchByName(name);
-
-		if (cacheReplicatorEntry == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCacheReplicatorEntryException(message);
-		}
-
-		return cacheReplicatorEntry;
+		return _uniquePersistenceFinderByName.find(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -432,7 +411,7 @@ public class CacheReplicatorEntryPersistenceImpl
 				_SQL_SELECT_CACHEREPLICATORENTRY_WHERE,
 				_SQL_COUNT_CACHEREPLICATORENTRY_WHERE,
 				CacheReplicatorEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cacheReplicatorEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -476,16 +455,10 @@ public class CacheReplicatorEntryPersistenceImpl
 	private static final String _SQL_COUNT_CACHEREPLICATORENTRY_WHERE =
 		"SELECT COUNT(cacheReplicatorEntry) FROM CacheReplicatorEntry cacheReplicatorEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CacheReplicatorEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CacheReplicatorEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:195288436
+// LIFERAY-SERVICE-BUILDER-HASH:-1084246024

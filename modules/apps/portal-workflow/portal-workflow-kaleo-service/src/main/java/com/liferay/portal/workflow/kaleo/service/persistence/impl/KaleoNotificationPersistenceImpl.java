@@ -79,8 +79,9 @@ public class KaleoNotificationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoNotification>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<KaleoNotification, NoSuchNotificationException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the kaleo notifications where companyId = &#63;.
@@ -121,16 +122,8 @@ public class KaleoNotificationPersistenceImpl
 			OrderByComparator<KaleoNotification> orderByComparator)
 		throws NoSuchNotificationException {
 
-		KaleoNotification kaleoNotification = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (kaleoNotification != null) {
-			return kaleoNotification;
-		}
-
-		throw new NoSuchNotificationException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -172,8 +165,9 @@ public class KaleoNotificationPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<KaleoNotification>
-		_collectionPersistenceFinderByKaleoDefinitionVersionId;
+	private CollectionPersistenceFinder
+		<KaleoNotification, NoSuchNotificationException>
+			_collectionPersistenceFinderByKaleoDefinitionVersionId;
 
 	/**
 	 * Returns an ordered range of all the kaleo notifications where kaleoDefinitionVersionId = &#63;.
@@ -214,19 +208,9 @@ public class KaleoNotificationPersistenceImpl
 			OrderByComparator<KaleoNotification> orderByComparator)
 		throws NoSuchNotificationException {
 
-		KaleoNotification kaleoNotification =
-			fetchByKaleoDefinitionVersionId_First(
-				kaleoDefinitionVersionId, orderByComparator);
-
-		if (kaleoNotification != null) {
-			return kaleoNotification;
-		}
-
-		throw new NoSuchNotificationException(
-			_collectionPersistenceFinderByKaleoDefinitionVersionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoDefinitionVersionId}));
+		return _collectionPersistenceFinderByKaleoDefinitionVersionId.findFirst(
+			finderCache, new Object[] {kaleoDefinitionVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -272,8 +256,9 @@ public class KaleoNotificationPersistenceImpl
 			finderCache, new Object[] {kaleoDefinitionVersionId});
 	}
 
-	private CollectionPersistenceFinder<KaleoNotification>
-		_collectionPersistenceFinderByKCN_KCPK;
+	private CollectionPersistenceFinder
+		<KaleoNotification, NoSuchNotificationException>
+			_collectionPersistenceFinderByKCN_KCPK;
 
 	/**
 	 * Returns an ordered range of all the kaleo notifications where kaleoClassName = &#63; and kaleoClassPK = &#63;.
@@ -316,17 +301,9 @@ public class KaleoNotificationPersistenceImpl
 			OrderByComparator<KaleoNotification> orderByComparator)
 		throws NoSuchNotificationException {
 
-		KaleoNotification kaleoNotification = fetchByKCN_KCPK_First(
-			kaleoClassName, kaleoClassPK, orderByComparator);
-
-		if (kaleoNotification != null) {
-			return kaleoNotification;
-		}
-
-		throw new NoSuchNotificationException(
-			_collectionPersistenceFinderByKCN_KCPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoClassName, kaleoClassPK}));
+		return _collectionPersistenceFinderByKCN_KCPK.findFirst(
+			finderCache, new Object[] {kaleoClassName, kaleoClassPK},
+			orderByComparator);
 	}
 
 	/**
@@ -372,8 +349,9 @@ public class KaleoNotificationPersistenceImpl
 			finderCache, new Object[] {kaleoClassName, kaleoClassPK});
 	}
 
-	private CollectionPersistenceFinder<KaleoNotification>
-		_collectionPersistenceFinderByKCN_KDVI;
+	private CollectionPersistenceFinder
+		<KaleoNotification, NoSuchNotificationException>
+			_collectionPersistenceFinderByKCN_KDVI;
 
 	/**
 	 * Returns an ordered range of all the kaleo notifications where kaleoClassName = &#63; and kaleoDefinitionVersionId = &#63;.
@@ -417,17 +395,10 @@ public class KaleoNotificationPersistenceImpl
 			OrderByComparator<KaleoNotification> orderByComparator)
 		throws NoSuchNotificationException {
 
-		KaleoNotification kaleoNotification = fetchByKCN_KDVI_First(
-			kaleoClassName, kaleoDefinitionVersionId, orderByComparator);
-
-		if (kaleoNotification != null) {
-			return kaleoNotification;
-		}
-
-		throw new NoSuchNotificationException(
-			_collectionPersistenceFinderByKCN_KDVI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoClassName, kaleoDefinitionVersionId}));
+		return _collectionPersistenceFinderByKCN_KDVI.findFirst(
+			finderCache,
+			new Object[] {kaleoClassName, kaleoDefinitionVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -788,7 +759,7 @@ public class KaleoNotificationPersistenceImpl
 				_SQL_SELECT_KALEONOTIFICATION_WHERE,
 				_SQL_COUNT_KALEONOTIFICATION_WHERE,
 				KaleoNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoNotification.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoNotification::getCompanyId));
@@ -818,7 +789,7 @@ public class KaleoNotificationPersistenceImpl
 				_SQL_SELECT_KALEONOTIFICATION_WHERE,
 				_SQL_COUNT_KALEONOTIFICATION_WHERE,
 				KaleoNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoNotification.", "kaleoDefinitionVersionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -849,7 +820,7 @@ public class KaleoNotificationPersistenceImpl
 				_SQL_SELECT_KALEONOTIFICATION_WHERE,
 				_SQL_COUNT_KALEONOTIFICATION_WHERE,
 				KaleoNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoNotification.", "kaleoClassName",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -885,7 +856,7 @@ public class KaleoNotificationPersistenceImpl
 				_SQL_SELECT_KALEONOTIFICATION_WHERE,
 				_SQL_COUNT_KALEONOTIFICATION_WHERE,
 				KaleoNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoNotification.", "kaleoClassName",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -952,13 +923,10 @@ public class KaleoNotificationPersistenceImpl
 	private static final String _SQL_COUNT_KALEONOTIFICATION_WHERE =
 		"SELECT COUNT(kaleoNotification) FROM KaleoNotification kaleoNotification WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoNotification exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1013710781
+// LIFERAY-SERVICE-BUILDER-HASH:-777730649

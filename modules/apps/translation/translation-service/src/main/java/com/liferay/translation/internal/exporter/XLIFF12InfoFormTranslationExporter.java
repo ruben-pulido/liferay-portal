@@ -21,10 +21,13 @@ import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
 import com.liferay.translation.exporter.TranslationInfoItemFieldValuesExporter;
 import com.liferay.translation.info.field.TranslationInfoFieldChecker;
+import com.liferay.translation.internal.util.XLIFFExporterUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+
+import java.nio.charset.StandardCharsets;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -124,14 +127,14 @@ public class XLIFF12InfoFormTranslationExporter
 
 			List<InfoFieldValue<Object>> infoFieldValues = entry.getValue();
 
-			StringBundler sb = new StringBundler(infoFieldValues.size() * 2);
+			StringBundler sb = new StringBundler(infoFieldValues.size());
 
 			for (InfoFieldValue<Object> infoFieldValue : infoFieldValues) {
-				sb.append(infoFieldValue.getValue(sourceLocale));
-				sb.append(StringPool.COMMA_AND_SPACE);
-			}
+				Object value = infoFieldValue.getValue(sourceLocale);
 
-			sb.setIndex(sb.index() - 1);
+				sb.append(
+					(value != null) ? value.toString() : StringPool.BLANK);
+			}
 
 			sourceElement.addCDATA(_getStringValue(sb));
 
@@ -166,8 +169,9 @@ public class XLIFF12InfoFormTranslationExporter
 
 					mrkElement.addAttribute("mid", String.valueOf(mid));
 					mrkElement.addAttribute("mtype", "seg");
-					mrkElement.addCDATA(
-						(String)infoFieldValue.getValue(targetLocale));
+
+					XLIFFExporterUtil.addTargetValue(
+						mrkElement, infoFieldValue, targetLocale);
 
 					mid++;
 				}
@@ -175,14 +179,14 @@ public class XLIFF12InfoFormTranslationExporter
 			else {
 				InfoFieldValue<Object> infoFieldValue = infoFieldValues.get(0);
 
-				targetElement.addCDATA(
-					_getStringValue(infoFieldValue.getValue(targetLocale)));
+				XLIFFExporterUtil.addTargetValue(
+					targetElement, infoFieldValue, targetLocale);
 			}
 		}
 
-		String formattedString = document.formattedString();
+		String xml = document.asXML();
 
-		return new ByteArrayInputStream(formattedString.getBytes());
+		return new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8));
 	}
 
 	@Override

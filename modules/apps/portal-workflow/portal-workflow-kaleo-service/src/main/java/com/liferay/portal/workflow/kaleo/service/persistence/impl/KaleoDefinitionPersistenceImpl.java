@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,8 +93,9 @@ public class KaleoDefinitionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where uuid = &#63;.
@@ -136,16 +135,8 @@ public class KaleoDefinitionPersistenceImpl
 			String uuid, OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -186,7 +177,7 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<KaleoDefinition>
+	private UniquePersistenceFinder<KaleoDefinition, NoSuchDefinitionException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -201,21 +192,8 @@ public class KaleoDefinitionPersistenceImpl
 	public KaleoDefinition findByUUID_G(String uuid, long groupId)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByUUID_G(uuid, groupId);
-
-		if (kaleoDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinitionException(message);
-		}
-
-		return kaleoDefinition;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -263,8 +241,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where uuid = &#63; and companyId = &#63;.
@@ -307,16 +286,8 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -361,8 +332,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where companyId = &#63;.
@@ -403,16 +375,8 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -453,8 +417,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByActive;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByActive;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where active = &#63;.
@@ -495,16 +460,8 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByActive_First(
-			active, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByActive.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {active}));
+		return _collectionPersistenceFinderByActive.findFirst(
+			finderCache, new Object[] {active}, orderByComparator);
 	}
 
 	/**
@@ -545,7 +502,7 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {active});
 	}
 
-	private UniquePersistenceFinder<KaleoDefinition>
+	private UniquePersistenceFinder<KaleoDefinition, NoSuchDefinitionException>
 		_uniquePersistenceFinderByC_N;
 
 	/**
@@ -560,21 +517,8 @@ public class KaleoDefinitionPersistenceImpl
 	public KaleoDefinition findByC_N(long companyId, String name)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByC_N(companyId, name);
-
-		if (kaleoDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinitionException(message);
-		}
-
-		return kaleoDefinition;
+		return _uniquePersistenceFinderByC_N.find(
+			finderCache, new Object[] {companyId, name});
 	}
 
 	/**
@@ -622,8 +566,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, name});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByC_A;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByC_A;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where companyId = &#63; and active = &#63;.
@@ -666,16 +611,8 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByC_A_First(
-			companyId, active, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByC_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, active}));
+		return _collectionPersistenceFinderByC_A.findFirst(
+			finderCache, new Object[] {companyId, active}, orderByComparator);
 	}
 
 	/**
@@ -720,8 +657,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, active});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByG_C_S;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByG_C_S;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where groupId = &#63; and companyId = &#63; and scope = &#63;.
@@ -766,17 +704,9 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByG_C_S_First(
-			groupId, companyId, scope, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByG_C_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, scope}));
+		return _collectionPersistenceFinderByG_C_S.findFirst(
+			finderCache, new Object[] {groupId, companyId, scope},
+			orderByComparator);
 	}
 
 	/**
@@ -825,7 +755,7 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {groupId, companyId, scope});
 	}
 
-	private UniquePersistenceFinder<KaleoDefinition>
+	private UniquePersistenceFinder<KaleoDefinition, NoSuchDefinitionException>
 		_uniquePersistenceFinderByC_N_V;
 
 	/**
@@ -841,23 +771,8 @@ public class KaleoDefinitionPersistenceImpl
 	public KaleoDefinition findByC_N_V(long companyId, String name, int version)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByC_N_V(
-			companyId, name, version);
-
-		if (kaleoDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByC_N_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, name, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinitionException(message);
-		}
-
-		return kaleoDefinition;
+		return _uniquePersistenceFinderByC_N_V.find(
+			finderCache, new Object[] {companyId, name, version});
 	}
 
 	/**
@@ -910,7 +825,7 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, name, version});
 	}
 
-	private UniquePersistenceFinder<KaleoDefinition>
+	private UniquePersistenceFinder<KaleoDefinition, NoSuchDefinitionException>
 		_uniquePersistenceFinderByC_N_A;
 
 	/**
@@ -927,22 +842,8 @@ public class KaleoDefinitionPersistenceImpl
 			long companyId, String name, boolean active)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByC_N_A(companyId, name, active);
-
-		if (kaleoDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByC_N_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, name, active});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinitionException(message);
-		}
-
-		return kaleoDefinition;
+		return _uniquePersistenceFinderByC_N_A.find(
+			finderCache, new Object[] {companyId, name, active});
 	}
 
 	/**
@@ -995,8 +896,9 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {companyId, name, active});
 	}
 
-	private CollectionPersistenceFinder<KaleoDefinition>
-		_collectionPersistenceFinderByG_C_S_A;
+	private CollectionPersistenceFinder
+		<KaleoDefinition, NoSuchDefinitionException>
+			_collectionPersistenceFinderByG_C_S_A;
 
 	/**
 	 * Returns an ordered range of all the kaleo definitions where groupId = &#63; and companyId = &#63; and scope = &#63; and active = &#63;.
@@ -1043,17 +945,9 @@ public class KaleoDefinitionPersistenceImpl
 			OrderByComparator<KaleoDefinition> orderByComparator)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByG_C_S_A_First(
-			groupId, companyId, scope, active, orderByComparator);
-
-		if (kaleoDefinition != null) {
-			return kaleoDefinition;
-		}
-
-		throw new NoSuchDefinitionException(
-			_collectionPersistenceFinderByG_C_S_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, scope, active}));
+		return _collectionPersistenceFinderByG_C_S_A.findFirst(
+			finderCache, new Object[] {groupId, companyId, scope, active},
+			orderByComparator);
 	}
 
 	/**
@@ -1109,7 +1003,7 @@ public class KaleoDefinitionPersistenceImpl
 			finderCache, new Object[] {groupId, companyId, scope, active});
 	}
 
-	private UniquePersistenceFinder<KaleoDefinition>
+	private UniquePersistenceFinder<KaleoDefinition, NoSuchDefinitionException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1125,23 +1019,8 @@ public class KaleoDefinitionPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchDefinitionException {
 
-		KaleoDefinition kaleoDefinition = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (kaleoDefinition == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDefinitionException(message);
-		}
-
-		return kaleoDefinition;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1586,9 +1465,10 @@ public class KaleoDefinitionPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_KALEODEFINITION_WHERE, _SQL_COUNT_KALEODEFINITION_WHERE,
 			KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"kaleoDefinition.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, KaleoDefinition::getUuid));
+				"kaleoDefinition.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, KaleoDefinition::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1600,8 +1480,8 @@ public class KaleoDefinitionPersistenceImpl
 				KaleoDefinition::getGroupId),
 			_SQL_SELECT_KALEODEFINITION_WHERE, "",
 			new FinderColumn<>(
-				"kaleoDefinition.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, KaleoDefinition::getUuid),
+				"kaleoDefinition.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, KaleoDefinition::getUuid),
 			new FinderColumn<>(
 				"kaleoDefinition.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, KaleoDefinition::getGroupId));
@@ -1628,10 +1508,11 @@ public class KaleoDefinitionPersistenceImpl
 				_SQL_SELECT_KALEODEFINITION_WHERE,
 				_SQL_COUNT_KALEODEFINITION_WHERE,
 				KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"kaleoDefinition.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, KaleoDefinition::getUuid),
+					"kaleoDefinition.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					KaleoDefinition::getUuid),
 				new FinderColumn<>(
 					"kaleoDefinition.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoDefinition::getCompanyId));
@@ -1658,7 +1539,7 @@ public class KaleoDefinitionPersistenceImpl
 				_SQL_SELECT_KALEODEFINITION_WHERE,
 				_SQL_COUNT_KALEODEFINITION_WHERE,
 				KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoDefinition.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, KaleoDefinition::getCompanyId));
@@ -1685,10 +1566,11 @@ public class KaleoDefinitionPersistenceImpl
 				_SQL_SELECT_KALEODEFINITION_WHERE,
 				_SQL_COUNT_KALEODEFINITION_WHERE,
 				KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"kaleoDefinition.", "active", FinderColumn.Type.BOOLEAN,
-					"=", true, true, KaleoDefinition::isActive));
+					"kaleoDefinition.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					KaleoDefinition::isActive));
 
 		_uniquePersistenceFinderByC_N = new UniquePersistenceFinder<>(
 			this,
@@ -1726,12 +1608,14 @@ public class KaleoDefinitionPersistenceImpl
 				new String[] {"companyId", "active_"}, false),
 			_SQL_SELECT_KALEODEFINITION_WHERE, _SQL_COUNT_KALEODEFINITION_WHERE,
 			KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"kaleoDefinition.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, KaleoDefinition::getCompanyId),
 			new FinderColumn<>(
-				"kaleoDefinition.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, KaleoDefinition::isActive));
+				"kaleoDefinition.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				KaleoDefinition::isActive));
 
 		_collectionPersistenceFinderByG_C_S = new CollectionPersistenceFinder<>(
 			this,
@@ -1761,6 +1645,7 @@ public class KaleoDefinitionPersistenceImpl
 				null),
 			_SQL_SELECT_KALEODEFINITION_WHERE, _SQL_COUNT_KALEODEFINITION_WHERE,
 			KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"kaleoDefinition.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, KaleoDefinition::getGroupId),
@@ -1814,8 +1699,9 @@ public class KaleoDefinitionPersistenceImpl
 				"kaleoDefinition.", "name", FinderColumn.Type.STRING, "=", true,
 				true, KaleoDefinition::getName),
 			new FinderColumn<>(
-				"kaleoDefinition.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, KaleoDefinition::isActive));
+				"kaleoDefinition.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				KaleoDefinition::isActive));
 
 		_collectionPersistenceFinderByG_C_S_A =
 			new CollectionPersistenceFinder<>(
@@ -1849,7 +1735,7 @@ public class KaleoDefinitionPersistenceImpl
 				_SQL_SELECT_KALEODEFINITION_WHERE,
 				_SQL_COUNT_KALEODEFINITION_WHERE,
 				KaleoDefinitionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoDefinition.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, KaleoDefinition::getGroupId),
@@ -1860,8 +1746,9 @@ public class KaleoDefinitionPersistenceImpl
 					"kaleoDefinition.", "scope", FinderColumn.Type.STRING, "=",
 					true, true, KaleoDefinition::getScope),
 				new FinderColumn<>(
-					"kaleoDefinition.", "active", FinderColumn.Type.BOOLEAN,
-					"=", true, true, KaleoDefinition::isActive));
+					"kaleoDefinition.", "active", "active_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					KaleoDefinition::isActive));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1938,12 +1825,6 @@ public class KaleoDefinitionPersistenceImpl
 	private static final String _SQL_COUNT_KALEODEFINITION_WHERE =
 		"SELECT COUNT(kaleoDefinition) FROM KaleoDefinition kaleoDefinition WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoDefinition exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoDefinitionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active"});
 
@@ -1953,4 +1834,4 @@ public class KaleoDefinitionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1354742459
+// LIFERAY-SERVICE-BUILDER-HASH:2039341296

@@ -112,9 +112,7 @@ public class SharingEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SharingEntry newSharingEntry = _persistence.create(pk);
+		SharingEntry newSharingEntry = addSharingEntry();
 
 		newSharingEntry.setUuid(RandomTestUtil.randomString());
 
@@ -148,7 +146,9 @@ public class SharingEntryPersistenceTest {
 
 		newSharingEntry.setExpirationDate(RandomTestUtil.nextDate());
 
-		_sharingEntries.add(_persistence.update(newSharingEntry));
+		newSharingEntry = _persistence.update(newSharingEntry);
+
+		_sharingEntries.add(newSharingEntry);
 
 		SharingEntry existingSharingEntry = _persistence.findByPrimaryKey(
 			newSharingEntry.getPrimaryKey());
@@ -732,4 +732,4 @@ public class SharingEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1087120718
+// LIFERAY-SERVICE-BUILDER-HASH:482754459

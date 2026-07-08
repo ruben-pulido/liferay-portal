@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Ticket;
+import com.liferay.portal.kernel.model.TicketConstants;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCRenderCommand;
 import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.service.TicketLocalService;
@@ -68,15 +69,25 @@ public class CreateAccountUserMVCRenderCommand implements MVCRenderCommand {
 
 		invitedAccountUserDisplayContext.setTicketKey(ticket.getKey());
 
-		try {
-			JSONObject jsonObject = _jsonFactory.createJSONObject(
-				ticket.getExtraInfo());
-
+		if (ticket.getType() == TicketConstants.TYPE_INVITE_COLLABORATOR) {
 			invitedAccountUserDisplayContext.setEmailAddress(
-				jsonObject.getString("emailAddress"));
+				ticket.getEmailAddress());
+			invitedAccountUserDisplayContext.setTitle(
+				"accept-invitation-to-collaborate");
 		}
-		catch (JSONException jsonException) {
-			throw new PortletException(jsonException);
+		else {
+			try {
+				JSONObject jsonObject = _jsonFactory.createJSONObject(
+					ticket.getExtraInfo());
+
+				invitedAccountUserDisplayContext.setEmailAddress(
+					jsonObject.getString("emailAddress"));
+			}
+			catch (JSONException jsonException) {
+				throw new PortletException(jsonException);
+			}
+
+			invitedAccountUserDisplayContext.setTitle("create-account");
 		}
 
 		renderRequest.setAttribute(

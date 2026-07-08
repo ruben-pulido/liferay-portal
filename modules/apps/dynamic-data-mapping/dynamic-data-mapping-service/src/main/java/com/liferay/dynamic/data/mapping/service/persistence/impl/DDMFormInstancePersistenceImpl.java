@@ -13,7 +13,6 @@ import com.liferay.dynamic.data.mapping.model.impl.DDMFormInstanceModelImpl;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstancePersistence;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.impl.constants.DDMPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -21,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -90,8 +87,9 @@ public class DDMFormInstancePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMFormInstance>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<DDMFormInstance, NoSuchFormInstanceException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the ddm form instances where uuid = &#63;.
@@ -131,16 +129,8 @@ public class DDMFormInstancePersistenceImpl
 			String uuid, OrderByComparator<DDMFormInstance> orderByComparator)
 		throws NoSuchFormInstanceException {
 
-		DDMFormInstance ddmFormInstance = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (ddmFormInstance != null) {
-			return ddmFormInstance;
-		}
-
-		throw new NoSuchFormInstanceException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -181,8 +171,9 @@ public class DDMFormInstancePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DDMFormInstance>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<DDMFormInstance, NoSuchFormInstanceException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the ddm form instance where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchFormInstanceException</code> if it could not be found.
@@ -196,21 +187,8 @@ public class DDMFormInstancePersistenceImpl
 	public DDMFormInstance findByUUID_G(String uuid, long groupId)
 		throws NoSuchFormInstanceException {
 
-		DDMFormInstance ddmFormInstance = fetchByUUID_G(uuid, groupId);
-
-		if (ddmFormInstance == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFormInstanceException(message);
-		}
-
-		return ddmFormInstance;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -258,8 +236,9 @@ public class DDMFormInstancePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DDMFormInstance>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<DDMFormInstance, NoSuchFormInstanceException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the ddm form instances where uuid = &#63; and companyId = &#63;.
@@ -302,16 +281,8 @@ public class DDMFormInstancePersistenceImpl
 			OrderByComparator<DDMFormInstance> orderByComparator)
 		throws NoSuchFormInstanceException {
 
-		DDMFormInstance ddmFormInstance = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ddmFormInstance != null) {
-			return ddmFormInstance;
-		}
-
-		throw new NoSuchFormInstanceException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -356,8 +327,9 @@ public class DDMFormInstancePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DDMFormInstance>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DDMFormInstance, NoSuchFormInstanceException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the ddm form instances where groupId = &#63;.
@@ -397,23 +369,9 @@ public class DDMFormInstancePersistenceImpl
 			long groupId, OrderByComparator<DDMFormInstance> orderByComparator)
 		throws NoSuchFormInstanceException {
 
-		DDMFormInstance ddmFormInstance = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (ddmFormInstance != null) {
-			return ddmFormInstance;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchFormInstanceException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -566,8 +524,9 @@ public class DDMFormInstancePersistenceImpl
 			finderCache, new Object[] {groupIds}, groupIds);
 	}
 
-	private UniquePersistenceFinder<DDMFormInstance>
-		_uniquePersistenceFinderByStructureId;
+	private UniquePersistenceFinder
+		<DDMFormInstance, NoSuchFormInstanceException>
+			_uniquePersistenceFinderByStructureId;
 
 	/**
 	 * Returns the ddm form instance where structureId = &#63; or throws a <code>NoSuchFormInstanceException</code> if it could not be found.
@@ -580,21 +539,8 @@ public class DDMFormInstancePersistenceImpl
 	public DDMFormInstance findByStructureId(long structureId)
 		throws NoSuchFormInstanceException {
 
-		DDMFormInstance ddmFormInstance = fetchByStructureId(structureId);
-
-		if (ddmFormInstance == null) {
-			String message =
-				_uniquePersistenceFinderByStructureId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {structureId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFormInstanceException(message);
-		}
-
-		return ddmFormInstance;
+		return _uniquePersistenceFinderByStructureId.find(
+			finderCache, new Object[] {structureId});
 	}
 
 	/**
@@ -965,9 +911,10 @@ public class DDMFormInstancePersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_DDMFORMINSTANCE_WHERE, _SQL_COUNT_DDMFORMINSTANCE_WHERE,
 			DDMFormInstanceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"ddmFormInstance.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMFormInstance::getUuid));
+				"ddmFormInstance.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DDMFormInstance::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -979,8 +926,8 @@ public class DDMFormInstancePersistenceImpl
 				DDMFormInstance::getGroupId),
 			_SQL_SELECT_DDMFORMINSTANCE_WHERE, "",
 			new FinderColumn<>(
-				"ddmFormInstance.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMFormInstance::getUuid),
+				"ddmFormInstance.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, DDMFormInstance::getUuid),
 			new FinderColumn<>(
 				"ddmFormInstance.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, DDMFormInstance::getGroupId));
@@ -1007,10 +954,11 @@ public class DDMFormInstancePersistenceImpl
 				_SQL_SELECT_DDMFORMINSTANCE_WHERE,
 				_SQL_COUNT_DDMFORMINSTANCE_WHERE,
 				DDMFormInstanceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ddmFormInstance.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, DDMFormInstance::getUuid),
+					"ddmFormInstance.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					DDMFormInstance::getUuid),
 				new FinderColumn<>(
 					"ddmFormInstance.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, DDMFormInstance::getCompanyId));
@@ -1037,17 +985,7 @@ public class DDMFormInstancePersistenceImpl
 				_SQL_SELECT_DDMFORMINSTANCE_WHERE,
 				_SQL_COUNT_DDMFORMINSTANCE_WHERE,
 				DDMFormInstanceModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMFormInstanceImpl.class, DDMFormInstance.class,
-					"ddmFormInstance", "DDMFormInstance",
-					"ddmFormInstance.formInstanceId",
-					"SELECT DISTINCT {ddmFormInstance.*} FROM DDMFormInstance ddmFormInstance WHERE ",
-					"SELECT {DDMFormInstance.*} FROM (SELECT DISTINCT ddmFormInstance.formInstanceId FROM DDMFormInstance ddmFormInstance WHERE ",
-					") TEMP_TABLE INNER JOIN DDMFormInstance ON TEMP_TABLE.formInstanceId = DDMFormInstance.formInstanceId",
-					"SELECT COUNT(DISTINCT ddmFormInstance.formInstanceId) AS COUNT_VALUE FROM DDMFormInstance ddmFormInstance WHERE ",
-					DDMFormInstanceModelImpl.ORDER_BY_SQL,
-					DDMFormInstanceModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"ddmFormInstance.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, DDMFormInstance::getGroupId));
@@ -1121,12 +1059,6 @@ public class DDMFormInstancePersistenceImpl
 	private static final String _SQL_COUNT_DDMFORMINSTANCE_WHERE =
 		"SELECT COUNT(ddmFormInstance) FROM DDMFormInstance ddmFormInstance WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMFormInstance exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMFormInstancePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "settings"});
 
@@ -1136,4 +1068,4 @@ public class DDMFormInstancePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-930715967
+// LIFERAY-SERVICE-BUILDER-HASH:652750634

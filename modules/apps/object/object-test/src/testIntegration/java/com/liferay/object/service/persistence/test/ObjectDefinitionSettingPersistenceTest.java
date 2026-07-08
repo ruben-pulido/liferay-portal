@@ -115,12 +115,8 @@ public class ObjectDefinitionSettingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		ObjectDefinitionSetting newObjectDefinitionSetting =
-			_persistence.create(pk);
-
-		newObjectDefinitionSetting.setMvccVersion(RandomTestUtil.nextLong());
+			addObjectDefinitionSetting();
 
 		newObjectDefinitionSetting.setUuid(RandomTestUtil.randomString());
 
@@ -141,8 +137,10 @@ public class ObjectDefinitionSettingPersistenceTest {
 
 		newObjectDefinitionSetting.setValue(RandomTestUtil.randomString());
 
-		_objectDefinitionSettings.add(
-			_persistence.update(newObjectDefinitionSetting));
+		newObjectDefinitionSetting = _persistence.update(
+			newObjectDefinitionSetting);
+
+		_objectDefinitionSettings.add(newObjectDefinitionSetting);
 
 		ObjectDefinitionSetting existingObjectDefinitionSetting =
 			_persistence.findByPrimaryKey(
@@ -587,8 +585,6 @@ public class ObjectDefinitionSettingPersistenceTest {
 		ObjectDefinitionSetting objectDefinitionSetting = _persistence.create(
 			pk);
 
-		objectDefinitionSetting.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectDefinitionSetting.setUuid(RandomTestUtil.randomString());
 
 		objectDefinitionSetting.setCompanyId(RandomTestUtil.nextLong());
@@ -620,4 +616,4 @@ public class ObjectDefinitionSettingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-571155320
+// LIFERAY-SERVICE-BUILDER-HASH:-1989435165

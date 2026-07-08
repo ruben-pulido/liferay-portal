@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class KaleoProcessPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoProcess>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<KaleoProcess, NoSuchKaleoProcessException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the kaleo processes where uuid = &#63;.
@@ -122,15 +121,8 @@ public class KaleoProcessPersistenceImpl
 			String uuid, OrderByComparator<KaleoProcess> orderByComparator)
 		throws NoSuchKaleoProcessException {
 
-		KaleoProcess kaleoProcess = fetchByUuid_First(uuid, orderByComparator);
-
-		if (kaleoProcess != null) {
-			return kaleoProcess;
-		}
-
-		throw new NoSuchKaleoProcessException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -171,7 +163,7 @@ public class KaleoProcessPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<KaleoProcess>
+	private UniquePersistenceFinder<KaleoProcess, NoSuchKaleoProcessException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -186,21 +178,8 @@ public class KaleoProcessPersistenceImpl
 	public KaleoProcess findByUUID_G(String uuid, long groupId)
 		throws NoSuchKaleoProcessException {
 
-		KaleoProcess kaleoProcess = fetchByUUID_G(uuid, groupId);
-
-		if (kaleoProcess == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchKaleoProcessException(message);
-		}
-
-		return kaleoProcess;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -248,8 +227,9 @@ public class KaleoProcessPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<KaleoProcess>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<KaleoProcess, NoSuchKaleoProcessException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the kaleo processes where uuid = &#63; and companyId = &#63;.
@@ -292,16 +272,8 @@ public class KaleoProcessPersistenceImpl
 			OrderByComparator<KaleoProcess> orderByComparator)
 		throws NoSuchKaleoProcessException {
 
-		KaleoProcess kaleoProcess = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (kaleoProcess != null) {
-			return kaleoProcess;
-		}
-
-		throw new NoSuchKaleoProcessException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -346,8 +318,9 @@ public class KaleoProcessPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<KaleoProcess>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<KaleoProcess, NoSuchKaleoProcessException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the kaleo processes where groupId = &#63;.
@@ -387,16 +360,8 @@ public class KaleoProcessPersistenceImpl
 			long groupId, OrderByComparator<KaleoProcess> orderByComparator)
 		throws NoSuchKaleoProcessException {
 
-		KaleoProcess kaleoProcess = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (kaleoProcess != null) {
-			return kaleoProcess;
-		}
-
-		throw new NoSuchKaleoProcessException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -472,7 +437,7 @@ public class KaleoProcessPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private UniquePersistenceFinder<KaleoProcess>
+	private UniquePersistenceFinder<KaleoProcess, NoSuchKaleoProcessException>
 		_uniquePersistenceFinderByDDLRecordSetId;
 
 	/**
@@ -486,21 +451,8 @@ public class KaleoProcessPersistenceImpl
 	public KaleoProcess findByDDLRecordSetId(long DDLRecordSetId)
 		throws NoSuchKaleoProcessException {
 
-		KaleoProcess kaleoProcess = fetchByDDLRecordSetId(DDLRecordSetId);
-
-		if (kaleoProcess == null) {
-			String message =
-				_uniquePersistenceFinderByDDLRecordSetId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {DDLRecordSetId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchKaleoProcessException(message);
-		}
-
-		return kaleoProcess;
+		return _uniquePersistenceFinderByDDLRecordSetId.find(
+			finderCache, new Object[] {DDLRecordSetId});
 	}
 
 	/**
@@ -783,10 +735,11 @@ public class KaleoProcessPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_KALEOPROCESS_WHERE, _SQL_COUNT_KALEOPROCESS_WHERE,
-			KaleoProcessModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			KaleoProcessModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"kaleoProcess.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, KaleoProcess::getUuid));
+				"kaleoProcess.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, KaleoProcess::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -798,8 +751,8 @@ public class KaleoProcessPersistenceImpl
 				KaleoProcess::getGroupId),
 			_SQL_SELECT_KALEOPROCESS_WHERE, "",
 			new FinderColumn<>(
-				"kaleoProcess.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, KaleoProcess::getUuid),
+				"kaleoProcess.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, KaleoProcess::getUuid),
 			new FinderColumn<>(
 				"kaleoProcess.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, KaleoProcess::getGroupId));
@@ -825,9 +778,10 @@ public class KaleoProcessPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_KALEOPROCESS_WHERE, _SQL_COUNT_KALEOPROCESS_WHERE,
 				KaleoProcessModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"kaleoProcess.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, KaleoProcess::getUuid),
+					"kaleoProcess.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, KaleoProcess::getUuid),
 				new FinderColumn<>(
 					"kaleoProcess.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, KaleoProcess::getCompanyId));
@@ -853,15 +807,7 @@ public class KaleoProcessPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_KALEOPROCESS_WHERE, _SQL_COUNT_KALEOPROCESS_WHERE,
 				KaleoProcessModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					KaleoProcessImpl.class, KaleoProcess.class, "kaleoProcess",
-					"KaleoProcess", "kaleoProcess.kaleoProcessId",
-					"SELECT DISTINCT {kaleoProcess.*} FROM KaleoProcess kaleoProcess WHERE ",
-					"SELECT {KaleoProcess.*} FROM (SELECT DISTINCT kaleoProcess.kaleoProcessId FROM KaleoProcess kaleoProcess WHERE ",
-					") TEMP_TABLE INNER JOIN KaleoProcess ON TEMP_TABLE.kaleoProcessId = KaleoProcess.kaleoProcessId",
-					"SELECT COUNT(DISTINCT kaleoProcess.kaleoProcessId) AS COUNT_VALUE FROM KaleoProcess kaleoProcess WHERE ",
-					KaleoProcessModelImpl.ORDER_BY_SQL,
-					KaleoProcessModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"kaleoProcess.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, KaleoProcess::getGroupId));
@@ -933,12 +879,6 @@ public class KaleoProcessPersistenceImpl
 	private static final String _SQL_COUNT_KALEOPROCESS_WHERE =
 		"SELECT COUNT(kaleoProcess) FROM KaleoProcess kaleoProcess WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoProcess exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoProcessPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -948,4 +888,4 @@ public class KaleoProcessPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-229528345
+// LIFERAY-SERVICE-BUILDER-HASH:-1178690584

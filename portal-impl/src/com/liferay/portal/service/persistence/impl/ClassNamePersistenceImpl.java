@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchClassNameException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.ClassNameTable;
 import com.liferay.portal.kernel.service.persistence.ClassNamePersistence;
@@ -58,7 +56,8 @@ public class ClassNamePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<ClassName> _uniquePersistenceFinderByValue;
+	private UniquePersistenceFinder<ClassName, NoSuchClassNameException>
+		_uniquePersistenceFinderByValue;
 
 	/**
 	 * Returns the class name where value = &#63; or throws a <code>NoSuchClassNameException</code> if it could not be found.
@@ -69,21 +68,8 @@ public class ClassNamePersistenceImpl
 	 */
 	@Override
 	public ClassName findByValue(String value) throws NoSuchClassNameException {
-		ClassName className = fetchByValue(value);
-
-		if (className == null) {
-			String message =
-				_uniquePersistenceFinderByValue.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {value});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchClassNameException(message);
-		}
-
-		return className;
+		return _uniquePersistenceFinderByValue.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {value});
 	}
 
 	/**
@@ -321,16 +307,10 @@ public class ClassNamePersistenceImpl
 	private static final String _SQL_SELECT_CLASSNAME_WHERE =
 		"SELECT className FROM ClassName className WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ClassName exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ClassNamePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:530755084
+// LIFERAY-SERVICE-BUILDER-HASH:-889200233

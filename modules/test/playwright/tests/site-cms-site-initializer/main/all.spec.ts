@@ -10,10 +10,18 @@ import path from 'path';
 import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {featureFlagsTest} from '../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../fixtures/loginTest';
+import {
+	applyFDSDateTimeRangeFilter,
+	formatDateTimeForUI,
+} from '../../../utils/applyFDSDateTimeRangeFilter';
+import {applyFDSSelectionFilter} from '../../../utils/applyFDSSelectionFilter';
 import getRandomString from '../../../utils/getRandomString';
 import {performUserSwitchViaApi, userData} from '../../../utils/performLogin';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import {cmsPagesTest} from './fixtures/cmsPagesTest';
+
+const _PNG_BASE64 =
+	'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNgAAACAAEABToPCwAAAABJRU5ErkJggg==';
 
 const test = mergeTests(
 	cmsPagesTest,
@@ -73,6 +81,10 @@ test(
 			await expect(
 				page.getByText('You are about to delete the asset')
 			).toBeVisible();
+
+			await expect(
+				page.locator('.liferay-modal .modal-dialog')
+			).toHaveClass(/modal-dialog-centered/);
 
 			await page.getByRole('button', {name: 'Delete'}).click();
 
@@ -328,8 +340,56 @@ test(
 );
 
 test(
+	'Upload button stays in viewport when many files are queued on a short screen',
+	{tag: '@LPD-90005'},
+	async ({assetsPage, page}) => {
+		await page.setViewportSize({height: 500, width: 1024});
+
+		await assetsPage.gotoAll();
+
+		const dataSetWrapper = page.locator('div.data-set-wrapper').first();
+		const dataTransfer = await page.evaluateHandle(
+			(data) => {
+				const dt = new DataTransfer();
+
+				for (let i = 1; i <= 10; i++) {
+					const file = new File(
+						[data.toString('hex')],
+						`file_upload_image_${i}.jpeg`,
+						{
+							type: 'image/jpg',
+						}
+					);
+					dt.items.add(file);
+				}
+
+				return dt;
+			},
+			readFileSync(
+				path.join(__dirname, '/dependencies/file_upload_image_1.jpg')
+			)
+		);
+
+		await dataSetWrapper.dispatchEvent('dragstart', {dataTransfer});
+		await dataSetWrapper.dispatchEvent('dragenter', {dataTransfer});
+		await dataSetWrapper.dispatchEvent('dragover', {dataTransfer});
+
+		await dataSetWrapper.dispatchEvent('drop', {dataTransfer});
+		await dataSetWrapper.dispatchEvent('dragend', {dataTransfer});
+
+		await expect(assetsPage.modal.container).toBeVisible();
+
+		await expect(
+			assetsPage.modal.footer.getByRole('button', {
+				name: 'Upload (10)',
+			})
+		).toBeInViewport();
+	}
+);
+
+test(
 	'Expiration date filter allows future dates',
-	{tag: '@LPD-69189'},
+	{tag: ['@LPD-69189', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const file1Title = `Content ${getRandomString()}`;
@@ -354,34 +414,18 @@ test(
 			page.getByRole('cell', {exact: true, name: file1Title})
 		).toBeVisible();
 
-		// Choose to filter by Expiration Date
-
-		await page.getByRole('button', {name: 'Filter'}).click();
-
-		await page.getByRole('menuitem', {name: 'Expiration Date'}).click();
-
-		const fromDateInput = page.getByLabel('From');
-		const toDateInput = page.getByLabel('To', {exact: true});
-
-		// Set future From and To dates covering futureDate
+		// Filter by an Expiration Date range covering futureDate
 
 		const fromDate = new Date();
 		const toDate = new Date();
 
 		toDate.setDate(toDate.getDate() + 2);
 
-		// Fill in future dates and see that filter label is applied
-
-		await fromDateInput.fill(fromDate.toISOString().split('T')[0]);
-		await toDateInput.fill(toDate.toISOString().split('T')[0]);
-
-		await page.getByRole('button', {name: 'Add Filter'}).click();
-
-		await expect(
-			page
-				.getByRole('button', {name: /Expiration Date:/})
-				.locator('.label-section')
-		).toBeVisible();
+		await applyFDSDateTimeRangeFilter(page, {
+			filter: 'Expiration Date',
+			from: fromDate,
+			to: toDate,
+		});
 
 		// Verify that the content is still visible (it was filtered out before the fix)
 
@@ -393,7 +437,7 @@ test(
 
 test(
 	'Content can be filtered by Review Date',
-	{tag: '@LPD-85206'},
+	{tag: ['@LPD-85206', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const file1Title = `Content ${getRandomString()}`;
@@ -418,34 +462,18 @@ test(
 			page.getByRole('cell', {exact: true, name: file1Title})
 		).toBeVisible();
 
-		// Choose to filter by Review Date
-
-		await page.getByRole('button', {name: 'Filter'}).click();
-
-		await page.getByRole('menuitem', {name: 'Review Date'}).click();
-
-		const fromDateInput = page.getByLabel('From');
-		const toDateInput = page.getByLabel('To', {exact: true});
-
-		// Set past From and To dates covering pastDate
+		// Filter by a Review Date range covering pastDate
 
 		const fromDate = new Date();
 		const toDate = new Date();
 
 		fromDate.setDate(fromDate.getDate() - 2);
 
-		// Fill in dates and see that filter label is applied
-
-		await fromDateInput.fill(fromDate.toISOString().split('T')[0]);
-		await toDateInput.fill(toDate.toISOString().split('T')[0]);
-
-		await page.getByRole('button', {name: 'Add Filter'}).click();
-
-		await expect(
-			page
-				.getByRole('button', {name: /Review Date:/})
-				.locator('.label-section')
-		).toBeVisible();
+		await applyFDSDateTimeRangeFilter(page, {
+			filter: 'Review Date',
+			from: fromDate,
+			to: toDate,
+		});
 
 		// Verify that the content is visible
 
@@ -457,7 +485,7 @@ test(
 
 test(
 	'Expiration date filter does not allow "to" date to be before "from" date',
-	{tag: '@LPD-78935'},
+	{tag: ['@LPD-78935', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const fileTitle = `Content ${getRandomString()}`;
@@ -495,17 +523,17 @@ test(
 			fromDate.setDate(fromDate.getDate() + 1);
 
 			await test.step('Set "from" date to a future date', async () => {
-				await fromDateInput.fill(fromDate.toISOString().split('T')[0]);
+				await fromDateInput.fill(formatDateTimeForUI(fromDate));
 			});
 
 			await test.step('Check that the "Add filter" button is disabled if "to" date is before "from date"', async () => {
-				await toDateInput.fill(toDate.toISOString().split('T')[0]);
+				await toDateInput.fill(formatDateTimeForUI(toDate));
 				await expect(addFilterButton).toBeDisabled();
 			});
 
 			await test.step('Check that the "Add filter" button is enabled if "to" date is after "from date"', async () => {
 				toDate.setDate(toDate.getDate() + 5);
-				await toDateInput.fill(toDate.toISOString().split('T')[0]);
+				await toDateInput.fill(formatDateTimeForUI(toDate));
 				await expect(addFilterButton).toBeEnabled();
 			});
 		}
@@ -694,7 +722,7 @@ test(
 
 test(
 	'Content can be filtered by Create Date',
-	{tag: ['@LPD-85551', '@LPD-87955']},
+	{tag: ['@LPD-85551', '@LPD-87955', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const fileTitle = `Content ${getRandomString()}`;
@@ -719,23 +747,14 @@ test(
 			});
 
 			await test.step('Apply Create Date filter', async () => {
-				await page.getByRole('button', {name: 'Filter'}).click();
-
-				await page.getByRole('menuitem', {name: 'Create Date'}).click();
-
 				const fromDate = new Date();
-				const toDate = new Date();
 
 				fromDate.setDate(fromDate.getDate() - 1);
 
-				await page
-					.getByLabel('From')
-					.fill(fromDate.toISOString().split('T')[0]);
-				await page
-					.getByLabel('To', {exact: true})
-					.fill(toDate.toISOString().split('T')[0]);
-
-				await page.getByRole('button', {name: 'Add Filter'}).click();
+				await applyFDSDateTimeRangeFilter(page, {
+					filter: 'Create Date',
+					from: fromDate,
+				});
 			});
 
 			await test.step('Check filter chip and entry are visible', async () => {
@@ -763,7 +782,7 @@ test(
 
 test(
 	'Content can be filtered by Display Date',
-	{tag: ['@LPD-85551', '@LPD-87955']},
+	{tag: ['@LPD-85551', '@LPD-87955', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const matchingTitle = `Matching ${getRandomString()}`;
@@ -813,26 +832,17 @@ test(
 			});
 
 			await test.step('Apply Display Date filter', async () => {
-				await page.getByRole('button', {name: 'Filter'}).click();
-
-				await page
-					.getByRole('menuitem', {name: 'Display Date'})
-					.click();
-
 				const fromDate = new Date();
 				const toDate = new Date();
 
 				fromDate.setDate(fromDate.getDate() + 4);
 				toDate.setDate(toDate.getDate() + 6);
 
-				await page
-					.getByLabel('From')
-					.fill(fromDate.toISOString().split('T')[0]);
-				await page
-					.getByLabel('To', {exact: true})
-					.fill(toDate.toISOString().split('T')[0]);
-
-				await page.getByRole('button', {name: 'Add Filter'}).click();
+				await applyFDSDateTimeRangeFilter(page, {
+					filter: 'Display Date',
+					from: fromDate,
+					to: toDate,
+				});
 			});
 
 			await test.step('Check only the matching content remains visible', async () => {
@@ -875,7 +885,7 @@ test(
 
 test(
 	'Content can be filtered by Modified Date',
-	{tag: ['@LPD-85551', '@LPD-87955']},
+	{tag: ['@LPD-85551', '@LPD-87955', '@LPD-90051']},
 	async ({apiHelpers, assetsPage, page}) => {
 		const applicationName = 'cms/basic-web-contents';
 		const fileTitle = `Content ${getRandomString()}`;
@@ -900,25 +910,14 @@ test(
 			});
 
 			await test.step('Apply Modified Date filter', async () => {
-				await page.getByRole('button', {name: 'Filter'}).click();
-
-				await page
-					.getByRole('menuitem', {name: 'Modified Date'})
-					.click();
-
 				const fromDate = new Date();
-				const toDate = new Date();
 
 				fromDate.setDate(fromDate.getDate() - 1);
 
-				await page
-					.getByLabel('From')
-					.fill(fromDate.toISOString().split('T')[0]);
-				await page
-					.getByLabel('To', {exact: true})
-					.fill(toDate.toISOString().split('T')[0]);
-
-				await page.getByRole('button', {name: 'Add Filter'}).click();
+				await applyFDSDateTimeRangeFilter(page, {
+					filter: 'Modified Date',
+					from: fromDate,
+				});
 			});
 
 			await test.step('Check filter chip and entry are visible', async () => {
@@ -1075,6 +1074,181 @@ test(
 
 			await expect(assetsPage.getItem(insideTitle)).toBeHidden();
 			await expect(assetsPage.getItem(outsideTitle)).toBeHidden();
+		});
+	}
+);
+
+test(
+	'All section can be filtered by Space',
+	{tag: '@LPD-91933'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const applicationName = 'cms/basic-web-contents';
+		const space1Name = `Space ${getRandomString()}`;
+		const space2Name = `Space ${getRandomString()}`;
+		const space1ContentTitle = `Content ${getRandomString()}`;
+		const space2ContentTitle = `Content ${getRandomString()}`;
+
+		await test.step('Create two Spaces with one content each', async () => {
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: space1Name,
+				settings: {},
+				type: 'Space',
+			});
+
+			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+				name: space2Name,
+				settings: {},
+				type: 'Space',
+			});
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: space1ContentTitle,
+				},
+				applicationName,
+				space1Name
+			);
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: space2ContentTitle,
+				},
+				applicationName,
+				space2Name
+			);
+		});
+
+		await test.step('Both contents are visible before filtering', async () => {
+			await assetsPage.gotoAll();
+
+			await expect(assetsPage.getItem(space1ContentTitle)).toBeVisible();
+			await expect(assetsPage.getItem(space2ContentTitle)).toBeVisible();
+		});
+
+		await test.step('Filter by Space and check only the matching content is visible', async () => {
+			await applyFDSSelectionFilter(page, {
+				filter: 'Space',
+				value: space1Name,
+			});
+
+			await expect(assetsPage.getItem(space1ContentTitle)).toBeVisible();
+			await expect(assetsPage.getItem(space2ContentTitle)).toBeHidden();
+		});
+	}
+);
+
+test(
+	'All section can be filtered by Status',
+	{tag: '@LPD-91933'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const applicationName = 'cms/basic-web-contents';
+		const approvedTitle = `Content A ${getRandomString()}`;
+		const expiredTitle = `Content B ${getRandomString()}`;
+
+		await test.step('Create one approved and one expired content in the Default Space', async () => {
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: approvedTitle,
+				},
+				applicationName,
+				'Default'
+			);
+
+			const expiredEntry = await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: expiredTitle,
+				},
+				applicationName,
+				'Default'
+			);
+
+			await apiHelpers.objectEntry.expireObjectEntryByExternalReferenceCode(
+				applicationName,
+				'Default',
+				expiredEntry.externalReferenceCode
+			);
+		});
+
+		await test.step('Both contents are visible before filtering', async () => {
+			await assetsPage.gotoAll();
+
+			await expect(assetsPage.getItem(approvedTitle)).toBeVisible();
+			await expect(assetsPage.getItem(expiredTitle)).toBeVisible();
+		});
+
+		await test.step('Filter by Status Approved and check only the approved content is visible', async () => {
+			await applyFDSSelectionFilter(page, {
+				filter: 'Status',
+				value: 'Approved',
+			});
+
+			await expect(assetsPage.getItem(approvedTitle)).toBeVisible();
+			await expect(assetsPage.getItem(expiredTitle)).toBeHidden();
+		});
+	}
+);
+
+test(
+	'All section can be filtered by Extension',
+	{tag: '@LPD-96958'},
+	async ({apiHelpers, assetsPage, page}) => {
+		const applicationName = 'cms/basic-documents';
+		const jpgFileName = `JPG ${getRandomString()}.jpg`;
+		const pngFileName = `PNG ${getRandomString()}.png`;
+
+		await test.step('Upload a PNG file and a JPG file to the Default Space', async () => {
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					file: {fileBase64: _PNG_BASE64, name: pngFileName},
+					objectEntryFolderExternalReferenceCode: 'L_FILES',
+					title: pngFileName,
+				},
+				applicationName,
+				'Default'
+			);
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					file: {
+						fileBase64: readFileSync(
+							path.join(
+								__dirname,
+								'/dependencies/file_upload_image_1.jpg'
+							)
+						).toString('base64'),
+						name: jpgFileName,
+					},
+					objectEntryFolderExternalReferenceCode: 'L_FILES',
+					title: jpgFileName,
+				},
+				applicationName,
+				'Default'
+			);
+		});
+
+		await test.step('Both files are visible before filtering', async () => {
+			await assetsPage.gotoAll();
+
+			await expect(assetsPage.getItem(pngFileName)).toBeVisible();
+			await expect(assetsPage.getItem(jpgFileName)).toBeVisible();
+		});
+
+		// The Extension filter is only offered when the aggregation finds
+		// existing file extensions, so applying it also proves the filter is
+		// mounted with options (LPD-96958).
+
+		await test.step('Filter by Extension png and check only the PNG file is visible', async () => {
+			await applyFDSSelectionFilter(page, {
+				filter: 'Extension',
+				value: 'png',
+			});
+
+			await expect(assetsPage.getItem(pngFileName)).toBeVisible();
+			await expect(assetsPage.getItem(jpgFileName)).toBeHidden();
 		});
 	}
 );

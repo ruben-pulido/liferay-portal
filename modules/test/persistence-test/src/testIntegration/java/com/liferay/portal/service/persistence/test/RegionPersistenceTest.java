@@ -112,11 +112,7 @@ public class RegionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Region newRegion = _persistence.create(pk);
-
-		newRegion.setMvccVersion(RandomTestUtil.nextLong());
+		Region newRegion = addRegion();
 
 		newRegion.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -150,7 +146,9 @@ public class RegionPersistenceTest {
 
 		newRegion.setStatus(RandomTestUtil.nextInt());
 
-		_regions.add(_persistence.update(newRegion));
+		newRegion = _persistence.update(newRegion);
+
+		_regions.add(newRegion);
 
 		Region existingRegion = _persistence.findByPrimaryKey(
 			newRegion.getPrimaryKey());
@@ -580,8 +578,6 @@ public class RegionPersistenceTest {
 
 		Region region = _persistence.create(pk);
 
-		region.setMvccVersion(RandomTestUtil.nextLong());
-
 		region.setCtCollectionId(RandomTestUtil.nextLong());
 
 		region.setUuid(RandomTestUtil.randomString());
@@ -624,4 +620,4 @@ public class RegionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1941573259
+// LIFERAY-SERVICE-BUILDER-HASH:-1580964058

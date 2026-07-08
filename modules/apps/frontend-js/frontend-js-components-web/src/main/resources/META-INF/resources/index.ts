@@ -27,6 +27,15 @@ export {
 	LearnResourcesContext,
 } from './learn_message/LearnMessage';
 
+export {ManageMembersList} from './manage_members_modal/ManageMembersList';
+export {default as ManageMembersModal} from './manage_members_modal/ManageMembersModal';
+export {MembersSelectOptions} from './manage_members_modal/MembersSelectOptions';
+export {MemberType} from './manage_members_modal/types';
+export type {
+	AddMembersInputApi,
+	MembersConfig,
+} from './manage_members_modal/types';
+
 export {default as ManagementToolbar} from './management_toolbar/ManagementToolbar';
 
 export {default as openAlertModal} from './modal/commands/openAlertModal';
@@ -52,6 +61,32 @@ export {
 	type UploadRequestCallback,
 } from './multiple_file_uploader/types';
 
+export {default as CollaboratorService} from './share_modal_content/CollaboratorService';
+export type {
+	CollaboratorItem,
+	CollaboratorPayload,
+} from './share_modal_content/CollaboratorService';
+
+export {
+	default as ExpirationDateSelector,
+	formatDateForView,
+	formatDateToISO,
+} from './share_modal_content/ExpirationDateSelector';
+export {default as PermissionSelector} from './share_modal_content/PermissionSelector';
+export {default as ShareModalContent} from './share_modal_content/ShareModalContent';
+export {COLLABORATOR_TYPE} from './share_modal_content/types';
+export type {
+	AutocompleteItem,
+	Collaborator,
+	CollaboratorBadgeProps,
+	CollaboratorIconProps,
+	CollaboratorType,
+	PermissionOption,
+	ShareModalContentProps,
+	ShareModalCreator,
+	ShareModalUserAccount,
+	ShareModalUserGroup,
+} from './share_modal_content/types';
 export {default as openToast} from './toast/openToast';
 export type {OpenToastProps} from './toast/openToast';
 

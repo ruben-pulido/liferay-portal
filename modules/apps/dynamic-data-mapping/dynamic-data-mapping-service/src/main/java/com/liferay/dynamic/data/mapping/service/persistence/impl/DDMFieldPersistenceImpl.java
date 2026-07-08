@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -79,7 +77,7 @@ public class DDMFieldPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMField>
+	private CollectionPersistenceFinder<DDMField, NoSuchFieldException>
 		_collectionPersistenceFinderByStorageId;
 
 	/**
@@ -119,16 +117,8 @@ public class DDMFieldPersistenceImpl
 			long storageId, OrderByComparator<DDMField> orderByComparator)
 		throws NoSuchFieldException {
 
-		DDMField ddmField = fetchByStorageId_First(
-			storageId, orderByComparator);
-
-		if (ddmField != null) {
-			return ddmField;
-		}
-
-		throw new NoSuchFieldException(
-			_collectionPersistenceFinderByStorageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {storageId}));
+		return _collectionPersistenceFinderByStorageId.findFirst(
+			finderCache, new Object[] {storageId}, orderByComparator);
 	}
 
 	/**
@@ -169,7 +159,7 @@ public class DDMFieldPersistenceImpl
 			finderCache, new Object[] {storageId});
 	}
 
-	private CollectionPersistenceFinder<DDMField>
+	private CollectionPersistenceFinder<DDMField, NoSuchFieldException>
 		_collectionPersistenceFinderByStructureVersionId;
 
 	/**
@@ -210,18 +200,8 @@ public class DDMFieldPersistenceImpl
 			OrderByComparator<DDMField> orderByComparator)
 		throws NoSuchFieldException {
 
-		DDMField ddmField = fetchByStructureVersionId_First(
-			structureVersionId, orderByComparator);
-
-		if (ddmField != null) {
-			return ddmField;
-		}
-
-		throw new NoSuchFieldException(
-			_collectionPersistenceFinderByStructureVersionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {structureVersionId}));
+		return _collectionPersistenceFinderByStructureVersionId.findFirst(
+			finderCache, new Object[] {structureVersionId}, orderByComparator);
 	}
 
 	/**
@@ -263,7 +243,7 @@ public class DDMFieldPersistenceImpl
 			finderCache, new Object[] {structureVersionId});
 	}
 
-	private CollectionPersistenceFinder<DDMField>
+	private CollectionPersistenceFinder<DDMField, NoSuchFieldException>
 		_collectionPersistenceFinderByC_F;
 
 	/**
@@ -306,16 +286,9 @@ public class DDMFieldPersistenceImpl
 			OrderByComparator<DDMField> orderByComparator)
 		throws NoSuchFieldException {
 
-		DDMField ddmField = fetchByC_F_First(
-			companyId, fieldType, orderByComparator);
-
-		if (ddmField != null) {
-			return ddmField;
-		}
-
-		throw new NoSuchFieldException(
-			_collectionPersistenceFinderByC_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, fieldType}));
+		return _collectionPersistenceFinderByC_F.findFirst(
+			finderCache, new Object[] {companyId, fieldType},
+			orderByComparator);
 	}
 
 	/**
@@ -361,7 +334,7 @@ public class DDMFieldPersistenceImpl
 			finderCache, new Object[] {companyId, fieldType});
 	}
 
-	private CollectionPersistenceFinder<DDMField>
+	private CollectionPersistenceFinder<DDMField, NoSuchFieldException>
 		_collectionPersistenceFinderByS_F;
 
 	/**
@@ -404,16 +377,9 @@ public class DDMFieldPersistenceImpl
 			OrderByComparator<DDMField> orderByComparator)
 		throws NoSuchFieldException {
 
-		DDMField ddmField = fetchByS_F_First(
-			storageId, fieldName, orderByComparator);
-
-		if (ddmField != null) {
-			return ddmField;
-		}
-
-		throw new NoSuchFieldException(
-			_collectionPersistenceFinderByS_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {storageId, fieldName}));
+		return _collectionPersistenceFinderByS_F.findFirst(
+			finderCache, new Object[] {storageId, fieldName},
+			orderByComparator);
 	}
 
 	/**
@@ -459,7 +425,8 @@ public class DDMFieldPersistenceImpl
 			finderCache, new Object[] {storageId, fieldName});
 	}
 
-	private UniquePersistenceFinder<DDMField> _uniquePersistenceFinderByS_I;
+	private UniquePersistenceFinder<DDMField, NoSuchFieldException>
+		_uniquePersistenceFinderByS_I;
 
 	/**
 	 * Returns the ddm field where storageId = &#63; and instanceId = &#63; or throws a <code>NoSuchFieldException</code> if it could not be found.
@@ -473,22 +440,8 @@ public class DDMFieldPersistenceImpl
 	public DDMField findByS_I(long storageId, String instanceId)
 		throws NoSuchFieldException {
 
-		DDMField ddmField = fetchByS_I(storageId, instanceId);
-
-		if (ddmField == null) {
-			String message =
-				_uniquePersistenceFinderByS_I.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {storageId, instanceId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFieldException(message);
-		}
-
-		return ddmField;
+		return _uniquePersistenceFinderByS_I.find(
+			finderCache, new Object[] {storageId, instanceId});
 	}
 
 	/**
@@ -794,7 +747,8 @@ public class DDMFieldPersistenceImpl
 					"countByStorageId", new String[] {Long.class.getName()},
 					new String[] {"storageId"}, false),
 				_SQL_SELECT_DDMFIELD_WHERE, _SQL_COUNT_DDMFIELD_WHERE,
-				DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ddmField.", "storageId", FinderColumn.Type.LONG, "=", true,
 					true, DDMField::getStorageId));
@@ -822,7 +776,8 @@ public class DDMFieldPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"structureVersionId"}, false),
 				_SQL_SELECT_DDMFIELD_WHERE, _SQL_COUNT_DDMFIELD_WHERE,
-				DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ddmField.", "structureVersionId", FinderColumn.Type.LONG,
 					"=", true, true, DDMField::getStructureVersionId));
@@ -846,7 +801,7 @@ public class DDMFieldPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "fieldType"}, 0, 2, false, null),
 			_SQL_SELECT_DDMFIELD_WHERE, _SQL_COUNT_DDMFIELD_WHERE,
-			DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ddmField.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, DDMField::getCompanyId),
@@ -873,7 +828,7 @@ public class DDMFieldPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"storageId", "fieldName"}, 0, 2, false, null),
 			_SQL_SELECT_DDMFIELD_WHERE, _SQL_COUNT_DDMFIELD_WHERE,
-			DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ddmField.", "storageId", FinderColumn.Type.LONG, "=", true,
 				true, DDMField::getStorageId),
@@ -954,16 +909,10 @@ public class DDMFieldPersistenceImpl
 	private static final String _SQL_COUNT_DDMFIELD_WHERE =
 		"SELECT COUNT(ddmField) FROM DDMField ddmField WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMField exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMFieldPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:300960618
+// LIFERAY-SERVICE-BUILDER-HASH:1234937332

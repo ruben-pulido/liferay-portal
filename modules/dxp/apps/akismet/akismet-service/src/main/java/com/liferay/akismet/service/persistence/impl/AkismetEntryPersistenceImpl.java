@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -78,8 +76,9 @@ public class AkismetEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AkismetEntry>
-		_collectionPersistenceFinderByLtModifiedDate;
+	private CollectionPersistenceFinder
+		<AkismetEntry, NoSuchAkismetEntryException>
+			_collectionPersistenceFinderByLtModifiedDate;
 
 	/**
 	 * Returns all the akismet entries where modifiedDate &lt; &#63;.
@@ -173,16 +172,8 @@ public class AkismetEntryPersistenceImpl
 			OrderByComparator<AkismetEntry> orderByComparator)
 		throws NoSuchAkismetEntryException {
 
-		AkismetEntry akismetEntry = fetchByLtModifiedDate_First(
-			modifiedDate, orderByComparator);
-
-		if (akismetEntry != null) {
-			return akismetEntry;
-		}
-
-		throw new NoSuchAkismetEntryException(
-			_collectionPersistenceFinderByLtModifiedDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {modifiedDate}));
+		return _collectionPersistenceFinderByLtModifiedDate.findFirst(
+			finderCache, new Object[] {modifiedDate}, orderByComparator);
 	}
 
 	/**
@@ -223,7 +214,8 @@ public class AkismetEntryPersistenceImpl
 			finderCache, new Object[] {modifiedDate});
 	}
 
-	private UniquePersistenceFinder<AkismetEntry> _uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder<AkismetEntry, NoSuchAkismetEntryException>
+		_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the akismet entry where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchAkismetEntryException</code> if it could not be found.
@@ -237,22 +229,8 @@ public class AkismetEntryPersistenceImpl
 	public AkismetEntry findByC_C(long classNameId, long classPK)
 		throws NoSuchAkismetEntryException {
 
-		AkismetEntry akismetEntry = fetchByC_C(classNameId, classPK);
-
-		if (akismetEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchAkismetEntryException(message);
-		}
-
-		return akismetEntry;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -519,6 +497,7 @@ public class AkismetEntryPersistenceImpl
 					new String[] {"modifiedDate"}, false),
 				_SQL_SELECT_AKISMETENTRY_WHERE, _SQL_COUNT_AKISMETENTRY_WHERE,
 				AkismetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"akismetEntry.", "modifiedDate", FinderColumn.Type.DATE,
 					"<", true, true, AkismetEntry::getModifiedDate));
@@ -592,12 +571,6 @@ public class AkismetEntryPersistenceImpl
 	private static final String _SQL_COUNT_AKISMETENTRY_WHERE =
 		"SELECT COUNT(akismetEntry) FROM AkismetEntry akismetEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AkismetEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AkismetEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -607,4 +580,4 @@ public class AkismetEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1391246213
+// LIFERAY-SERVICE-BUILDER-HASH:-1298039729

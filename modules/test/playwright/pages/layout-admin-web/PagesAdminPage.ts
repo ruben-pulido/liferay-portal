@@ -357,6 +357,57 @@ export class PagesAdminPage {
 		});
 	}
 
+	async makeCopy({
+		name,
+		newName,
+		type = 'page',
+	}: {
+		name: string;
+		newName: string;
+		type?: 'page' | 'page-with-permissions';
+	}) {
+		const iframeTitle =
+			type === 'page-with-permissions'
+				? 'Copy Page With Permissions'
+				: 'Copy Page';
+		const label =
+			type === 'page-with-permissions' ? 'Page With Permissions' : 'Page';
+
+		// Open the page options menu
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: 'Make a Copy',
+			}),
+			trigger: this.page
+				.locator('li', {has: this.page.getByText(name)})
+				.getByRole('button', {name: 'Open Page Options Menu'}),
+		});
+
+		// Click desired option
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {exact: true, name: label}),
+			timeout: 5000,
+			trigger: this.page.getByRole('menuitem', {name: 'Make a Copy'}),
+		});
+
+		// Fill the copy name and confirm
+
+		const copyPageFrame = this.page.frameLocator(
+			`iframe[title="${iframeTitle}"]`
+		);
+
+		await copyPageFrame.getByPlaceholder('Add Page Name').fill(newName);
+
+		await copyPageFrame.getByRole('button', {name: 'Add'}).click();
+
+		await waitForAlert(this.page);
+	}
+
 	async clickNewButtonAndWaitForBlankTemplate() {
 		const blankTemplateCard = this.page
 			.locator('.card-page-item')

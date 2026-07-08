@@ -113,12 +113,8 @@ public class JournalArticleResourcePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		JournalArticleResource newJournalArticleResource = _persistence.create(
-			pk);
-
-		newJournalArticleResource.setMvccVersion(RandomTestUtil.nextLong());
+		JournalArticleResource newJournalArticleResource =
+			addJournalArticleResource();
 
 		newJournalArticleResource.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -130,8 +126,10 @@ public class JournalArticleResourcePersistenceTest {
 
 		newJournalArticleResource.setArticleId(RandomTestUtil.randomString());
 
-		_journalArticleResources.add(
-			_persistence.update(newJournalArticleResource));
+		newJournalArticleResource = _persistence.update(
+			newJournalArticleResource);
+
+		_journalArticleResources.add(newJournalArticleResource);
 
 		JournalArticleResource existingJournalArticleResource =
 			_persistence.findByPrimaryKey(
@@ -556,8 +554,6 @@ public class JournalArticleResourcePersistenceTest {
 
 		JournalArticleResource journalArticleResource = _persistence.create(pk);
 
-		journalArticleResource.setMvccVersion(RandomTestUtil.nextLong());
-
 		journalArticleResource.setCtCollectionId(RandomTestUtil.nextLong());
 
 		journalArticleResource.setUuid(RandomTestUtil.randomString());
@@ -580,4 +576,4 @@ public class JournalArticleResourcePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:819910206
+// LIFERAY-SERVICE-BUILDER-HASH:-16012004

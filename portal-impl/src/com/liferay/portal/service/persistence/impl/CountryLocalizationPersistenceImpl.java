@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchCountryLocalizationException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.CountryLocalization;
 import com.liferay.portal.kernel.model.CountryLocalizationTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -72,8 +70,9 @@ public class CountryLocalizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CountryLocalization>
-		_collectionPersistenceFinderByCountryId;
+	private CollectionPersistenceFinder
+		<CountryLocalization, NoSuchCountryLocalizationException>
+			_collectionPersistenceFinderByCountryId;
 
 	/**
 	 * Returns an ordered range of all the country localizations where countryId = &#63;.
@@ -114,16 +113,9 @@ public class CountryLocalizationPersistenceImpl
 			OrderByComparator<CountryLocalization> orderByComparator)
 		throws NoSuchCountryLocalizationException {
 
-		CountryLocalization countryLocalization = fetchByCountryId_First(
-			countryId, orderByComparator);
-
-		if (countryLocalization != null) {
-			return countryLocalization;
-		}
-
-		throw new NoSuchCountryLocalizationException(
-			_collectionPersistenceFinderByCountryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {countryId}));
+		return _collectionPersistenceFinderByCountryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {countryId},
+			orderByComparator);
 	}
 
 	/**
@@ -166,8 +158,9 @@ public class CountryLocalizationPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {countryId});
 	}
 
-	private UniquePersistenceFinder<CountryLocalization>
-		_uniquePersistenceFinderByCountryId_LanguageId;
+	private UniquePersistenceFinder
+		<CountryLocalization, NoSuchCountryLocalizationException>
+			_uniquePersistenceFinderByCountryId_LanguageId;
 
 	/**
 	 * Returns the country localization where countryId = &#63; and languageId = &#63; or throws a <code>NoSuchCountryLocalizationException</code> if it could not be found.
@@ -182,24 +175,9 @@ public class CountryLocalizationPersistenceImpl
 			long countryId, String languageId)
 		throws NoSuchCountryLocalizationException {
 
-		CountryLocalization countryLocalization = fetchByCountryId_LanguageId(
-			countryId, languageId);
-
-		if (countryLocalization == null) {
-			String message =
-				_uniquePersistenceFinderByCountryId_LanguageId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {countryId, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCountryLocalizationException(message);
-		}
-
-		return countryLocalization;
+		return _uniquePersistenceFinderByCountryId_LanguageId.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {countryId, languageId});
 	}
 
 	/**
@@ -521,7 +499,7 @@ public class CountryLocalizationPersistenceImpl
 				_SQL_SELECT_COUNTRYLOCALIZATION_WHERE,
 				_SQL_COUNT_COUNTRYLOCALIZATION_WHERE,
 				CountryLocalizationModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"countryLocalization.", "countryId", FinderColumn.Type.LONG,
 					"=", true, true, CountryLocalization::getCountryId));
@@ -565,16 +543,10 @@ public class CountryLocalizationPersistenceImpl
 	private static final String _SQL_COUNT_COUNTRYLOCALIZATION_WHERE =
 		"SELECT COUNT(countryLocalization) FROM CountryLocalization countryLocalization WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CountryLocalization exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CountryLocalizationPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:652376247
+// LIFERAY-SERVICE-BUILDER-HASH:1408660356

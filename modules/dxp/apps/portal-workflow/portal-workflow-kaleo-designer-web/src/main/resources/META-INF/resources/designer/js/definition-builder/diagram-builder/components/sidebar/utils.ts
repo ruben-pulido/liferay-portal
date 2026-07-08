@@ -85,6 +85,14 @@ export function getModalInfo(itemType: string) {
 			title: Liferay.Language.get('delete-fork-node'),
 		};
 	}
+	if (itemType === 'http-request') {
+		return {
+			message: Liferay.Language.get(
+				'are-you-sure-you-want-to-delete-the-selected-http-request-node'
+			),
+			title: Liferay.Language.get('delete-http-request-node'),
+		};
+	}
 	if (itemType === 'join') {
 		return {
 			message: Liferay.Language.get(
@@ -115,6 +123,14 @@ export function getModalInfo(itemType: string) {
 				'are-you-sure-you-want-to-delete-all-notifications-and-their-settings'
 			),
 			title: Liferay.Language.get('delete-notifications'),
+		};
+	}
+	if (itemType === 'service') {
+		return {
+			message: Liferay.Language.get(
+				'are-you-sure-you-want-to-delete-the-selected-service-node'
+			),
+			title: Liferay.Language.get('delete-service-node'),
 		};
 	}
 	if (itemType === 'start') {

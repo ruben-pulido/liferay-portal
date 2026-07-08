@@ -116,12 +116,8 @@ public class CPDVirtualSettingFileEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPDVirtualSettingFileEntry newCPDVirtualSettingFileEntry =
-			_persistence.create(pk);
-
-		newCPDVirtualSettingFileEntry.setMvccVersion(RandomTestUtil.nextLong());
+			addCPDVirtualSettingFileEntry();
 
 		newCPDVirtualSettingFileEntry.setUuid(RandomTestUtil.randomString());
 
@@ -148,8 +144,10 @@ public class CPDVirtualSettingFileEntryPersistenceTest {
 
 		newCPDVirtualSettingFileEntry.setVersion(RandomTestUtil.randomString());
 
-		_cpdVirtualSettingFileEntries.add(
-			_persistence.update(newCPDVirtualSettingFileEntry));
+		newCPDVirtualSettingFileEntry = _persistence.update(
+			newCPDVirtualSettingFileEntry);
+
+		_cpdVirtualSettingFileEntries.add(newCPDVirtualSettingFileEntry);
 
 		CPDVirtualSettingFileEntry existingCPDVirtualSettingFileEntry =
 			_persistence.findByPrimaryKey(
@@ -609,8 +607,6 @@ public class CPDVirtualSettingFileEntryPersistenceTest {
 		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry =
 			_persistence.create(pk);
 
-		cpdVirtualSettingFileEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpdVirtualSettingFileEntry.setUuid(RandomTestUtil.randomString());
 
 		cpdVirtualSettingFileEntry.setGroupId(RandomTestUtil.nextLong());
@@ -646,4 +642,4 @@ public class CPDVirtualSettingFileEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1165514412
+// LIFERAY-SERVICE-BUILDER-HASH:-1084227417

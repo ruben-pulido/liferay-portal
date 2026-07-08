@@ -111,11 +111,7 @@ public class RolePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Role newRole = _persistence.create(pk);
-
-		newRole.setMvccVersion(RandomTestUtil.nextLong());
+		Role newRole = addRole();
 
 		newRole.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -149,7 +145,9 @@ public class RolePersistenceTest {
 
 		newRole.setStatus(RandomTestUtil.nextInt());
 
-		_roles.add(_persistence.update(newRole));
+		newRole = _persistence.update(newRole);
+
+		_roles.add(newRole);
 
 		Role existingRole = _persistence.findByPrimaryKey(
 			newRole.getPrimaryKey());
@@ -672,8 +670,6 @@ public class RolePersistenceTest {
 
 		Role role = _persistence.create(pk);
 
-		role.setMvccVersion(RandomTestUtil.nextLong());
-
 		role.setCtCollectionId(RandomTestUtil.nextLong());
 
 		role.setUuid(RandomTestUtil.randomString());
@@ -716,4 +712,4 @@ public class RolePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1511729577
+// LIFERAY-SERVICE-BUILDER-HASH:981109946

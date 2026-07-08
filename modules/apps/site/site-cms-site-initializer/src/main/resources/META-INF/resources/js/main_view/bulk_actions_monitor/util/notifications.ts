@@ -424,6 +424,54 @@ const BULK_ACTION_MESSAGES: BulkActionMessage = {
 	},
 };
 
+const BULK_ACTION_FAILURE_MESSAGES: {
+	[actionType in keyof IBulkActionTaskType]?: {
+		[taskResult: string]: string;
+	};
+} = {
+	[BULK_ACTION_COPY]: {
+		structureNotInDestinationSpace: Liferay.Language.get(
+			'some-items-could-not-be-copied.-please-ensure-their-structures-exist-in-the-destination-space'
+		),
+	},
+	[BULK_ACTION_MOVE]: {
+		structureNotInDestinationSpace: Liferay.Language.get(
+			'some-items-could-not-be-moved.-please-ensure-their-structures-exist-in-the-destination-space'
+		),
+	},
+};
+
+export function getBulkActionTaskFailureMessage(
+	actionType: keyof IBulkActionTaskType,
+	taskResult: string
+): string | null {
+	if (!taskResult) {
+		return null;
+	}
+
+	const failureMessages = BULK_ACTION_FAILURE_MESSAGES?.[actionType] ?? {};
+
+	for (const reason of _getTaskResultReasons(taskResult)) {
+		if (failureMessages[reason]) {
+			return failureMessages[reason];
+		}
+	}
+
+	return null;
+}
+
+function _getTaskResultReasons(taskResult: string): string[] {
+	const parsedTaskResult = JSON.parse(taskResult);
+
+	if (Array.isArray(parsedTaskResult)) {
+		return parsedTaskResult
+			.map((taskResultError) => taskResultError?.id)
+			.filter(Boolean);
+	}
+
+	return [];
+}
+
 export function getBulkActionTaskMessage(
 	actionType: keyof IBulkActionTaskType,
 	messageType: MessageType = 'info',

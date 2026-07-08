@@ -110,11 +110,7 @@ public class CTScorePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTScore newCTScore = _persistence.create(pk);
-
-		newCTScore.setMvccVersion(RandomTestUtil.nextLong());
+		CTScore newCTScore = addCTScore();
 
 		newCTScore.setCompanyId(RandomTestUtil.nextLong());
 
@@ -122,7 +118,9 @@ public class CTScorePersistenceTest {
 
 		newCTScore.setScore(RandomTestUtil.nextInt());
 
-		_ctScores.add(_persistence.update(newCTScore));
+		newCTScore = _persistence.update(newCTScore);
+
+		_ctScores.add(newCTScore);
 
 		CTScore existingCTScore = _persistence.findByPrimaryKey(
 			newCTScore.getPrimaryKey());
@@ -439,8 +437,6 @@ public class CTScorePersistenceTest {
 
 		CTScore ctScore = _persistence.create(pk);
 
-		ctScore.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctScore.setCompanyId(RandomTestUtil.nextLong());
 
 		ctScore.setCtCollectionId(RandomTestUtil.nextLong());
@@ -457,4 +453,4 @@ public class CTScorePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:592054589
+// LIFERAY-SERVICE-BUILDER-HASH:-2013155455

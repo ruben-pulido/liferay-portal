@@ -112,11 +112,7 @@ public class CommerceTaxMethodPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceTaxMethod newCommerceTaxMethod = _persistence.create(pk);
-
-		newCommerceTaxMethod.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceTaxMethod newCommerceTaxMethod = addCommerceTaxMethod();
 
 		newCommerceTaxMethod.setGroupId(RandomTestUtil.nextLong());
 
@@ -142,7 +138,9 @@ public class CommerceTaxMethodPersistenceTest {
 
 		newCommerceTaxMethod.setTypeSettings(RandomTestUtil.randomString());
 
-		_commerceTaxMethods.add(_persistence.update(newCommerceTaxMethod));
+		newCommerceTaxMethod = _persistence.update(newCommerceTaxMethod);
+
+		_commerceTaxMethods.add(newCommerceTaxMethod);
 
 		CommerceTaxMethod existingCommerceTaxMethod =
 			_persistence.findByPrimaryKey(newCommerceTaxMethod.getPrimaryKey());
@@ -537,8 +535,6 @@ public class CommerceTaxMethodPersistenceTest {
 
 		CommerceTaxMethod commerceTaxMethod = _persistence.create(pk);
 
-		commerceTaxMethod.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceTaxMethod.setGroupId(RandomTestUtil.nextLong());
 
 		commerceTaxMethod.setCompanyId(RandomTestUtil.nextLong());
@@ -574,4 +570,4 @@ public class CommerceTaxMethodPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:653272755
+// LIFERAY-SERVICE-BUILDER-HASH:240740727

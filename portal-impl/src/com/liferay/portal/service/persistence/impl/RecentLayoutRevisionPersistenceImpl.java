@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchRecentLayoutRevisionException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.RecentLayoutRevision;
 import com.liferay.portal.kernel.model.RecentLayoutRevisionTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -64,8 +62,9 @@ public class RecentLayoutRevisionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<RecentLayoutRevision>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<RecentLayoutRevision, NoSuchRecentLayoutRevisionException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the recent layout revisions where groupId = &#63;.
@@ -106,16 +105,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			OrderByComparator<RecentLayoutRevision> orderByComparator)
 		throws NoSuchRecentLayoutRevisionException {
 
-		RecentLayoutRevision recentLayoutRevision = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (recentLayoutRevision != null) {
-			return recentLayoutRevision;
-		}
-
-		throw new NoSuchRecentLayoutRevisionException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -158,8 +150,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<RecentLayoutRevision>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<RecentLayoutRevision, NoSuchRecentLayoutRevisionException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the recent layout revisions where userId = &#63;.
@@ -200,16 +193,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			OrderByComparator<RecentLayoutRevision> orderByComparator)
 		throws NoSuchRecentLayoutRevisionException {
 
-		RecentLayoutRevision recentLayoutRevision = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (recentLayoutRevision != null) {
-			return recentLayoutRevision;
-		}
-
-		throw new NoSuchRecentLayoutRevisionException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -252,8 +238,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<RecentLayoutRevision>
-		_collectionPersistenceFinderByLayoutRevisionId;
+	private CollectionPersistenceFinder
+		<RecentLayoutRevision, NoSuchRecentLayoutRevisionException>
+			_collectionPersistenceFinderByLayoutRevisionId;
 
 	/**
 	 * Returns an ordered range of all the recent layout revisions where layoutRevisionId = &#63;.
@@ -294,17 +281,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			OrderByComparator<RecentLayoutRevision> orderByComparator)
 		throws NoSuchRecentLayoutRevisionException {
 
-		RecentLayoutRevision recentLayoutRevision =
-			fetchByLayoutRevisionId_First(layoutRevisionId, orderByComparator);
-
-		if (recentLayoutRevision != null) {
-			return recentLayoutRevision;
-		}
-
-		throw new NoSuchRecentLayoutRevisionException(
-			_collectionPersistenceFinderByLayoutRevisionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {layoutRevisionId}));
+		return _collectionPersistenceFinderByLayoutRevisionId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutRevisionId},
+			orderByComparator);
 	}
 
 	/**
@@ -347,8 +326,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {layoutRevisionId});
 	}
 
-	private UniquePersistenceFinder<RecentLayoutRevision>
-		_uniquePersistenceFinderByU_L_P;
+	private UniquePersistenceFinder
+		<RecentLayoutRevision, NoSuchRecentLayoutRevisionException>
+			_uniquePersistenceFinderByU_L_P;
 
 	/**
 	 * Returns the recent layout revision where userId = &#63; and layoutSetBranchId = &#63; and plid = &#63; or throws a <code>NoSuchRecentLayoutRevisionException</code> if it could not be found.
@@ -364,23 +344,9 @@ public class RecentLayoutRevisionPersistenceImpl
 			long userId, long layoutSetBranchId, long plid)
 		throws NoSuchRecentLayoutRevisionException {
 
-		RecentLayoutRevision recentLayoutRevision = fetchByU_L_P(
-			userId, layoutSetBranchId, plid);
-
-		if (recentLayoutRevision == null) {
-			String message =
-				_uniquePersistenceFinderByU_L_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {userId, layoutSetBranchId, plid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRecentLayoutRevisionException(message);
-		}
-
-		return recentLayoutRevision;
+		return _uniquePersistenceFinderByU_L_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userId, layoutSetBranchId, plid});
 	}
 
 	/**
@@ -639,7 +605,7 @@ public class RecentLayoutRevisionPersistenceImpl
 				_SQL_SELECT_RECENTLAYOUTREVISION_WHERE,
 				_SQL_COUNT_RECENTLAYOUTREVISION_WHERE,
 				RecentLayoutRevisionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"recentLayoutRevision.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, RecentLayoutRevision::getGroupId));
@@ -666,7 +632,7 @@ public class RecentLayoutRevisionPersistenceImpl
 				_SQL_SELECT_RECENTLAYOUTREVISION_WHERE,
 				_SQL_COUNT_RECENTLAYOUTREVISION_WHERE,
 				RecentLayoutRevisionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"recentLayoutRevision.", "userId", FinderColumn.Type.LONG,
 					"=", true, true, RecentLayoutRevision::getUserId));
@@ -696,7 +662,7 @@ public class RecentLayoutRevisionPersistenceImpl
 				_SQL_SELECT_RECENTLAYOUTREVISION_WHERE,
 				_SQL_COUNT_RECENTLAYOUTREVISION_WHERE,
 				RecentLayoutRevisionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"recentLayoutRevision.", "layoutRevisionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -747,16 +713,10 @@ public class RecentLayoutRevisionPersistenceImpl
 	private static final String _SQL_COUNT_RECENTLAYOUTREVISION_WHERE =
 		"SELECT COUNT(recentLayoutRevision) FROM RecentLayoutRevision recentLayoutRevision WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No RecentLayoutRevision exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		RecentLayoutRevisionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1163919879
+// LIFERAY-SERVICE-BUILDER-HASH:1188592092

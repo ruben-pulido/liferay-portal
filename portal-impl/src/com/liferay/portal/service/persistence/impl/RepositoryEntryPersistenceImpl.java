@@ -13,8 +13,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchRepositoryEntryException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.RepositoryEntry;
 import com.liferay.portal.kernel.model.RepositoryEntryTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -78,8 +76,9 @@ public class RepositoryEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<RepositoryEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<RepositoryEntry, NoSuchRepositoryEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the repository entries where uuid = &#63;.
@@ -119,16 +118,9 @@ public class RepositoryEntryPersistenceImpl
 			String uuid, OrderByComparator<RepositoryEntry> orderByComparator)
 		throws NoSuchRepositoryEntryException {
 
-		RepositoryEntry repositoryEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (repositoryEntry != null) {
-			return repositoryEntry;
-		}
-
-		throw new NoSuchRepositoryEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -170,8 +162,9 @@ public class RepositoryEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<RepositoryEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<RepositoryEntry, NoSuchRepositoryEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the repository entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchRepositoryEntryException</code> if it could not be found.
@@ -185,21 +178,8 @@ public class RepositoryEntryPersistenceImpl
 	public RepositoryEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchRepositoryEntryException {
 
-		RepositoryEntry repositoryEntry = fetchByUUID_G(uuid, groupId);
-
-		if (repositoryEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRepositoryEntryException(message);
-		}
-
-		return repositoryEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -248,8 +228,9 @@ public class RepositoryEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<RepositoryEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<RepositoryEntry, NoSuchRepositoryEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the repository entries where uuid = &#63; and companyId = &#63;.
@@ -292,16 +273,9 @@ public class RepositoryEntryPersistenceImpl
 			OrderByComparator<RepositoryEntry> orderByComparator)
 		throws NoSuchRepositoryEntryException {
 
-		RepositoryEntry repositoryEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (repositoryEntry != null) {
-			return repositoryEntry;
-		}
-
-		throw new NoSuchRepositoryEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -347,8 +321,9 @@ public class RepositoryEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<RepositoryEntry>
-		_collectionPersistenceFinderByRepositoryId;
+	private CollectionPersistenceFinder
+		<RepositoryEntry, NoSuchRepositoryEntryException>
+			_collectionPersistenceFinderByRepositoryId;
 
 	/**
 	 * Returns an ordered range of all the repository entries where repositoryId = &#63;.
@@ -389,16 +364,9 @@ public class RepositoryEntryPersistenceImpl
 			OrderByComparator<RepositoryEntry> orderByComparator)
 		throws NoSuchRepositoryEntryException {
 
-		RepositoryEntry repositoryEntry = fetchByRepositoryId_First(
-			repositoryId, orderByComparator);
-
-		if (repositoryEntry != null) {
-			return repositoryEntry;
-		}
-
-		throw new NoSuchRepositoryEntryException(
-			_collectionPersistenceFinderByRepositoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {repositoryId}));
+		return _collectionPersistenceFinderByRepositoryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {repositoryId},
+			orderByComparator);
 	}
 
 	/**
@@ -441,8 +409,9 @@ public class RepositoryEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {repositoryId});
 	}
 
-	private UniquePersistenceFinder<RepositoryEntry>
-		_uniquePersistenceFinderByR_M;
+	private UniquePersistenceFinder
+		<RepositoryEntry, NoSuchRepositoryEntryException>
+			_uniquePersistenceFinderByR_M;
 
 	/**
 	 * Returns the repository entry where repositoryId = &#63; and mappedId = &#63; or throws a <code>NoSuchRepositoryEntryException</code> if it could not be found.
@@ -456,22 +425,9 @@ public class RepositoryEntryPersistenceImpl
 	public RepositoryEntry findByR_M(long repositoryId, String mappedId)
 		throws NoSuchRepositoryEntryException {
 
-		RepositoryEntry repositoryEntry = fetchByR_M(repositoryId, mappedId);
-
-		if (repositoryEntry == null) {
-			String message =
-				_uniquePersistenceFinderByR_M.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {repositoryId, mappedId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRepositoryEntryException(message);
-		}
-
-		return repositoryEntry;
+		return _uniquePersistenceFinderByR_M.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {repositoryId, mappedId});
 	}
 
 	/**
@@ -842,9 +798,10 @@ public class RepositoryEntryPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_REPOSITORYENTRY_WHERE, _SQL_COUNT_REPOSITORYENTRY_WHERE,
 			RepositoryEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"repositoryEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, RepositoryEntry::getUuid));
+				"repositoryEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, RepositoryEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -856,8 +813,8 @@ public class RepositoryEntryPersistenceImpl
 				RepositoryEntry::getGroupId),
 			_SQL_SELECT_REPOSITORYENTRY_WHERE, "",
 			new FinderColumn<>(
-				"repositoryEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, RepositoryEntry::getUuid),
+				"repositoryEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, RepositoryEntry::getUuid),
 			new FinderColumn<>(
 				"repositoryEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, RepositoryEntry::getGroupId));
@@ -884,10 +841,11 @@ public class RepositoryEntryPersistenceImpl
 				_SQL_SELECT_REPOSITORYENTRY_WHERE,
 				_SQL_COUNT_REPOSITORYENTRY_WHERE,
 				RepositoryEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"repositoryEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, RepositoryEntry::getUuid),
+					"repositoryEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					RepositoryEntry::getUuid),
 				new FinderColumn<>(
 					"repositoryEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, RepositoryEntry::getCompanyId));
@@ -915,7 +873,7 @@ public class RepositoryEntryPersistenceImpl
 				_SQL_SELECT_REPOSITORYENTRY_WHERE,
 				_SQL_COUNT_REPOSITORYENTRY_WHERE,
 				RepositoryEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"repositoryEntry.", "repositoryId", FinderColumn.Type.LONG,
 					"=", true, true, RepositoryEntry::getRepositoryId));
@@ -957,12 +915,6 @@ public class RepositoryEntryPersistenceImpl
 	private static final String _SQL_COUNT_REPOSITORYENTRY_WHERE =
 		"SELECT COUNT(repositoryEntry) FROM RepositoryEntry repositoryEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No RepositoryEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		RepositoryEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -972,4 +924,4 @@ public class RepositoryEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2001895154
+// LIFERAY-SERVICE-BUILDER-HASH:465666749

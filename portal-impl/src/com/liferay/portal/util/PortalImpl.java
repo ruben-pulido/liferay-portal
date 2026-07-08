@@ -1222,8 +1222,7 @@ public class PortalImpl implements Portal {
 		NavigableMap<String, String> virtualHostnames = getVirtualHostnames(
 			themeDisplay.getLayoutSet());
 
-		String virtualHostname = _getVirtualHostname(
-			virtualHostnames, themeDisplay);
+		String virtualHostname = _getVirtualHostname(themeDisplay);
 
 		if ((!Validator.isBlank(portalDomain) &&
 			 !StringUtil.equalsIgnoreCase(
@@ -2271,6 +2270,26 @@ public class PortalImpl implements Portal {
 	}
 
 	@Override
+	public String getDefaultVirtualHostname(
+		boolean companyFallback, LayoutSet layoutSet) {
+
+		NavigableMap<String, String> virtualHostnames =
+			layoutSet.getVirtualHostnames();
+
+		for (Map.Entry<String, String> entry : virtualHostnames.entrySet()) {
+			if (Validator.isNull(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+
+		if (companyFallback) {
+			return layoutSet.getCompanyFallbackVirtualHostname();
+		}
+
+		return StringPool.BLANK;
+	}
+
+	@Override
 	public String getEmailFromAddress(
 		PortletPreferences portletPreferences, long companyId,
 		String defaultValue) {
@@ -2812,17 +2831,10 @@ public class PortalImpl implements Portal {
 			}
 		}
 
-		String virtualHostname = null;
+		String virtualHostname = getDefaultVirtualHostname(
+			false, layout.getLayoutSet());
 
-		LayoutSet layoutSet = layout.getLayoutSet();
-
-		NavigableMap<String, String> virtualHostnames =
-			layoutSet.getVirtualHostnames();
-
-		if (!virtualHostnames.isEmpty()) {
-			virtualHostname = virtualHostnames.firstKey();
-		}
-		else {
+		if (Validator.isNull(virtualHostname)) {
 			Company company = CompanyLocalServiceUtil.getCompany(
 				layout.getCompanyId());
 
@@ -2908,7 +2920,8 @@ public class PortalImpl implements Portal {
 			String portalDomain = portalURL.substring(index + 3);
 
 			String virtualHostname = getCanonicalDomain(
-				virtualHostnames, portalDomain, defaultVirtualHostname);
+				defaultVirtualHostname, layoutSet, portalDomain,
+				virtualHostnames);
 
 			virtualHostname = getPortalURL(
 				virtualHostname, portalPort, secureConnection);
@@ -2952,14 +2965,7 @@ public class PortalImpl implements Portal {
 		String defaultVirtualHostname = _getDefaultVirtualHostname(
 			themeDisplay.getCompany());
 
-		String virtualHostname = null;
-
-		NavigableMap<String, String> virtualHostnames = getVirtualHostnames(
-			layoutSet);
-
-		if (!virtualHostnames.isEmpty()) {
-			virtualHostname = virtualHostnames.firstKey();
-		}
+		String virtualHostname = getDefaultVirtualHostname(true, layoutSet);
 
 		if (Validator.isNotNull(virtualHostname) &&
 			!StringUtil.equalsIgnoreCase(
@@ -6037,9 +6043,23 @@ public class PortalImpl implements Portal {
 
 			dynamicServletRequest.setAttribute("status_code", status);
 
-			// Reset layout params or there will be an infinite loop
+			// Reset layout params or there will be an infinite loop. When the
+			// request was rejected by strict virtual host mode, pin p_l_id to
+			// the requesting host's first layout so the status page renders
+			// with the requesting site's chrome rather than falling through
+			// the default layout chain to an unrelated site.
 
-			dynamicServletRequest.setParameter("p_l_id", StringPool.BLANK);
+			long strictVirtualHostBlockedPlid =
+				_getStrictVirtualHostBlockedPlid(httpServletRequest);
+
+			if (strictVirtualHostBlockedPlid > 0) {
+				dynamicServletRequest.setParameter(
+					"p_l_id", String.valueOf(strictVirtualHostBlockedPlid));
+			}
+			else {
+				dynamicServletRequest.setParameter("p_l_id", StringPool.BLANK);
+			}
+
 			dynamicServletRequest.setParameter("groupId", StringPool.BLANK);
 			dynamicServletRequest.setParameter("layoutId", StringPool.BLANK);
 			dynamicServletRequest.setParameter(
@@ -6798,14 +6818,29 @@ public class PortalImpl implements Portal {
 	}
 
 	protected String getCanonicalDomain(
-		NavigableMap<String, String> virtualHostnames, String portalDomain,
-		String defaultVirtualHostname) {
+		String defaultVirtualHostname, LayoutSet layoutSet, String portalDomain,
+		NavigableMap<String, String> virtualHostnames) {
 
 		if (Validator.isBlank(portalDomain) ||
 			StringUtil.equalsIgnoreCase(portalDomain, defaultVirtualHostname) ||
 			!virtualHostnames.containsKey(defaultVirtualHostname)) {
 
-			return virtualHostnames.firstKey();
+			for (Map.Entry<String, String> entry :
+					virtualHostnames.entrySet()) {
+
+				if (Validator.isNull(entry.getValue())) {
+					return entry.getKey();
+				}
+			}
+
+			String virtualHostname = getDefaultVirtualHostname(
+				false, layoutSet);
+
+			if (Validator.isNotNull(virtualHostname)) {
+				return virtualHostname;
+			}
+
+			return defaultVirtualHostname;
 		}
 
 		int pos = portalDomain.indexOf(CharPool.COLON);
@@ -7595,7 +7630,7 @@ public class PortalImpl implements Portal {
 								virtualHostnames, portalDomain)) {
 
 							portalURL = getPortalURL(
-								virtualHostnames.firstKey(),
+								getDefaultVirtualHostname(true, layoutSet),
 								themeDisplay.getServerPort(),
 								themeDisplay.isSecure());
 						}
@@ -7659,8 +7694,8 @@ public class PortalImpl implements Portal {
 						!virtualHostnames.containsKey(defaultVirtualHostname)) {
 
 						String virtualHostname = getCanonicalDomain(
-							virtualHostnames, portalDomain,
-							defaultVirtualHostname);
+							defaultVirtualHostname, layoutSet, portalDomain,
+							virtualHostnames);
 
 						portalURL = getPortalURL(
 							virtualHostname, themeDisplay.getServerPort(),
@@ -8021,6 +8056,36 @@ public class PortalImpl implements Portal {
 		return group;
 	}
 
+	private long _getStrictVirtualHostBlockedPlid(
+		HttpServletRequest httpServletRequest) {
+
+		if (!GetterUtil.getBoolean(
+				httpServletRequest.getAttribute(
+					WebKeys.SITE_VIRTUAL_HOST_RESTRICTED))) {
+
+			return 0;
+		}
+
+		LayoutSet layoutSet = (LayoutSet)httpServletRequest.getAttribute(
+			WebKeys.VIRTUAL_HOST_LAYOUT_SET);
+
+		if (layoutSet == null) {
+			return 0;
+		}
+
+		List<Layout> layouts = LayoutLocalServiceUtil.getLayouts(
+			layoutSet.getGroupId(), layoutSet.isPrivateLayout(),
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID);
+
+		if (layouts.isEmpty()) {
+			return 0;
+		}
+
+		Layout layout = layouts.get(0);
+
+		return layout.getPlid();
+	}
+
 	private Map<String, String> _getVariables(Layout layout, String mainPath) {
 		if (layout == null) {
 			return HashMapBuilder.put(
@@ -8052,17 +8117,17 @@ public class PortalImpl implements Portal {
 		).build();
 	}
 
-	private String _getVirtualHostname(
-		NavigableMap<String, String> virtualHostnames,
-		ThemeDisplay themeDisplay) {
+	private String _getVirtualHostname(ThemeDisplay themeDisplay) {
+		String virtualHostname = getDefaultVirtualHostname(
+			true, themeDisplay.getLayoutSet());
 
-		if (virtualHostnames.isEmpty()) {
-			Company company = themeDisplay.getCompany();
-
-			return company.getVirtualHostname();
+		if (Validator.isNotNull(virtualHostname)) {
+			return virtualHostname;
 		}
 
-		return virtualHostnames.firstKey();
+		Company company = themeDisplay.getCompany();
+
+		return company.getVirtualHostname();
 	}
 
 	private boolean _isSignedIn(HttpServletRequest httpServletRequest) {

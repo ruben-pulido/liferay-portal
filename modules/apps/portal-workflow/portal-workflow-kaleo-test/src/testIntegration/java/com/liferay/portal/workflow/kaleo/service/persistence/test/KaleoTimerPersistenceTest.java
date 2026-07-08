@@ -111,11 +111,7 @@ public class KaleoTimerPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoTimer newKaleoTimer = _persistence.create(pk);
-
-		newKaleoTimer.setMvccVersion(RandomTestUtil.nextLong());
+		KaleoTimer newKaleoTimer = addKaleoTimer();
 
 		newKaleoTimer.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -153,7 +149,9 @@ public class KaleoTimerPersistenceTest {
 
 		newKaleoTimer.setRecurrenceScale(RandomTestUtil.randomString());
 
-		_kaleoTimers.add(_persistence.update(newKaleoTimer));
+		newKaleoTimer = _persistence.update(newKaleoTimer);
+
+		_kaleoTimers.add(newKaleoTimer);
 
 		KaleoTimer existingKaleoTimer = _persistence.findByPrimaryKey(
 			newKaleoTimer.getPrimaryKey());
@@ -490,8 +488,6 @@ public class KaleoTimerPersistenceTest {
 
 		KaleoTimer kaleoTimer = _persistence.create(pk);
 
-		kaleoTimer.setMvccVersion(RandomTestUtil.nextLong());
-
 		kaleoTimer.setCtCollectionId(RandomTestUtil.nextLong());
 
 		kaleoTimer.setGroupId(RandomTestUtil.nextLong());
@@ -538,4 +534,4 @@ public class KaleoTimerPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-134570361
+// LIFERAY-SERVICE-BUILDER-HASH:-1250126303

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class SegmentsEntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SegmentsEntryRel>
-		_collectionPersistenceFinderBySegmentsEntryId;
+	private CollectionPersistenceFinder
+		<SegmentsEntryRel, NoSuchEntryRelException>
+			_collectionPersistenceFinderBySegmentsEntryId;
 
 	/**
 	 * Returns an ordered range of all the segments entry rels where segmentsEntryId = &#63;.
@@ -124,16 +123,8 @@ public class SegmentsEntryRelPersistenceImpl
 			OrderByComparator<SegmentsEntryRel> orderByComparator)
 		throws NoSuchEntryRelException {
 
-		SegmentsEntryRel segmentsEntryRel = fetchBySegmentsEntryId_First(
-			segmentsEntryId, orderByComparator);
-
-		if (segmentsEntryRel != null) {
-			return segmentsEntryRel;
-		}
-
-		throw new NoSuchEntryRelException(
-			_collectionPersistenceFinderBySegmentsEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {segmentsEntryId}));
+		return _collectionPersistenceFinderBySegmentsEntryId.findFirst(
+			finderCache, new Object[] {segmentsEntryId}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +166,9 @@ public class SegmentsEntryRelPersistenceImpl
 			finderCache, new Object[] {segmentsEntryId});
 	}
 
-	private CollectionPersistenceFinder<SegmentsEntryRel>
-		_collectionPersistenceFinderByCN_CPK;
+	private CollectionPersistenceFinder
+		<SegmentsEntryRel, NoSuchEntryRelException>
+			_collectionPersistenceFinderByCN_CPK;
 
 	/**
 	 * Returns an ordered range of all the segments entry rels where classNameId = &#63; and classPK = &#63;.
@@ -219,16 +211,9 @@ public class SegmentsEntryRelPersistenceImpl
 			OrderByComparator<SegmentsEntryRel> orderByComparator)
 		throws NoSuchEntryRelException {
 
-		SegmentsEntryRel segmentsEntryRel = fetchByCN_CPK_First(
-			classNameId, classPK, orderByComparator);
-
-		if (segmentsEntryRel != null) {
-			return segmentsEntryRel;
-		}
-
-		throw new NoSuchEntryRelException(
-			_collectionPersistenceFinderByCN_CPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByCN_CPK.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -274,8 +259,9 @@ public class SegmentsEntryRelPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SegmentsEntryRel>
-		_collectionPersistenceFinderByG_CN_CPK;
+	private CollectionPersistenceFinder
+		<SegmentsEntryRel, NoSuchEntryRelException>
+			_collectionPersistenceFinderByG_CN_CPK;
 
 	/**
 	 * Returns an ordered range of all the segments entry rels where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -320,17 +306,9 @@ public class SegmentsEntryRelPersistenceImpl
 			OrderByComparator<SegmentsEntryRel> orderByComparator)
 		throws NoSuchEntryRelException {
 
-		SegmentsEntryRel segmentsEntryRel = fetchByG_CN_CPK_First(
-			groupId, classNameId, classPK, orderByComparator);
-
-		if (segmentsEntryRel != null) {
-			return segmentsEntryRel;
-		}
-
-		throw new NoSuchEntryRelException(
-			_collectionPersistenceFinderByG_CN_CPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK}));
+		return _collectionPersistenceFinderByG_CN_CPK.findFirst(
+			finderCache, new Object[] {groupId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -379,7 +357,7 @@ public class SegmentsEntryRelPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<SegmentsEntryRel>
+	private UniquePersistenceFinder<SegmentsEntryRel, NoSuchEntryRelException>
 		_uniquePersistenceFinderByS_CN_CPK;
 
 	/**
@@ -396,23 +374,8 @@ public class SegmentsEntryRelPersistenceImpl
 			long segmentsEntryId, long classNameId, long classPK)
 		throws NoSuchEntryRelException {
 
-		SegmentsEntryRel segmentsEntryRel = fetchByS_CN_CPK(
-			segmentsEntryId, classNameId, classPK);
-
-		if (segmentsEntryRel == null) {
-			String message =
-				_uniquePersistenceFinderByS_CN_CPK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsEntryId, classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryRelException(message);
-		}
-
-		return segmentsEntryRel;
+		return _uniquePersistenceFinderByS_CN_CPK.find(
+			finderCache, new Object[] {segmentsEntryId, classNameId, classPK});
 	}
 
 	/**
@@ -773,7 +736,7 @@ public class SegmentsEntryRelPersistenceImpl
 				_SQL_SELECT_SEGMENTSENTRYREL_WHERE,
 				_SQL_COUNT_SEGMENTSENTRYREL_WHERE,
 				SegmentsEntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsEntryRel.", "segmentsEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -801,7 +764,7 @@ public class SegmentsEntryRelPersistenceImpl
 				_SQL_SELECT_SEGMENTSENTRYREL_WHERE,
 				_SQL_COUNT_SEGMENTSENTRYREL_WHERE,
 				SegmentsEntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsEntryRel.", "classNameId", FinderColumn.Type.LONG,
 					"=", true, true, SegmentsEntryRel::getClassNameId),
@@ -839,7 +802,7 @@ public class SegmentsEntryRelPersistenceImpl
 				_SQL_SELECT_SEGMENTSENTRYREL_WHERE,
 				_SQL_COUNT_SEGMENTSENTRYREL_WHERE,
 				SegmentsEntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsEntryRel.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SegmentsEntryRel::getGroupId),
@@ -929,16 +892,10 @@ public class SegmentsEntryRelPersistenceImpl
 	private static final String _SQL_COUNT_SEGMENTSENTRYREL_WHERE =
 		"SELECT COUNT(segmentsEntryRel) FROM SegmentsEntryRel segmentsEntryRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SegmentsEntryRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SegmentsEntryRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-349799106
+// LIFERAY-SERVICE-BUILDER-HASH:1119803129

@@ -115,11 +115,7 @@ public class CommerceCurrencyPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CommerceCurrency newCommerceCurrency = _persistence.create(pk);
-
-		newCommerceCurrency.setMvccVersion(RandomTestUtil.nextLong());
+		CommerceCurrency newCommerceCurrency = addCommerceCurrency();
 
 		newCommerceCurrency.setUuid(RandomTestUtil.randomString());
 
@@ -161,7 +157,9 @@ public class CommerceCurrencyPersistenceTest {
 
 		newCommerceCurrency.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_commerceCurrencies.add(_persistence.update(newCommerceCurrency));
+		newCommerceCurrency = _persistence.update(newCommerceCurrency);
+
+		_commerceCurrencies.add(newCommerceCurrency);
 
 		CommerceCurrency existingCommerceCurrency =
 			_persistence.findByPrimaryKey(newCommerceCurrency.getPrimaryKey());
@@ -650,8 +648,6 @@ public class CommerceCurrencyPersistenceTest {
 
 		CommerceCurrency commerceCurrency = _persistence.create(pk);
 
-		commerceCurrency.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceCurrency.setUuid(RandomTestUtil.randomString());
 
 		commerceCurrency.setExternalReferenceCode(
@@ -702,4 +698,4 @@ public class CommerceCurrencyPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1390789473
+// LIFERAY-SERVICE-BUILDER-HASH:-1855499828

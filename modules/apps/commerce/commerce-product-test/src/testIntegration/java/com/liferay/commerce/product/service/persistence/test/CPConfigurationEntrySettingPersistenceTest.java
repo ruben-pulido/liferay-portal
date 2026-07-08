@@ -115,13 +115,8 @@ public class CPConfigurationEntrySettingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPConfigurationEntrySetting newCPConfigurationEntrySetting =
-			_persistence.create(pk);
-
-		newCPConfigurationEntrySetting.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCPConfigurationEntrySetting();
 
 		newCPConfigurationEntrySetting.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -149,8 +144,10 @@ public class CPConfigurationEntrySettingPersistenceTest {
 
 		newCPConfigurationEntrySetting.setValue(RandomTestUtil.randomString());
 
-		_cpConfigurationEntrySettings.add(
-			_persistence.update(newCPConfigurationEntrySetting));
+		newCPConfigurationEntrySetting = _persistence.update(
+			newCPConfigurationEntrySetting);
+
+		_cpConfigurationEntrySettings.add(newCPConfigurationEntrySetting);
 
 		CPConfigurationEntrySetting existingCPConfigurationEntrySetting =
 			_persistence.findByPrimaryKey(
@@ -619,8 +616,6 @@ public class CPConfigurationEntrySettingPersistenceTest {
 		CPConfigurationEntrySetting cpConfigurationEntrySetting =
 			_persistence.create(pk);
 
-		cpConfigurationEntrySetting.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpConfigurationEntrySetting.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -657,4 +652,4 @@ public class CPConfigurationEntrySettingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:649800287
+// LIFERAY-SERVICE-BUILDER-HASH:1152965699

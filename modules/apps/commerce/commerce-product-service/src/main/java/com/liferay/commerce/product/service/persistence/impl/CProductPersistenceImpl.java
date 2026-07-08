@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -95,7 +93,7 @@ public class CProductPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CProduct>
+	private CollectionPersistenceFinder<CProduct, NoSuchCProductException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -135,15 +133,8 @@ public class CProductPersistenceImpl
 			String uuid, OrderByComparator<CProduct> orderByComparator)
 		throws NoSuchCProductException {
 
-		CProduct cProduct = fetchByUuid_First(uuid, orderByComparator);
-
-		if (cProduct != null) {
-			return cProduct;
-		}
-
-		throw new NoSuchCProductException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -184,7 +175,8 @@ public class CProductPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CProduct> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<CProduct, NoSuchCProductException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the c product where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCProductException</code> if it could not be found.
@@ -198,21 +190,8 @@ public class CProductPersistenceImpl
 	public CProduct findByUUID_G(String uuid, long groupId)
 		throws NoSuchCProductException {
 
-		CProduct cProduct = fetchByUUID_G(uuid, groupId);
-
-		if (cProduct == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCProductException(message);
-		}
-
-		return cProduct;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -260,7 +239,7 @@ public class CProductPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CProduct>
+	private CollectionPersistenceFinder<CProduct, NoSuchCProductException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -303,16 +282,8 @@ public class CProductPersistenceImpl
 			OrderByComparator<CProduct> orderByComparator)
 		throws NoSuchCProductException {
 
-		CProduct cProduct = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cProduct != null) {
-			return cProduct;
-		}
-
-		throw new NoSuchCProductException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -357,7 +328,7 @@ public class CProductPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CProduct>
+	private CollectionPersistenceFinder<CProduct, NoSuchCProductException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -397,15 +368,8 @@ public class CProductPersistenceImpl
 			long groupId, OrderByComparator<CProduct> orderByComparator)
 		throws NoSuchCProductException {
 
-		CProduct cProduct = fetchByGroupId_First(groupId, orderByComparator);
-
-		if (cProduct != null) {
-			return cProduct;
-		}
-
-		throw new NoSuchCProductException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -446,7 +410,8 @@ public class CProductPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<CProduct> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<CProduct, NoSuchCProductException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the c product where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCProductException</code> if it could not be found.
@@ -460,22 +425,8 @@ public class CProductPersistenceImpl
 	public CProduct findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchCProductException {
 
-		CProduct cProduct = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (cProduct == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCProductException(message);
-		}
-
-		return cProduct;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -893,10 +844,10 @@ public class CProductPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_CPRODUCT_WHERE, _SQL_COUNT_CPRODUCT_WHERE,
-			CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cProduct.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				CProduct::getUuid));
+				"cProduct.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, CProduct::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -907,8 +858,8 @@ public class CProductPersistenceImpl
 				convertNullFunction(CProduct::getUuid), CProduct::getGroupId),
 			_SQL_SELECT_CPRODUCT_WHERE, "",
 			new FinderColumn<>(
-				"cProduct.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				CProduct::getUuid),
+				"cProduct.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, CProduct::getUuid),
 			new FinderColumn<>(
 				"cProduct.", "groupId", FinderColumn.Type.LONG, "=", true, true,
 				CProduct::getGroupId));
@@ -933,10 +884,11 @@ public class CProductPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_CPRODUCT_WHERE, _SQL_COUNT_CPRODUCT_WHERE,
-				CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"cProduct.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, CProduct::getUuid),
+					"cProduct.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, CProduct::getUuid),
 				new FinderColumn<>(
 					"cProduct.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, CProduct::getCompanyId));
@@ -961,7 +913,8 @@ public class CProductPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_CPRODUCT_WHERE, _SQL_COUNT_CPRODUCT_WHERE,
-				CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CProductModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"cProduct.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, CProduct::getGroupId));
@@ -1039,12 +992,6 @@ public class CProductPersistenceImpl
 	private static final String _SQL_COUNT_CPRODUCT_WHERE =
 		"SELECT COUNT(cProduct) FROM CProduct cProduct WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CProduct exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CProductPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1054,4 +1001,4 @@ public class CProductPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1457225059
+// LIFERAY-SERVICE-BUILDER-HASH:1146199667

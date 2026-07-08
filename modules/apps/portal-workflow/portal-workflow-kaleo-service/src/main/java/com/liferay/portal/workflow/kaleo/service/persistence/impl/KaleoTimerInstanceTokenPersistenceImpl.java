@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -83,8 +81,9 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoTimerInstanceToken>
-		_collectionPersistenceFinderByKaleoInstanceId;
+	private CollectionPersistenceFinder
+		<KaleoTimerInstanceToken, NoSuchTimerInstanceTokenException>
+			_collectionPersistenceFinderByKaleoInstanceId;
 
 	/**
 	 * Returns an ordered range of all the kaleo timer instance tokens where kaleoInstanceId = &#63;.
@@ -125,16 +124,8 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			OrderByComparator<KaleoTimerInstanceToken> orderByComparator)
 		throws NoSuchTimerInstanceTokenException {
 
-		KaleoTimerInstanceToken kaleoTimerInstanceToken =
-			fetchByKaleoInstanceId_First(kaleoInstanceId, orderByComparator);
-
-		if (kaleoTimerInstanceToken != null) {
-			return kaleoTimerInstanceToken;
-		}
-
-		throw new NoSuchTimerInstanceTokenException(
-			_collectionPersistenceFinderByKaleoInstanceId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoInstanceId}));
+		return _collectionPersistenceFinderByKaleoInstanceId.findFirst(
+			finderCache, new Object[] {kaleoInstanceId}, orderByComparator);
 	}
 
 	/**
@@ -176,8 +167,9 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			finderCache, new Object[] {kaleoInstanceId});
 	}
 
-	private UniquePersistenceFinder<KaleoTimerInstanceToken>
-		_uniquePersistenceFinderByKITI_KTI;
+	private UniquePersistenceFinder
+		<KaleoTimerInstanceToken, NoSuchTimerInstanceTokenException>
+			_uniquePersistenceFinderByKITI_KTI;
 
 	/**
 	 * Returns the kaleo timer instance token where kaleoInstanceTokenId = &#63; and kaleoTimerId = &#63; or throws a <code>NoSuchTimerInstanceTokenException</code> if it could not be found.
@@ -192,23 +184,8 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			long kaleoInstanceTokenId, long kaleoTimerId)
 		throws NoSuchTimerInstanceTokenException {
 
-		KaleoTimerInstanceToken kaleoTimerInstanceToken = fetchByKITI_KTI(
-			kaleoInstanceTokenId, kaleoTimerId);
-
-		if (kaleoTimerInstanceToken == null) {
-			String message =
-				_uniquePersistenceFinderByKITI_KTI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoInstanceTokenId, kaleoTimerId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTimerInstanceTokenException(message);
-		}
-
-		return kaleoTimerInstanceToken;
+		return _uniquePersistenceFinderByKITI_KTI.find(
+			finderCache, new Object[] {kaleoInstanceTokenId, kaleoTimerId});
 	}
 
 	/**
@@ -259,8 +236,9 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			finderCache, new Object[] {kaleoInstanceTokenId, kaleoTimerId});
 	}
 
-	private CollectionPersistenceFinder<KaleoTimerInstanceToken>
-		_collectionPersistenceFinderByKITI_C;
+	private CollectionPersistenceFinder
+		<KaleoTimerInstanceToken, NoSuchTimerInstanceTokenException>
+			_collectionPersistenceFinderByKITI_C;
 
 	/**
 	 * Returns an ordered range of all the kaleo timer instance tokens where kaleoInstanceTokenId = &#63; and completed = &#63;.
@@ -303,17 +281,9 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			OrderByComparator<KaleoTimerInstanceToken> orderByComparator)
 		throws NoSuchTimerInstanceTokenException {
 
-		KaleoTimerInstanceToken kaleoTimerInstanceToken = fetchByKITI_C_First(
-			kaleoInstanceTokenId, completed, orderByComparator);
-
-		if (kaleoTimerInstanceToken != null) {
-			return kaleoTimerInstanceToken;
-		}
-
-		throw new NoSuchTimerInstanceTokenException(
-			_collectionPersistenceFinderByKITI_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoInstanceTokenId, completed}));
+		return _collectionPersistenceFinderByKITI_C.findFirst(
+			finderCache, new Object[] {kaleoInstanceTokenId, completed},
+			orderByComparator);
 	}
 
 	/**
@@ -359,8 +329,9 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			finderCache, new Object[] {kaleoInstanceTokenId, completed});
 	}
 
-	private CollectionPersistenceFinder<KaleoTimerInstanceToken>
-		_collectionPersistenceFinderByKITI_B_C;
+	private CollectionPersistenceFinder
+		<KaleoTimerInstanceToken, NoSuchTimerInstanceTokenException>
+			_collectionPersistenceFinderByKITI_B_C;
 
 	/**
 	 * Returns an ordered range of all the kaleo timer instance tokens where kaleoInstanceTokenId = &#63; and blocking = &#63; and completed = &#63;.
@@ -407,17 +378,10 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 			OrderByComparator<KaleoTimerInstanceToken> orderByComparator)
 		throws NoSuchTimerInstanceTokenException {
 
-		KaleoTimerInstanceToken kaleoTimerInstanceToken = fetchByKITI_B_C_First(
-			kaleoInstanceTokenId, blocking, completed, orderByComparator);
-
-		if (kaleoTimerInstanceToken != null) {
-			return kaleoTimerInstanceToken;
-		}
-
-		throw new NoSuchTimerInstanceTokenException(
-			_collectionPersistenceFinderByKITI_B_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {kaleoInstanceTokenId, blocking, completed}));
+		return _collectionPersistenceFinderByKITI_B_C.findFirst(
+			finderCache,
+			new Object[] {kaleoInstanceTokenId, blocking, completed},
+			orderByComparator);
 	}
 
 	/**
@@ -796,7 +760,7 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 				_SQL_SELECT_KALEOTIMERINSTANCETOKEN_WHERE,
 				_SQL_COUNT_KALEOTIMERINSTANCETOKEN_WHERE,
 				KaleoTimerInstanceTokenModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"kaleoTimerInstanceToken.", "kaleoInstanceId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -846,7 +810,7 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 				_SQL_SELECT_KALEOTIMERINSTANCETOKEN_WHERE,
 				_SQL_COUNT_KALEOTIMERINSTANCETOKEN_WHERE,
 				KaleoTimerInstanceTokenModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"kaleoTimerInstanceToken.", "kaleoInstanceTokenId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -895,7 +859,7 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 				_SQL_SELECT_KALEOTIMERINSTANCETOKEN_WHERE,
 				_SQL_COUNT_KALEOTIMERINSTANCETOKEN_WHERE,
 				KaleoTimerInstanceTokenModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"kaleoTimerInstanceToken.", "kaleoInstanceTokenId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -966,16 +930,10 @@ public class KaleoTimerInstanceTokenPersistenceImpl
 	private static final String _SQL_COUNT_KALEOTIMERINSTANCETOKEN_WHERE =
 		"SELECT COUNT(kaleoTimerInstanceToken) FROM KaleoTimerInstanceToken kaleoTimerInstanceToken WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoTimerInstanceToken exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoTimerInstanceTokenPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:188223265
+// LIFERAY-SERVICE-BUILDER-HASH:1321677907

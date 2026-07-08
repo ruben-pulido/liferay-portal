@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,10 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinitionVersion>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinitionVersion,
+		 NoSuchSLADefinitionVersionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definition versions where uuid = &#63;.
@@ -126,17 +126,8 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				orderByComparator)
 		throws NoSuchSLADefinitionVersionException {
 
-		WorkflowMetricsSLADefinitionVersion
-			workflowMetricsSLADefinitionVersion = fetchByUuid_First(
-				uuid, orderByComparator);
-
-		if (workflowMetricsSLADefinitionVersion != null) {
-			return workflowMetricsSLADefinitionVersion;
-		}
-
-		throw new NoSuchSLADefinitionVersionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -179,8 +170,9 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<WorkflowMetricsSLADefinitionVersion>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<WorkflowMetricsSLADefinitionVersion,
+		 NoSuchSLADefinitionVersionException> _uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the workflow metrics sla definition version where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchSLADefinitionVersionException</code> if it could not be found.
@@ -195,22 +187,8 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			String uuid, long groupId)
 		throws NoSuchSLADefinitionVersionException {
 
-		WorkflowMetricsSLADefinitionVersion
-			workflowMetricsSLADefinitionVersion = fetchByUUID_G(uuid, groupId);
-
-		if (workflowMetricsSLADefinitionVersion == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSLADefinitionVersionException(message);
-		}
-
-		return workflowMetricsSLADefinitionVersion;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -260,8 +238,10 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinitionVersion>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinitionVersion,
+		 NoSuchSLADefinitionVersionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definition versions where uuid = &#63; and companyId = &#63;.
@@ -306,17 +286,8 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				orderByComparator)
 		throws NoSuchSLADefinitionVersionException {
 
-		WorkflowMetricsSLADefinitionVersion
-			workflowMetricsSLADefinitionVersion = fetchByUuid_C_First(
-				uuid, companyId, orderByComparator);
-
-		if (workflowMetricsSLADefinitionVersion != null) {
-			return workflowMetricsSLADefinitionVersion;
-		}
-
-		throw new NoSuchSLADefinitionVersionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -362,8 +333,10 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<WorkflowMetricsSLADefinitionVersion>
-		_collectionPersistenceFinderByWorkflowMetricsSLADefinitionId;
+	private CollectionPersistenceFinder
+		<WorkflowMetricsSLADefinitionVersion,
+		 NoSuchSLADefinitionVersionException>
+			_collectionPersistenceFinderByWorkflowMetricsSLADefinitionId;
 
 	/**
 	 * Returns an ordered range of all the workflow metrics sla definition versions where workflowMetricsSLADefinitionId = &#63;.
@@ -409,20 +382,10 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 					orderByComparator)
 		throws NoSuchSLADefinitionVersionException {
 
-		WorkflowMetricsSLADefinitionVersion
-			workflowMetricsSLADefinitionVersion =
-				fetchByWorkflowMetricsSLADefinitionId_First(
-					workflowMetricsSLADefinitionId, orderByComparator);
-
-		if (workflowMetricsSLADefinitionVersion != null) {
-			return workflowMetricsSLADefinitionVersion;
-		}
-
-		throw new NoSuchSLADefinitionVersionException(
-			_collectionPersistenceFinderByWorkflowMetricsSLADefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {workflowMetricsSLADefinitionId}));
+		return _collectionPersistenceFinderByWorkflowMetricsSLADefinitionId.
+			findFirst(
+				finderCache, new Object[] {workflowMetricsSLADefinitionId},
+				orderByComparator);
 	}
 
 	/**
@@ -472,8 +435,10 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			count(finderCache, new Object[] {workflowMetricsSLADefinitionId});
 	}
 
-	private UniquePersistenceFinder<WorkflowMetricsSLADefinitionVersion>
-		_uniquePersistenceFinderByV_WMSLAD;
+	private UniquePersistenceFinder
+		<WorkflowMetricsSLADefinitionVersion,
+		 NoSuchSLADefinitionVersionException>
+			_uniquePersistenceFinderByV_WMSLAD;
 
 	/**
 	 * Returns the workflow metrics sla definition version where version = &#63; and workflowMetricsSLADefinitionId = &#63; or throws a <code>NoSuchSLADefinitionVersionException</code> if it could not be found.
@@ -488,24 +453,9 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			String version, long workflowMetricsSLADefinitionId)
 		throws NoSuchSLADefinitionVersionException {
 
-		WorkflowMetricsSLADefinitionVersion
-			workflowMetricsSLADefinitionVersion = fetchByV_WMSLAD(
-				version, workflowMetricsSLADefinitionId);
-
-		if (workflowMetricsSLADefinitionVersion == null) {
-			String message =
-				_uniquePersistenceFinderByV_WMSLAD.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {version, workflowMetricsSLADefinitionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSLADefinitionVersionException(message);
-		}
-
-		return workflowMetricsSLADefinitionVersion;
+		return _uniquePersistenceFinderByV_WMSLAD.find(
+			finderCache,
+			new Object[] {version, workflowMetricsSLADefinitionId});
 	}
 
 	/**
@@ -806,6 +756,11 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "workflowMetricsSLADefinitionVersionId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_WORKFLOWMETRICSSLADEFINITIONVERSION;
 	}
@@ -840,9 +795,9 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 			_SQL_COUNT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 			WorkflowMetricsSLADefinitionVersionModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"workflowMetricsSLADefinitionVersion.", "uuid",
+				"workflowMetricsSLADefinitionVersion.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				WorkflowMetricsSLADefinitionVersion::getUuid));
 
@@ -857,7 +812,7 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				WorkflowMetricsSLADefinitionVersion::getGroupId),
 			_SQL_SELECT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE, "",
 			new FinderColumn<>(
-				"workflowMetricsSLADefinitionVersion.", "uuid",
+				"workflowMetricsSLADefinitionVersion.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				WorkflowMetricsSLADefinitionVersion::getUuid),
 			new FinderColumn<>(
@@ -887,9 +842,9 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 				WorkflowMetricsSLADefinitionVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"workflowMetricsSLADefinitionVersion.", "uuid",
+					"workflowMetricsSLADefinitionVersion.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					WorkflowMetricsSLADefinitionVersion::getUuid),
 				new FinderColumn<>(
@@ -922,11 +877,11 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				_SQL_SELECT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 				_SQL_COUNT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE,
 				WorkflowMetricsSLADefinitionVersionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"workflowMetricsSLADefinitionVersion.",
-					"workflowMetricsSLADefinitionId", FinderColumn.Type.LONG,
-					"=", true, true,
+					"workflowMetricsSLADefinitionId", "wmSLADefinitionId",
+					FinderColumn.Type.LONG, "=", true, true,
 					WorkflowMetricsSLADefinitionVersion::
 						getWorkflowMetricsSLADefinitionId));
 
@@ -947,8 +902,8 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 				WorkflowMetricsSLADefinitionVersion::getVersion),
 			new FinderColumn<>(
 				"workflowMetricsSLADefinitionVersion.",
-				"workflowMetricsSLADefinitionId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"workflowMetricsSLADefinitionId", "wmSLADefinitionId",
+				FinderColumn.Type.LONG, "=", true, true,
 				WorkflowMetricsSLADefinitionVersion::
 					getWorkflowMetricsSLADefinitionId));
 
@@ -1010,12 +965,6 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 		_SQL_COUNT_WORKFLOWMETRICSSLADEFINITIONVERSION_WHERE =
 			"SELECT COUNT(workflowMetricsSLADefinitionVersion) FROM WorkflowMetricsSLADefinitionVersion workflowMetricsSLADefinitionVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No WorkflowMetricsSLADefinitionVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		WorkflowMetricsSLADefinitionVersionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {
 			"uuid", "workflowMetricsSLADefinitionVersionId", "active",
@@ -1028,4 +977,4 @@ public class WorkflowMetricsSLADefinitionVersionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1222508953
+// LIFERAY-SERVICE-BUILDER-HASH:668944082

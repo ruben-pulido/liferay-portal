@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -72,7 +70,7 @@ public class MVCCEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<MVCCEntry>
+	private CollectionPersistenceFinder<MVCCEntry, NoSuchMVCCEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -113,16 +111,8 @@ public class MVCCEntryPersistenceImpl
 			long companyId, OrderByComparator<MVCCEntry> orderByComparator)
 		throws NoSuchMVCCEntryException {
 
-		MVCCEntry mvccEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (mvccEntry != null) {
-			return mvccEntry;
-		}
-
-		throw new NoSuchMVCCEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -163,7 +153,8 @@ public class MVCCEntryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<MVCCEntry> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<MVCCEntry, NoSuchMVCCEntryException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the mvcc entry where companyId = &#63; and name = &#63; or throws a <code>NoSuchMVCCEntryException</code> if it could not be found.
@@ -177,21 +168,8 @@ public class MVCCEntryPersistenceImpl
 	public MVCCEntry findByC_N(long companyId, String name)
 		throws NoSuchMVCCEntryException {
 
-		MVCCEntry mvccEntry = fetchByC_N(companyId, name);
-
-		if (mvccEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMVCCEntryException(message);
-		}
-
-		return mvccEntry;
+		return _uniquePersistenceFinderByC_N.find(
+			finderCache, new Object[] {companyId, name});
 	}
 
 	/**
@@ -430,7 +408,8 @@ public class MVCCEntryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_MVCCENTRY_WHERE, _SQL_COUNT_MVCCENTRY_WHERE,
-				MVCCEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				MVCCEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"mvccEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, MVCCEntry::getCompanyId));
@@ -505,16 +484,10 @@ public class MVCCEntryPersistenceImpl
 	private static final String _SQL_COUNT_MVCCENTRY_WHERE =
 		"SELECT COUNT(mvccEntry) FROM MVCCEntry mvccEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MVCCEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MVCCEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:91739843
+// LIFERAY-SERVICE-BUILDER-HASH:915565454

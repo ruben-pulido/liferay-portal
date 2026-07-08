@@ -13,7 +13,6 @@ import com.liferay.osb.faro.model.impl.FaroNotificationModelImpl;
 import com.liferay.osb.faro.service.persistence.FaroNotificationPersistence;
 import com.liferay.osb.faro.service.persistence.FaroNotificationUtil;
 import com.liferay.osb.faro.service.persistence.impl.constants.OSBFaroPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -74,8 +73,9 @@ public class FaroNotificationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FaroNotification>
-		_collectionPersistenceFinderByLtCreateTime;
+	private CollectionPersistenceFinder
+		<FaroNotification, NoSuchFaroNotificationException>
+			_collectionPersistenceFinderByLtCreateTime;
 
 	/**
 	 * Returns all the faro notifications where createTime &lt; &#63;.
@@ -169,16 +169,8 @@ public class FaroNotificationPersistenceImpl
 			OrderByComparator<FaroNotification> orderByComparator)
 		throws NoSuchFaroNotificationException {
 
-		FaroNotification faroNotification = fetchByLtCreateTime_First(
-			createTime, orderByComparator);
-
-		if (faroNotification != null) {
-			return faroNotification;
-		}
-
-		throw new NoSuchFaroNotificationException(
-			_collectionPersistenceFinderByLtCreateTime.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {createTime}));
+		return _collectionPersistenceFinderByLtCreateTime.findFirst(
+			finderCache, new Object[] {createTime}, orderByComparator);
 	}
 
 	/**
@@ -220,8 +212,9 @@ public class FaroNotificationPersistenceImpl
 			finderCache, new Object[] {createTime});
 	}
 
-	private CollectionPersistenceFinder<FaroNotification>
-		_collectionPersistenceFinderByG_GtC_O_T;
+	private CollectionPersistenceFinder
+		<FaroNotification, NoSuchFaroNotificationException>
+			_collectionPersistenceFinderByG_GtC_O_T;
 
 	/**
 	 * Returns all the faro notifications where groupId = &#63; and createTime &gt; &#63; and ownerId = &#63; and type = &#63;.
@@ -337,32 +330,10 @@ public class FaroNotificationPersistenceImpl
 			OrderByComparator<FaroNotification> orderByComparator)
 		throws NoSuchFaroNotificationException {
 
-		FaroNotification faroNotification = fetchByG_GtC_O_T_First(
-			groupId, createTime, ownerId, type, orderByComparator);
-
-		if (faroNotification != null) {
-			return faroNotification;
-		}
-
-		StringBundler sb = new StringBundler(10);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", createTime>");
-		sb.append(createTime);
-
-		sb.append(", ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchFaroNotificationException(sb.toString());
+		return _collectionPersistenceFinderByG_GtC_O_T.findFirst(
+			finderCache,
+			new Object[] {groupId, createTime, new long[] {ownerId}, type},
+			orderByComparator);
 	}
 
 	/**
@@ -544,8 +515,9 @@ public class FaroNotificationPersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<FaroNotification>
-		_collectionPersistenceFinderByG_GtC_O_T_S;
+	private CollectionPersistenceFinder
+		<FaroNotification, NoSuchFaroNotificationException>
+			_collectionPersistenceFinderByG_GtC_O_T_S;
 
 	/**
 	 * Returns all the faro notifications where groupId = &#63; and createTime &gt; &#63; and ownerId = &#63; and type = &#63; and subtype = &#63;.
@@ -672,35 +644,12 @@ public class FaroNotificationPersistenceImpl
 			OrderByComparator<FaroNotification> orderByComparator)
 		throws NoSuchFaroNotificationException {
 
-		FaroNotification faroNotification = fetchByG_GtC_O_T_S_First(
-			groupId, createTime, ownerId, type, subtype, orderByComparator);
-
-		if (faroNotification != null) {
-			return faroNotification;
-		}
-
-		StringBundler sb = new StringBundler(12);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", createTime>");
-		sb.append(createTime);
-
-		sb.append(", ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append(", subtype=");
-		sb.append(subtype);
-
-		sb.append("}");
-
-		throw new NoSuchFaroNotificationException(sb.toString());
+		return _collectionPersistenceFinderByG_GtC_O_T_S.findFirst(
+			finderCache,
+			new Object[] {
+				groupId, createTime, new long[] {ownerId}, type, subtype
+			},
+			orderByComparator);
 	}
 
 	/**
@@ -904,8 +853,9 @@ public class FaroNotificationPersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<FaroNotification>
-		_collectionPersistenceFinderByG_GtC_O_R_T_S;
+	private CollectionPersistenceFinder
+		<FaroNotification, NoSuchFaroNotificationException>
+			_collectionPersistenceFinderByG_GtC_O_R_T_S;
 
 	/**
 	 * Returns all the faro notifications where groupId = &#63; and createTime &gt; &#63; and ownerId = &#63; and read = &#63; and type = &#63; and subtype = &#63;.
@@ -1038,39 +988,12 @@ public class FaroNotificationPersistenceImpl
 			OrderByComparator<FaroNotification> orderByComparator)
 		throws NoSuchFaroNotificationException {
 
-		FaroNotification faroNotification = fetchByG_GtC_O_R_T_S_First(
-			groupId, createTime, ownerId, read, type, subtype,
+		return _collectionPersistenceFinderByG_GtC_O_R_T_S.findFirst(
+			finderCache,
+			new Object[] {
+				groupId, createTime, new long[] {ownerId}, read, type, subtype
+			},
 			orderByComparator);
-
-		if (faroNotification != null) {
-			return faroNotification;
-		}
-
-		StringBundler sb = new StringBundler(14);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", createTime>");
-		sb.append(createTime);
-
-		sb.append(", ownerId=");
-		sb.append(ownerId);
-
-		sb.append(", read=");
-		sb.append(read);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append(", subtype=");
-		sb.append(subtype);
-
-		sb.append("}");
-
-		throw new NoSuchFaroNotificationException(sb.toString());
 	}
 
 	/**
@@ -1472,7 +1395,7 @@ public class FaroNotificationPersistenceImpl
 				_SQL_SELECT_FARONOTIFICATION_WHERE,
 				_SQL_COUNT_FARONOTIFICATION_WHERE,
 				FaroNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"faroNotification.", "createTime", FinderColumn.Type.LONG,
 					"<", true, true, FaroNotification::getCreateTime));
@@ -1503,6 +1426,7 @@ public class FaroNotificationPersistenceImpl
 				_SQL_COUNT_FARONOTIFICATION_WHERE,
 				FaroNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"faroNotification.read = [$FALSE$]",
+				"faroNotification.read_ = [$FALSE$]", null,
 				new FinderColumn<>(
 					"faroNotification.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, FaroNotification::getGroupId),
@@ -1513,8 +1437,9 @@ public class FaroNotificationPersistenceImpl
 					"faroNotification.", "ownerId", FinderColumn.Type.LONG, "=",
 					false, true, true, FaroNotification::getOwnerId),
 				new FinderColumn<>(
-					"faroNotification.", "type", FinderColumn.Type.STRING, "=",
-					true, true, FaroNotification::getType));
+					"faroNotification.", "type", "type_",
+					FinderColumn.Type.STRING, "=", true, true,
+					FaroNotification::getType));
 
 		_collectionPersistenceFinderByG_GtC_O_T_S =
 			new CollectionPersistenceFinder<>(
@@ -1548,7 +1473,7 @@ public class FaroNotificationPersistenceImpl
 				_SQL_SELECT_FARONOTIFICATION_WHERE,
 				_SQL_COUNT_FARONOTIFICATION_WHERE,
 				FaroNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"faroNotification.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, FaroNotification::getGroupId),
@@ -1559,8 +1484,9 @@ public class FaroNotificationPersistenceImpl
 					"faroNotification.", "ownerId", FinderColumn.Type.LONG, "=",
 					false, true, true, FaroNotification::getOwnerId),
 				new FinderColumn<>(
-					"faroNotification.", "type", FinderColumn.Type.STRING, "=",
-					true, true, FaroNotification::getType),
+					"faroNotification.", "type", "type_",
+					FinderColumn.Type.STRING, "=", true, true,
+					FaroNotification::getType),
 				new FinderColumn<>(
 					"faroNotification.", "subtype", FinderColumn.Type.STRING,
 					"=", true, true, FaroNotification::getSubtype));
@@ -1600,7 +1526,7 @@ public class FaroNotificationPersistenceImpl
 				_SQL_SELECT_FARONOTIFICATION_WHERE,
 				_SQL_COUNT_FARONOTIFICATION_WHERE,
 				FaroNotificationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"faroNotification.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, FaroNotification::getGroupId),
@@ -1611,11 +1537,13 @@ public class FaroNotificationPersistenceImpl
 					"faroNotification.", "ownerId", FinderColumn.Type.LONG, "=",
 					false, true, true, FaroNotification::getOwnerId),
 				new FinderColumn<>(
-					"faroNotification.", "read", FinderColumn.Type.BOOLEAN, "=",
-					true, true, FaroNotification::isRead),
+					"faroNotification.", "read", "read_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					FaroNotification::isRead),
 				new FinderColumn<>(
-					"faroNotification.", "type", FinderColumn.Type.STRING, "=",
-					true, true, FaroNotification::getType),
+					"faroNotification.", "type", "type_",
+					FinderColumn.Type.STRING, "=", true, true,
+					FaroNotification::getType),
 				new FinderColumn<>(
 					"faroNotification.", "subtype", FinderColumn.Type.STRING,
 					"=", true, true, FaroNotification::getSubtype));
@@ -1674,9 +1602,6 @@ public class FaroNotificationPersistenceImpl
 	private static final String _SQL_COUNT_FARONOTIFICATION_WHERE =
 		"SELECT COUNT(faroNotification) FROM FaroNotification faroNotification WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FaroNotification exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"read", "type"});
 
@@ -1686,4 +1611,4 @@ public class FaroNotificationPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1237888783
+// LIFERAY-SERVICE-BUILDER-HASH:-447983108

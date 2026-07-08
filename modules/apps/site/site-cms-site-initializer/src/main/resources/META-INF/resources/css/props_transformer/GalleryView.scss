@@ -1,8 +1,30 @@
 @import 'atlas-variables';
 
 .fds-gallery-view {
+	$gallery-preview-height: unquote(
+		'clamp(320px, calc(100dvh - 475px), 100cqw)'
+	);
+	$gallery-thumbnail-gap: $spacer;
+	$gallery-thumbnail-width: 190px;
+
+	// stylelint-disable-next-line property-no-unknown
+	container-type: inline-size;
+
 	&__preview {
-		height: 570px;
+		height: $gallery-preview-height;
+
+		.c-empty-state {
+			align-self: center;
+			margin: 0;
+
+			&-image {
+				max-width: 200px;
+			}
+
+			&-title {
+				margin-top: $spacer;
+			}
+		}
 
 		&-wrapper > * {
 			margin: 0;
@@ -14,20 +36,44 @@
 		}
 	}
 
-	.preview-file .preview-file-container.preview-file-max-height {
-		height: 570px;
-		max-height: 100%;
+	.preview-file {
+		display: flex;
+		flex-direction: column;
+		height: $gallery-preview-height;
+
+		.preview-file-container.preview-file-max-height {
+			flex: 1 1 auto;
+			height: auto;
+			max-height: 100%;
+			min-height: 0;
+		}
+
+		.preview-toolbar-container {
+			bottom: auto;
+			position: relative;
+			top: auto;
+		}
 	}
 
-	.fds-gallery-view__thumbnails {
-		min-width: 0;
-	}
+	.fds-gallery-view {
+		&__thumbnails {
+			gap: $gallery-thumbnail-gap;
+			min-width: 0;
+		}
+		&__thumbnail {
+			flex: 0 0 $gallery-thumbnail-width;
+			max-width: $gallery-thumbnail-width;
 
-	.fds-gallery-view__thumbnail {
-		max-width: 20%;
+			&.drop-target .card {
+				background-color: $info-l2;
+				box-shadow: 0 0 0 2px $info;
+			}
 
-		&.selected {
-			.card {
+			.form-check-card {
+				margin-bottom: 0;
+			}
+
+			&.selected .card {
 				box-shadow: 0 0 0 2px $primary-l1;
 			}
 		}

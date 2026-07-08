@@ -75,6 +75,9 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 	 *
 	 * curl -X 'DELETE' 'http://localhost:8080/o/headless-commerce-admin-inventory/v1.0/warehouse-order-types/{warehouseOrderTypeId}'  -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Deletes the warehouse-order-type binding identified by warehouseOrderTypeId. Calls CommerceInventoryWarehouseRelService.deleteCommerceInventoryWarehouseRel. Side effects -- removes the row that scopes the warehouse to the bound order type; the order type itself is not affected."
+	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -151,11 +154,18 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-commerce-admin-inventory/v1.0/warehouses/by-externalReferenceCode/{externalReferenceCode}/warehouse-order-types'  -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Returns the paginated list of warehouse-order-type bindings for the warehouse identified by externalReferenceCode. Supports the search query parameter, which matches against the bound order-type name. No filter or sort. Validation -- NoSuchInventoryWarehouseException -> 404 when the externalReferenceCode does not resolve."
+	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
 				name = "externalReferenceCode"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "nestedFields"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
@@ -195,6 +205,9 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-commerce-admin-inventory/v1.0/warehouses/{id}/warehouse-order-types'  -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Returns the paginated list of warehouse-order-type bindings for the warehouse identified by id. Supports the search query parameter against the bound order-type name. Validation -- NoSuchInventoryWarehouseException -> 404 when the id does not resolve."
+	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -204,6 +217,10 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
 				name = "filter"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "nestedFields"
 			),
 			@io.swagger.v3.oas.annotations.Parameter(
 				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
@@ -255,6 +272,9 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-commerce-admin-inventory/v1.0/warehouses/by-externalReferenceCode/{externalReferenceCode}/warehouse-order-types' -d $'{"orderTypeExternalReferenceCode": ___, "orderTypeId": ___, "priority": ___, "warehouseExternalReferenceCode": ___, "warehouseId": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Creates a warehouse-order-type binding between the warehouse identified by externalReferenceCode and the order type resolved by orderTypeId or orderTypeExternalReferenceCode in the body. Not an upsert. Validation -- 404 when the order type cannot be resolved."
+	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -292,6 +312,9 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-commerce-admin-inventory/v1.0/warehouses/{id}/warehouse-order-types' -d $'{"orderTypeExternalReferenceCode": ___, "orderTypeId": ___, "priority": ___, "warehouseExternalReferenceCode": ___, "warehouseId": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Creates a warehouse-order-type binding between the warehouse identified by id and the order type resolved by orderTypeId or orderTypeExternalReferenceCode in the body. Not an upsert. Validation -- 404 when the order type cannot be resolved."
+	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
 			@io.swagger.v3.oas.annotations.Parameter(
@@ -1083,4 +1106,4 @@ public abstract class BaseWarehouseOrderTypeResourceImpl
 		LogFactoryUtil.getLog(BaseWarehouseOrderTypeResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1916104480
+// LIFERAY-REST-BUILDER-HASH:1494308542

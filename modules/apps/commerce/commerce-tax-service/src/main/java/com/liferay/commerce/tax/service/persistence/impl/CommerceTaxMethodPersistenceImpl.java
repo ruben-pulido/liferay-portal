@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -78,8 +76,9 @@ public class CommerceTaxMethodPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceTaxMethod>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<CommerceTaxMethod, NoSuchTaxMethodException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax methods where groupId = &#63;.
@@ -120,16 +119,8 @@ public class CommerceTaxMethodPersistenceImpl
 			OrderByComparator<CommerceTaxMethod> orderByComparator)
 		throws NoSuchTaxMethodException {
 
-		CommerceTaxMethod commerceTaxMethod = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (commerceTaxMethod != null) {
-			return commerceTaxMethod;
-		}
-
-		throw new NoSuchTaxMethodException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +161,7 @@ public class CommerceTaxMethodPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<CommerceTaxMethod>
+	private UniquePersistenceFinder<CommerceTaxMethod, NoSuchTaxMethodException>
 		_uniquePersistenceFinderByG_E;
 
 	/**
@@ -185,22 +176,8 @@ public class CommerceTaxMethodPersistenceImpl
 	public CommerceTaxMethod findByG_E(long groupId, String engineKey)
 		throws NoSuchTaxMethodException {
 
-		CommerceTaxMethod commerceTaxMethod = fetchByG_E(groupId, engineKey);
-
-		if (commerceTaxMethod == null) {
-			String message =
-				_uniquePersistenceFinderByG_E.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, engineKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaxMethodException(message);
-		}
-
-		return commerceTaxMethod;
+		return _uniquePersistenceFinderByG_E.find(
+			finderCache, new Object[] {groupId, engineKey});
 	}
 
 	/**
@@ -248,8 +225,9 @@ public class CommerceTaxMethodPersistenceImpl
 			finderCache, new Object[] {groupId, engineKey});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxMethod>
-		_collectionPersistenceFinderByG_A;
+	private CollectionPersistenceFinder
+		<CommerceTaxMethod, NoSuchTaxMethodException>
+			_collectionPersistenceFinderByG_A;
 
 	/**
 	 * Returns an ordered range of all the commerce tax methods where groupId = &#63; and active = &#63;.
@@ -292,16 +270,8 @@ public class CommerceTaxMethodPersistenceImpl
 			OrderByComparator<CommerceTaxMethod> orderByComparator)
 		throws NoSuchTaxMethodException {
 
-		CommerceTaxMethod commerceTaxMethod = fetchByG_A_First(
-			groupId, active, orderByComparator);
-
-		if (commerceTaxMethod != null) {
-			return commerceTaxMethod;
-		}
-
-		throw new NoSuchTaxMethodException(
-			_collectionPersistenceFinderByG_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, active}));
+		return _collectionPersistenceFinderByG_A.findFirst(
+			finderCache, new Object[] {groupId, active}, orderByComparator);
 	}
 
 	/**
@@ -583,7 +553,7 @@ public class CommerceTaxMethodPersistenceImpl
 				_SQL_SELECT_COMMERCETAXMETHOD_WHERE,
 				_SQL_COUNT_COMMERCETAXMETHOD_WHERE,
 				CommerceTaxMethodModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"commerceTaxMethod.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, CommerceTaxMethod::getGroupId));
@@ -625,12 +595,14 @@ public class CommerceTaxMethodPersistenceImpl
 			_SQL_SELECT_COMMERCETAXMETHOD_WHERE,
 			_SQL_COUNT_COMMERCETAXMETHOD_WHERE,
 			CommerceTaxMethodModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"commerceTaxMethod.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CommerceTaxMethod::getGroupId),
 			new FinderColumn<>(
-				"commerceTaxMethod.", "active", FinderColumn.Type.BOOLEAN, "=",
-				true, true, CommerceTaxMethod::isActive));
+				"commerceTaxMethod.", "active", "active_",
+				FinderColumn.Type.BOOLEAN, "=", true, true,
+				CommerceTaxMethod::isActive));
 
 		CommerceTaxMethodUtil.setPersistence(this);
 	}
@@ -686,12 +658,6 @@ public class CommerceTaxMethodPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCETAXMETHOD_WHERE =
 		"SELECT COUNT(commerceTaxMethod) FROM CommerceTaxMethod commerceTaxMethod WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceTaxMethod exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceTaxMethodPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"active"});
 
@@ -701,4 +667,4 @@ public class CommerceTaxMethodPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1648044672
+// LIFERAY-SERVICE-BUILDER-HASH:-1337744455

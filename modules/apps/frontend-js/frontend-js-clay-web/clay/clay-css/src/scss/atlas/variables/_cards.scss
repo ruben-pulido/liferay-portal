@@ -1,3 +1,4 @@
+$card-bg: $white !default;
 $card-border-color: $secondary-l2 !default;
 $card-border-radius: $border-radius-xl !default;
 $card-border-width: $border-width !default;
@@ -22,6 +23,7 @@ $card-inner-border-radius: calc(
 $card: () !default;
 $card: map-deep-merge(
 	(
+		background-color: $card-bg,
 		border-radius: clay-enable-rounded($card-border-radius),
 		border-width: $card-border-width,
 		outline-color: transparent,
@@ -30,7 +32,20 @@ $card: map-deep-merge(
 		transition: $card-transition,
 
 		hover: (
+			border-color: $primary-l1,
 			box-shadow: clay-enable-shadows($card-hover-box-shadow),
+			outline-color: $primary-l1,
+		),
+
+		active: (
+			border-color: $primary,
+			outline-color: $primary,
+		),
+
+		disabled: (
+			cursor: $disabled-cursor,
+			opacity: $component-disabled-opacity,
+			pointer-events: none,
 		),
 	),
 	$card
@@ -126,6 +141,8 @@ $form-check-card: map-deep-merge(
 		),
 
 		disabled: (
+			transform: none,
+
 			card: (
 				box-shadow: none,
 				border-color: $card-border-color,
@@ -145,7 +162,7 @@ $card-interactive: map-deep-merge(
 		transition: c-unset,
 
 		hover: (
-			background-color: #f7f8f9,
+			background-color: $gray-100,
 		),
 
 		focus: (
@@ -158,7 +175,7 @@ $card-interactive: map-deep-merge(
 		),
 
 		active: (
-			background-color: #f1f2f5,
+			background-color: $gray-200,
 		),
 	),
 	$card-interactive
@@ -199,6 +216,14 @@ $card-interactive-secondary: map-deep-merge(
 			box-shadow: c-unset,
 			color: $gray-900,
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 
 		active: (
@@ -217,9 +242,18 @@ $card-type-asset: map-deep-merge(
 
 		hover: (
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 
 		aspect-ratio: (
+			background-color: $gray-100,
 			border-color: $gray-300,
 		),
 
@@ -241,6 +275,14 @@ $template-card: map-deep-merge(
 	(
 		hover: (
 			transform: translateY(-0.25rem),
+			after: (
+				bottom: -0.25rem,
+				content: '',
+				height: 0.25rem,
+				left: 0,
+				position: absolute,
+				right: 0,
+			),
 		),
 	),
 	$template-card

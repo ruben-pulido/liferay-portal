@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -90,8 +88,9 @@ public class SavedContentEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where uuid = &#63;.
@@ -131,16 +130,8 @@ public class SavedContentEntryPersistenceImpl
 			String uuid, OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -181,8 +172,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<SavedContentEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the saved content entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchSavedContentEntryException</code> if it could not be found.
@@ -196,21 +188,8 @@ public class SavedContentEntryPersistenceImpl
 	public SavedContentEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByUUID_G(uuid, groupId);
-
-		if (savedContentEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSavedContentEntryException(message);
-		}
-
-		return savedContentEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -258,8 +237,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where uuid = &#63; and companyId = &#63;.
@@ -302,16 +282,8 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -356,8 +328,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where groupId = &#63;.
@@ -398,16 +371,8 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -483,8 +448,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where userId = &#63;.
@@ -524,16 +490,8 @@ public class SavedContentEntryPersistenceImpl
 			long userId, OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -574,8 +532,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private FilterCollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByG_U;
+	private FilterCollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByG_U;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where groupId = &#63; and userId = &#63;.
@@ -618,16 +577,8 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByG_U_First(
-			groupId, userId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByG_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, userId}));
+		return _collectionPersistenceFinderByG_U.findFirst(
+			finderCache, new Object[] {groupId, userId}, orderByComparator);
 	}
 
 	/**
@@ -709,8 +660,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {groupId, userId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByG_CN;
+	private FilterCollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByG_CN;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where groupId = &#63; and classNameId = &#63;.
@@ -753,16 +705,9 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByG_CN_First(
-			groupId, classNameId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByG_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, classNameId}));
+		return _collectionPersistenceFinderByG_CN.findFirst(
+			finderCache, new Object[] {groupId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -845,8 +790,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByU_C;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByU_C;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where userId = &#63; and classNameId = &#63;.
@@ -889,16 +835,8 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByU_C_First(
-			userId, classNameId, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByU_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId, classNameId}));
+		return _collectionPersistenceFinderByU_C.findFirst(
+			finderCache, new Object[] {userId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -943,8 +881,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {userId, classNameId});
 	}
 
-	private FilterCollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByG_C_C;
+	private FilterCollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByG_C_C;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -989,17 +928,9 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByG_C_C_First(
-			groupId, classNameId, classPK, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByG_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK}));
+		return _collectionPersistenceFinderByG_C_C.findFirst(
+			finderCache, new Object[] {groupId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1089,8 +1020,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId, classPK}, groupId);
 	}
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByC_C_C;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByC_C_C;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where companyId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -1135,17 +1067,9 @@ public class SavedContentEntryPersistenceImpl
 			OrderByComparator<SavedContentEntry> orderByComparator)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByC_C_C_First(
-			companyId, classNameId, classPK, orderByComparator);
-
-		if (savedContentEntry != null) {
-			return savedContentEntry;
-		}
-
-		throw new NoSuchSavedContentEntryException(
-			_collectionPersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_C.findFirst(
+			finderCache, new Object[] {companyId, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1194,8 +1118,9 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {companyId, classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<SavedContentEntry>
-		_uniquePersistenceFinderByG_U_C_C;
+	private UniquePersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_uniquePersistenceFinderByG_U_C_C;
 
 	/**
 	 * Returns the saved content entry where groupId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchSavedContentEntryException</code> if it could not be found.
@@ -1212,23 +1137,8 @@ public class SavedContentEntryPersistenceImpl
 			long groupId, long userId, long classNameId, long classPK)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByG_U_C_C(
-			groupId, userId, classNameId, classPK);
-
-		if (savedContentEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_U_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, userId, classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSavedContentEntryException(message);
-		}
-
-		return savedContentEntry;
+		return _uniquePersistenceFinderByG_U_C_C.find(
+			finderCache, new Object[] {groupId, userId, classNameId, classPK});
 	}
 
 	/**
@@ -1288,10 +1198,12 @@ public class SavedContentEntryPersistenceImpl
 			finderCache, new Object[] {groupId, userId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SavedContentEntry>
-		_collectionPersistenceFinderByC_U_C_C;
-	private UniquePersistenceFinder<SavedContentEntry>
-		_uniquePersistenceFinderByC_U_C_C;
+	private CollectionPersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_collectionPersistenceFinderByC_U_C_C;
+	private UniquePersistenceFinder
+		<SavedContentEntry, NoSuchSavedContentEntryException>
+			_uniquePersistenceFinderByC_U_C_C;
 
 	/**
 	 * Returns an ordered range of all the saved content entries where companyId = &#63; and userId = &#63; and classNameId = &#63; and classPK = &#63;, optionally using the finder cache.
@@ -1317,29 +1229,12 @@ public class SavedContentEntryPersistenceImpl
 		OrderByComparator<SavedContentEntry> orderByComparator,
 		boolean useFinderCache) {
 
-		classPKs = ArrayUtil.sortedUnique(classPKs);
-
-		if (classPKs.length == 1) {
-			SavedContentEntry savedContentEntry = fetchByC_U_C_C(
-				companyId, userId, classNameId, classPKs[0], useFinderCache);
-
-			if (savedContentEntry == null) {
-				return Collections.emptyList();
-			}
-			else {
-				List<SavedContentEntry> list = new ArrayList<SavedContentEntry>(
-					1);
-
-				list.add(savedContentEntry);
-
-				return list;
-			}
-		}
-
 		return _collectionPersistenceFinderByC_U_C_C.find(
 			finderCache,
-			new Object[] {companyId, userId, classNameId, classPKs}, start, end,
-			orderByComparator, useFinderCache);
+			new Object[] {
+				companyId, userId, classNameId, ArrayUtil.sortedUnique(classPKs)
+			},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1357,23 +1252,9 @@ public class SavedContentEntryPersistenceImpl
 			long companyId, long userId, long classNameId, long classPK)
 		throws NoSuchSavedContentEntryException {
 
-		SavedContentEntry savedContentEntry = fetchByC_U_C_C(
-			companyId, userId, classNameId, classPK);
-
-		if (savedContentEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_U_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, userId, classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSavedContentEntryException(message);
-		}
-
-		return savedContentEntry;
+		return _uniquePersistenceFinderByC_U_C_C.find(
+			finderCache,
+			new Object[] {companyId, userId, classNameId, classPK});
 	}
 
 	/**
@@ -1781,9 +1662,10 @@ public class SavedContentEntryPersistenceImpl
 			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 			_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 			SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"savedContentEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SavedContentEntry::getUuid));
+				"savedContentEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, SavedContentEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1795,8 +1677,8 @@ public class SavedContentEntryPersistenceImpl
 				SavedContentEntry::getGroupId),
 			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE, "",
 			new FinderColumn<>(
-				"savedContentEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SavedContentEntry::getUuid),
+				"savedContentEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, SavedContentEntry::getUuid),
 			new FinderColumn<>(
 				"savedContentEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, SavedContentEntry::getGroupId));
@@ -1823,10 +1705,11 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"savedContentEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, SavedContentEntry::getUuid),
+					"savedContentEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					SavedContentEntry::getUuid),
 				new FinderColumn<>(
 					"savedContentEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getCompanyId));
@@ -1853,17 +1736,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SavedContentEntryImpl.class, SavedContentEntry.class,
-					"savedContentEntry", "SavedContentEntry",
-					"savedContentEntry.savedContentEntryId",
-					"SELECT DISTINCT {savedContentEntry.*} FROM SavedContentEntry savedContentEntry WHERE ",
-					"SELECT {SavedContentEntry.*} FROM (SELECT DISTINCT savedContentEntry.savedContentEntryId FROM SavedContentEntry savedContentEntry WHERE ",
-					") TEMP_TABLE INNER JOIN SavedContentEntry ON TEMP_TABLE.savedContentEntryId = SavedContentEntry.savedContentEntryId",
-					"SELECT COUNT(DISTINCT savedContentEntry.savedContentEntryId) AS COUNT_VALUE FROM SavedContentEntry savedContentEntry WHERE ",
-					SavedContentEntryModelImpl.ORDER_BY_SQL,
-					SavedContentEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"savedContentEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getGroupId));
@@ -1890,7 +1763,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"savedContentEntry.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, SavedContentEntry::getUserId));
@@ -1917,17 +1790,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SavedContentEntryImpl.class, SavedContentEntry.class,
-					"savedContentEntry", "SavedContentEntry",
-					"savedContentEntry.savedContentEntryId",
-					"SELECT DISTINCT {savedContentEntry.*} FROM SavedContentEntry savedContentEntry WHERE ",
-					"SELECT {SavedContentEntry.*} FROM (SELECT DISTINCT savedContentEntry.savedContentEntryId FROM SavedContentEntry savedContentEntry WHERE ",
-					") TEMP_TABLE INNER JOIN SavedContentEntry ON TEMP_TABLE.savedContentEntryId = SavedContentEntry.savedContentEntryId",
-					"SELECT COUNT(DISTINCT savedContentEntry.savedContentEntryId) AS COUNT_VALUE FROM SavedContentEntry savedContentEntry WHERE ",
-					SavedContentEntryModelImpl.ORDER_BY_SQL,
-					SavedContentEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"savedContentEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getGroupId),
@@ -1957,17 +1820,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SavedContentEntryImpl.class, SavedContentEntry.class,
-					"savedContentEntry", "SavedContentEntry",
-					"savedContentEntry.savedContentEntryId",
-					"SELECT DISTINCT {savedContentEntry.*} FROM SavedContentEntry savedContentEntry WHERE ",
-					"SELECT {SavedContentEntry.*} FROM (SELECT DISTINCT savedContentEntry.savedContentEntryId FROM SavedContentEntry savedContentEntry WHERE ",
-					") TEMP_TABLE INNER JOIN SavedContentEntry ON TEMP_TABLE.savedContentEntryId = SavedContentEntry.savedContentEntryId",
-					"SELECT COUNT(DISTINCT savedContentEntry.savedContentEntryId) AS COUNT_VALUE FROM SavedContentEntry savedContentEntry WHERE ",
-					SavedContentEntryModelImpl.ORDER_BY_SQL,
-					SavedContentEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"savedContentEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getGroupId),
@@ -1996,6 +1849,7 @@ public class SavedContentEntryPersistenceImpl
 			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 			_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 			SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"savedContentEntry.", "userId", FinderColumn.Type.LONG, "=",
 				true, true, SavedContentEntry::getUserId),
@@ -2032,17 +1886,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SavedContentEntryImpl.class, SavedContentEntry.class,
-					"savedContentEntry", "SavedContentEntry",
-					"savedContentEntry.savedContentEntryId",
-					"SELECT DISTINCT {savedContentEntry.*} FROM SavedContentEntry savedContentEntry WHERE ",
-					"SELECT {SavedContentEntry.*} FROM (SELECT DISTINCT savedContentEntry.savedContentEntryId FROM SavedContentEntry savedContentEntry WHERE ",
-					") TEMP_TABLE INNER JOIN SavedContentEntry ON TEMP_TABLE.savedContentEntryId = SavedContentEntry.savedContentEntryId",
-					"SELECT COUNT(DISTINCT savedContentEntry.savedContentEntryId) AS COUNT_VALUE FROM SavedContentEntry savedContentEntry WHERE ",
-					SavedContentEntryModelImpl.ORDER_BY_SQL,
-					SavedContentEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"savedContentEntry.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getGroupId),
@@ -2080,6 +1924,7 @@ public class SavedContentEntryPersistenceImpl
 			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 			_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 			SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"savedContentEntry.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, SavedContentEntry::getCompanyId),
@@ -2106,6 +1951,32 @@ public class SavedContentEntryPersistenceImpl
 			new FinderColumn<>(
 				"savedContentEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, SavedContentEntry::getGroupId),
+			new FinderColumn<>(
+				"savedContentEntry.", "userId", FinderColumn.Type.LONG, "=",
+				true, true, SavedContentEntry::getUserId),
+			new FinderColumn<>(
+				"savedContentEntry.", "classNameId", FinderColumn.Type.LONG,
+				"=", true, true, SavedContentEntry::getClassNameId),
+			new FinderColumn<>(
+				"savedContentEntry.", "classPK", FinderColumn.Type.LONG, "=",
+				true, true, SavedContentEntry::getClassPK));
+
+		_uniquePersistenceFinderByC_U_C_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByC_U_C_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName(), Long.class.getName()
+				},
+				new String[] {"companyId", "userId", "classNameId", "classPK"},
+				0, 0, false, SavedContentEntry::getCompanyId,
+				SavedContentEntry::getUserId, SavedContentEntry::getClassNameId,
+				SavedContentEntry::getClassPK),
+			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE, "",
+			new FinderColumn<>(
+				"savedContentEntry.", "companyId", FinderColumn.Type.LONG, "=",
+				true, true, SavedContentEntry::getCompanyId),
 			new FinderColumn<>(
 				"savedContentEntry.", "userId", FinderColumn.Type.LONG, "=",
 				true, true, SavedContentEntry::getUserId),
@@ -2154,7 +2025,7 @@ public class SavedContentEntryPersistenceImpl
 				_SQL_SELECT_SAVEDCONTENTENTRY_WHERE,
 				_SQL_COUNT_SAVEDCONTENTENTRY_WHERE,
 				SavedContentEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", _uniquePersistenceFinderByC_U_C_C,
 				new FinderColumn<>(
 					"savedContentEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SavedContentEntry::getCompanyId),
@@ -2167,32 +2038,6 @@ public class SavedContentEntryPersistenceImpl
 				new ArrayableFinderColumn<>(
 					"savedContentEntry.", "classPK", FinderColumn.Type.LONG,
 					"=", false, true, true, SavedContentEntry::getClassPK));
-
-		_uniquePersistenceFinderByC_U_C_C = new UniquePersistenceFinder<>(
-			this,
-			createUniqueFinderPath(
-				FINDER_CLASS_NAME_ENTITY, "fetchByC_U_C_C",
-				new String[] {
-					Long.class.getName(), Long.class.getName(),
-					Long.class.getName(), Long.class.getName()
-				},
-				new String[] {"companyId", "userId", "classNameId", "classPK"},
-				0, 0, false, SavedContentEntry::getCompanyId,
-				SavedContentEntry::getUserId, SavedContentEntry::getClassNameId,
-				SavedContentEntry::getClassPK),
-			_SQL_SELECT_SAVEDCONTENTENTRY_WHERE, "",
-			new FinderColumn<>(
-				"savedContentEntry.", "companyId", FinderColumn.Type.LONG, "=",
-				true, true, SavedContentEntry::getCompanyId),
-			new FinderColumn<>(
-				"savedContentEntry.", "userId", FinderColumn.Type.LONG, "=",
-				true, true, SavedContentEntry::getUserId),
-			new FinderColumn<>(
-				"savedContentEntry.", "classNameId", FinderColumn.Type.LONG,
-				"=", true, true, SavedContentEntry::getClassNameId),
-			new FinderColumn<>(
-				"savedContentEntry.", "classPK", FinderColumn.Type.LONG, "=",
-				true, true, SavedContentEntry::getClassPK));
 
 		SavedContentEntryUtil.setPersistence(this);
 	}
@@ -2251,12 +2096,6 @@ public class SavedContentEntryPersistenceImpl
 	private static final String _SQL_COUNT_SAVEDCONTENTENTRY_WHERE =
 		"SELECT COUNT(savedContentEntry) FROM SavedContentEntry savedContentEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SavedContentEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SavedContentEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2266,4 +2105,4 @@ public class SavedContentEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1063795589
+// LIFERAY-SERVICE-BUILDER-HASH:635948431

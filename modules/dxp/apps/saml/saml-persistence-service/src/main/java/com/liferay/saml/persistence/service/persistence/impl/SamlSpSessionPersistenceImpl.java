@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -78,7 +76,7 @@ public class SamlSpSessionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SamlSpSession>
+	private CollectionPersistenceFinder<SamlSpSession, NoSuchSpSessionException>
 		_collectionPersistenceFinderBySamlPeerBindingId;
 
 	/**
@@ -120,18 +118,8 @@ public class SamlSpSessionPersistenceImpl
 			OrderByComparator<SamlSpSession> orderByComparator)
 		throws NoSuchSpSessionException {
 
-		SamlSpSession samlSpSession = fetchBySamlPeerBindingId_First(
-			samlPeerBindingId, orderByComparator);
-
-		if (samlSpSession != null) {
-			return samlSpSession;
-		}
-
-		throw new NoSuchSpSessionException(
-			_collectionPersistenceFinderBySamlPeerBindingId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {samlPeerBindingId}));
+		return _collectionPersistenceFinderBySamlPeerBindingId.findFirst(
+			finderCache, new Object[] {samlPeerBindingId}, orderByComparator);
 	}
 
 	/**
@@ -173,7 +161,7 @@ public class SamlSpSessionPersistenceImpl
 			finderCache, new Object[] {samlPeerBindingId});
 	}
 
-	private UniquePersistenceFinder<SamlSpSession>
+	private UniquePersistenceFinder<SamlSpSession, NoSuchSpSessionException>
 		_uniquePersistenceFinderByJSessionId;
 
 	/**
@@ -187,21 +175,8 @@ public class SamlSpSessionPersistenceImpl
 	public SamlSpSession findByJSessionId(String jSessionId)
 		throws NoSuchSpSessionException {
 
-		SamlSpSession samlSpSession = fetchByJSessionId(jSessionId);
-
-		if (samlSpSession == null) {
-			String message =
-				_uniquePersistenceFinderByJSessionId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {jSessionId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSpSessionException(message);
-		}
-
-		return samlSpSession;
+		return _uniquePersistenceFinderByJSessionId.find(
+			finderCache, new Object[] {jSessionId});
 	}
 
 	/**
@@ -246,7 +221,7 @@ public class SamlSpSessionPersistenceImpl
 			finderCache, new Object[] {jSessionId});
 	}
 
-	private UniquePersistenceFinder<SamlSpSession>
+	private UniquePersistenceFinder<SamlSpSession, NoSuchSpSessionException>
 		_uniquePersistenceFinderBySamlSpSessionKey;
 
 	/**
@@ -260,23 +235,8 @@ public class SamlSpSessionPersistenceImpl
 	public SamlSpSession findBySamlSpSessionKey(String samlSpSessionKey)
 		throws NoSuchSpSessionException {
 
-		SamlSpSession samlSpSession = fetchBySamlSpSessionKey(samlSpSessionKey);
-
-		if (samlSpSession == null) {
-			String message =
-				_uniquePersistenceFinderBySamlSpSessionKey.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {samlSpSessionKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSpSessionException(message);
-		}
-
-		return samlSpSession;
+		return _uniquePersistenceFinderBySamlSpSessionKey.find(
+			finderCache, new Object[] {samlSpSessionKey});
 	}
 
 	/**
@@ -321,7 +281,7 @@ public class SamlSpSessionPersistenceImpl
 			finderCache, new Object[] {samlSpSessionKey});
 	}
 
-	private CollectionPersistenceFinder<SamlSpSession>
+	private CollectionPersistenceFinder<SamlSpSession, NoSuchSpSessionException>
 		_collectionPersistenceFinderByC_SI;
 
 	/**
@@ -365,17 +325,9 @@ public class SamlSpSessionPersistenceImpl
 			OrderByComparator<SamlSpSession> orderByComparator)
 		throws NoSuchSpSessionException {
 
-		SamlSpSession samlSpSession = fetchByC_SI_First(
-			companyId, sessionIndex, orderByComparator);
-
-		if (samlSpSession != null) {
-			return samlSpSession;
-		}
-
-		throw new NoSuchSpSessionException(
-			_collectionPersistenceFinderByC_SI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, sessionIndex}));
+		return _collectionPersistenceFinderByC_SI.findFirst(
+			finderCache, new Object[] {companyId, sessionIndex},
+			orderByComparator);
 	}
 
 	/**
@@ -655,6 +607,7 @@ public class SamlSpSessionPersistenceImpl
 					new String[] {"samlPeerBindingId"}, false),
 				_SQL_SELECT_SAMLSPSESSION_WHERE, _SQL_COUNT_SAMLSPSESSION_WHERE,
 				SamlSpSessionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"samlSpSession.", "samlPeerBindingId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -705,7 +658,8 @@ public class SamlSpSessionPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "sessionIndex"}, 0, 2, false, null),
 			_SQL_SELECT_SAMLSPSESSION_WHERE, _SQL_COUNT_SAMLSPSESSION_WHERE,
-			SamlSpSessionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SamlSpSessionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"samlSpSession.", "companyId", FinderColumn.Type.LONG, "=",
 				true, true, SamlSpSession::getCompanyId),
@@ -767,12 +721,6 @@ public class SamlSpSessionPersistenceImpl
 	private static final String _SQL_COUNT_SAMLSPSESSION_WHERE =
 		"SELECT COUNT(samlSpSession) FROM SamlSpSession samlSpSession WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SamlSpSession exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SamlSpSessionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"terminated"});
 
@@ -782,4 +730,4 @@ public class SamlSpSessionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1139821452
+// LIFERAY-SERVICE-BUILDER-HASH:-880979730

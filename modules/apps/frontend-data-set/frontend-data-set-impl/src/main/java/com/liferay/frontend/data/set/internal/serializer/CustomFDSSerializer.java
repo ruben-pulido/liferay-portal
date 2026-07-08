@@ -703,7 +703,7 @@ public class CustomFDSSerializer
 				).put(
 					"default", defaultVisualizationMode.equals("list")
 				).put(
-					"label", LanguageUtil.get(httpServletRequest, "list")
+					"label", LanguageUtil.get(httpServletRequest, "list[noun]")
 				).put(
 					"name", "list"
 				).put(
@@ -878,7 +878,9 @@ public class CustomFDSSerializer
 	@Reference
 	protected FDSFilterRegistry fdsFilterRegistry;
 
-	private JSONObject _getDateJSONObject(Object object) {
+	private JSONObject _getDateOrDateTimeJSONObject(
+		boolean dateTime, Object object) {
+
 		if (object == null) {
 			return null;
 		}
@@ -887,13 +889,25 @@ public class CustomFDSSerializer
 
 		calendar.setTime(Date.from(Instant.parse(String.valueOf(object))));
 
-		return JSONUtil.put(
+		JSONObject jsonObject = JSONUtil.put(
 			"day", calendar.get(Calendar.DATE)
 		).put(
 			"month", calendar.get(Calendar.MONTH) + 1
 		).put(
 			"year", calendar.get(Calendar.YEAR)
 		);
+
+		if (dateTime) {
+			jsonObject.put(
+				"hour", calendar.get(Calendar.HOUR_OF_DAY)
+			).put(
+				"minute", calendar.get(Calendar.MINUTE)
+			).put(
+				"second", calendar.get(Calendar.SECOND)
+			);
+		}
+
+		return jsonObject;
 	}
 
 	private Object _getListTypeEntryKey(
@@ -1118,8 +1132,12 @@ public class CustomFDSSerializer
 			String fieldName, Map<String, Object> properties, String type)
 		throws Exception {
 
-		JSONObject fromJSONObject = _getDateJSONObject(properties.get("from"));
-		JSONObject toJSONObject = _getDateJSONObject(properties.get("to"));
+		boolean dateTime = !Objects.equals(type, FDSEntityFieldTypes.DATE);
+
+		JSONObject fromJSONObject = _getDateOrDateTimeJSONObject(
+			dateTime, properties.get("from"));
+		JSONObject toJSONObject = _getDateOrDateTimeJSONObject(
+			dateTime, properties.get("to"));
 
 		boolean active = (fromJSONObject != null) || (toJSONObject != null);
 
@@ -1127,8 +1145,7 @@ public class CustomFDSSerializer
 			"active", active
 		).put(
 			"entityFieldType",
-			Objects.equals(type, "date") ? FDSEntityFieldTypes.DATE :
-				FDSEntityFieldTypes.DATE_TIME
+			dateTime ? FDSEntityFieldTypes.DATE_TIME : FDSEntityFieldTypes.DATE
 		).put(
 			"id", fieldName
 		).put(
@@ -1148,7 +1165,7 @@ public class CustomFDSSerializer
 				);
 			}
 		).put(
-			"type", "dateRange"
+			"type", dateTime ? "dateTimeRange" : "dateRange"
 		);
 	}
 

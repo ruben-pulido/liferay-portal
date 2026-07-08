@@ -114,12 +114,8 @@ public class AssetEntryAssetCategoryRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		AssetEntryAssetCategoryRel newAssetEntryAssetCategoryRel =
-			_persistence.create(pk);
-
-		newAssetEntryAssetCategoryRel.setMvccVersion(RandomTestUtil.nextLong());
+			addAssetEntryAssetCategoryRel();
 
 		newAssetEntryAssetCategoryRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -134,8 +130,10 @@ public class AssetEntryAssetCategoryRelPersistenceTest {
 
 		newAssetEntryAssetCategoryRel.setPriority(RandomTestUtil.nextInt());
 
-		_assetEntryAssetCategoryRels.add(
-			_persistence.update(newAssetEntryAssetCategoryRel));
+		newAssetEntryAssetCategoryRel = _persistence.update(
+			newAssetEntryAssetCategoryRel);
+
+		_assetEntryAssetCategoryRels.add(newAssetEntryAssetCategoryRel);
 
 		AssetEntryAssetCategoryRel existingAssetEntryAssetCategoryRel =
 			_persistence.findByPrimaryKey(
@@ -545,8 +543,6 @@ public class AssetEntryAssetCategoryRelPersistenceTest {
 		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel =
 			_persistence.create(pk);
 
-		assetEntryAssetCategoryRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		assetEntryAssetCategoryRel.setCtCollectionId(RandomTestUtil.nextLong());
 
 		assetEntryAssetCategoryRel.setCompanyId(RandomTestUtil.nextLong());
@@ -570,4 +566,4 @@ public class AssetEntryAssetCategoryRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:77557266
+// LIFERAY-SERVICE-BUILDER-HASH:-1809647120

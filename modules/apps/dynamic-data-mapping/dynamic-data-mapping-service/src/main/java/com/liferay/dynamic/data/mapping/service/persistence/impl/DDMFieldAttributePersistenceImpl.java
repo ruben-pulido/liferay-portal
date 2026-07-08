@@ -13,7 +13,6 @@ import com.liferay.dynamic.data.mapping.model.impl.DDMFieldAttributeModelImpl;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFieldAttributePersistence;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFieldAttributeUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.impl.constants.DDMPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -21,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.ArrayableFinderColumn;
@@ -83,8 +80,9 @@ public class DDMFieldAttributePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMFieldAttribute>
-		_collectionPersistenceFinderByStorageId;
+	private CollectionPersistenceFinder
+		<DDMFieldAttribute, NoSuchFieldAttributeException>
+			_collectionPersistenceFinderByStorageId;
 
 	/**
 	 * Returns an ordered range of all the ddm field attributes where storageId = &#63;.
@@ -125,16 +123,8 @@ public class DDMFieldAttributePersistenceImpl
 			OrderByComparator<DDMFieldAttribute> orderByComparator)
 		throws NoSuchFieldAttributeException {
 
-		DDMFieldAttribute ddmFieldAttribute = fetchByStorageId_First(
-			storageId, orderByComparator);
-
-		if (ddmFieldAttribute != null) {
-			return ddmFieldAttribute;
-		}
-
-		throw new NoSuchFieldAttributeException(
-			_collectionPersistenceFinderByStorageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {storageId}));
+		return _collectionPersistenceFinderByStorageId.findFirst(
+			finderCache, new Object[] {storageId}, orderByComparator);
 	}
 
 	/**
@@ -176,8 +166,9 @@ public class DDMFieldAttributePersistenceImpl
 			finderCache, new Object[] {storageId});
 	}
 
-	private CollectionPersistenceFinder<DDMFieldAttribute>
-		_collectionPersistenceFinderByS_AN;
+	private CollectionPersistenceFinder
+		<DDMFieldAttribute, NoSuchFieldAttributeException>
+			_collectionPersistenceFinderByS_AN;
 
 	/**
 	 * Returns an ordered range of all the ddm field attributes where storageId = &#63; and attributeName = &#63;.
@@ -220,17 +211,9 @@ public class DDMFieldAttributePersistenceImpl
 			OrderByComparator<DDMFieldAttribute> orderByComparator)
 		throws NoSuchFieldAttributeException {
 
-		DDMFieldAttribute ddmFieldAttribute = fetchByS_AN_First(
-			storageId, attributeName, orderByComparator);
-
-		if (ddmFieldAttribute != null) {
-			return ddmFieldAttribute;
-		}
-
-		throw new NoSuchFieldAttributeException(
-			_collectionPersistenceFinderByS_AN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {storageId, attributeName}));
+		return _collectionPersistenceFinderByS_AN.findFirst(
+			finderCache, new Object[] {storageId, attributeName},
+			orderByComparator);
 	}
 
 	/**
@@ -276,8 +259,9 @@ public class DDMFieldAttributePersistenceImpl
 			finderCache, new Object[] {storageId, attributeName});
 	}
 
-	private CollectionPersistenceFinder<DDMFieldAttribute>
-		_collectionPersistenceFinderByS_L;
+	private CollectionPersistenceFinder
+		<DDMFieldAttribute, NoSuchFieldAttributeException>
+			_collectionPersistenceFinderByS_L;
 
 	/**
 	 * Returns an ordered range of all the ddm field attributes where storageId = &#63; and languageId = &#63;.
@@ -320,26 +304,9 @@ public class DDMFieldAttributePersistenceImpl
 			OrderByComparator<DDMFieldAttribute> orderByComparator)
 		throws NoSuchFieldAttributeException {
 
-		DDMFieldAttribute ddmFieldAttribute = fetchByS_L_First(
-			storageId, languageId, orderByComparator);
-
-		if (ddmFieldAttribute != null) {
-			return ddmFieldAttribute;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("storageId=");
-		sb.append(storageId);
-
-		sb.append(", languageId=");
-		sb.append(languageId);
-
-		sb.append("}");
-
-		throw new NoSuchFieldAttributeException(sb.toString());
+		return _collectionPersistenceFinderByS_L.findFirst(
+			finderCache, new Object[] {storageId, new String[] {languageId}},
+			orderByComparator);
 	}
 
 	/**
@@ -426,8 +393,9 @@ public class DDMFieldAttributePersistenceImpl
 			new Object[] {storageId, ArrayUtil.sortedUnique(languageIds)});
 	}
 
-	private CollectionPersistenceFinder<DDMFieldAttribute>
-		_collectionPersistenceFinderByAN_SAV;
+	private CollectionPersistenceFinder
+		<DDMFieldAttribute, NoSuchFieldAttributeException>
+			_collectionPersistenceFinderByAN_SAV;
 
 	/**
 	 * Returns an ordered range of all the ddm field attributes where attributeName = &#63; and smallAttributeValue = &#63;.
@@ -470,17 +438,9 @@ public class DDMFieldAttributePersistenceImpl
 			OrderByComparator<DDMFieldAttribute> orderByComparator)
 		throws NoSuchFieldAttributeException {
 
-		DDMFieldAttribute ddmFieldAttribute = fetchByAN_SAV_First(
-			attributeName, smallAttributeValue, orderByComparator);
-
-		if (ddmFieldAttribute != null) {
-			return ddmFieldAttribute;
-		}
-
-		throw new NoSuchFieldAttributeException(
-			_collectionPersistenceFinderByAN_SAV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {attributeName, smallAttributeValue}));
+		return _collectionPersistenceFinderByAN_SAV.findFirst(
+			finderCache, new Object[] {attributeName, smallAttributeValue},
+			orderByComparator);
 	}
 
 	/**
@@ -528,8 +488,9 @@ public class DDMFieldAttributePersistenceImpl
 			finderCache, new Object[] {attributeName, smallAttributeValue});
 	}
 
-	private UniquePersistenceFinder<DDMFieldAttribute>
-		_uniquePersistenceFinderByF_AN_L;
+	private UniquePersistenceFinder
+		<DDMFieldAttribute, NoSuchFieldAttributeException>
+			_uniquePersistenceFinderByF_AN_L;
 
 	/**
 	 * Returns the ddm field attribute where fieldId = &#63; and attributeName = &#63; and languageId = &#63; or throws a <code>NoSuchFieldAttributeException</code> if it could not be found.
@@ -545,23 +506,8 @@ public class DDMFieldAttributePersistenceImpl
 			long fieldId, String attributeName, String languageId)
 		throws NoSuchFieldAttributeException {
 
-		DDMFieldAttribute ddmFieldAttribute = fetchByF_AN_L(
-			fieldId, attributeName, languageId);
-
-		if (ddmFieldAttribute == null) {
-			String message =
-				_uniquePersistenceFinderByF_AN_L.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {fieldId, attributeName, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFieldAttributeException(message);
-		}
-
-		return ddmFieldAttribute;
+		return _uniquePersistenceFinderByF_AN_L.find(
+			finderCache, new Object[] {fieldId, attributeName, languageId});
 	}
 
 	/**
@@ -891,7 +837,7 @@ public class DDMFieldAttributePersistenceImpl
 				_SQL_SELECT_DDMFIELDATTRIBUTE_WHERE,
 				_SQL_COUNT_DDMFIELDATTRIBUTE_WHERE,
 				DDMFieldAttributeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddmFieldAttribute.", "storageId", FinderColumn.Type.LONG,
 					"=", true, true, DDMFieldAttribute::getStorageId));
@@ -917,6 +863,7 @@ public class DDMFieldAttributePersistenceImpl
 			_SQL_SELECT_DDMFIELDATTRIBUTE_WHERE,
 			_SQL_COUNT_DDMFIELDATTRIBUTE_WHERE,
 			DDMFieldAttributeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ddmFieldAttribute.", "storageId", FinderColumn.Type.LONG, "=",
 				true, true, DDMFieldAttribute::getStorageId),
@@ -945,6 +892,7 @@ public class DDMFieldAttributePersistenceImpl
 			_SQL_SELECT_DDMFIELDATTRIBUTE_WHERE,
 			_SQL_COUNT_DDMFIELDATTRIBUTE_WHERE,
 			DDMFieldAttributeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ddmFieldAttribute.", "storageId", FinderColumn.Type.LONG, "=",
 				true, true, DDMFieldAttribute::getStorageId),
@@ -981,7 +929,7 @@ public class DDMFieldAttributePersistenceImpl
 				_SQL_SELECT_DDMFIELDATTRIBUTE_WHERE,
 				_SQL_COUNT_DDMFIELDATTRIBUTE_WHERE,
 				DDMFieldAttributeModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddmFieldAttribute.", "attributeName",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1071,16 +1019,10 @@ public class DDMFieldAttributePersistenceImpl
 	private static final String _SQL_COUNT_DDMFIELDATTRIBUTE_WHERE =
 		"SELECT COUNT(ddmFieldAttribute) FROM DDMFieldAttribute ddmFieldAttribute WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMFieldAttribute exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMFieldAttributePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1742500865
+// LIFERAY-SERVICE-BUILDER-HASH:1024056831

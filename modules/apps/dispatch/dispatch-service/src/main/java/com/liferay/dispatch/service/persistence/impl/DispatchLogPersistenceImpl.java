@@ -75,7 +75,7 @@ public class DispatchLogPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DispatchLog>
+	private CollectionPersistenceFinder<DispatchLog, NoSuchLogException>
 		_collectionPersistenceFinderByDispatchTriggerId;
 
 	/**
@@ -117,18 +117,8 @@ public class DispatchLogPersistenceImpl
 			OrderByComparator<DispatchLog> orderByComparator)
 		throws NoSuchLogException {
 
-		DispatchLog dispatchLog = fetchByDispatchTriggerId_First(
-			dispatchTriggerId, orderByComparator);
-
-		if (dispatchLog != null) {
-			return dispatchLog;
-		}
-
-		throw new NoSuchLogException(
-			_collectionPersistenceFinderByDispatchTriggerId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {dispatchTriggerId}));
+		return _collectionPersistenceFinderByDispatchTriggerId.findFirst(
+			finderCache, new Object[] {dispatchTriggerId}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +160,7 @@ public class DispatchLogPersistenceImpl
 			finderCache, new Object[] {dispatchTriggerId});
 	}
 
-	private CollectionPersistenceFinder<DispatchLog>
+	private CollectionPersistenceFinder<DispatchLog, NoSuchLogException>
 		_collectionPersistenceFinderByDTI_S;
 
 	/**
@@ -214,17 +204,9 @@ public class DispatchLogPersistenceImpl
 			OrderByComparator<DispatchLog> orderByComparator)
 		throws NoSuchLogException {
 
-		DispatchLog dispatchLog = fetchByDTI_S_First(
-			dispatchTriggerId, status, orderByComparator);
-
-		if (dispatchLog != null) {
-			return dispatchLog;
-		}
-
-		throw new NoSuchLogException(
-			_collectionPersistenceFinderByDTI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {dispatchTriggerId, status}));
+		return _collectionPersistenceFinderByDTI_S.findFirst(
+			finderCache, new Object[] {dispatchTriggerId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -501,6 +483,7 @@ public class DispatchLogPersistenceImpl
 					new String[] {"dispatchTriggerId"}, false),
 				_SQL_SELECT_DISPATCHLOG_WHERE, _SQL_COUNT_DISPATCHLOG_WHERE,
 				DispatchLogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dispatchLog.", "dispatchTriggerId", FinderColumn.Type.LONG,
 					"=", true, true, DispatchLog::getDispatchTriggerId));
@@ -524,7 +507,8 @@ public class DispatchLogPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"dispatchTriggerId", "status"}, false),
 			_SQL_SELECT_DISPATCHLOG_WHERE, _SQL_COUNT_DISPATCHLOG_WHERE,
-			DispatchLogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DispatchLogModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"dispatchLog.", "dispatchTriggerId", FinderColumn.Type.LONG,
 				"=", true, true, DispatchLog::getDispatchTriggerId),
@@ -586,9 +570,6 @@ public class DispatchLogPersistenceImpl
 	private static final String _SQL_COUNT_DISPATCHLOG_WHERE =
 		"SELECT COUNT(dispatchLog) FROM DispatchLog dispatchLog WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DispatchLog exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"output"});
 
@@ -598,4 +579,4 @@ public class DispatchLogPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-355065192
+// LIFERAY-SERVICE-BUILDER-HASH:1926173064

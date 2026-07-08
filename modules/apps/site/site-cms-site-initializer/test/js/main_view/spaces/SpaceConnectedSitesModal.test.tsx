@@ -290,6 +290,31 @@ describe('SpaceConnectedSitesModal', () => {
 			).toBeInTheDocument();
 		});
 
+		it('renders the site logo in the autocomplete options', async () => {
+			mockFetch.mockImplementation(async () => {
+				return {
+					headers: new Headers([
+						['Content-Type', 'application/json'],
+					]),
+					json: async () => ({items: [mockUnconnectedSite]}),
+				} as Response;
+			});
+
+			renderComponent();
+			await waitForComponentRendering();
+
+			await userEvent.click(screen.getByPlaceholderText('select-a-site'));
+
+			const option = await screen.findByRole('option', {
+				name: mockUnconnectedSite.descriptiveName,
+			});
+
+			expect(option.querySelector('img')).toHaveAttribute(
+				'src',
+				mockUnconnectedSite.logo
+			);
+		});
+
 		it('shows an error toast if connecting a site fails', async () => {
 			mockFetch.mockImplementation(async () => {
 				return {
@@ -488,6 +513,82 @@ describe('SpaceConnectedSitesModal', () => {
 			).toBeDisabled();
 		});
 
+		it('excludes already-connected sites from the autocomplete request', async () => {
+			mockFetch.mockImplementation(async () => {
+				return {
+					headers: new Headers([
+						['Content-Type', 'application/json'],
+					]),
+					json: async () => ({items: []}),
+				} as Response;
+			});
+
+			renderComponent();
+			await waitForComponentRendering();
+
+			await userEvent.click(screen.getByPlaceholderText('select-a-site'));
+
+			await waitFor(() => {
+				const sitesURLs = mockFetch.mock.calls
+					.map((call: unknown[]) => String(call[0]))
+					.filter((url) => url.includes('/sites'));
+
+				expect(
+					sitesURLs.some(
+						(url) =>
+							url.includes('excludedExternalReferenceCodes=1') &&
+							url.includes('excludedExternalReferenceCodes=2')
+					)
+				).toBe(true);
+			});
+		});
+
+		it('excludes already-connected site templates from the autocomplete request', async () => {
+			mockGetConnectedSitesFromSpace.mockResolvedValue({
+				data: {items: [mockConnectedSiteTemplate]},
+				error: null,
+			});
+
+			mockFetch.mockImplementation(async () => {
+				return {
+					headers: new Headers([
+						['Content-Type', 'application/json'],
+					]),
+					json: async () => ({items: []}),
+				} as Response;
+			});
+
+			renderComponent();
+
+			await screen.findByText(
+				`${mockConnectedSiteTemplate.descriptiveName} (site-template)`
+			);
+
+			await userEvent.click(screen.getByLabelText('sites'));
+
+			await userEvent.click(
+				screen.getByRole('option', {name: 'site-templates'})
+			);
+
+			await userEvent.click(
+				screen.getByPlaceholderText('select-a-site-template')
+			);
+
+			await waitFor(() => {
+				const siteTemplatesURLs = mockFetch.mock.calls
+					.map((call: unknown[]) => String(call[0]))
+					.filter((url) => url.includes('/site-templates'));
+
+				expect(
+					siteTemplatesURLs.some((url) =>
+						url.includes(
+							`excludedSiteExternalReferenceCodes=${mockConnectedSiteTemplate.externalReferenceCode}`
+						)
+					)
+				).toBe(true);
+			});
+		});
+
 		it('switches the autocomplete placeholder when toggled to site templates', async () => {
 			renderComponent();
 			await waitForComponentRendering();
@@ -496,9 +597,10 @@ describe('SpaceConnectedSitesModal', () => {
 				screen.getByPlaceholderText('select-a-site')
 			).toBeInTheDocument();
 
-			await userEvent.selectOptions(
-				screen.getByLabelText('sites'),
-				'site-templates'
+			await userEvent.click(screen.getByLabelText('sites'));
+
+			await userEvent.click(
+				screen.getByRole('option', {name: 'site-templates'})
 			);
 
 			expect(
@@ -538,9 +640,10 @@ describe('SpaceConnectedSitesModal', () => {
 			renderComponent();
 			await waitForComponentRendering();
 
-			await userEvent.selectOptions(
-				screen.getByLabelText('sites'),
-				'site-templates'
+			await userEvent.click(screen.getByLabelText('sites'));
+
+			await userEvent.click(
+				screen.getByRole('option', {name: 'site-templates'})
 			);
 
 			await userEvent.click(
@@ -604,9 +707,10 @@ describe('SpaceConnectedSitesModal', () => {
 			renderComponent();
 			await waitForComponentRendering();
 
-			await userEvent.selectOptions(
-				screen.getByLabelText('sites'),
-				'site-templates'
+			await userEvent.click(screen.getByLabelText('sites'));
+
+			await userEvent.click(
+				screen.getByRole('option', {name: 'site-templates'})
 			);
 
 			await userEvent.click(
@@ -666,9 +770,10 @@ describe('SpaceConnectedSitesModal', () => {
 				)
 			).toBeInTheDocument();
 
-			await userEvent.selectOptions(
-				screen.getByLabelText('sites'),
-				'site-templates'
+			await userEvent.click(screen.getByLabelText('sites'));
+
+			await userEvent.click(
+				screen.getByRole('option', {name: 'site-templates'})
 			);
 
 			await userEvent.click(

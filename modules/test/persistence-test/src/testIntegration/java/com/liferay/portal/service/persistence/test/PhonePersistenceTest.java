@@ -111,11 +111,7 @@ public class PhonePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Phone newPhone = _persistence.create(pk);
-
-		newPhone.setMvccVersion(RandomTestUtil.nextLong());
+		Phone newPhone = addPhone();
 
 		newPhone.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -145,7 +141,9 @@ public class PhonePersistenceTest {
 
 		newPhone.setPrimary(RandomTestUtil.randomBoolean());
 
-		_phones.add(_persistence.update(newPhone));
+		newPhone = _persistence.update(newPhone);
+
+		_phones.add(newPhone);
 
 		Phone existingPhone = _persistence.findByPrimaryKey(
 			newPhone.getPrimaryKey());
@@ -564,8 +562,6 @@ public class PhonePersistenceTest {
 
 		Phone phone = _persistence.create(pk);
 
-		phone.setMvccVersion(RandomTestUtil.nextLong());
-
 		phone.setCtCollectionId(RandomTestUtil.nextLong());
 
 		phone.setUuid(RandomTestUtil.randomString());
@@ -604,4 +600,4 @@ public class PhonePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1631807683
+// LIFERAY-SERVICE-BUILDER-HASH:154667146

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -85,7 +83,7 @@ public class PLOEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PLOEntry>
+	private CollectionPersistenceFinder<PLOEntry, NoSuchPLOEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -125,16 +123,8 @@ public class PLOEntryPersistenceImpl
 			long companyId, OrderByComparator<PLOEntry> orderByComparator)
 		throws NoSuchPLOEntryException {
 
-		PLOEntry ploEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ploEntry != null) {
-			return ploEntry;
-		}
-
-		throw new NoSuchPLOEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -175,7 +165,7 @@ public class PLOEntryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<PLOEntry>
+	private CollectionPersistenceFinder<PLOEntry, NoSuchPLOEntryException>
 		_collectionPersistenceFinderByC_K;
 
 	/**
@@ -218,15 +208,8 @@ public class PLOEntryPersistenceImpl
 			OrderByComparator<PLOEntry> orderByComparator)
 		throws NoSuchPLOEntryException {
 
-		PLOEntry ploEntry = fetchByC_K_First(companyId, key, orderByComparator);
-
-		if (ploEntry != null) {
-			return ploEntry;
-		}
-
-		throw new NoSuchPLOEntryException(
-			_collectionPersistenceFinderByC_K.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, key}));
+		return _collectionPersistenceFinderByC_K.findFirst(
+			finderCache, new Object[] {companyId, key}, orderByComparator);
 	}
 
 	/**
@@ -271,7 +254,7 @@ public class PLOEntryPersistenceImpl
 			finderCache, new Object[] {companyId, key});
 	}
 
-	private CollectionPersistenceFinder<PLOEntry>
+	private CollectionPersistenceFinder<PLOEntry, NoSuchPLOEntryException>
 		_collectionPersistenceFinderByC_L;
 
 	/**
@@ -314,17 +297,9 @@ public class PLOEntryPersistenceImpl
 			OrderByComparator<PLOEntry> orderByComparator)
 		throws NoSuchPLOEntryException {
 
-		PLOEntry ploEntry = fetchByC_L_First(
-			companyId, languageId, orderByComparator);
-
-		if (ploEntry != null) {
-			return ploEntry;
-		}
-
-		throw new NoSuchPLOEntryException(
-			_collectionPersistenceFinderByC_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, languageId}));
+		return _collectionPersistenceFinderByC_L.findFirst(
+			finderCache, new Object[] {companyId, languageId},
+			orderByComparator);
 	}
 
 	/**
@@ -370,7 +345,8 @@ public class PLOEntryPersistenceImpl
 			finderCache, new Object[] {companyId, languageId});
 	}
 
-	private UniquePersistenceFinder<PLOEntry> _uniquePersistenceFinderByC_K_L;
+	private UniquePersistenceFinder<PLOEntry, NoSuchPLOEntryException>
+		_uniquePersistenceFinderByC_K_L;
 
 	/**
 	 * Returns the plo entry where companyId = &#63; and key = &#63; and languageId = &#63; or throws a <code>NoSuchPLOEntryException</code> if it could not be found.
@@ -385,22 +361,8 @@ public class PLOEntryPersistenceImpl
 	public PLOEntry findByC_K_L(long companyId, String key, String languageId)
 		throws NoSuchPLOEntryException {
 
-		PLOEntry ploEntry = fetchByC_K_L(companyId, key, languageId);
-
-		if (ploEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_K_L.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, key, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPLOEntryException(message);
-		}
-
-		return ploEntry;
+		return _uniquePersistenceFinderByC_K_L.find(
+			finderCache, new Object[] {companyId, key, languageId});
 	}
 
 	/**
@@ -702,7 +664,8 @@ public class PLOEntryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_PLOENTRY_WHERE, _SQL_COUNT_PLOENTRY_WHERE,
-				PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ploEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, PLOEntry::getCompanyId));
@@ -726,13 +689,13 @@ public class PLOEntryPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "key_"}, 0, 2, false, null),
 			_SQL_SELECT_PLOENTRY_WHERE, _SQL_COUNT_PLOENTRY_WHERE,
-			PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ploEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, PLOEntry::getCompanyId),
 			new FinderColumn<>(
-				"ploEntry.", "key", FinderColumn.Type.STRING, "=", true, true,
-				PLOEntry::getKey));
+				"ploEntry.", "key", "key_", FinderColumn.Type.STRING, "=", true,
+				true, PLOEntry::getKey));
 
 		_collectionPersistenceFinderByC_L = new CollectionPersistenceFinder<>(
 			this,
@@ -753,7 +716,7 @@ public class PLOEntryPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "languageId"}, 0, 2, false, null),
 			_SQL_SELECT_PLOENTRY_WHERE, _SQL_COUNT_PLOENTRY_WHERE,
-			PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			PLOEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"ploEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, PLOEntry::getCompanyId),
@@ -777,8 +740,8 @@ public class PLOEntryPersistenceImpl
 				"ploEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, PLOEntry::getCompanyId),
 			new FinderColumn<>(
-				"ploEntry.", "key", FinderColumn.Type.STRING, "=", true, true,
-				PLOEntry::getKey),
+				"ploEntry.", "key", "key_", FinderColumn.Type.STRING, "=", true,
+				true, PLOEntry::getKey),
 			new FinderColumn<>(
 				"ploEntry.", "languageId", FinderColumn.Type.STRING, "=", true,
 				true, PLOEntry::getLanguageId));
@@ -837,12 +800,6 @@ public class PLOEntryPersistenceImpl
 	private static final String _SQL_COUNT_PLOENTRY_WHERE =
 		"SELECT COUNT(ploEntry) FROM PLOEntry ploEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PLOEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PLOEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"key"});
 
@@ -852,4 +809,4 @@ public class PLOEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-995927073
+// LIFERAY-SERVICE-BUILDER-HASH:1297784821

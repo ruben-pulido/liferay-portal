@@ -606,6 +606,17 @@ public class ObjectEntryResourceImpl
 			}
 
 			@Override
+			public boolean isHidden() {
+				if (!_objectDefinition.isAllowStandaloneObjectEntry() &&
+					_objectDefinition.isRootDescendantNode()) {
+
+					return true;
+				}
+
+				return false;
+			}
+
+			@Override
 			public boolean isMissingPortletSupported() {
 				return true;
 			}

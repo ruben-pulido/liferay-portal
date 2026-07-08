@@ -115,13 +115,8 @@ public class CommerceDiscountOrderTypeRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceDiscountOrderTypeRel newCommerceDiscountOrderTypeRel =
-			_persistence.create(pk);
-
-		newCommerceDiscountOrderTypeRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceDiscountOrderTypeRel();
 
 		newCommerceDiscountOrderTypeRel.setUuid(RandomTestUtil.randomString());
 
@@ -149,8 +144,10 @@ public class CommerceDiscountOrderTypeRelPersistenceTest {
 		newCommerceDiscountOrderTypeRel.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_commerceDiscountOrderTypeRels.add(
-			_persistence.update(newCommerceDiscountOrderTypeRel));
+		newCommerceDiscountOrderTypeRel = _persistence.update(
+			newCommerceDiscountOrderTypeRel);
+
+		_commerceDiscountOrderTypeRels.add(newCommerceDiscountOrderTypeRel);
 
 		CommerceDiscountOrderTypeRel existingCommerceDiscountOrderTypeRel =
 			_persistence.findByPrimaryKey(
@@ -605,8 +602,6 @@ public class CommerceDiscountOrderTypeRelPersistenceTest {
 		CommerceDiscountOrderTypeRel commerceDiscountOrderTypeRel =
 			_persistence.create(pk);
 
-		commerceDiscountOrderTypeRel.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceDiscountOrderTypeRel.setUuid(RandomTestUtil.randomString());
 
 		commerceDiscountOrderTypeRel.setCompanyId(RandomTestUtil.nextLong());
@@ -642,4 +637,4 @@ public class CommerceDiscountOrderTypeRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-947806861
+// LIFERAY-SERVICE-BUILDER-HASH:-2082815603

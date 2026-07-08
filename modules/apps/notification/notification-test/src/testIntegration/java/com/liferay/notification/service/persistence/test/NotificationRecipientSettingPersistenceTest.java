@@ -115,13 +115,8 @@ public class NotificationRecipientSettingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		NotificationRecipientSetting newNotificationRecipientSetting =
-			_persistence.create(pk);
-
-		newNotificationRecipientSetting.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addNotificationRecipientSetting();
 
 		newNotificationRecipientSetting.setUuid(RandomTestUtil.randomString());
 
@@ -145,8 +140,10 @@ public class NotificationRecipientSettingPersistenceTest {
 
 		newNotificationRecipientSetting.setValue(RandomTestUtil.randomString());
 
-		_notificationRecipientSettings.add(
-			_persistence.update(newNotificationRecipientSetting));
+		newNotificationRecipientSetting = _persistence.update(
+			newNotificationRecipientSetting);
+
+		_notificationRecipientSettings.add(newNotificationRecipientSetting);
 
 		NotificationRecipientSetting existingNotificationRecipientSetting =
 			_persistence.findByPrimaryKey(
@@ -590,8 +587,6 @@ public class NotificationRecipientSettingPersistenceTest {
 		NotificationRecipientSetting notificationRecipientSetting =
 			_persistence.create(pk);
 
-		notificationRecipientSetting.setMvccVersion(RandomTestUtil.nextLong());
-
 		notificationRecipientSetting.setUuid(RandomTestUtil.randomString());
 
 		notificationRecipientSetting.setCompanyId(RandomTestUtil.nextLong());
@@ -623,4 +618,4 @@ public class NotificationRecipientSettingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-765702117
+// LIFERAY-SERVICE-BUILDER-HASH:-1765690740

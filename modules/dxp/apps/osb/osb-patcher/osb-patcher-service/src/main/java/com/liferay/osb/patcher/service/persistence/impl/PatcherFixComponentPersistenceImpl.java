@@ -18,8 +18,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -72,8 +70,9 @@ public class PatcherFixComponentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<PatcherFixComponent>
-		_uniquePersistenceFinderByName;
+	private UniquePersistenceFinder
+		<PatcherFixComponent, NoSuchPatcherFixComponentException>
+			_uniquePersistenceFinderByName;
 
 	/**
 	 * Returns the patcher fix component where name = &#63; or throws a <code>NoSuchPatcherFixComponentException</code> if it could not be found.
@@ -86,21 +85,8 @@ public class PatcherFixComponentPersistenceImpl
 	public PatcherFixComponent findByName(String name)
 		throws NoSuchPatcherFixComponentException {
 
-		PatcherFixComponent patcherFixComponent = fetchByName(name);
-
-		if (patcherFixComponent == null) {
-			String message =
-				_uniquePersistenceFinderByName.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPatcherFixComponentException(message);
-		}
-
-		return patcherFixComponent;
+		return _uniquePersistenceFinderByName.find(
+			finderCache, new Object[] {name});
 	}
 
 	/**
@@ -410,16 +396,10 @@ public class PatcherFixComponentPersistenceImpl
 	private static final String _SQL_SELECT_PATCHERFIXCOMPONENT_WHERE =
 		"SELECT patcherFixComponent FROM PatcherFixComponent patcherFixComponent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PatcherFixComponent exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PatcherFixComponentPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-614999957
+// LIFERAY-SERVICE-BUILDER-HASH:-1115939261

@@ -7,7 +7,6 @@ package com.liferay.headless.admin.site.internal.dto.v1_0.util;
 
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
 import com.liferay.portal.kernel.util.ScopeUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -22,7 +21,8 @@ public class ItemScopeUtil {
 		long companyId, Scope scope, long scopeGroupId) {
 
 		return ScopeUtil.getItemGroupId(
-			companyId, _getScopeExternalReferenceCode(scope), scopeGroupId);
+			companyId, _getScopeExternalReferenceCode(scope, scopeGroupId),
+			scopeGroupId);
 	}
 
 	public static Scope getItemScope(long itemScopeGroupId, long scopeGroupId)
@@ -32,12 +32,7 @@ public class ItemScopeUtil {
 			return null;
 		}
 
-		Group group = GroupLocalServiceUtil.getGroup(itemScopeGroupId);
-
-		Scope.Type type = (group.getType() == GroupConstants.TYPE_DEPOT) ?
-			Scope.Type.ASSET_LIBRARY : Scope.Type.SITE;
-
-		return Scope.ofReference(group.getExternalReferenceCode(), type);
+		return Scope.of(GroupLocalServiceUtil.getGroup(itemScopeGroupId));
 	}
 
 	public static Scope getItemScope(
@@ -60,10 +55,7 @@ public class ItemScopeUtil {
 			return null;
 		}
 
-		Scope.Type type = (group.getType() == GroupConstants.TYPE_DEPOT) ?
-			Scope.Type.ASSET_LIBRARY : Scope.Type.SITE;
-
-		return Scope.ofReference(group.getExternalReferenceCode(), type);
+		return Scope.of(group);
 	}
 
 	public static String getItemScopeExternalReferenceCode(
@@ -71,12 +63,25 @@ public class ItemScopeUtil {
 		throws PortalException {
 
 		return ScopeUtil.getItemScopeExternalReferenceCode(
-			_getScopeExternalReferenceCode(itemScope), scopeGroupId);
+			_getScopeExternalReferenceCode(itemScope, scopeGroupId),
+			scopeGroupId);
 	}
 
-	private static String _getScopeExternalReferenceCode(Scope scope) {
+	private static String _getScopeExternalReferenceCode(
+		Scope scope, long scopeGroupId) {
+
 		if (scope == null) {
 			return null;
+		}
+
+		if (Validator.isNull(scope.getLiveExternalReferenceCode())) {
+			return scope.getExternalReferenceCode();
+		}
+
+		Group group = GroupLocalServiceUtil.fetchGroup(scopeGroupId);
+
+		if ((group != null) && !group.isStagingGroup()) {
+			return scope.getLiveExternalReferenceCode();
 		}
 
 		return scope.getExternalReferenceCode();

@@ -110,9 +110,7 @@ public class DataLimitEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DataLimitEntry newDataLimitEntry = _persistence.create(pk);
+		DataLimitEntry newDataLimitEntry = addDataLimitEntry();
 
 		newDataLimitEntry.setCompanyId(RandomTestUtil.nextLong());
 
@@ -124,7 +122,9 @@ public class DataLimitEntryPersistenceTest {
 
 		newDataLimitEntry.setModifiedDate(RandomTestUtil.nextDate());
 
-		_dataLimitEntries.add(_persistence.update(newDataLimitEntry));
+		newDataLimitEntry = _persistence.update(newDataLimitEntry);
+
+		_dataLimitEntries.add(newDataLimitEntry);
 
 		DataLimitEntry existingDataLimitEntry = _persistence.findByPrimaryKey(
 			newDataLimitEntry.getPrimaryKey());
@@ -418,4 +418,4 @@ public class DataLimitEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-830118962
+// LIFERAY-SERVICE-BUILDER-HASH:-571641246

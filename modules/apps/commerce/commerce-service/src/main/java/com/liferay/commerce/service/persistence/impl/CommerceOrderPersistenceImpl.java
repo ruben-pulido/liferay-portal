@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -91,7 +89,7 @@ public class CommerceOrderPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -132,16 +130,8 @@ public class CommerceOrderPersistenceImpl
 			String uuid, OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -182,7 +172,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceOrder>
+	private UniquePersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -197,21 +187,8 @@ public class CommerceOrderPersistenceImpl
 	public CommerceOrder findByUUID_G(String uuid, long groupId)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByUUID_G(uuid, groupId);
-
-		if (commerceOrder == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOrderException(message);
-		}
-
-		return commerceOrder;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -259,7 +236,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -303,16 +280,8 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -357,8 +326,9 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrder>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrder, NoSuchOrderException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the commerce orders where groupId = &#63;.
@@ -398,16 +368,8 @@ public class CommerceOrderPersistenceImpl
 			long groupId, OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -483,7 +445,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -524,16 +486,8 @@ public class CommerceOrderPersistenceImpl
 			long userId, OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -574,7 +528,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByBillingAddressId;
 
 	/**
@@ -616,17 +570,8 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByBillingAddressId_First(
-			billingAddressId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByBillingAddressId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {billingAddressId}));
+		return _collectionPersistenceFinderByBillingAddressId.findFirst(
+			finderCache, new Object[] {billingAddressId}, orderByComparator);
 	}
 
 	/**
@@ -668,7 +613,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {billingAddressId});
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByCommerceAccountId;
 
 	/**
@@ -710,18 +655,8 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByCommerceAccountId_First(
-			commerceAccountId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByCommerceAccountId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceAccountId}));
+		return _collectionPersistenceFinderByCommerceAccountId.findFirst(
+			finderCache, new Object[] {commerceAccountId}, orderByComparator);
 	}
 
 	/**
@@ -763,7 +698,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {commerceAccountId});
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByShippingAddressId;
 
 	/**
@@ -805,18 +740,8 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByShippingAddressId_First(
-			shippingAddressId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByShippingAddressId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {shippingAddressId}));
+		return _collectionPersistenceFinderByShippingAddressId.findFirst(
+			finderCache, new Object[] {shippingAddressId}, orderByComparator);
 	}
 
 	/**
@@ -858,8 +783,8 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {shippingAddressId});
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrder>
-		_collectionPersistenceFinderByG_C;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrder, NoSuchOrderException> _collectionPersistenceFinderByG_C;
 
 	/**
 	 * Returns an ordered range of all the commerce orders where groupId = &#63; and commerceAccountId = &#63;.
@@ -902,17 +827,9 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByG_C_First(
-			groupId, commerceAccountId, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByG_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, commerceAccountId}));
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, commerceAccountId},
+			orderByComparator);
 	}
 
 	/**
@@ -995,8 +912,9 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {groupId, commerceAccountId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrder>
-		_collectionPersistenceFinderByG_CP;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrder, NoSuchOrderException>
+			_collectionPersistenceFinderByG_CP;
 
 	/**
 	 * Returns an ordered range of all the commerce orders where groupId = &#63; and commercePaymentMethodKey = &#63;.
@@ -1039,17 +957,9 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByG_CP_First(
-			groupId, commercePaymentMethodKey, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByG_CP.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, commercePaymentMethodKey}));
+		return _collectionPersistenceFinderByG_CP.findFirst(
+			finderCache, new Object[] {groupId, commercePaymentMethodKey},
+			orderByComparator);
 	}
 
 	/**
@@ -1135,8 +1045,9 @@ public class CommerceOrderPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrder>
-		_collectionPersistenceFinderByG_U_O;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrder, NoSuchOrderException>
+			_collectionPersistenceFinderByG_U_O;
 
 	/**
 	 * Returns an ordered range of all the commerce orders where groupId = &#63; and userId = &#63; and orderStatus = &#63;.
@@ -1181,17 +1092,9 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByG_U_O_First(
-			groupId, userId, orderStatus, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByG_U_O.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, userId, orderStatus}));
+		return _collectionPersistenceFinderByG_U_O.findFirst(
+			finderCache, new Object[] {groupId, userId, orderStatus},
+			orderByComparator);
 	}
 
 	/**
@@ -1279,8 +1182,9 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {groupId, userId, orderStatus}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<CommerceOrder>
-		_collectionPersistenceFinderByG_C_O;
+	private FilterCollectionPersistenceFinder
+		<CommerceOrder, NoSuchOrderException>
+			_collectionPersistenceFinderByG_C_O;
 
 	/**
 	 * Returns an ordered range of all the commerce orders where groupId = &#63; and commerceAccountId = &#63; and orderStatus = &#63;.
@@ -1325,17 +1229,9 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByG_C_O_First(
-			groupId, commerceAccountId, orderStatus, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByG_C_O.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, commerceAccountId, orderStatus}));
+		return _collectionPersistenceFinderByG_C_O.findFirst(
+			finderCache, new Object[] {groupId, commerceAccountId, orderStatus},
+			orderByComparator);
 	}
 
 	/**
@@ -1432,7 +1328,7 @@ public class CommerceOrderPersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByU_LtC_O;
 
 	/**
@@ -1541,17 +1437,9 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByU_LtC_O_First(
-			userId, createDate, orderStatus, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByU_LtC_O.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, createDate, orderStatus}));
+		return _collectionPersistenceFinderByU_LtC_O.findFirst(
+			finderCache, new Object[] {userId, createDate, orderStatus},
+			orderByComparator);
 	}
 
 	/**
@@ -1600,7 +1488,7 @@ public class CommerceOrderPersistenceImpl
 			finderCache, new Object[] {userId, createDate, orderStatus});
 	}
 
-	private CollectionPersistenceFinder<CommerceOrder>
+	private CollectionPersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_collectionPersistenceFinderByC_LtC_O;
 
 	/**
@@ -1712,17 +1600,10 @@ public class CommerceOrderPersistenceImpl
 			OrderByComparator<CommerceOrder> orderByComparator)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByC_LtC_O_First(
-			createDate, commerceAccountId, orderStatus, orderByComparator);
-
-		if (commerceOrder != null) {
-			return commerceOrder;
-		}
-
-		throw new NoSuchOrderException(
-			_collectionPersistenceFinderByC_LtC_O.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {createDate, commerceAccountId, orderStatus}));
+		return _collectionPersistenceFinderByC_LtC_O.findFirst(
+			finderCache,
+			new Object[] {createDate, commerceAccountId, orderStatus},
+			orderByComparator);
 	}
 
 	/**
@@ -1778,7 +1659,7 @@ public class CommerceOrderPersistenceImpl
 			new Object[] {createDate, commerceAccountId, orderStatus});
 	}
 
-	private UniquePersistenceFinder<CommerceOrder>
+	private UniquePersistenceFinder<CommerceOrder, NoSuchOrderException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1794,23 +1675,8 @@ public class CommerceOrderPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchOrderException {
 
-		CommerceOrder commerceOrder = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (commerceOrder == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOrderException(message);
-		}
-
-		return commerceOrder;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -2263,10 +2129,11 @@ public class CommerceOrderPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
-			CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"commerceOrder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, CommerceOrder::getUuid));
+				"commerceOrder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceOrder::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -2278,8 +2145,8 @@ public class CommerceOrderPersistenceImpl
 				CommerceOrder::getGroupId),
 			_SQL_SELECT_COMMERCEORDER_WHERE, "",
 			new FinderColumn<>(
-				"commerceOrder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, CommerceOrder::getUuid),
+				"commerceOrder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, CommerceOrder::getUuid),
 			new FinderColumn<>(
 				"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, CommerceOrder::getGroupId));
@@ -2305,9 +2172,10 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"commerceOrder.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CommerceOrder::getUuid),
+					"commerceOrder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CommerceOrder::getUuid),
 				new FinderColumn<>(
 					"commerceOrder.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getCompanyId));
@@ -2333,16 +2201,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderImpl.class, CommerceOrder.class,
-					"commerceOrder", "CommerceOrder",
-					"commerceOrder.commerceOrderId",
-					"SELECT DISTINCT {commerceOrder.*} FROM CommerceOrder commerceOrder WHERE ",
-					"SELECT {CommerceOrder.*} FROM (SELECT DISTINCT commerceOrder.commerceOrderId FROM CommerceOrder commerceOrder WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrder ON TEMP_TABLE.commerceOrderId = CommerceOrder.commerceOrderId",
-					"SELECT COUNT(DISTINCT commerceOrder.commerceOrderId) AS COUNT_VALUE FROM CommerceOrder commerceOrder WHERE ",
-					CommerceOrderModelImpl.ORDER_BY_SQL,
-					CommerceOrderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getGroupId));
@@ -2368,6 +2227,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getUserId));
@@ -2396,6 +2256,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"billingAddressId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "billingAddressId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2425,6 +2286,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"commerceAccountId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "commerceAccountId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2454,6 +2316,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"shippingAddressId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "shippingAddressId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2480,16 +2343,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"groupId", "commerceAccountId"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderImpl.class, CommerceOrder.class,
-					"commerceOrder", "CommerceOrder",
-					"commerceOrder.commerceOrderId",
-					"SELECT DISTINCT {commerceOrder.*} FROM CommerceOrder commerceOrder WHERE ",
-					"SELECT {CommerceOrder.*} FROM (SELECT DISTINCT commerceOrder.commerceOrderId FROM CommerceOrder commerceOrder WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrder ON TEMP_TABLE.commerceOrderId = CommerceOrder.commerceOrderId",
-					"SELECT COUNT(DISTINCT commerceOrder.commerceOrderId) AS COUNT_VALUE FROM CommerceOrder commerceOrder WHERE ",
-					CommerceOrderModelImpl.ORDER_BY_SQL,
-					CommerceOrderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getGroupId),
@@ -2521,16 +2375,7 @@ public class CommerceOrderPersistenceImpl
 					false, null),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderImpl.class, CommerceOrder.class,
-					"commerceOrder", "CommerceOrder",
-					"commerceOrder.commerceOrderId",
-					"SELECT DISTINCT {commerceOrder.*} FROM CommerceOrder commerceOrder WHERE ",
-					"SELECT {CommerceOrder.*} FROM (SELECT DISTINCT commerceOrder.commerceOrderId FROM CommerceOrder commerceOrder WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrder ON TEMP_TABLE.commerceOrderId = CommerceOrder.commerceOrderId",
-					"SELECT COUNT(DISTINCT commerceOrder.commerceOrderId) AS COUNT_VALUE FROM CommerceOrder commerceOrder WHERE ",
-					CommerceOrderModelImpl.ORDER_BY_SQL,
-					CommerceOrderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getGroupId),
@@ -2567,16 +2412,7 @@ public class CommerceOrderPersistenceImpl
 					new String[] {"groupId", "userId", "orderStatus"}, false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderImpl.class, CommerceOrder.class,
-					"commerceOrder", "CommerceOrder",
-					"commerceOrder.commerceOrderId",
-					"SELECT DISTINCT {commerceOrder.*} FROM CommerceOrder commerceOrder WHERE ",
-					"SELECT {CommerceOrder.*} FROM (SELECT DISTINCT commerceOrder.commerceOrderId FROM CommerceOrder commerceOrder WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrder ON TEMP_TABLE.commerceOrderId = CommerceOrder.commerceOrderId",
-					"SELECT COUNT(DISTINCT commerceOrder.commerceOrderId) AS COUNT_VALUE FROM CommerceOrder commerceOrder WHERE ",
-					CommerceOrderModelImpl.ORDER_BY_SQL,
-					CommerceOrderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getGroupId),
@@ -2624,16 +2460,7 @@ public class CommerceOrderPersistenceImpl
 					false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CommerceOrderImpl.class, CommerceOrder.class,
-					"commerceOrder", "CommerceOrder",
-					"commerceOrder.commerceOrderId",
-					"SELECT DISTINCT {commerceOrder.*} FROM CommerceOrder commerceOrder WHERE ",
-					"SELECT {CommerceOrder.*} FROM (SELECT DISTINCT commerceOrder.commerceOrderId FROM CommerceOrder commerceOrder WHERE ",
-					") TEMP_TABLE INNER JOIN CommerceOrder ON TEMP_TABLE.commerceOrderId = CommerceOrder.commerceOrderId",
-					"SELECT COUNT(DISTINCT commerceOrder.commerceOrderId) AS COUNT_VALUE FROM CommerceOrder commerceOrder WHERE ",
-					CommerceOrderModelImpl.ORDER_BY_SQL,
-					CommerceOrderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getGroupId),
@@ -2668,6 +2495,7 @@ public class CommerceOrderPersistenceImpl
 					false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, CommerceOrder::getUserId),
@@ -2706,6 +2534,7 @@ public class CommerceOrderPersistenceImpl
 					false),
 				_SQL_SELECT_COMMERCEORDER_WHERE, _SQL_COUNT_COMMERCEORDER_WHERE,
 				CommerceOrderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"commerceOrder.", "createDate", FinderColumn.Type.DATE, "<",
 					true, true, CommerceOrder::getCreateDate),
@@ -2789,12 +2618,6 @@ public class CommerceOrderPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEORDER_WHERE =
 		"SELECT COUNT(commerceOrder) FROM CommerceOrder commerceOrder WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceOrder exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceOrderPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {
 			"uuid", "deliveryCommerceTermEntryDescription",
@@ -2827,4 +2650,4 @@ public class CommerceOrderPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-756810372
+// LIFERAY-SERVICE-BUILDER-HASH:31559006

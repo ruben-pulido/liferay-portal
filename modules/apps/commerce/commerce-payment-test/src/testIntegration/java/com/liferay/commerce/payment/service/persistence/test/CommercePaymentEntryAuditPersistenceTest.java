@@ -115,12 +115,8 @@ public class CommercePaymentEntryAuditPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommercePaymentEntryAudit newCommercePaymentEntryAudit =
-			_persistence.create(pk);
-
-		newCommercePaymentEntryAudit.setMvccVersion(RandomTestUtil.nextLong());
+			addCommercePaymentEntryAudit();
 
 		newCommercePaymentEntryAudit.setCompanyId(RandomTestUtil.nextLong());
 
@@ -146,8 +142,10 @@ public class CommercePaymentEntryAuditPersistenceTest {
 		newCommercePaymentEntryAudit.setLogTypeSettings(
 			RandomTestUtil.randomString());
 
-		_commercePaymentEntryAudits.add(
-			_persistence.update(newCommercePaymentEntryAudit));
+		newCommercePaymentEntryAudit = _persistence.update(
+			newCommercePaymentEntryAudit);
+
+		_commercePaymentEntryAudits.add(newCommercePaymentEntryAudit);
 
 		CommercePaymentEntryAudit existingCommercePaymentEntryAudit =
 			_persistence.findByPrimaryKey(
@@ -491,8 +489,6 @@ public class CommercePaymentEntryAuditPersistenceTest {
 		CommercePaymentEntryAudit commercePaymentEntryAudit =
 			_persistence.create(pk);
 
-		commercePaymentEntryAudit.setMvccVersion(RandomTestUtil.nextLong());
-
 		commercePaymentEntryAudit.setCompanyId(RandomTestUtil.nextLong());
 
 		commercePaymentEntryAudit.setUserId(RandomTestUtil.nextLong());
@@ -529,4 +525,4 @@ public class CommercePaymentEntryAuditPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-979732116
+// LIFERAY-SERVICE-BUILDER-HASH:1892280911

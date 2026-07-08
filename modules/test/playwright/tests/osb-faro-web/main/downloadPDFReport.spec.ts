@@ -26,7 +26,6 @@ test(
 	{
 		tag: '@LPD-44478',
 	},
-
 	async ({analyticsChannel: channel, page, project}) => {
 		await test.step('Go to Analytics Cloud and Switch the property', async () => {
 			await navigateToACPageViaURL({
@@ -67,6 +66,13 @@ test(
 				page,
 				timeFilterPeriod: 'Custom Range',
 			});
+
+			// Move to the previous month so the picked days are always in the
+			// past. The calendar disables the current day and any future date,
+			// so hardcoding days from the current month flakes when the test
+			// runs on the first days of a month.
+
+			await page.getByTestId('previous-month').first().click();
 
 			await page
 				.getByRole('button', {exact: true, name: '2'})

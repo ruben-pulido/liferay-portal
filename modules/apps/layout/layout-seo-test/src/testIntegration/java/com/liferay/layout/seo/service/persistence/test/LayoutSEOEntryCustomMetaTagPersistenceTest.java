@@ -109,13 +109,8 @@ public class LayoutSEOEntryCustomMetaTagPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		LayoutSEOEntryCustomMetaTag newLayoutSEOEntryCustomMetaTag =
-			_persistence.create(pk);
-
-		newLayoutSEOEntryCustomMetaTag.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addLayoutSEOEntryCustomMetaTag();
 
 		newLayoutSEOEntryCustomMetaTag.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -133,8 +128,10 @@ public class LayoutSEOEntryCustomMetaTagPersistenceTest {
 		newLayoutSEOEntryCustomMetaTag.setProperty(
 			RandomTestUtil.randomString());
 
-		_layoutSEOEntryCustomMetaTags.add(
-			_persistence.update(newLayoutSEOEntryCustomMetaTag));
+		newLayoutSEOEntryCustomMetaTag = _persistence.update(
+			newLayoutSEOEntryCustomMetaTag);
+
+		_layoutSEOEntryCustomMetaTags.add(newLayoutSEOEntryCustomMetaTag);
 
 		LayoutSEOEntryCustomMetaTag existingLayoutSEOEntryCustomMetaTag =
 			_persistence.findByPrimaryKey(
@@ -439,8 +436,6 @@ public class LayoutSEOEntryCustomMetaTagPersistenceTest {
 		LayoutSEOEntryCustomMetaTag layoutSEOEntryCustomMetaTag =
 			_persistence.create(pk);
 
-		layoutSEOEntryCustomMetaTag.setMvccVersion(RandomTestUtil.nextLong());
-
 		layoutSEOEntryCustomMetaTag.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -467,4 +462,4 @@ public class LayoutSEOEntryCustomMetaTagPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-927386854
+// LIFERAY-SERVICE-BUILDER-HASH:970137636

@@ -32,7 +32,7 @@ public abstract class BaseTopLevelBuildReport
 	extends BaseBuildReport implements TopLevelBuildReport {
 
 	@Override
-	public void addDownstreamBuildReport(
+	public synchronized void addDownstreamBuildReport(
 		DownstreamBuildReport downstreamBuildReport) {
 
 		if (downstreamBuildReport == null) {
@@ -137,6 +137,10 @@ public abstract class BaseTopLevelBuildReport
 
 	@Override
 	public TestrayCloudObject getBuildReportTestrayCloudObject() {
+		if (!TestrayCloudBucket.hasGoogleApplicationCredentials()) {
+			return null;
+		}
+
 		JenkinsMaster jenkinsMaster = getJenkinsMaster();
 
 		TestrayCloudBucket testrayCloudBucket =
@@ -150,7 +154,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public ControllerBuildReport getControllerBuildReport() {
+	public synchronized ControllerBuildReport getControllerBuildReport() {
 		if (_controllerBuildReport != null) {
 			return _controllerBuildReport;
 		}
@@ -177,7 +181,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public List<FailureReport> getDistinctFailureReports() {
+	public synchronized List<FailureReport> getDistinctFailureReports() {
 		if (_distinctFailureReports != null) {
 			return _distinctFailureReports;
 		}
@@ -206,7 +210,9 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public DownstreamBuildReport getDownstreamBuildReport(String axisName) {
+	public synchronized DownstreamBuildReport getDownstreamBuildReport(
+		String axisName) {
+
 		for (DownstreamBuildReport downstreamBuildReport :
 				_downstreamBuildReports) {
 
@@ -229,7 +235,9 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public List<DownstreamBuildReport> getDownstreamBuildReports() {
+	public synchronized List<DownstreamBuildReport>
+		getDownstreamBuildReports() {
+
 		List<DownstreamBuildReport> downstreamBuildReports = new ArrayList<>();
 
 		downstreamBuildReports.addAll(_cachedDownstreamBuildReports);
@@ -239,7 +247,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public List<FailureReport> getFailureReports() {
+	public synchronized List<FailureReport> getFailureReports() {
 		if (_failureReports != null) {
 			return _failureReports;
 		}
@@ -276,7 +284,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public JobReport getJobReport() {
+	public synchronized JobReport getJobReport() {
 		if (_jobReport != null) {
 			return _jobReport;
 		}
@@ -300,7 +308,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public TopLevelBuildReport getPreviousTopLevelBuildReport() {
+	public synchronized TopLevelBuildReport getPreviousTopLevelBuildReport() {
 		if (_previousTopLevelBuildReport != null) {
 			return _previousTopLevelBuildReport;
 		}
@@ -524,7 +532,7 @@ public abstract class BaseTopLevelBuildReport
 	}
 
 	@Override
-	public List<FailureReport> getUniqueFailureReports() {
+	public synchronized List<FailureReport> getUniqueFailureReports() {
 		if (_uniqueFailureReports != null) {
 			return _uniqueFailureReports;
 		}

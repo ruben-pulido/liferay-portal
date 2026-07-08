@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,8 +85,9 @@ public class SegmentsExperimentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SegmentsExperiment>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the segments experiments where uuid = &#63;.
@@ -129,16 +128,8 @@ public class SegmentsExperimentPersistenceImpl
 			OrderByComparator<SegmentsExperiment> orderByComparator)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (segmentsExperiment != null) {
-			return segmentsExperiment;
-		}
-
-		throw new NoSuchExperimentException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -179,8 +170,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<SegmentsExperiment>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the segments experiment where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchExperimentException</code> if it could not be found.
@@ -194,21 +186,8 @@ public class SegmentsExperimentPersistenceImpl
 	public SegmentsExperiment findByUUID_G(String uuid, long groupId)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByUUID_G(uuid, groupId);
-
-		if (segmentsExperiment == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchExperimentException(message);
-		}
-
-		return segmentsExperiment;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -256,8 +235,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<SegmentsExperiment>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the segments experiments where uuid = &#63; and companyId = &#63;.
@@ -300,16 +280,8 @@ public class SegmentsExperimentPersistenceImpl
 			OrderByComparator<SegmentsExperiment> orderByComparator)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (segmentsExperiment != null) {
-			return segmentsExperiment;
-		}
-
-		throw new NoSuchExperimentException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -354,8 +326,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<SegmentsExperiment>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the segments experiments where groupId = &#63;.
@@ -396,16 +369,8 @@ public class SegmentsExperimentPersistenceImpl
 			OrderByComparator<SegmentsExperiment> orderByComparator)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (segmentsExperiment != null) {
-			return segmentsExperiment;
-		}
-
-		throw new NoSuchExperimentException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -481,8 +446,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<SegmentsExperiment>
-		_collectionPersistenceFinderBySegmentsExperimentKey;
+	private CollectionPersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_collectionPersistenceFinderBySegmentsExperimentKey;
 
 	/**
 	 * Returns an ordered range of all the segments experiments where segmentsExperimentKey = &#63;.
@@ -523,19 +489,9 @@ public class SegmentsExperimentPersistenceImpl
 			OrderByComparator<SegmentsExperiment> orderByComparator)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment =
-			fetchBySegmentsExperimentKey_First(
-				segmentsExperimentKey, orderByComparator);
-
-		if (segmentsExperiment != null) {
-			return segmentsExperiment;
-		}
-
-		throw new NoSuchExperimentException(
-			_collectionPersistenceFinderBySegmentsExperimentKey.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {segmentsExperimentKey}));
+		return _collectionPersistenceFinderBySegmentsExperimentKey.findFirst(
+			finderCache, new Object[] {segmentsExperimentKey},
+			orderByComparator);
 	}
 
 	/**
@@ -578,8 +534,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {segmentsExperimentKey});
 	}
 
-	private UniquePersistenceFinder<SegmentsExperiment>
-		_uniquePersistenceFinderByG_S;
+	private UniquePersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_uniquePersistenceFinderByG_S;
 
 	/**
 	 * Returns the segments experiment where groupId = &#63; and segmentsExperimentKey = &#63; or throws a <code>NoSuchExperimentException</code> if it could not be found.
@@ -594,23 +551,8 @@ public class SegmentsExperimentPersistenceImpl
 			long groupId, String segmentsExperimentKey)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByG_S(
-			groupId, segmentsExperimentKey);
-
-		if (segmentsExperiment == null) {
-			String message =
-				_uniquePersistenceFinderByG_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, segmentsExperimentKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchExperimentException(message);
-		}
-
-		return segmentsExperiment;
+		return _uniquePersistenceFinderByG_S.find(
+			finderCache, new Object[] {groupId, segmentsExperimentKey});
 	}
 
 	/**
@@ -661,8 +603,9 @@ public class SegmentsExperimentPersistenceImpl
 			finderCache, new Object[] {groupId, segmentsExperimentKey});
 	}
 
-	private UniquePersistenceFinder<SegmentsExperiment>
-		_uniquePersistenceFinderByG_S_P;
+	private UniquePersistenceFinder
+		<SegmentsExperiment, NoSuchExperimentException>
+			_uniquePersistenceFinderByG_S_P;
 
 	/**
 	 * Returns the segments experiment where groupId = &#63; and segmentsExperienceId = &#63; and plid = &#63; or throws a <code>NoSuchExperimentException</code> if it could not be found.
@@ -678,23 +621,8 @@ public class SegmentsExperimentPersistenceImpl
 			long groupId, long segmentsExperienceId, long plid)
 		throws NoSuchExperimentException {
 
-		SegmentsExperiment segmentsExperiment = fetchByG_S_P(
-			groupId, segmentsExperienceId, plid);
-
-		if (segmentsExperiment == null) {
-			String message =
-				_uniquePersistenceFinderByG_S_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, segmentsExperienceId, plid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchExperimentException(message);
-		}
-
-		return segmentsExperiment;
+		return _uniquePersistenceFinderByG_S_P.find(
+			finderCache, new Object[] {groupId, segmentsExperienceId, plid});
 	}
 
 	/**
@@ -1086,9 +1014,11 @@ public class SegmentsExperimentPersistenceImpl
 			_SQL_SELECT_SEGMENTSEXPERIMENT_WHERE,
 			_SQL_COUNT_SEGMENTSEXPERIMENT_WHERE,
 			SegmentsExperimentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"segmentsExperiment.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SegmentsExperiment::getUuid));
+				"segmentsExperiment.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				SegmentsExperiment::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1100,8 +1030,9 @@ public class SegmentsExperimentPersistenceImpl
 				SegmentsExperiment::getGroupId),
 			_SQL_SELECT_SEGMENTSEXPERIMENT_WHERE, "",
 			new FinderColumn<>(
-				"segmentsExperiment.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, SegmentsExperiment::getUuid),
+				"segmentsExperiment.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				SegmentsExperiment::getUuid),
 			new FinderColumn<>(
 				"segmentsExperiment.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, SegmentsExperiment::getGroupId));
@@ -1128,10 +1059,11 @@ public class SegmentsExperimentPersistenceImpl
 				_SQL_SELECT_SEGMENTSEXPERIMENT_WHERE,
 				_SQL_COUNT_SEGMENTSEXPERIMENT_WHERE,
 				SegmentsExperimentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"segmentsExperiment.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, SegmentsExperiment::getUuid),
+					"segmentsExperiment.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					SegmentsExperiment::getUuid),
 				new FinderColumn<>(
 					"segmentsExperiment.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, SegmentsExperiment::getCompanyId));
@@ -1158,17 +1090,7 @@ public class SegmentsExperimentPersistenceImpl
 				_SQL_SELECT_SEGMENTSEXPERIMENT_WHERE,
 				_SQL_COUNT_SEGMENTSEXPERIMENT_WHERE,
 				SegmentsExperimentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					SegmentsExperimentImpl.class, SegmentsExperiment.class,
-					"segmentsExperiment", "SegmentsExperiment",
-					"segmentsExperiment.segmentsExperimentId",
-					"SELECT DISTINCT {segmentsExperiment.*} FROM SegmentsExperiment segmentsExperiment WHERE ",
-					"SELECT {SegmentsExperiment.*} FROM (SELECT DISTINCT segmentsExperiment.segmentsExperimentId FROM SegmentsExperiment segmentsExperiment WHERE ",
-					") TEMP_TABLE INNER JOIN SegmentsExperiment ON TEMP_TABLE.segmentsExperimentId = SegmentsExperiment.segmentsExperimentId",
-					"SELECT COUNT(DISTINCT segmentsExperiment.segmentsExperimentId) AS COUNT_VALUE FROM SegmentsExperiment segmentsExperiment WHERE ",
-					SegmentsExperimentModelImpl.ORDER_BY_SQL,
-					SegmentsExperimentModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsExperiment.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, SegmentsExperiment::getGroupId));
@@ -1198,7 +1120,7 @@ public class SegmentsExperimentPersistenceImpl
 				_SQL_SELECT_SEGMENTSEXPERIMENT_WHERE,
 				_SQL_COUNT_SEGMENTSEXPERIMENT_WHERE,
 				SegmentsExperimentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"segmentsExperiment.", "segmentsExperimentKey",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1303,12 +1225,6 @@ public class SegmentsExperimentPersistenceImpl
 	private static final String _SQL_COUNT_SEGMENTSEXPERIMENT_WHERE =
 		"SELECT COUNT(segmentsExperiment) FROM SegmentsExperiment segmentsExperiment WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SegmentsExperiment exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SegmentsExperimentPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1318,4 +1234,4 @@ public class SegmentsExperimentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1627565125
+// LIFERAY-SERVICE-BUILDER-HASH:985913688

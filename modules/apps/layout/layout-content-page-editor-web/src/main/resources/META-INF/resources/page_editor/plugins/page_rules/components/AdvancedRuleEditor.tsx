@@ -12,10 +12,6 @@ import {config} from '../../../app/config';
 import {LAYOUT_DATA_ITEM_TYPES} from '../../../app/config/constants/layoutDataItemTypes';
 import {LAYOUT_TYPES} from '../../../app/config/constants/layoutTypes';
 import {
-	ObjectField,
-	ObjectFields,
-} from '../../../app/contexts/ObjectDataContext';
-import {
 	useRuleValidation,
 	useScriptError,
 	useScriptInputRef,
@@ -29,6 +25,7 @@ import {CACHE_KEYS, getCacheItem, getCacheKey} from '../../../app/utils/cache';
 import {isLayoutDataItemDeleted} from '../../../app/utils/isLayoutDataItemDeleted';
 import useCache from '../../../app/utils/useCache';
 import {visitSelectedInputLayoutDataItems} from '../../../app/utils/visitSelectedInputLayoutDataItems';
+import {MappingField, MappingFields} from '../../../types/MappingField';
 import {State} from '../../../types/State';
 import {FragmentLayoutDataItem} from '../../../types/layout_data/FragmentLayoutDataItem';
 import {MappingFieldItem} from '../utils/useMappingFieldItems';
@@ -237,12 +234,12 @@ async function getFormFieldsSections(
 					classTypeId,
 				});
 
-		const formFields = (await promise) as ObjectFields;
+		const formFields = (await promise) as MappingFields;
 
 		const items = formFields
 			.flatMap((field) => ('fields' in field ? field.fields : [field]))
 			.filter(
-				(field) =>
+				(field): field is MappingField =>
 					'key' in field &&
 					selectedInputsData.some(
 						(inputField: any) => inputField.fieldId === field.key
@@ -251,8 +248,7 @@ async function getFormFieldsSections(
 			)
 			.map((field) => {
 				const inputField = selectedInputsData.find(
-					(inputField) =>
-						inputField.fieldId === (field as ObjectField).key
+					(inputField) => inputField.fieldId === field.key
 				)!;
 
 				return {

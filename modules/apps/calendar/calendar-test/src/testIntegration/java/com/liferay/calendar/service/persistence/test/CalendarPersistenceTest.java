@@ -111,11 +111,7 @@ public class CalendarPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Calendar newCalendar = _persistence.create(pk);
-
-		newCalendar.setMvccVersion(RandomTestUtil.nextLong());
+		Calendar newCalendar = addCalendar();
 
 		newCalendar.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -151,7 +147,9 @@ public class CalendarPersistenceTest {
 
 		newCalendar.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_calendars.add(_persistence.update(newCalendar));
+		newCalendar = _persistence.update(newCalendar);
+
+		_calendars.add(newCalendar);
 
 		Calendar existingCalendar = _persistence.findByPrimaryKey(
 			newCalendar.getPrimaryKey());
@@ -553,8 +551,6 @@ public class CalendarPersistenceTest {
 
 		Calendar calendar = _persistence.create(pk);
 
-		calendar.setMvccVersion(RandomTestUtil.nextLong());
-
 		calendar.setCtCollectionId(RandomTestUtil.nextLong());
 
 		calendar.setUuid(RandomTestUtil.randomString());
@@ -599,4 +595,4 @@ public class CalendarPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1666359923
+// LIFERAY-SERVICE-BUILDER-HASH:-545665790

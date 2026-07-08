@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -75,8 +73,9 @@ public class BatchPlannerMappingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BatchPlannerMapping>
-		_collectionPersistenceFinderByBatchPlannerPlanId;
+	private CollectionPersistenceFinder
+		<BatchPlannerMapping, NoSuchMappingException>
+			_collectionPersistenceFinderByBatchPlannerPlanId;
 
 	/**
 	 * Returns an ordered range of all the batch planner mappings where batchPlannerPlanId = &#63;.
@@ -117,19 +116,8 @@ public class BatchPlannerMappingPersistenceImpl
 			OrderByComparator<BatchPlannerMapping> orderByComparator)
 		throws NoSuchMappingException {
 
-		BatchPlannerMapping batchPlannerMapping =
-			fetchByBatchPlannerPlanId_First(
-				batchPlannerPlanId, orderByComparator);
-
-		if (batchPlannerMapping != null) {
-			return batchPlannerMapping;
-		}
-
-		throw new NoSuchMappingException(
-			_collectionPersistenceFinderByBatchPlannerPlanId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {batchPlannerPlanId}));
+		return _collectionPersistenceFinderByBatchPlannerPlanId.findFirst(
+			finderCache, new Object[] {batchPlannerPlanId}, orderByComparator);
 	}
 
 	/**
@@ -171,7 +159,7 @@ public class BatchPlannerMappingPersistenceImpl
 			finderCache, new Object[] {batchPlannerPlanId});
 	}
 
-	private UniquePersistenceFinder<BatchPlannerMapping>
+	private UniquePersistenceFinder<BatchPlannerMapping, NoSuchMappingException>
 		_uniquePersistenceFinderByBPPI_EFN_IFN;
 
 	/**
@@ -189,25 +177,11 @@ public class BatchPlannerMappingPersistenceImpl
 			String internalFieldName)
 		throws NoSuchMappingException {
 
-		BatchPlannerMapping batchPlannerMapping = fetchByBPPI_EFN_IFN(
-			batchPlannerPlanId, externalFieldName, internalFieldName);
-
-		if (batchPlannerMapping == null) {
-			String message =
-				_uniquePersistenceFinderByBPPI_EFN_IFN.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						batchPlannerPlanId, externalFieldName, internalFieldName
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMappingException(message);
-		}
-
-		return batchPlannerMapping;
+		return _uniquePersistenceFinderByBPPI_EFN_IFN.find(
+			finderCache,
+			new Object[] {
+				batchPlannerPlanId, externalFieldName, internalFieldName
+			});
 	}
 
 	/**
@@ -503,7 +477,7 @@ public class BatchPlannerMappingPersistenceImpl
 				_SQL_SELECT_BATCHPLANNERMAPPING_WHERE,
 				_SQL_COUNT_BATCHPLANNERMAPPING_WHERE,
 				BatchPlannerMappingModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"batchPlannerMapping.", "batchPlannerPlanId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -592,16 +566,10 @@ public class BatchPlannerMappingPersistenceImpl
 	private static final String _SQL_COUNT_BATCHPLANNERMAPPING_WHERE =
 		"SELECT COUNT(batchPlannerMapping) FROM BatchPlannerMapping batchPlannerMapping WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BatchPlannerMapping exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BatchPlannerMappingPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-259824018
+// LIFERAY-SERVICE-BUILDER-HASH:-173039725

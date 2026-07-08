@@ -1,31 +1,34 @@
+import * as API from 'shared/api';
 import Card from 'shared/components/Card';
 import React from 'react';
-import {columns, pagination, useSnapshots} from 'shared/util/frontend-data-set';
 import {
-	EConfigInURLBehavior,
-	FrontendDataSet
-} from '@liferay/frontend-data-set-web';
+	columns,
+	FrontendDataSet,
+	pagination,
+	rangeSelectors
+} from 'shared/components/FrontendDataSet';
 import {
 	LifecycleStages,
 	lifecycleStagesLabelMap
 } from 'contacts/pages/account/utils/constants';
+import {RangeKeyTimeRanges} from 'shared/util/constants';
 import {Routes} from 'shared/util/router';
 import {toThousands} from 'shared/util/numbers';
-
-const lifecycleStageItems = Object.entries(lifecycleStagesLabelMap).map(
-	([stage]) => ({
-		label: lifecycleStagesLabelMap[stage as LifecycleStages].label,
-		value: stage
-	})
-);
+import {useRequest} from 'shared/hooks/useRequest';
 
 interface IAccountsDataSetProps {
+	accountLifecycleId?: string;
 	apiURL: string;
 	channelId: string;
 	countryFilter?: string;
 	groupId: string;
 	industryFilter?: string;
 	lifecycleStageFilter?: LifecycleStages;
+}
+
+interface ILifecycleStageFieldValue {
+	id: string;
+	stageType: LifecycleStages;
 }
 
 const buildSelectionPreloadedData = (value?: string, label?: string) =>
@@ -37,6 +40,7 @@ const buildSelectionPreloadedData = (value?: string, label?: string) =>
 		: undefined;
 
 const AccountsDataSet: React.FC<IAccountsDataSetProps> = ({
+	accountLifecycleId,
 	apiURL,
 	channelId,
 	countryFilter,
@@ -44,13 +48,34 @@ const AccountsDataSet: React.FC<IAccountsDataSetProps> = ({
 	industryFilter,
 	lifecycleStageFilter
 }) => {
-	const snapshots = useSnapshots('accounts-list-dataset');
+	const {data: lifecycleStageFieldValues} = useRequest({
+		dataSourceFn: API.accounts.fetchLifecycleStageFieldValues,
+		skipRequest: !accountLifecycleId,
+		variables: {
+			accountLifecycleId,
+			channelId,
+			groupId
+		}
+	});
+
+	const lifecycleStages: ILifecycleStageFieldValue[] =
+		lifecycleStageFieldValues?.items ?? [];
+
+	const lifecycleStageItems = lifecycleStages.map(({id, stageType}) => ({
+		label: lifecycleStagesLabelMap[stageType].label,
+		value: id
+	}));
+
+	const preloadedLifecycleStage = lifecycleStageFilter
+		? lifecycleStages.find(
+				({stageType}) => stageType === lifecycleStageFilter
+		  )
+		: undefined;
 
 	return (
-		<Card>
+		<Card minHeight={300}>
 			<FrontendDataSet
 				apiURL={apiURL}
-				configInURLBehavior={EConfigInURLBehavior.OFF}
 				customDataRenderers={{
 					accountLifecycleStageRenderer: ({
 						value
@@ -92,19 +117,35 @@ const AccountsDataSet: React.FC<IAccountsDataSetProps> = ({
 				}}
 				filters={[
 					{
-						id: 'lifecycleStatus',
-						items: lifecycleStageItems,
-						label: Liferay.Language.get('status'),
-						name: 'status',
+						id: 'rangeKey',
+						items: rangeSelectors,
+						label: Liferay.Language.get('active-individuals'),
+						name: 'rangeKey',
 						preloadedData: buildSelectionPreloadedData(
-							lifecycleStageFilter,
-							lifecycleStageFilter
-								? lifecycleStagesLabelMap[lifecycleStageFilter]
-										.label
-								: undefined
+							RangeKeyTimeRanges.Last30Days,
+							Liferay.Language.get('last-30-days')
 						),
 						type: 'selection'
 					},
+					...(accountLifecycleId
+						? [
+								{
+									id: 'lifecycleStatus',
+									items: lifecycleStageItems,
+									label: Liferay.Language.get('status'),
+									name: 'status',
+									preloadedData: buildSelectionPreloadedData(
+										preloadedLifecycleStage?.id,
+										lifecycleStageFilter
+											? lifecycleStagesLabelMap[
+													lifecycleStageFilter
+											  ].label
+											: undefined
+									),
+									type: 'selection' as const
+								}
+						  ]
+						: []),
 					{
 						apiURL: `/o/faro/contacts/${groupId}/account/fds_field_values?channelId=${channelId}&fieldMappingFieldName=industry`,
 						entityFieldType: 'string',
@@ -131,12 +172,14 @@ const AccountsDataSet: React.FC<IAccountsDataSetProps> = ({
 					}
 				]}
 				id='accounts-list-dataset'
-				key={`${countryFilter ?? ''}|${industryFilter ?? ''}|${
-					lifecycleStageFilter ?? ''
-				}`}
+				key={[
+					countryFilter,
+					industryFilter,
+					lifecycleStageFilter,
+					lifecycleStages.length
+				].join()}
 				pagination={pagination}
 				showPagination
-				snapshots={snapshots}
 				snapshotsEnabled
 				sorts={[
 					{

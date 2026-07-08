@@ -110,11 +110,7 @@ public class DepotEntryPinPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DepotEntryPin newDepotEntryPin = _persistence.create(pk);
-
-		newDepotEntryPin.setMvccVersion(RandomTestUtil.nextLong());
+		DepotEntryPin newDepotEntryPin = addDepotEntryPin();
 
 		newDepotEntryPin.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -128,7 +124,9 @@ public class DepotEntryPinPersistenceTest {
 
 		newDepotEntryPin.setDepotEntryId(RandomTestUtil.nextLong());
 
-		_depotEntryPins.add(_persistence.update(newDepotEntryPin));
+		newDepotEntryPin = _persistence.update(newDepotEntryPin);
+
+		_depotEntryPins.add(newDepotEntryPin);
 
 		DepotEntryPin existingDepotEntryPin = _persistence.findByPrimaryKey(
 			newDepotEntryPin.getPrimaryKey());
@@ -527,8 +525,6 @@ public class DepotEntryPinPersistenceTest {
 
 		DepotEntryPin depotEntryPin = _persistence.create(pk);
 
-		depotEntryPin.setMvccVersion(RandomTestUtil.nextLong());
-
 		depotEntryPin.setCtCollectionId(RandomTestUtil.nextLong());
 
 		depotEntryPin.setUuid(RandomTestUtil.randomString());
@@ -552,4 +548,4 @@ public class DepotEntryPinPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1077594613
+// LIFERAY-SERVICE-BUILDER-HASH:-1760724621

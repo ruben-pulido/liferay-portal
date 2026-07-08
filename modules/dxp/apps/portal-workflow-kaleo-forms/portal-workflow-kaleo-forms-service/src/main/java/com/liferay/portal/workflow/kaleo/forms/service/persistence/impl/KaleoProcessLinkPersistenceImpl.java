@@ -11,8 +11,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -73,8 +71,9 @@ public class KaleoProcessLinkPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KaleoProcessLink>
-		_collectionPersistenceFinderByKaleoProcessId;
+	private CollectionPersistenceFinder
+		<KaleoProcessLink, NoSuchKaleoProcessLinkException>
+			_collectionPersistenceFinderByKaleoProcessId;
 
 	/**
 	 * Returns an ordered range of all the kaleo process links where kaleoProcessId = &#63;.
@@ -115,16 +114,8 @@ public class KaleoProcessLinkPersistenceImpl
 			OrderByComparator<KaleoProcessLink> orderByComparator)
 		throws NoSuchKaleoProcessLinkException {
 
-		KaleoProcessLink kaleoProcessLink = fetchByKaleoProcessId_First(
-			kaleoProcessId, orderByComparator);
-
-		if (kaleoProcessLink != null) {
-			return kaleoProcessLink;
-		}
-
-		throw new NoSuchKaleoProcessLinkException(
-			_collectionPersistenceFinderByKaleoProcessId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {kaleoProcessId}));
+		return _collectionPersistenceFinderByKaleoProcessId.findFirst(
+			finderCache, new Object[] {kaleoProcessId}, orderByComparator);
 	}
 
 	/**
@@ -166,8 +157,9 @@ public class KaleoProcessLinkPersistenceImpl
 			finderCache, new Object[] {kaleoProcessId});
 	}
 
-	private UniquePersistenceFinder<KaleoProcessLink>
-		_uniquePersistenceFinderByKPI_WTN;
+	private UniquePersistenceFinder
+		<KaleoProcessLink, NoSuchKaleoProcessLinkException>
+			_uniquePersistenceFinderByKPI_WTN;
 
 	/**
 	 * Returns the kaleo process link where kaleoProcessId = &#63; and workflowTaskName = &#63; or throws a <code>NoSuchKaleoProcessLinkException</code> if it could not be found.
@@ -182,23 +174,8 @@ public class KaleoProcessLinkPersistenceImpl
 			long kaleoProcessId, String workflowTaskName)
 		throws NoSuchKaleoProcessLinkException {
 
-		KaleoProcessLink kaleoProcessLink = fetchByKPI_WTN(
-			kaleoProcessId, workflowTaskName);
-
-		if (kaleoProcessLink == null) {
-			String message =
-				_uniquePersistenceFinderByKPI_WTN.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {kaleoProcessId, workflowTaskName});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchKaleoProcessLinkException(message);
-		}
-
-		return kaleoProcessLink;
+		return _uniquePersistenceFinderByKPI_WTN.find(
+			finderCache, new Object[] {kaleoProcessId, workflowTaskName});
 	}
 
 	/**
@@ -450,7 +427,7 @@ public class KaleoProcessLinkPersistenceImpl
 				_SQL_SELECT_KALEOPROCESSLINK_WHERE,
 				_SQL_COUNT_KALEOPROCESSLINK_WHERE,
 				KaleoProcessLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"kaleoProcessLink.", "kaleoProcessId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -527,16 +504,10 @@ public class KaleoProcessLinkPersistenceImpl
 	private static final String _SQL_COUNT_KALEOPROCESSLINK_WHERE =
 		"SELECT COUNT(kaleoProcessLink) FROM KaleoProcessLink kaleoProcessLink WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KaleoProcessLink exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KaleoProcessLinkPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:747361073
+// LIFERAY-SERVICE-BUILDER-HASH:190756682

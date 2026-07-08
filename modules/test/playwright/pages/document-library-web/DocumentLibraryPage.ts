@@ -101,15 +101,27 @@ export class DocumentLibraryPage {
 	}
 
 	async changeView(viewName: string) {
+		const trigger = this.page.getByLabel(
+			'Select View, Currently Selected: '
+		);
+
+		await trigger.waitFor({state: 'visible'});
+
+		const currentViewLabel = this.page.getByLabel(
+			`Select View, Currently Selected: ${viewName}`
+		);
+
+		if (await currentViewLabel.isVisible()) {
+			return;
+		}
+
 		await clickAndExpectToBeVisible({
 			autoClick: true,
 			target: this.page.getByRole('menuitem', {name: viewName}),
-			trigger: this.page.getByLabel('Select View, Currently Selected: '),
+			trigger,
 		});
 
-		await expect(
-			this.page.getByLabel(`Select View, Currently Selected: ${viewName}`)
-		).toBeVisible();
+		await expect(currentViewLabel).toBeVisible();
 	}
 
 	async deleteAllFileEntries() {
@@ -284,6 +296,23 @@ export class DocumentLibraryPage {
 		});
 	}
 
+	async assertFileEntryActionAbsent(action: string, entryTitle: string) {
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: this.page.getByRole('menuitem', {
+				exact: true,
+				name: 'Delete',
+			}),
+			trigger: this.page
+				.locator(`.card-body:has-text('${entryTitle}')`)
+				.getByLabel('Actions'),
+		});
+
+		await expect(
+			this.page.getByRole('menuitem', {exact: true, name: action})
+		).toBeHidden();
+	}
+
 	async openBulkEditCategoriesModal(titles: string[]) {
 		await this.selectFileEntries(titles);
 		await this.page.getByRole('button', {name: 'Edit Categories'}).click();
@@ -333,8 +362,9 @@ export class DocumentLibraryPage {
 		for (const vocabularyCategory of vocabularyCategories) {
 			for (const categoryName of vocabularyCategory.categoryNames) {
 				await this.page
-					.getByLabel(vocabularyCategory.vocabularyName, {
+					.getByRole('combobox', {
 						exact: true,
+						name: vocabularyCategory.vocabularyName,
 					})
 					.fill(categoryName);
 				await this.page

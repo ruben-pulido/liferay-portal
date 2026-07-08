@@ -3,11 +3,14 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import {FrontendDataSetContext} from '@liferay/frontend-data-set-web';
+import {
+	FrontendDataSetContext,
+	IItemsActions,
+} from '@liferay/frontend-data-set-web';
 import React, {useCallback, useContext, useEffect} from 'react';
 
 import {patchTaskById} from '../../../../utils/api';
-import {IItemsActions, ITask} from '../../../../utils/types';
+import {ITask} from '../../../../utils/types';
 import {UPDATE_TASKS_QUICK_FILTER_VISIBILITY} from '../../../task/TasksQuickFilters';
 import Board from './components/Board';
 import {KanbanViewContext} from './context';
@@ -17,6 +20,7 @@ interface KanbanViewProps {
 	items: ITask[];
 	itemsActions: IItemsActions[];
 	projectId: string;
+	projectObjectDefinitionId: number;
 }
 
 function KanbanView(props: KanbanViewProps) {
@@ -60,6 +64,7 @@ function KanbanView(props: KanbanViewProps) {
 				itemsActions: props.itemsActions,
 				loadData,
 				projectId: props.projectId,
+				projectObjectDefinitionId: props.projectObjectDefinitionId,
 			}}
 		>
 			<Board />

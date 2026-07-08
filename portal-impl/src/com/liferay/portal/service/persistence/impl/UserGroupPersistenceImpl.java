@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.DuplicateUserGroupExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.NoSuchUserGroupException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.UserGroup;
 import com.liferay.portal.kernel.model.UserGroupTable;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
@@ -96,8 +94,9 @@ public class UserGroupPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the user groups where uuid = &#63;.
@@ -137,15 +136,9 @@ public class UserGroupPersistenceImpl
 			String uuid, OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByUuid_First(uuid, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -222,8 +215,9 @@ public class UserGroupPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the user groups where uuid = &#63; and companyId = &#63;.
@@ -266,16 +260,9 @@ public class UserGroupPersistenceImpl
 			OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -359,8 +346,9 @@ public class UserGroupPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the user groups where companyId = &#63;.
@@ -400,16 +388,9 @@ public class UserGroupPersistenceImpl
 			long companyId, OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -487,8 +468,8 @@ public class UserGroupPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByC_P;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException> _collectionPersistenceFinderByC_P;
 
 	/**
 	 * Returns an ordered range of all the user groups where companyId = &#63; and parentUserGroupId = &#63;.
@@ -532,17 +513,9 @@ public class UserGroupPersistenceImpl
 			OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByC_P_First(
-			companyId, parentUserGroupId, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, parentUserGroupId}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, parentUserGroupId}, orderByComparator);
 	}
 
 	/**
@@ -629,7 +602,8 @@ public class UserGroupPersistenceImpl
 			new Object[] {companyId, parentUserGroupId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<UserGroup> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<UserGroup, NoSuchUserGroupException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the user group where companyId = &#63; and name = &#63; or throws a <code>NoSuchUserGroupException</code> if it could not be found.
@@ -643,21 +617,8 @@ public class UserGroupPersistenceImpl
 	public UserGroup findByC_N(long companyId, String name)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByC_N(companyId, name);
-
-		if (userGroup == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchUserGroupException(message);
-		}
-
-		return userGroup;
+		return _uniquePersistenceFinderByC_N.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
 	/**
@@ -706,8 +667,9 @@ public class UserGroupPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByC_LikeN;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException>
+			_collectionPersistenceFinderByC_LikeN;
 
 	/**
 	 * Returns all the user groups where companyId = &#63; and name LIKE &#63;.
@@ -806,16 +768,9 @@ public class UserGroupPersistenceImpl
 			OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByC_LikeN_First(
-			companyId, name, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByC_LikeN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name}));
+		return _collectionPersistenceFinderByC_LikeN.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -932,8 +887,9 @@ public class UserGroupPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<UserGroup>
-		_collectionPersistenceFinderByGtU_C_P;
+	private FilterCollectionPersistenceFinder
+		<UserGroup, NoSuchUserGroupException>
+			_collectionPersistenceFinderByGtU_C_P;
 
 	/**
 	 * Returns all the user groups where userGroupId &gt; &#63; and companyId = &#63; and parentUserGroupId = &#63;.
@@ -1044,17 +1000,10 @@ public class UserGroupPersistenceImpl
 			OrderByComparator<UserGroup> orderByComparator)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByGtU_C_P_First(
-			userGroupId, companyId, parentUserGroupId, orderByComparator);
-
-		if (userGroup != null) {
-			return userGroup;
-		}
-
-		throw new NoSuchUserGroupException(
-			_collectionPersistenceFinderByGtU_C_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userGroupId, companyId, parentUserGroupId}));
+		return _collectionPersistenceFinderByGtU_C_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {userGroupId, companyId, parentUserGroupId},
+			orderByComparator);
 	}
 
 	/**
@@ -1194,7 +1143,8 @@ public class UserGroupPersistenceImpl
 			0);
 	}
 
-	private UniquePersistenceFinder<UserGroup> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<UserGroup, NoSuchUserGroupException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the user group where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchUserGroupException</code> if it could not be found.
@@ -1208,22 +1158,9 @@ public class UserGroupPersistenceImpl
 	public UserGroup findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchUserGroupException {
 
-		UserGroup userGroup = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (userGroup == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchUserGroupException(message);
-		}
-
-		return userGroup;
+		return _uniquePersistenceFinderByERC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -2635,19 +2572,11 @@ public class UserGroupPersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"userGroup.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, UserGroup::getUuid));
+					"userGroup.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, UserGroup::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -2669,19 +2598,11 @@ public class UserGroupPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"userGroup.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, UserGroup::getUuid),
+					"userGroup.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, UserGroup::getUuid),
 				new FinderColumn<>(
 					"userGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, UserGroup::getCompanyId));
@@ -2706,16 +2627,8 @@ public class UserGroupPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"userGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, UserGroup::getCompanyId));
@@ -2740,16 +2653,8 @@ public class UserGroupPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"companyId", "parentUserGroupId"}, false),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"userGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, UserGroup::getCompanyId),
@@ -2790,16 +2695,8 @@ public class UserGroupPersistenceImpl
 					new String[] {Long.class.getName(), String.class.getName()},
 					new String[] {"companyId", "name"}, false),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"userGroup.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, UserGroup::getCompanyId),
@@ -2834,16 +2731,8 @@ public class UserGroupPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_USERGROUP_WHERE, _SQL_COUNT_USERGROUP_WHERE,
-				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					UserGroupImpl.class, UserGroup.class, "userGroup",
-					"UserGroup", "userGroup.userGroupId",
-					"SELECT DISTINCT {userGroup.*} FROM UserGroup userGroup WHERE ",
-					"SELECT {UserGroup.*} FROM (SELECT DISTINCT userGroup.userGroupId FROM UserGroup userGroup WHERE ",
-					") TEMP_TABLE INNER JOIN UserGroup ON TEMP_TABLE.userGroupId = UserGroup.userGroupId",
-					"SELECT COUNT(DISTINCT userGroup.userGroupId) AS COUNT_VALUE FROM UserGroup userGroup WHERE ",
-					UserGroupModelImpl.ORDER_BY_SQL,
-					UserGroupModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				UserGroupModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"userGroup.", "userGroupId", FinderColumn.Type.LONG, ">",
 					true, true, UserGroup::getUserGroupId),
@@ -2913,12 +2802,6 @@ public class UserGroupPersistenceImpl
 	private static final String _SQL_COUNT_USERGROUP_WHERE =
 		"SELECT COUNT(userGroup) FROM UserGroup userGroup WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No UserGroup exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		UserGroupPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "groups"});
 
@@ -2928,4 +2811,4 @@ public class UserGroupPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1144137114
+// LIFERAY-SERVICE-BUILDER-HASH:-1960027828

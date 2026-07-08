@@ -114,13 +114,8 @@ public class CommerceAvailabilityEstimatePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceAvailabilityEstimate newCommerceAvailabilityEstimate =
-			_persistence.create(pk);
-
-		newCommerceAvailabilityEstimate.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceAvailabilityEstimate();
 
 		newCommerceAvailabilityEstimate.setUuid(RandomTestUtil.randomString());
 
@@ -145,8 +140,10 @@ public class CommerceAvailabilityEstimatePersistenceTest {
 		newCommerceAvailabilityEstimate.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_commerceAvailabilityEstimates.add(
-			_persistence.update(newCommerceAvailabilityEstimate));
+		newCommerceAvailabilityEstimate = _persistence.update(
+			newCommerceAvailabilityEstimate);
+
+		_commerceAvailabilityEstimates.add(newCommerceAvailabilityEstimate);
 
 		CommerceAvailabilityEstimate existingCommerceAvailabilityEstimate =
 			_persistence.findByPrimaryKey(
@@ -512,8 +509,6 @@ public class CommerceAvailabilityEstimatePersistenceTest {
 		CommerceAvailabilityEstimate commerceAvailabilityEstimate =
 			_persistence.create(pk);
 
-		commerceAvailabilityEstimate.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceAvailabilityEstimate.setUuid(RandomTestUtil.randomString());
 
 		commerceAvailabilityEstimate.setCompanyId(RandomTestUtil.nextLong());
@@ -545,4 +540,4 @@ public class CommerceAvailabilityEstimatePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1800479216
+// LIFERAY-SERVICE-BUILDER-HASH:-1002093147

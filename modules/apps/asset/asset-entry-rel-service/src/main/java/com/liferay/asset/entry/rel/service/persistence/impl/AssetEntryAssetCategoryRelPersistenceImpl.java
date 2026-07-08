@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -80,8 +78,9 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AssetEntryAssetCategoryRel>
-		_collectionPersistenceFinderByAssetEntryId;
+	private CollectionPersistenceFinder
+		<AssetEntryAssetCategoryRel, NoSuchEntryAssetCategoryRelException>
+			_collectionPersistenceFinderByAssetEntryId;
 
 	/**
 	 * Returns an ordered range of all the asset entry asset category rels where assetEntryId = &#63;.
@@ -122,16 +121,8 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 			OrderByComparator<AssetEntryAssetCategoryRel> orderByComparator)
 		throws NoSuchEntryAssetCategoryRelException {
 
-		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel =
-			fetchByAssetEntryId_First(assetEntryId, orderByComparator);
-
-		if (assetEntryAssetCategoryRel != null) {
-			return assetEntryAssetCategoryRel;
-		}
-
-		throw new NoSuchEntryAssetCategoryRelException(
-			_collectionPersistenceFinderByAssetEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {assetEntryId}));
+		return _collectionPersistenceFinderByAssetEntryId.findFirst(
+			finderCache, new Object[] {assetEntryId}, orderByComparator);
 	}
 
 	/**
@@ -173,8 +164,9 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 			finderCache, new Object[] {assetEntryId});
 	}
 
-	private CollectionPersistenceFinder<AssetEntryAssetCategoryRel>
-		_collectionPersistenceFinderByAssetCategoryId;
+	private CollectionPersistenceFinder
+		<AssetEntryAssetCategoryRel, NoSuchEntryAssetCategoryRelException>
+			_collectionPersistenceFinderByAssetCategoryId;
 
 	/**
 	 * Returns an ordered range of all the asset entry asset category rels where assetCategoryId = &#63;.
@@ -215,16 +207,8 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 			OrderByComparator<AssetEntryAssetCategoryRel> orderByComparator)
 		throws NoSuchEntryAssetCategoryRelException {
 
-		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel =
-			fetchByAssetCategoryId_First(assetCategoryId, orderByComparator);
-
-		if (assetEntryAssetCategoryRel != null) {
-			return assetEntryAssetCategoryRel;
-		}
-
-		throw new NoSuchEntryAssetCategoryRelException(
-			_collectionPersistenceFinderByAssetCategoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {assetCategoryId}));
+		return _collectionPersistenceFinderByAssetCategoryId.findFirst(
+			finderCache, new Object[] {assetCategoryId}, orderByComparator);
 	}
 
 	/**
@@ -266,8 +250,9 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 			finderCache, new Object[] {assetCategoryId});
 	}
 
-	private UniquePersistenceFinder<AssetEntryAssetCategoryRel>
-		_uniquePersistenceFinderByA_A;
+	private UniquePersistenceFinder
+		<AssetEntryAssetCategoryRel, NoSuchEntryAssetCategoryRelException>
+			_uniquePersistenceFinderByA_A;
 
 	/**
 	 * Returns the asset entry asset category rel where assetEntryId = &#63; and assetCategoryId = &#63; or throws a <code>NoSuchEntryAssetCategoryRelException</code> if it could not be found.
@@ -282,23 +267,8 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 			long assetEntryId, long assetCategoryId)
 		throws NoSuchEntryAssetCategoryRelException {
 
-		AssetEntryAssetCategoryRel assetEntryAssetCategoryRel = fetchByA_A(
-			assetEntryId, assetCategoryId);
-
-		if (assetEntryAssetCategoryRel == null) {
-			String message =
-				_uniquePersistenceFinderByA_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {assetEntryId, assetCategoryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryAssetCategoryRelException(message);
-		}
-
-		return assetEntryAssetCategoryRel;
+		return _uniquePersistenceFinderByA_A.find(
+			finderCache, new Object[] {assetEntryId, assetCategoryId});
 	}
 
 	/**
@@ -634,7 +604,7 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 				_SQL_SELECT_ASSETENTRYASSETCATEGORYREL_WHERE,
 				_SQL_COUNT_ASSETENTRYASSETCATEGORYREL_WHERE,
 				AssetEntryAssetCategoryRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetEntryAssetCategoryRel.", "assetEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -665,7 +635,7 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 				_SQL_SELECT_ASSETENTRYASSETCATEGORYREL_WHERE,
 				_SQL_COUNT_ASSETENTRYASSETCATEGORYREL_WHERE,
 				AssetEntryAssetCategoryRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetEntryAssetCategoryRel.", "assetCategoryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -746,16 +716,10 @@ public class AssetEntryAssetCategoryRelPersistenceImpl
 	private static final String _SQL_COUNT_ASSETENTRYASSETCATEGORYREL_WHERE =
 		"SELECT COUNT(assetEntryAssetCategoryRel) FROM AssetEntryAssetCategoryRel assetEntryAssetCategoryRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AssetEntryAssetCategoryRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AssetEntryAssetCategoryRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-528296767
+// LIFERAY-SERVICE-BUILDER-HASH:1259875840

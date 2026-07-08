@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -77,8 +75,9 @@ public class FriendlyURLEntryMappingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<FriendlyURLEntryMapping>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<FriendlyURLEntryMapping, NoSuchFriendlyURLEntryMappingException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the friendly url entry mapping where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchFriendlyURLEntryMappingException</code> if it could not be found.
@@ -92,23 +91,8 @@ public class FriendlyURLEntryMappingPersistenceImpl
 	public FriendlyURLEntryMapping findByC_C(long classNameId, long classPK)
 		throws NoSuchFriendlyURLEntryMappingException {
 
-		FriendlyURLEntryMapping friendlyURLEntryMapping = fetchByC_C(
-			classNameId, classPK);
-
-		if (friendlyURLEntryMapping == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFriendlyURLEntryMappingException(message);
-		}
-
-		return friendlyURLEntryMapping;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -481,16 +465,10 @@ public class FriendlyURLEntryMappingPersistenceImpl
 	private static final String _SQL_SELECT_FRIENDLYURLENTRYMAPPING_WHERE =
 		"SELECT friendlyURLEntryMapping FROM FriendlyURLEntryMapping friendlyURLEntryMapping WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FriendlyURLEntryMapping exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FriendlyURLEntryMappingPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-612302441
+// LIFERAY-SERVICE-BUILDER-HASH:1382267949

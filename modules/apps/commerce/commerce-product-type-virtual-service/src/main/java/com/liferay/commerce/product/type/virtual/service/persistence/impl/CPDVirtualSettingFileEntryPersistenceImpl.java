@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPDVirtualSettingFileEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPDVirtualSettingFileEntry, NoSuchCPDVirtualSettingFileEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cpd virtual setting file entries where uuid = &#63;.
@@ -123,16 +122,8 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			OrderByComparator<CPDVirtualSettingFileEntry> orderByComparator)
 		throws NoSuchCPDVirtualSettingFileEntryException {
 
-		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (cpdVirtualSettingFileEntry != null) {
-			return cpdVirtualSettingFileEntry;
-		}
-
-		throw new NoSuchCPDVirtualSettingFileEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPDVirtualSettingFileEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPDVirtualSettingFileEntry, NoSuchCPDVirtualSettingFileEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cpd virtual setting file entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPDVirtualSettingFileEntryException</code> if it could not be found.
@@ -189,22 +181,8 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 	public CPDVirtualSettingFileEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchCPDVirtualSettingFileEntryException {
 
-		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry = fetchByUUID_G(
-			uuid, groupId);
-
-		if (cpdVirtualSettingFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPDVirtualSettingFileEntryException(message);
-		}
-
-		return cpdVirtualSettingFileEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -253,8 +231,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPDVirtualSettingFileEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPDVirtualSettingFileEntry, NoSuchCPDVirtualSettingFileEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cpd virtual setting file entries where uuid = &#63; and companyId = &#63;.
@@ -297,16 +276,8 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			OrderByComparator<CPDVirtualSettingFileEntry> orderByComparator)
 		throws NoSuchCPDVirtualSettingFileEntryException {
 
-		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (cpdVirtualSettingFileEntry != null) {
-			return cpdVirtualSettingFileEntry;
-		}
-
-		throw new NoSuchCPDVirtualSettingFileEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,8 +322,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPDVirtualSettingFileEntry>
-		_collectionPersistenceFinderByCPDefinitionVirtualSettingId;
+	private CollectionPersistenceFinder
+		<CPDVirtualSettingFileEntry, NoSuchCPDVirtualSettingFileEntryException>
+			_collectionPersistenceFinderByCPDefinitionVirtualSettingId;
 
 	/**
 	 * Returns an ordered range of all the cpd virtual setting file entries where CPDefinitionVirtualSettingId = &#63;.
@@ -393,19 +365,10 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			OrderByComparator<CPDVirtualSettingFileEntry> orderByComparator)
 		throws NoSuchCPDVirtualSettingFileEntryException {
 
-		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry =
-			fetchByCPDefinitionVirtualSettingId_First(
-				CPDefinitionVirtualSettingId, orderByComparator);
-
-		if (cpdVirtualSettingFileEntry != null) {
-			return cpdVirtualSettingFileEntry;
-		}
-
-		throw new NoSuchCPDVirtualSettingFileEntryException(
-			_collectionPersistenceFinderByCPDefinitionVirtualSettingId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPDefinitionVirtualSettingId}));
+		return _collectionPersistenceFinderByCPDefinitionVirtualSettingId.
+			findFirst(
+				finderCache, new Object[] {CPDefinitionVirtualSettingId},
+				orderByComparator);
 	}
 
 	/**
@@ -453,8 +416,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			finderCache, new Object[] {CPDefinitionVirtualSettingId});
 	}
 
-	private CollectionPersistenceFinder<CPDVirtualSettingFileEntry>
-		_collectionPersistenceFinderByFileEntryId;
+	private CollectionPersistenceFinder
+		<CPDVirtualSettingFileEntry, NoSuchCPDVirtualSettingFileEntryException>
+			_collectionPersistenceFinderByFileEntryId;
 
 	/**
 	 * Returns an ordered range of all the cpd virtual setting file entries where fileEntryId = &#63;.
@@ -495,16 +459,8 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			OrderByComparator<CPDVirtualSettingFileEntry> orderByComparator)
 		throws NoSuchCPDVirtualSettingFileEntryException {
 
-		CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry =
-			fetchByFileEntryId_First(fileEntryId, orderByComparator);
-
-		if (cpdVirtualSettingFileEntry != null) {
-			return cpdVirtualSettingFileEntry;
-		}
-
-		throw new NoSuchCPDVirtualSettingFileEntryException(
-			_collectionPersistenceFinderByFileEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {fileEntryId}));
+		return _collectionPersistenceFinderByFileEntryId.findFirst(
+			finderCache, new Object[] {fileEntryId}, orderByComparator);
 	}
 
 	/**
@@ -778,6 +734,11 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "CPDefinitionVirtualSettingFileEntryId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY;
 	}
@@ -812,10 +773,11 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 			_SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 			_SQL_COUNT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 			CPDVirtualSettingFileEntryModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"cpdVirtualSettingFileEntry.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPDVirtualSettingFileEntry::getUuid));
+				"cpdVirtualSettingFileEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPDVirtualSettingFileEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -827,8 +789,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 				CPDVirtualSettingFileEntry::getGroupId),
 			_SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"cpdVirtualSettingFileEntry.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CPDVirtualSettingFileEntry::getUuid),
+				"cpdVirtualSettingFileEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPDVirtualSettingFileEntry::getUuid),
 			new FinderColumn<>(
 				"cpdVirtualSettingFileEntry.", "groupId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -856,9 +819,9 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 				_SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				_SQL_COUNT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				CPDVirtualSettingFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpdVirtualSettingFileEntry.", "uuid",
+					"cpdVirtualSettingFileEntry.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CPDVirtualSettingFileEntry::getUuid),
 				new FinderColumn<>(
@@ -891,7 +854,7 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 				_SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				_SQL_COUNT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				CPDVirtualSettingFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpdVirtualSettingFileEntry.",
 					"CPDefinitionVirtualSettingId", FinderColumn.Type.LONG, "=",
@@ -921,7 +884,7 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 				_SQL_SELECT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				_SQL_COUNT_CPDVIRTUALSETTINGFILEENTRY_WHERE,
 				CPDVirtualSettingFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpdVirtualSettingFileEntry.", "fileEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -981,12 +944,6 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 	private static final String _SQL_COUNT_CPDVIRTUALSETTINGFILEENTRY_WHERE =
 		"SELECT COUNT(cpdVirtualSettingFileEntry) FROM CPDVirtualSettingFileEntry cpdVirtualSettingFileEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPDVirtualSettingFileEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPDVirtualSettingFileEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "CPDefinitionVirtualSettingFileEntryId"});
 
@@ -996,4 +953,4 @@ public class CPDVirtualSettingFileEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1418519486
+// LIFERAY-SERVICE-BUILDER-HASH:-1635407398

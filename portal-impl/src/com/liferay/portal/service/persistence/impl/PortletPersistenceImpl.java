@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPortletException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.model.PortletTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -66,7 +64,7 @@ public class PortletPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Portlet>
+	private CollectionPersistenceFinder<Portlet, NoSuchPortletException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -106,15 +104,9 @@ public class PortletPersistenceImpl
 			long companyId, OrderByComparator<Portlet> orderByComparator)
 		throws NoSuchPortletException {
 
-		Portlet portlet = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (portlet != null) {
-			return portlet;
-		}
-
-		throw new NoSuchPortletException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -156,7 +148,8 @@ public class PortletPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<Portlet> _uniquePersistenceFinderByC_P;
+	private UniquePersistenceFinder<Portlet, NoSuchPortletException>
+		_uniquePersistenceFinderByC_P;
 
 	/**
 	 * Returns the portlet where companyId = &#63; and portletId = &#63; or throws a <code>NoSuchPortletException</code> if it could not be found.
@@ -170,22 +163,9 @@ public class PortletPersistenceImpl
 	public Portlet findByC_P(long companyId, String portletId)
 		throws NoSuchPortletException {
 
-		Portlet portlet = fetchByC_P(companyId, portletId);
-
-		if (portlet == null) {
-			String message =
-				_uniquePersistenceFinderByC_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, portletId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPortletException(message);
-		}
-
-		return portlet;
+		return _uniquePersistenceFinderByC_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, portletId});
 	}
 
 	/**
@@ -402,6 +382,11 @@ public class PortletPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "id";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_PORTLET;
 	}
@@ -435,7 +420,8 @@ public class PortletPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_PORTLET_WHERE, _SQL_COUNT_PORTLET_WHERE,
-				PortletModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				PortletModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"portlet.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Portlet::getCompanyId));
@@ -477,12 +463,6 @@ public class PortletPersistenceImpl
 	private static final String _SQL_COUNT_PORTLET_WHERE =
 		"SELECT COUNT(portlet) FROM Portlet portlet WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Portlet exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PortletPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"id", "active"});
 
@@ -492,4 +472,4 @@ public class PortletPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1768889591
+// LIFERAY-SERVICE-BUILDER-HASH:-1104701137

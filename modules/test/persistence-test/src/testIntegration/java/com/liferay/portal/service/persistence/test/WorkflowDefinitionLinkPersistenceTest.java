@@ -114,12 +114,8 @@ public class WorkflowDefinitionLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		WorkflowDefinitionLink newWorkflowDefinitionLink = _persistence.create(
-			pk);
-
-		newWorkflowDefinitionLink.setMvccVersion(RandomTestUtil.nextLong());
+		WorkflowDefinitionLink newWorkflowDefinitionLink =
+			addWorkflowDefinitionLink();
 
 		newWorkflowDefinitionLink.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -152,8 +148,10 @@ public class WorkflowDefinitionLinkPersistenceTest {
 		newWorkflowDefinitionLink.setWorkflowDefinitionVersion(
 			RandomTestUtil.nextInt());
 
-		_workflowDefinitionLinks.add(
-			_persistence.update(newWorkflowDefinitionLink));
+		newWorkflowDefinitionLink = _persistence.update(
+			newWorkflowDefinitionLink);
+
+		_workflowDefinitionLinks.add(newWorkflowDefinitionLink);
 
 		WorkflowDefinitionLink existingWorkflowDefinitionLink =
 			_persistence.findByPrimaryKey(
@@ -696,8 +694,6 @@ public class WorkflowDefinitionLinkPersistenceTest {
 
 		WorkflowDefinitionLink workflowDefinitionLink = _persistence.create(pk);
 
-		workflowDefinitionLink.setMvccVersion(RandomTestUtil.nextLong());
-
 		workflowDefinitionLink.setCtCollectionId(RandomTestUtil.nextLong());
 
 		workflowDefinitionLink.setUuid(RandomTestUtil.randomString());
@@ -741,4 +737,4 @@ public class WorkflowDefinitionLinkPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:484497332
+// LIFERAY-SERVICE-BUILDER-HASH:-281089987

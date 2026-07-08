@@ -110,11 +110,7 @@ public class DLFileVersionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DLFileVersion newDLFileVersion = _persistence.create(pk);
-
-		newDLFileVersion.setMvccVersion(RandomTestUtil.nextLong());
+		DLFileVersion newDLFileVersion = addDLFileVersion();
 
 		newDLFileVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -180,7 +176,9 @@ public class DLFileVersionPersistenceTest {
 
 		newDLFileVersion.setStatusDate(RandomTestUtil.nextDate());
 
-		_dlFileVersions.add(_persistence.update(newDLFileVersion));
+		newDLFileVersion = _persistence.update(newDLFileVersion);
+
+		_dlFileVersions.add(newDLFileVersion);
 
 		DLFileVersion existingDLFileVersion = _persistence.findByPrimaryKey(
 			newDLFileVersion.getPrimaryKey());
@@ -745,8 +743,6 @@ public class DLFileVersionPersistenceTest {
 
 		DLFileVersion dlFileVersion = _persistence.create(pk);
 
-		dlFileVersion.setMvccVersion(RandomTestUtil.nextLong());
-
 		dlFileVersion.setCtCollectionId(RandomTestUtil.nextLong());
 
 		dlFileVersion.setUuid(RandomTestUtil.randomString());
@@ -822,4 +818,4 @@ public class DLFileVersionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:490148269
+// LIFERAY-SERVICE-BUILDER-HASH:1296643732

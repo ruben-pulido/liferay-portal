@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -83,8 +81,9 @@ public class OAuth2ScopeGrantPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<OAuth2ScopeGrant>
-		_collectionPersistenceFinderByOAuth2ApplicationScopeAliasesId;
+	private CollectionPersistenceFinder
+		<OAuth2ScopeGrant, NoSuchOAuth2ScopeGrantException>
+			_collectionPersistenceFinderByOAuth2ApplicationScopeAliasesId;
 
 	/**
 	 * Returns an ordered range of all the o auth2 scope grants where oAuth2ApplicationScopeAliasesId = &#63;.
@@ -126,19 +125,10 @@ public class OAuth2ScopeGrantPersistenceImpl
 			OrderByComparator<OAuth2ScopeGrant> orderByComparator)
 		throws NoSuchOAuth2ScopeGrantException {
 
-		OAuth2ScopeGrant oAuth2ScopeGrant =
-			fetchByOAuth2ApplicationScopeAliasesId_First(
-				oAuth2ApplicationScopeAliasesId, orderByComparator);
-
-		if (oAuth2ScopeGrant != null) {
-			return oAuth2ScopeGrant;
-		}
-
-		throw new NoSuchOAuth2ScopeGrantException(
-			_collectionPersistenceFinderByOAuth2ApplicationScopeAliasesId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {oAuth2ApplicationScopeAliasesId}));
+		return _collectionPersistenceFinderByOAuth2ApplicationScopeAliasesId.
+			findFirst(
+				finderCache, new Object[] {oAuth2ApplicationScopeAliasesId},
+				orderByComparator);
 	}
 
 	/**
@@ -186,8 +176,9 @@ public class OAuth2ScopeGrantPersistenceImpl
 			count(finderCache, new Object[] {oAuth2ApplicationScopeAliasesId});
 	}
 
-	private UniquePersistenceFinder<OAuth2ScopeGrant>
-		_uniquePersistenceFinderByC_O_A_B_S;
+	private UniquePersistenceFinder
+		<OAuth2ScopeGrant, NoSuchOAuth2ScopeGrantException>
+			_uniquePersistenceFinderByC_O_A_B_S;
 
 	/**
 	 * Returns the o auth2 scope grant where companyId = &#63; and oAuth2ApplicationScopeAliasesId = &#63; and applicationName = &#63; and bundleSymbolicName = &#63; and scope = &#63; or throws a <code>NoSuchOAuth2ScopeGrantException</code> if it could not be found.
@@ -206,27 +197,12 @@ public class OAuth2ScopeGrantPersistenceImpl
 			String applicationName, String bundleSymbolicName, String scope)
 		throws NoSuchOAuth2ScopeGrantException {
 
-		OAuth2ScopeGrant oAuth2ScopeGrant = fetchByC_O_A_B_S(
-			companyId, oAuth2ApplicationScopeAliasesId, applicationName,
-			bundleSymbolicName, scope);
-
-		if (oAuth2ScopeGrant == null) {
-			String message =
-				_uniquePersistenceFinderByC_O_A_B_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						companyId, oAuth2ApplicationScopeAliasesId,
-						applicationName, bundleSymbolicName, scope
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOAuth2ScopeGrantException(message);
-		}
-
-		return oAuth2ScopeGrant;
+		return _uniquePersistenceFinderByC_O_A_B_S.find(
+			finderCache,
+			new Object[] {
+				companyId, oAuth2ApplicationScopeAliasesId, applicationName,
+				bundleSymbolicName, scope
+			});
 	}
 
 	/**
@@ -879,10 +855,11 @@ public class OAuth2ScopeGrantPersistenceImpl
 				_SQL_SELECT_OAUTH2SCOPEGRANT_WHERE,
 				_SQL_COUNT_OAUTH2SCOPEGRANT_WHERE,
 				OAuth2ScopeGrantModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"oAuth2ScopeGrant.", "oAuth2ApplicationScopeAliasesId",
-					FinderColumn.Type.LONG, "=", true, true,
+					"oA2AScopeAliasesId", FinderColumn.Type.LONG, "=", true,
+					true,
 					OAuth2ScopeGrant::getOAuth2ApplicationScopeAliasesId));
 
 		_uniquePersistenceFinderByC_O_A_B_S = new UniquePersistenceFinder<>(
@@ -909,7 +886,7 @@ public class OAuth2ScopeGrantPersistenceImpl
 				true, true, OAuth2ScopeGrant::getCompanyId),
 			new FinderColumn<>(
 				"oAuth2ScopeGrant.", "oAuth2ApplicationScopeAliasesId",
-				FinderColumn.Type.LONG, "=", true, true,
+				"oA2AScopeAliasesId", FinderColumn.Type.LONG, "=", true, true,
 				OAuth2ScopeGrant::getOAuth2ApplicationScopeAliasesId),
 			new FinderColumn<>(
 				"oAuth2ScopeGrant.", "applicationName",
@@ -983,12 +960,6 @@ public class OAuth2ScopeGrantPersistenceImpl
 	private static final String _SQL_COUNT_OAUTH2SCOPEGRANT_WHERE =
 		"SELECT COUNT(oAuth2ScopeGrant) FROM OAuth2ScopeGrant oAuth2ScopeGrant WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No OAuth2ScopeGrant exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		OAuth2ScopeGrantPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"oAuth2ApplicationScopeAliasesId"});
 
@@ -998,4 +969,4 @@ public class OAuth2ScopeGrantPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:248514199
+// LIFERAY-SERVICE-BUILDER-HASH:606474620

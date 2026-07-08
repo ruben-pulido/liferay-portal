@@ -14,7 +14,6 @@ import com.liferay.dynamic.data.mapping.model.impl.DDMTemplateModelImpl;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplatePersistence;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMTemplateUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.impl.constants.DDMPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -23,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -99,7 +96,7 @@ public class DDMTemplatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -140,15 +137,8 @@ public class DDMTemplatePersistenceImpl
 			String uuid, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByUuid_First(uuid, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -189,7 +179,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DDMTemplate>
+	private UniquePersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -204,21 +194,8 @@ public class DDMTemplatePersistenceImpl
 	public DDMTemplate findByUUID_G(String uuid, long groupId)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByUUID_G(uuid, groupId);
-
-		if (ddmTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateException(message);
-		}
-
-		return ddmTemplate;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -266,7 +243,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -310,16 +287,8 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -364,8 +333,9 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63;.
@@ -405,16 +375,8 @@ public class DDMTemplatePersistenceImpl
 			long groupId, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -490,7 +452,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByClassPK;
 
 	/**
@@ -531,16 +493,8 @@ public class DDMTemplatePersistenceImpl
 			long classPK, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByClassPK_First(
-			classPK, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByClassPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classPK}));
+		return _collectionPersistenceFinderByClassPK.findFirst(
+			finderCache, new Object[] {classPK}, orderByComparator);
 	}
 
 	/**
@@ -581,7 +535,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {classPK});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByTemplateKey;
 
 	/**
@@ -623,16 +577,8 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByTemplateKey_First(
-			templateKey, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByTemplateKey.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {templateKey}));
+		return _collectionPersistenceFinderByTemplateKey.findFirst(
+			finderCache, new Object[] {templateKey}, orderByComparator);
 	}
 
 	/**
@@ -673,7 +619,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {templateKey});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByType;
 
 	/**
@@ -714,15 +660,8 @@ public class DDMTemplatePersistenceImpl
 			String type, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByType_First(type, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByType.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type}));
+		return _collectionPersistenceFinderByType.findFirst(
+			finderCache, new Object[] {type}, orderByComparator);
 	}
 
 	/**
@@ -763,7 +702,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {type});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByLanguage;
 
 	/**
@@ -804,16 +743,8 @@ public class DDMTemplatePersistenceImpl
 			String language, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByLanguage_First(
-			language, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByLanguage.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {language}));
+		return _collectionPersistenceFinderByLanguage.findFirst(
+			finderCache, new Object[] {language}, orderByComparator);
 	}
 
 	/**
@@ -854,7 +785,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {language});
 	}
 
-	private UniquePersistenceFinder<DDMTemplate>
+	private UniquePersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_uniquePersistenceFinderBySmallImageId;
 
 	/**
@@ -868,21 +799,8 @@ public class DDMTemplatePersistenceImpl
 	public DDMTemplate findBySmallImageId(long smallImageId)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchBySmallImageId(smallImageId);
-
-		if (ddmTemplate == null) {
-			String message =
-				_uniquePersistenceFinderBySmallImageId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {smallImageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateException(message);
-		}
-
-		return ddmTemplate;
+		return _uniquePersistenceFinderBySmallImageId.find(
+			finderCache, new Object[] {smallImageId});
 	}
 
 	/**
@@ -927,8 +845,9 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {smallImageId});
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByG_C;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByG_C;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63; and classNameId = &#63;.
@@ -971,16 +890,9 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_C_First(
-			groupId, classNameId, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByG_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, classNameId}));
+		return _collectionPersistenceFinderByG_C.findFirst(
+			finderCache, new Object[] {groupId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -1063,8 +975,9 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {groupId, classNameId}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByG_CPK;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByG_CPK;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63; and classPK = &#63;.
@@ -1107,26 +1020,9 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_CPK_First(
-			groupId, classPK, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append("}");
-
-		throw new NoSuchTemplateException(sb.toString());
+		return _collectionPersistenceFinderByG_CPK.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1291,8 +1187,9 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {groupIds, classPK}, groupIds);
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByG_C_C;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByG_C_C;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63; and classNameId = &#63; and classPK = &#63;.
@@ -1338,29 +1235,10 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_C_C_First(
-			groupId, classNameId, classPK, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", classNameId=");
-		sb.append(classNameId);
-
-		sb.append(", classPK=");
-		sb.append(classPK);
-
-		sb.append("}");
-
-		throw new NoSuchTemplateException(sb.toString());
+		return _collectionPersistenceFinderByG_C_C.findFirst(
+			finderCache,
+			new Object[] {new long[] {groupId}, classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -1548,7 +1426,7 @@ public class DDMTemplatePersistenceImpl
 			groupIds);
 	}
 
-	private UniquePersistenceFinder<DDMTemplate>
+	private UniquePersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_uniquePersistenceFinderByG_C_T;
 
 	/**
@@ -1565,23 +1443,8 @@ public class DDMTemplatePersistenceImpl
 			long groupId, long classNameId, String templateKey)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_C_T(
-			groupId, classNameId, templateKey);
-
-		if (ddmTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByG_C_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, classNameId, templateKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateException(message);
-		}
-
-		return ddmTemplate;
+		return _uniquePersistenceFinderByG_C_T.find(
+			finderCache, new Object[] {groupId, classNameId, templateKey});
 	}
 
 	/**
@@ -1638,7 +1501,7 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {groupId, classNameId, templateKey});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplate>
+	private CollectionPersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_collectionPersistenceFinderByC_C_T;
 
 	/**
@@ -1684,17 +1547,9 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByC_C_T_First(
-			classNameId, classPK, type, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByC_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, type}));
+		return _collectionPersistenceFinderByC_C_T.findFirst(
+			finderCache, new Object[] {classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -1743,8 +1598,9 @@ public class DDMTemplatePersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, type});
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByG_C_C_T;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByG_C_C_T;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;.
@@ -1791,17 +1647,9 @@ public class DDMTemplatePersistenceImpl
 			OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_C_C_T_First(
-			groupId, classNameId, classPK, type, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByG_C_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK, type}));
+		return _collectionPersistenceFinderByG_C_C_T.findFirst(
+			finderCache, new Object[] {groupId, classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -1901,8 +1749,9 @@ public class DDMTemplatePersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<DDMTemplate>
-		_collectionPersistenceFinderByG_C_C_T_M;
+	private FilterCollectionPersistenceFinder
+		<DDMTemplate, NoSuchTemplateException>
+			_collectionPersistenceFinderByG_C_C_T_M;
 
 	/**
 	 * Returns an ordered range of all the ddm templates where groupId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63; and mode = &#63;.
@@ -1952,17 +1801,10 @@ public class DDMTemplatePersistenceImpl
 			String mode, OrderByComparator<DDMTemplate> orderByComparator)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByG_C_C_T_M_First(
-			groupId, classNameId, classPK, type, mode, orderByComparator);
-
-		if (ddmTemplate != null) {
-			return ddmTemplate;
-		}
-
-		throw new NoSuchTemplateException(
-			_collectionPersistenceFinderByG_C_C_T_M.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK, type, mode}));
+		return _collectionPersistenceFinderByG_C_C_T_M.findFirst(
+			finderCache,
+			new Object[] {groupId, classNameId, classPK, type, mode},
+			orderByComparator);
 	}
 
 	/**
@@ -2074,7 +1916,7 @@ public class DDMTemplatePersistenceImpl
 			new Object[] {groupId, classNameId, classPK, type, mode}, groupId);
 	}
 
-	private UniquePersistenceFinder<DDMTemplate>
+	private UniquePersistenceFinder<DDMTemplate, NoSuchTemplateException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -2089,22 +1931,8 @@ public class DDMTemplatePersistenceImpl
 	public DDMTemplate findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchTemplateException {
 
-		DDMTemplate ddmTemplate = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (ddmTemplate == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateException(message);
-		}
-
-		return ddmTemplate;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -2549,10 +2377,11 @@ public class DDMTemplatePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
-			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"ddmTemplate.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMTemplate::getUuid));
+				"ddmTemplate.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DDMTemplate::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -2564,8 +2393,8 @@ public class DDMTemplatePersistenceImpl
 				DDMTemplate::getGroupId),
 			_SQL_SELECT_DDMTEMPLATE_WHERE, "",
 			new FinderColumn<>(
-				"ddmTemplate.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMTemplate::getUuid),
+				"ddmTemplate.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DDMTemplate::getUuid),
 			new FinderColumn<>(
 				"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DDMTemplate::getGroupId));
@@ -2591,9 +2420,10 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"ddmTemplate.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, DDMTemplate::getUuid),
+					"ddmTemplate.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, DDMTemplate::getUuid),
 				new FinderColumn<>(
 					"ddmTemplate.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getCompanyId));
@@ -2619,15 +2449,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getGroupId));
@@ -2653,6 +2475,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"classPK"}, false),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getClassPK));
@@ -2678,6 +2501,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"templateKey"}, 0, 1, false, null),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "templateKey", FinderColumn.Type.STRING,
 					"=", true, true, DDMTemplate::getTemplateKey));
@@ -2700,10 +2524,11 @@ public class DDMTemplatePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"type_"},
 				0, 1, false, null),
 			_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
-			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"ddmTemplate.", "type", FinderColumn.Type.STRING, "=", true,
-				true, DDMTemplate::getType));
+				"ddmTemplate.", "type", "type_", FinderColumn.Type.STRING, "=",
+				true, true, DDMTemplate::getType));
 
 		_collectionPersistenceFinderByLanguage =
 			new CollectionPersistenceFinder<>(
@@ -2726,6 +2551,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"language"}, 0, 1, false, null),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "language", FinderColumn.Type.STRING, "=",
 					true, true, DDMTemplate::getLanguage));
@@ -2763,15 +2589,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"groupId", "classNameId"}, false),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getGroupId),
@@ -2800,15 +2618,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"groupId", "classPK"}, false),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new ArrayableFinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, DDMTemplate::getGroupId),
@@ -2844,15 +2654,7 @@ public class DDMTemplatePersistenceImpl
 					new String[] {"groupId", "classNameId", "classPK"}, false),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new ArrayableFinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					false, true, true, DDMTemplate::getGroupId),
@@ -2912,7 +2714,8 @@ public class DDMTemplatePersistenceImpl
 				new String[] {"classNameId", "classPK", "type_"}, 0, 4, false,
 				null),
 			_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
-			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"ddmTemplate.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, DDMTemplate::getClassNameId),
@@ -2920,8 +2723,8 @@ public class DDMTemplatePersistenceImpl
 				"ddmTemplate.", "classPK", FinderColumn.Type.LONG, "=", true,
 				true, DDMTemplate::getClassPK),
 			new FinderColumn<>(
-				"ddmTemplate.", "type", FinderColumn.Type.STRING, "=", true,
-				true, DDMTemplate::getType));
+				"ddmTemplate.", "type", "type_", FinderColumn.Type.STRING, "=",
+				true, true, DDMTemplate::getType));
 
 		_collectionPersistenceFinderByG_C_C_T =
 			new FilterCollectionPersistenceFinder<>(
@@ -2954,15 +2757,7 @@ public class DDMTemplatePersistenceImpl
 					0, 8, false, null),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getGroupId),
@@ -2973,8 +2768,8 @@ public class DDMTemplatePersistenceImpl
 					"ddmTemplate.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getClassPK),
 				new FinderColumn<>(
-					"ddmTemplate.", "type", FinderColumn.Type.STRING, "=", true,
-					true, DDMTemplate::getType));
+					"ddmTemplate.", "type", "type_", FinderColumn.Type.STRING,
+					"=", true, true, DDMTemplate::getType));
 
 		_collectionPersistenceFinderByG_C_C_T_M =
 			new FilterCollectionPersistenceFinder<>(
@@ -3018,15 +2813,7 @@ public class DDMTemplatePersistenceImpl
 					0, 24, false, null),
 				_SQL_SELECT_DDMTEMPLATE_WHERE, _SQL_COUNT_DDMTEMPLATE_WHERE,
 				DDMTemplateModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMTemplateImpl.class, DDMTemplate.class, "ddmTemplate",
-					"DDMTemplate", "ddmTemplate.templateId",
-					"SELECT DISTINCT {ddmTemplate.*} FROM DDMTemplate ddmTemplate WHERE ",
-					"SELECT {DDMTemplate.*} FROM (SELECT DISTINCT ddmTemplate.templateId FROM DDMTemplate ddmTemplate WHERE ",
-					") TEMP_TABLE INNER JOIN DDMTemplate ON TEMP_TABLE.templateId = DDMTemplate.templateId",
-					"SELECT COUNT(DISTINCT ddmTemplate.templateId) AS COUNT_VALUE FROM DDMTemplate ddmTemplate WHERE ",
-					DDMTemplateModelImpl.ORDER_BY_SQL,
-					DDMTemplateModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ddmTemplate.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getGroupId),
@@ -3037,11 +2824,11 @@ public class DDMTemplatePersistenceImpl
 					"ddmTemplate.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, DDMTemplate::getClassPK),
 				new FinderColumn<>(
-					"ddmTemplate.", "type", FinderColumn.Type.STRING, "=", true,
-					true, DDMTemplate::getType),
+					"ddmTemplate.", "type", "type_", FinderColumn.Type.STRING,
+					"=", true, true, DDMTemplate::getType),
 				new FinderColumn<>(
-					"ddmTemplate.", "mode", FinderColumn.Type.STRING, "=", true,
-					true, DDMTemplate::getMode));
+					"ddmTemplate.", "mode", "mode_", FinderColumn.Type.STRING,
+					"=", true, true, DDMTemplate::getMode));
 
 		_uniquePersistenceFinderByERC_G = new UniquePersistenceFinder<>(
 			this,
@@ -3117,12 +2904,6 @@ public class DDMTemplatePersistenceImpl
 	private static final String _SQL_COUNT_DDMTEMPLATE_WHERE =
 		"SELECT COUNT(ddmTemplate) FROM DDMTemplate ddmTemplate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMTemplate exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMTemplatePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type", "mode"});
 
@@ -3132,4 +2913,4 @@ public class DDMTemplatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:476433870
+// LIFERAY-SERVICE-BUILDER-HASH:-1541191909

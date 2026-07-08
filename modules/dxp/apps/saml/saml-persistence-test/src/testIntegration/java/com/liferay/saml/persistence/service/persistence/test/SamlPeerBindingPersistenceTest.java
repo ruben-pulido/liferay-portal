@@ -109,9 +109,7 @@ public class SamlPeerBindingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SamlPeerBinding newSamlPeerBinding = _persistence.create(pk);
+		SamlPeerBinding newSamlPeerBinding = addSamlPeerBinding();
 
 		newSamlPeerBinding.setCompanyId(RandomTestUtil.nextLong());
 
@@ -138,7 +136,9 @@ public class SamlPeerBindingPersistenceTest {
 
 		newSamlPeerBinding.setSamlNameIdValue(RandomTestUtil.randomString());
 
-		_samlPeerBindings.add(_persistence.update(newSamlPeerBinding));
+		newSamlPeerBinding = _persistence.update(newSamlPeerBinding);
+
+		_samlPeerBindings.add(newSamlPeerBinding);
 
 		SamlPeerBinding existingSamlPeerBinding = _persistence.findByPrimaryKey(
 			newSamlPeerBinding.getPrimaryKey());
@@ -494,4 +494,4 @@ public class SamlPeerBindingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:736157838
+// LIFERAY-SERVICE-BUILDER-HASH:-316055613

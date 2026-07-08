@@ -112,11 +112,7 @@ public class TemplateEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		TemplateEntry newTemplateEntry = _persistence.create(pk);
-
-		newTemplateEntry.setMvccVersion(RandomTestUtil.nextLong());
+		TemplateEntry newTemplateEntry = addTemplateEntry();
 
 		newTemplateEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -146,7 +142,9 @@ public class TemplateEntryPersistenceTest {
 
 		newTemplateEntry.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_templateEntries.add(_persistence.update(newTemplateEntry));
+		newTemplateEntry = _persistence.update(newTemplateEntry);
+
+		_templateEntries.add(newTemplateEntry);
 
 		TemplateEntry existingTemplateEntry = _persistence.findByPrimaryKey(
 			newTemplateEntry.getPrimaryKey());
@@ -626,8 +624,6 @@ public class TemplateEntryPersistenceTest {
 
 		TemplateEntry templateEntry = _persistence.create(pk);
 
-		templateEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		templateEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		templateEntry.setUuid(RandomTestUtil.randomString());
@@ -666,4 +662,4 @@ public class TemplateEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-24019339
+// LIFERAY-SERVICE-BUILDER-HASH:1365928798

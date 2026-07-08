@@ -119,13 +119,8 @@ public class CommerceInventoryWarehouseItemPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceInventoryWarehouseItem newCommerceInventoryWarehouseItem =
-			_persistence.create(pk);
-
-		newCommerceInventoryWarehouseItem.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceInventoryWarehouseItem();
 
 		newCommerceInventoryWarehouseItem.setUuid(
 			RandomTestUtil.randomString());
@@ -161,8 +156,10 @@ public class CommerceInventoryWarehouseItemPersistenceTest {
 		newCommerceInventoryWarehouseItem.setUnitOfMeasureKey(
 			RandomTestUtil.randomString());
 
-		_commerceInventoryWarehouseItems.add(
-			_persistence.update(newCommerceInventoryWarehouseItem));
+		newCommerceInventoryWarehouseItem = _persistence.update(
+			newCommerceInventoryWarehouseItem);
+
+		_commerceInventoryWarehouseItems.add(newCommerceInventoryWarehouseItem);
 
 		CommerceInventoryWarehouseItem existingCommerceInventoryWarehouseItem =
 			_persistence.findByPrimaryKey(
@@ -690,9 +687,6 @@ public class CommerceInventoryWarehouseItemPersistenceTest {
 		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
 			_persistence.create(pk);
 
-		commerceInventoryWarehouseItem.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commerceInventoryWarehouseItem.setUuid(RandomTestUtil.randomString());
 
 		commerceInventoryWarehouseItem.setExternalReferenceCode(
@@ -737,4 +731,4 @@ public class CommerceInventoryWarehouseItemPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:117601161
+// LIFERAY-SERVICE-BUILDER-HASH:73408003

@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class DDMFormInstanceReportPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<DDMFormInstanceReport>
-		_uniquePersistenceFinderByFormInstanceId;
+	private UniquePersistenceFinder
+		<DDMFormInstanceReport, NoSuchFormInstanceReportException>
+			_uniquePersistenceFinderByFormInstanceId;
 
 	/**
 	 * Returns the ddm form instance report where formInstanceId = &#63; or throws a <code>NoSuchFormInstanceReportException</code> if it could not be found.
@@ -96,22 +95,8 @@ public class DDMFormInstanceReportPersistenceImpl
 	public DDMFormInstanceReport findByFormInstanceId(long formInstanceId)
 		throws NoSuchFormInstanceReportException {
 
-		DDMFormInstanceReport ddmFormInstanceReport = fetchByFormInstanceId(
-			formInstanceId);
-
-		if (ddmFormInstanceReport == null) {
-			String message =
-				_uniquePersistenceFinderByFormInstanceId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {formInstanceId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFormInstanceReportException(message);
-		}
-
-		return ddmFormInstanceReport;
+		return _uniquePersistenceFinderByFormInstanceId.find(
+			finderCache, new Object[] {formInstanceId});
 	}
 
 	/**
@@ -513,12 +498,6 @@ public class DDMFormInstanceReportPersistenceImpl
 	private static final String _SQL_SELECT_DDMFORMINSTANCEREPORT_WHERE =
 		"SELECT ddmFormInstanceReport FROM DDMFormInstanceReport ddmFormInstanceReport WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMFormInstanceReport exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMFormInstanceReportPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"data"});
 
@@ -528,4 +507,4 @@ public class DDMFormInstanceReportPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-206635778
+// LIFERAY-SERVICE-BUILDER-HASH:-1709553128

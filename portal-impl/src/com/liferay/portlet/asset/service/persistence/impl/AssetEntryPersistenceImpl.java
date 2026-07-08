@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,7 +80,7 @@ public class AssetEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -123,16 +121,9 @@ public class AssetEntryPersistenceImpl
 			long groupId, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -174,7 +165,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -215,16 +206,9 @@ public class AssetEntryPersistenceImpl
 			long companyId, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -266,7 +250,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByClassUuid;
 
 	/**
@@ -307,16 +291,9 @@ public class AssetEntryPersistenceImpl
 			String classUuid, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByClassUuid_First(
-			classUuid, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByClassUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classUuid}));
+		return _collectionPersistenceFinderByClassUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {classUuid},
+			orderByComparator);
 	}
 
 	/**
@@ -358,7 +335,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {classUuid});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByVisible;
 
 	/**
@@ -399,16 +376,9 @@ public class AssetEntryPersistenceImpl
 			boolean visible, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByVisible_First(
-			visible, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByVisible.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {visible}));
+		return _collectionPersistenceFinderByVisible.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {visible},
+			orderByComparator);
 	}
 
 	/**
@@ -450,7 +420,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {visible});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByPublishDate;
 
 	/**
@@ -491,16 +461,9 @@ public class AssetEntryPersistenceImpl
 			Date publishDate, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByPublishDate_First(
-			publishDate, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByPublishDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {publishDate}));
+		return _collectionPersistenceFinderByPublishDate.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {publishDate},
+			orderByComparator);
 	}
 
 	/**
@@ -542,7 +505,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {publishDate});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByExpirationDate;
 
 	/**
@@ -584,16 +547,9 @@ public class AssetEntryPersistenceImpl
 			OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByExpirationDate_First(
-			expirationDate, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByExpirationDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
+		return _collectionPersistenceFinderByExpirationDate.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {expirationDate},
+			orderByComparator);
 	}
 
 	/**
@@ -635,7 +591,7 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {expirationDate});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByLayoutUuid;
 
 	/**
@@ -676,16 +632,9 @@ public class AssetEntryPersistenceImpl
 			String layoutUuid, OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByLayoutUuid_First(
-			layoutUuid, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByLayoutUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {layoutUuid}));
+		return _collectionPersistenceFinderByLayoutUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {layoutUuid},
+			orderByComparator);
 	}
 
 	/**
@@ -727,7 +676,8 @@ public class AssetEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {layoutUuid});
 	}
 
-	private UniquePersistenceFinder<AssetEntry> _uniquePersistenceFinderByG_CU;
+	private UniquePersistenceFinder<AssetEntry, NoSuchEntryException>
+		_uniquePersistenceFinderByG_CU;
 
 	/**
 	 * Returns the asset entry where groupId = &#63; and classUuid = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
@@ -741,22 +691,9 @@ public class AssetEntryPersistenceImpl
 	public AssetEntry findByG_CU(long groupId, String classUuid)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByG_CU(groupId, classUuid);
-
-		if (assetEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_CU.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, classUuid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return assetEntry;
+		return _uniquePersistenceFinderByG_CU.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classUuid});
 	}
 
 	/**
@@ -806,7 +743,7 @@ public class AssetEntryPersistenceImpl
 			new Object[] {groupId, classUuid});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByC_CN;
 
 	/**
@@ -851,17 +788,9 @@ public class AssetEntryPersistenceImpl
 			OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByC_CN_First(
-			companyId, classNameId, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId}));
+		return _collectionPersistenceFinderByC_CN.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId}, orderByComparator);
 	}
 
 	/**
@@ -909,7 +838,8 @@ public class AssetEntryPersistenceImpl
 			new Object[] {companyId, classNameId});
 	}
 
-	private UniquePersistenceFinder<AssetEntry> _uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder<AssetEntry, NoSuchEntryException>
+		_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the asset entry where classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchEntryException</code> if it could not be found.
@@ -923,22 +853,9 @@ public class AssetEntryPersistenceImpl
 	public AssetEntry findByC_C(long classNameId, long classPK)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByC_C(classNameId, classPK);
-
-		if (assetEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return assetEntry;
+		return _uniquePersistenceFinderByC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -988,7 +905,7 @@ public class AssetEntryPersistenceImpl
 			new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByG_C_V;
 
 	/**
@@ -1035,17 +952,9 @@ public class AssetEntryPersistenceImpl
 			OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByG_C_V_First(
-			groupId, classNameId, visible, orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByG_C_V.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, visible}));
+		return _collectionPersistenceFinderByG_C_V.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, visible}, orderByComparator);
 	}
 
 	/**
@@ -1096,7 +1005,7 @@ public class AssetEntryPersistenceImpl
 			new Object[] {groupId, classNameId, visible});
 	}
 
-	private CollectionPersistenceFinder<AssetEntry>
+	private CollectionPersistenceFinder<AssetEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByG_C_P_E;
 
 	/**
@@ -1146,20 +1055,10 @@ public class AssetEntryPersistenceImpl
 			OrderByComparator<AssetEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetEntry assetEntry = fetchByG_C_P_E_First(
-			groupId, classNameId, publishDate, expirationDate,
+		return _collectionPersistenceFinderByG_C_P_E.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, publishDate, expirationDate},
 			orderByComparator);
-
-		if (assetEntry != null) {
-			return assetEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByG_C_P_E.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					groupId, classNameId, publishDate, expirationDate
-				}));
 	}
 
 	/**
@@ -1860,7 +1759,8 @@ public class AssetEntryPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, AssetEntry::getGroupId));
@@ -1885,7 +1785,8 @@ public class AssetEntryPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AssetEntry::getCompanyId));
@@ -1910,7 +1811,8 @@ public class AssetEntryPersistenceImpl
 					"countByClassUuid", new String[] {String.class.getName()},
 					new String[] {"classUuid"}, 0, 1, false, null),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "classUuid", FinderColumn.Type.STRING, "=",
 					true, true, AssetEntry::getClassUuid));
@@ -1935,7 +1837,8 @@ public class AssetEntryPersistenceImpl
 					new String[] {Boolean.class.getName()},
 					new String[] {"visible"}, false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "visible", FinderColumn.Type.BOOLEAN, "=",
 					true, true, AssetEntry::isVisible));
@@ -1960,7 +1863,8 @@ public class AssetEntryPersistenceImpl
 					"countByPublishDate", new String[] {Date.class.getName()},
 					new String[] {"publishDate"}, false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "publishDate", FinderColumn.Type.DATE, "=",
 					true, true, AssetEntry::getPublishDate));
@@ -1987,7 +1891,8 @@ public class AssetEntryPersistenceImpl
 					new String[] {Date.class.getName()},
 					new String[] {"expirationDate"}, false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "expirationDate", FinderColumn.Type.DATE,
 					"=", true, true, AssetEntry::getExpirationDate));
@@ -2012,7 +1917,8 @@ public class AssetEntryPersistenceImpl
 					"countByLayoutUuid", new String[] {String.class.getName()},
 					new String[] {"layoutUuid"}, 0, 1, false, null),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "layoutUuid", FinderColumn.Type.STRING, "=",
 					true, true, AssetEntry::getLayoutUuid));
@@ -2052,7 +1958,8 @@ public class AssetEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "classNameId"}, false),
 			_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-			AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"assetEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, AssetEntry::getCompanyId),
@@ -2100,7 +2007,8 @@ public class AssetEntryPersistenceImpl
 				},
 				new String[] {"groupId", "classNameId", "visible"}, false),
 			_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-			AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"assetEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, AssetEntry::getGroupId),
@@ -2150,7 +2058,8 @@ public class AssetEntryPersistenceImpl
 					},
 					false),
 				_SQL_SELECT_ASSETENTRY_WHERE, _SQL_COUNT_ASSETENTRY_WHERE,
-				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, AssetEntry::getGroupId),
@@ -2193,16 +2102,10 @@ public class AssetEntryPersistenceImpl
 	private static final String _SQL_COUNT_ASSETENTRY_WHERE =
 		"SELECT COUNT(assetEntry) FROM AssetEntry assetEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AssetEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AssetEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-930039048
+// LIFERAY-SERVICE-BUILDER-HASH:-325774449

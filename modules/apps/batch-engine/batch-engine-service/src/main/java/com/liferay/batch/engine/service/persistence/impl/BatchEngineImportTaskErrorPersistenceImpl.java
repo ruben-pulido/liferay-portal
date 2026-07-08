@@ -73,8 +73,9 @@ public class BatchEngineImportTaskErrorPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BatchEngineImportTaskError>
-		_collectionPersistenceFinderByBatchEngineImportTaskId;
+	private CollectionPersistenceFinder
+		<BatchEngineImportTaskError, NoSuchImportTaskErrorException>
+			_collectionPersistenceFinderByBatchEngineImportTaskId;
 
 	/**
 	 * Returns an ordered range of all the batch engine import task errors where batchEngineImportTaskId = &#63;.
@@ -115,19 +116,9 @@ public class BatchEngineImportTaskErrorPersistenceImpl
 			OrderByComparator<BatchEngineImportTaskError> orderByComparator)
 		throws NoSuchImportTaskErrorException {
 
-		BatchEngineImportTaskError batchEngineImportTaskError =
-			fetchByBatchEngineImportTaskId_First(
-				batchEngineImportTaskId, orderByComparator);
-
-		if (batchEngineImportTaskError != null) {
-			return batchEngineImportTaskError;
-		}
-
-		throw new NoSuchImportTaskErrorException(
-			_collectionPersistenceFinderByBatchEngineImportTaskId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {batchEngineImportTaskId}));
+		return _collectionPersistenceFinderByBatchEngineImportTaskId.findFirst(
+			finderCache, new Object[] {batchEngineImportTaskId},
+			orderByComparator);
 	}
 
 	/**
@@ -413,7 +404,7 @@ public class BatchEngineImportTaskErrorPersistenceImpl
 				_SQL_SELECT_BATCHENGINEIMPORTTASKERROR_WHERE,
 				_SQL_COUNT_BATCHENGINEIMPORTTASKERROR_WHERE,
 				BatchEngineImportTaskErrorModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"batchEngineImportTaskError.", "batchEngineImportTaskId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -473,13 +464,10 @@ public class BatchEngineImportTaskErrorPersistenceImpl
 	private static final String _SQL_COUNT_BATCHENGINEIMPORTTASKERROR_WHERE =
 		"SELECT COUNT(batchEngineImportTaskError) FROM BatchEngineImportTaskError batchEngineImportTaskError WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BatchEngineImportTaskError exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1503368490
+// LIFERAY-SERVICE-BUILDER-HASH:-820433925

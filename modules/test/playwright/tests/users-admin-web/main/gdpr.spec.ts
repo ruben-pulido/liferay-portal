@@ -890,51 +890,11 @@ testAdmin(
 			userAssociatedDataEditMessageBoardThreadPage.relatedAssetsButton
 		).toBeVisible();
 
-		await userAssociatedDataEditMessageBoardThreadPage.relatedAssetsButton.click();
+		await userAssociatedDataEditMessageBoardThreadPage.selectRelatedAssets([
+			blog.headline,
+			document.title,
+		]);
 
-		await expect(async () => {
-			await userAssociatedDataEditMessageBoardThreadPage.selectButton.click();
-			await expect(
-				userAssociatedDataEditMessageBoardThreadPage.blogEntryMenuItem
-			).toBeVisible({timeout: 500});
-		}).toPass({timeout: 5000});
-
-		await userAssociatedDataEditMessageBoardThreadPage.blogEntryMenuItem.click();
-
-		await expect(
-			await userAssociatedDataEditMessageBoardThreadPage.tableRowCheckBox(
-				blog.headline
-			)
-		).toBeVisible();
-
-		await (
-			await userAssociatedDataEditMessageBoardThreadPage.tableRowCheckBox(
-				blog.headline
-			)
-		).check();
-		await userAssociatedDataEditMessageBoardThreadPage.doneButton.click();
-
-		await expect(async () => {
-			await userAssociatedDataEditMessageBoardThreadPage.selectButton.click();
-			await expect(
-				userAssociatedDataEditMessageBoardThreadPage.basicDocumentMenuItem
-			).toBeVisible({timeout: 500});
-		}).toPass({timeout: 5000});
-
-		await userAssociatedDataEditMessageBoardThreadPage.basicDocumentMenuItem.click();
-
-		await expect(
-			await userAssociatedDataEditMessageBoardThreadPage.tableRowCheckBox(
-				document.title
-			)
-		).toBeVisible();
-
-		await (
-			await userAssociatedDataEditMessageBoardThreadPage.tableRowCheckBox(
-				document.title
-			)
-		).check();
-		await userAssociatedDataEditMessageBoardThreadPage.doneButton.click();
 		await userAssociatedDataEditMessageBoardThreadPage.publishButton.click();
 
 		await performUserSwitch(page, 'test');
@@ -2064,16 +2024,12 @@ testAdmin(
 
 		await expect(async () => {
 			await exportUserDataPage.orderButton.click();
-			await exportUserDataPage
-				.orderMenuItem('Name')
-				.click({timeout: 1000});
+			await exportUserDataPage.clickOrderMenuItem('Name');
 		}).toPass({timeout: 5000});
 
 		await expect(async () => {
 			await exportUserDataPage.orderButton.click();
-			await exportUserDataPage
-				.orderMenuItem('Descending')
-				.click({timeout: 1000});
+			await exportUserDataPage.clickOrderMenuItem('Descending');
 		}).toPass({timeout: 5000});
 
 		await expect(exportUserDataPage.optionalColumnRow(0, 1)).toContainText(

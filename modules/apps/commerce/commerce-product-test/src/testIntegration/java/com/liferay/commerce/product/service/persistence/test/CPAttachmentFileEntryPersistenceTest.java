@@ -116,12 +116,8 @@ public class CPAttachmentFileEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CPAttachmentFileEntry newCPAttachmentFileEntry = _persistence.create(
-			pk);
-
-		newCPAttachmentFileEntry.setMvccVersion(RandomTestUtil.nextLong());
+		CPAttachmentFileEntry newCPAttachmentFileEntry =
+			addCPAttachmentFileEntry();
 
 		newCPAttachmentFileEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -178,8 +174,10 @@ public class CPAttachmentFileEntryPersistenceTest {
 
 		newCPAttachmentFileEntry.setStatusDate(RandomTestUtil.nextDate());
 
-		_cpAttachmentFileEntries.add(
-			_persistence.update(newCPAttachmentFileEntry));
+		newCPAttachmentFileEntry = _persistence.update(
+			newCPAttachmentFileEntry);
+
+		_cpAttachmentFileEntries.add(newCPAttachmentFileEntry);
 
 		CPAttachmentFileEntry existingCPAttachmentFileEntry =
 			_persistence.findByPrimaryKey(
@@ -804,8 +802,6 @@ public class CPAttachmentFileEntryPersistenceTest {
 
 		CPAttachmentFileEntry cpAttachmentFileEntry = _persistence.create(pk);
 
-		cpAttachmentFileEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpAttachmentFileEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpAttachmentFileEntry.setUuid(RandomTestUtil.randomString());
@@ -872,4 +868,4 @@ public class CPAttachmentFileEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-674048705
+// LIFERAY-SERVICE-BUILDER-HASH:34817944

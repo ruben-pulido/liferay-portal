@@ -74,7 +74,7 @@ public class ImagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Image>
+	private CollectionPersistenceFinder<Image, NoSuchImageException>
 		_collectionPersistenceFinderByLtSize;
 
 	/**
@@ -163,15 +163,9 @@ public class ImagePersistenceImpl
 			int size, OrderByComparator<Image> orderByComparator)
 		throws NoSuchImageException {
 
-		Image image = fetchByLtSize_First(size, orderByComparator);
-
-		if (image != null) {
-			return image;
-		}
-
-		throw new NoSuchImageException(
-			_collectionPersistenceFinderByLtSize.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {size}));
+		return _collectionPersistenceFinderByLtSize.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {size},
+			orderByComparator);
 	}
 
 	/**
@@ -490,10 +484,11 @@ public class ImagePersistenceImpl
 					new String[] {Integer.class.getName()},
 					new String[] {"size_"}, false),
 				_SQL_SELECT_IMAGE_WHERE, _SQL_COUNT_IMAGE_WHERE,
-				ImageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ImageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"image.", "size", FinderColumn.Type.INTEGER, "<", true,
-					true, Image::getSize));
+					"image.", "size", "size_", FinderColumn.Type.INTEGER, "<",
+					true, true, Image::getSize));
 
 		ImageUtil.setPersistence(this);
 	}
@@ -516,9 +511,6 @@ public class ImagePersistenceImpl
 	private static final String _SQL_COUNT_IMAGE_WHERE =
 		"SELECT COUNT(image) FROM Image image WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Image exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type", "size"});
 
@@ -528,4 +520,4 @@ public class ImagePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1296534998
+// LIFERAY-SERVICE-BUILDER-HASH:1444248253

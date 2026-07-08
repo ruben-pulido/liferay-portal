@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -75,7 +73,7 @@ public class FaroProjectPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<FaroProject>
+	private UniquePersistenceFinder<FaroProject, NoSuchFaroProjectException>
 		_uniquePersistenceFinderByGroupId;
 
 	/**
@@ -89,21 +87,8 @@ public class FaroProjectPersistenceImpl
 	public FaroProject findByGroupId(long groupId)
 		throws NoSuchFaroProjectException {
 
-		FaroProject faroProject = fetchByGroupId(groupId);
-
-		if (faroProject == null) {
-			String message =
-				_uniquePersistenceFinderByGroupId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFaroProjectException(message);
-		}
-
-		return faroProject;
+		return _uniquePersistenceFinderByGroupId.find(
+			finderCache, new Object[] {groupId});
 	}
 
 	/**
@@ -146,7 +131,7 @@ public class FaroProjectPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<FaroProject>
+	private CollectionPersistenceFinder<FaroProject, NoSuchFaroProjectException>
 		_collectionPersistenceFinderByUserId;
 
 	/**
@@ -187,16 +172,8 @@ public class FaroProjectPersistenceImpl
 			long userId, OrderByComparator<FaroProject> orderByComparator)
 		throws NoSuchFaroProjectException {
 
-		FaroProject faroProject = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (faroProject != null) {
-			return faroProject;
-		}
-
-		throw new NoSuchFaroProjectException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			finderCache, new Object[] {userId}, orderByComparator);
 	}
 
 	/**
@@ -237,7 +214,7 @@ public class FaroProjectPersistenceImpl
 			finderCache, new Object[] {userId});
 	}
 
-	private UniquePersistenceFinder<FaroProject>
+	private UniquePersistenceFinder<FaroProject, NoSuchFaroProjectException>
 		_uniquePersistenceFinderByCorpProjectUuid;
 
 	/**
@@ -251,21 +228,8 @@ public class FaroProjectPersistenceImpl
 	public FaroProject findByCorpProjectUuid(String corpProjectUuid)
 		throws NoSuchFaroProjectException {
 
-		FaroProject faroProject = fetchByCorpProjectUuid(corpProjectUuid);
-
-		if (faroProject == null) {
-			String message =
-				_uniquePersistenceFinderByCorpProjectUuid.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {corpProjectUuid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFaroProjectException(message);
-		}
-
-		return faroProject;
+		return _uniquePersistenceFinderByCorpProjectUuid.find(
+			finderCache, new Object[] {corpProjectUuid});
 	}
 
 	/**
@@ -310,7 +274,7 @@ public class FaroProjectPersistenceImpl
 			finderCache, new Object[] {corpProjectUuid});
 	}
 
-	private CollectionPersistenceFinder<FaroProject>
+	private CollectionPersistenceFinder<FaroProject, NoSuchFaroProjectException>
 		_collectionPersistenceFinderByServerLocation;
 
 	/**
@@ -352,16 +316,8 @@ public class FaroProjectPersistenceImpl
 			OrderByComparator<FaroProject> orderByComparator)
 		throws NoSuchFaroProjectException {
 
-		FaroProject faroProject = fetchByServerLocation_First(
-			serverLocation, orderByComparator);
-
-		if (faroProject != null) {
-			return faroProject;
-		}
-
-		throw new NoSuchFaroProjectException(
-			_collectionPersistenceFinderByServerLocation.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {serverLocation}));
+		return _collectionPersistenceFinderByServerLocation.findFirst(
+			finderCache, new Object[] {serverLocation}, orderByComparator);
 	}
 
 	/**
@@ -403,7 +359,7 @@ public class FaroProjectPersistenceImpl
 			finderCache, new Object[] {serverLocation});
 	}
 
-	private UniquePersistenceFinder<FaroProject>
+	private UniquePersistenceFinder<FaroProject, NoSuchFaroProjectException>
 		_uniquePersistenceFinderByWeDeployKey;
 
 	/**
@@ -417,21 +373,8 @@ public class FaroProjectPersistenceImpl
 	public FaroProject findByWeDeployKey(String weDeployKey)
 		throws NoSuchFaroProjectException {
 
-		FaroProject faroProject = fetchByWeDeployKey(weDeployKey);
-
-		if (faroProject == null) {
-			String message =
-				_uniquePersistenceFinderByWeDeployKey.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {weDeployKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFaroProjectException(message);
-		}
-
-		return faroProject;
+		return _uniquePersistenceFinderByWeDeployKey.find(
+			finderCache, new Object[] {weDeployKey});
 	}
 
 	/**
@@ -693,6 +636,7 @@ public class FaroProjectPersistenceImpl
 					new String[] {"userId"}, false),
 				_SQL_SELECT_FAROPROJECT_WHERE, _SQL_COUNT_FAROPROJECT_WHERE,
 				FaroProjectModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"faroProject.", "userId", FinderColumn.Type.LONG, "=", true,
 					true, FaroProject::getUserId));
@@ -734,6 +678,7 @@ public class FaroProjectPersistenceImpl
 					new String[] {"serverLocation"}, 0, 1, false, null),
 				_SQL_SELECT_FAROPROJECT_WHERE, _SQL_COUNT_FAROPROJECT_WHERE,
 				FaroProjectModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"faroProject.", "serverLocation", FinderColumn.Type.STRING,
 					"=", true, true, FaroProject::getServerLocation));
@@ -804,12 +749,6 @@ public class FaroProjectPersistenceImpl
 	private static final String _SQL_COUNT_FAROPROJECT_WHERE =
 		"SELECT COUNT(faroProject) FROM FaroProject faroProject WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FaroProject exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FaroProjectPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"state"});
 
@@ -819,4 +758,4 @@ public class FaroProjectPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1459987115
+// LIFERAY-SERVICE-BUILDER-HASH:-963518515

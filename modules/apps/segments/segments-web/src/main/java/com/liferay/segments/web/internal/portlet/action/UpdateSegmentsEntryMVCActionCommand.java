@@ -25,11 +25,13 @@ import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.Localization;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.constants.SegmentsPortletKeys;
 import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.CriteriaSerializer;
 import com.liferay.segments.criteria.contributor.SegmentsCriteriaContributorRegistry;
+import com.liferay.segments.exception.LockedSegmentsEntryException;
 import com.liferay.segments.exception.NoSuchEntryException;
 import com.liferay.segments.exception.SegmentsEntryCriteriaException;
 import com.liferay.segments.exception.SegmentsEntryKeyException;
@@ -96,9 +98,12 @@ public class UpdateSegmentsEntryMVCActionCommand extends BaseMVCActionCommand {
 				serviceContext.setScopeGroupId(
 					_getGroupId(actionRequest, serviceContext));
 
+				String source = null;
+
 				segmentsEntry = _segmentsEntryService.addSegmentsEntry(
 					segmentsEntryKey, nameMap, descriptionMap, active,
-					CriteriaSerializer.serialize(criteria), serviceContext);
+					CriteriaSerializer.serialize(criteria), source,
+					serviceContext);
 			}
 			else {
 				segmentsEntry = _segmentsEntryService.updateSegmentsEntry(
@@ -133,7 +138,8 @@ public class UpdateSegmentsEntryMVCActionCommand extends BaseMVCActionCommand {
 
 				actionResponse.setRenderParameter("mvcPath", "/error.jsp");
 			}
-			else if (exception instanceof NestableRuntimeException ||
+			else if (exception instanceof LockedSegmentsEntryException ||
+					 exception instanceof NestableRuntimeException ||
 					 exception instanceof SegmentsEntryCriteriaException ||
 					 exception instanceof SegmentsEntryKeyException ||
 					 exception instanceof SegmentsEntryNameException) {
@@ -181,7 +187,7 @@ public class UpdateSegmentsEntryMVCActionCommand extends BaseMVCActionCommand {
 
 		return PortletURLBuilder.create(
 			requestBackedPortletURLFactory.createRenderURL(
-				SegmentsPortletKeys.SEGMENTS)
+				_portal.getPortletId(actionRequest))
 		).setMVCRenderCommandName(
 			"/segments/edit_segments_entry"
 		).setCMD(
@@ -213,6 +219,9 @@ public class UpdateSegmentsEntryMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private Localization _localization;
+
+	@Reference
+	private Portal _portal;
 
 	@Reference
 	private SegmentsCriteriaContributorRegistry

@@ -116,12 +116,8 @@ public class ExportImportReportEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		ExportImportReportEntry newExportImportReportEntry =
-			_persistence.create(pk);
-
-		newExportImportReportEntry.setMvccVersion(RandomTestUtil.nextLong());
+			addExportImportReportEntry();
 
 		newExportImportReportEntry.setGroupId(RandomTestUtil.nextLong());
 
@@ -156,8 +152,10 @@ public class ExportImportReportEntryPersistenceTest {
 
 		newExportImportReportEntry.setStatus(RandomTestUtil.nextInt());
 
-		_exportImportReportEntries.add(
-			_persistence.update(newExportImportReportEntry));
+		newExportImportReportEntry = _persistence.update(
+			newExportImportReportEntry);
+
+		_exportImportReportEntries.add(newExportImportReportEntry);
 
 		ExportImportReportEntry existingExportImportReportEntry =
 			_persistence.findByPrimaryKey(
@@ -608,8 +606,6 @@ public class ExportImportReportEntryPersistenceTest {
 		ExportImportReportEntry exportImportReportEntry = _persistence.create(
 			pk);
 
-		exportImportReportEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		exportImportReportEntry.setGroupId(RandomTestUtil.nextLong());
 
 		exportImportReportEntry.setCompanyId(RandomTestUtil.nextLong());
@@ -654,4 +650,4 @@ public class ExportImportReportEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:61312322
+// LIFERAY-SERVICE-BUILDER-HASH:-1768262800

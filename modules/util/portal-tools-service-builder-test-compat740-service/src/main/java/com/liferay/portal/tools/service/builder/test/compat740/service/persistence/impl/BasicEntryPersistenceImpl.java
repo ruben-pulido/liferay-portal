@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -84,7 +82,7 @@ public class BasicEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BasicEntry>
+	private CollectionPersistenceFinder<BasicEntry, NoSuchBasicEntryException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -125,16 +123,8 @@ public class BasicEntryPersistenceImpl
 			long groupId, OrderByComparator<BasicEntry> orderByComparator)
 		throws NoSuchBasicEntryException {
 
-		BasicEntry basicEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (basicEntry != null) {
-			return basicEntry;
-		}
-
-		throw new NoSuchBasicEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -175,7 +165,8 @@ public class BasicEntryPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<BasicEntry> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<BasicEntry, NoSuchBasicEntryException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the basic entry where companyId = &#63; and name = &#63; or throws a <code>NoSuchBasicEntryException</code> if it could not be found.
@@ -189,21 +180,8 @@ public class BasicEntryPersistenceImpl
 	public BasicEntry findByC_N(long companyId, String name)
 		throws NoSuchBasicEntryException {
 
-		BasicEntry basicEntry = fetchByC_N(companyId, name);
-
-		if (basicEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchBasicEntryException(message);
-		}
-
-		return basicEntry;
+		return _uniquePersistenceFinderByC_N.find(
+			finderCache, new Object[] {companyId, name});
 	}
 
 	/**
@@ -801,7 +779,8 @@ public class BasicEntryPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_BASICENTRY_WHERE, _SQL_COUNT_BASICENTRY_WHERE,
-				BasicEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				BasicEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"basicEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, BasicEntry::getGroupId));
@@ -882,16 +861,10 @@ public class BasicEntryPersistenceImpl
 	private static final String _SQL_COUNT_BASICENTRY_WHERE =
 		"SELECT COUNT(basicEntry) FROM BasicEntry basicEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BasicEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		BasicEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:676392749
+// LIFERAY-SERVICE-BUILDER-HASH:1327642974

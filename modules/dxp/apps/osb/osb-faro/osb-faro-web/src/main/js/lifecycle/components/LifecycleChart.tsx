@@ -77,10 +77,16 @@ const StageMetrics = ({
 					aria-labelledby={titleId}
 					borderless
 					className='ml-auto'
+					data-tooltip-align='top'
 					displayType='secondary'
 					onClick={() => onFilterClick(stageType)}
 					size='sm'
 					symbol='filter'
+					title={
+						sub(Liferay.Language.get('filter-by-x'), [
+							lifecycleStagesLabelMap[stageType].label
+						]) as string
+					}
 				/>
 			</div>
 			<Text as='p' color='secondary'>
@@ -107,7 +113,9 @@ const StageMetrics = ({
 				<div className='mt-3 text-secondary'>
 					{averageDaysInStage != 0 ? (
 						<>
-							<span className='mr-4'>{`${averageDaysInStage}`}</span>
+							<span className='mr-4'>{`${averageDaysInStage.toFixed(
+								2
+							)}`}</span>
 							<span>
 								{Liferay.Language.get('avg.-day').toLowerCase()}
 							</span>

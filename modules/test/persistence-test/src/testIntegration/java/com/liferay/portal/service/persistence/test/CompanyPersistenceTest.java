@@ -110,11 +110,7 @@ public class CompanyPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Company newCompany = _persistence.create(pk);
-
-		newCompany.setMvccVersion(RandomTestUtil.nextLong());
+		Company newCompany = addCompany();
 
 		newCompany.setUserId(RandomTestUtil.nextLong());
 
@@ -158,7 +154,9 @@ public class CompanyPersistenceTest {
 
 		newCompany.setIndexNameNext(RandomTestUtil.randomString());
 
-		_companies.add(_persistence.update(newCompany));
+		newCompany = _persistence.update(newCompany);
+
+		_companies.add(newCompany);
 
 		Company existingCompany = _persistence.findByPrimaryKey(
 			newCompany.getPrimaryKey());
@@ -522,8 +520,6 @@ public class CompanyPersistenceTest {
 
 		Company company = _persistence.create(pk);
 
-		company.setMvccVersion(RandomTestUtil.nextLong());
-
 		company.setUserId(RandomTestUtil.nextLong());
 
 		company.setUserName(RandomTestUtil.randomString());
@@ -576,4 +572,4 @@ public class CompanyPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1335555811
+// LIFERAY-SERVICE-BUILDER-HASH:-1071339307

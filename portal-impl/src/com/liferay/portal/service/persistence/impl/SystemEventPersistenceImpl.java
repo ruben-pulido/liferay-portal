@@ -73,7 +73,7 @@ public class SystemEventPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SystemEvent>
+	private CollectionPersistenceFinder<SystemEvent, NoSuchSystemEventException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -114,16 +114,9 @@ public class SystemEventPersistenceImpl
 			long groupId, OrderByComparator<SystemEvent> orderByComparator)
 		throws NoSuchSystemEventException {
 
-		SystemEvent systemEvent = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (systemEvent != null) {
-			return systemEvent;
-		}
-
-		throw new NoSuchSystemEventException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -165,7 +158,7 @@ public class SystemEventPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<SystemEvent>
+	private CollectionPersistenceFinder<SystemEvent, NoSuchSystemEventException>
 		_collectionPersistenceFinderByG_S;
 
 	/**
@@ -210,17 +203,9 @@ public class SystemEventPersistenceImpl
 			OrderByComparator<SystemEvent> orderByComparator)
 		throws NoSuchSystemEventException {
 
-		SystemEvent systemEvent = fetchByG_S_First(
-			groupId, systemEventSetKey, orderByComparator);
-
-		if (systemEvent != null) {
-			return systemEvent;
-		}
-
-		throw new NoSuchSystemEventException(
-			_collectionPersistenceFinderByG_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, systemEventSetKey}));
+		return _collectionPersistenceFinderByG_S.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, systemEventSetKey}, orderByComparator);
 	}
 
 	/**
@@ -268,7 +253,7 @@ public class SystemEventPersistenceImpl
 			new Object[] {groupId, systemEventSetKey});
 	}
 
-	private CollectionPersistenceFinder<SystemEvent>
+	private CollectionPersistenceFinder<SystemEvent, NoSuchSystemEventException>
 		_collectionPersistenceFinderByG_C_C;
 
 	/**
@@ -315,17 +300,9 @@ public class SystemEventPersistenceImpl
 			OrderByComparator<SystemEvent> orderByComparator)
 		throws NoSuchSystemEventException {
 
-		SystemEvent systemEvent = fetchByG_C_C_First(
-			groupId, classNameId, classPK, orderByComparator);
-
-		if (systemEvent != null) {
-			return systemEvent;
-		}
-
-		throw new NoSuchSystemEventException(
-			_collectionPersistenceFinderByG_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK}));
+		return _collectionPersistenceFinderByG_C_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -376,7 +353,7 @@ public class SystemEventPersistenceImpl
 			new Object[] {groupId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<SystemEvent>
+	private CollectionPersistenceFinder<SystemEvent, NoSuchSystemEventException>
 		_collectionPersistenceFinderByG_C_C_T;
 
 	/**
@@ -425,17 +402,10 @@ public class SystemEventPersistenceImpl
 			OrderByComparator<SystemEvent> orderByComparator)
 		throws NoSuchSystemEventException {
 
-		SystemEvent systemEvent = fetchByG_C_C_T_First(
-			groupId, classNameId, classPK, type, orderByComparator);
-
-		if (systemEvent != null) {
-			return systemEvent;
-		}
-
-		throw new NoSuchSystemEventException(
-			_collectionPersistenceFinderByG_C_C_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, classPK, type}));
+		return _collectionPersistenceFinderByG_C_C_T.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, classNameId, classPK, type},
+			orderByComparator);
 	}
 
 	/**
@@ -787,6 +757,7 @@ public class SystemEventPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
 				SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"systemEvent.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SystemEvent::getGroupId));
@@ -810,7 +781,8 @@ public class SystemEventPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"groupId", "systemEventSetKey"}, false),
 			_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
-			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"systemEvent.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, SystemEvent::getGroupId),
@@ -843,7 +815,8 @@ public class SystemEventPersistenceImpl
 				},
 				new String[] {"groupId", "classNameId", "classPK"}, false),
 			_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
-			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"systemEvent.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, SystemEvent::getGroupId),
@@ -885,6 +858,7 @@ public class SystemEventPersistenceImpl
 					false),
 				_SQL_SELECT_SYSTEMEVENT_WHERE, _SQL_COUNT_SYSTEMEVENT_WHERE,
 				SystemEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"systemEvent.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, SystemEvent::getGroupId),
@@ -895,8 +869,8 @@ public class SystemEventPersistenceImpl
 					"systemEvent.", "classPK", FinderColumn.Type.LONG, "=",
 					true, true, SystemEvent::getClassPK),
 				new FinderColumn<>(
-					"systemEvent.", "type", FinderColumn.Type.INTEGER, "=",
-					true, true, SystemEvent::getType));
+					"systemEvent.", "type", "type_", FinderColumn.Type.INTEGER,
+					"=", true, true, SystemEvent::getType));
 
 		SystemEventUtil.setPersistence(this);
 	}
@@ -919,9 +893,6 @@ public class SystemEventPersistenceImpl
 	private static final String _SQL_COUNT_SYSTEMEVENT_WHERE =
 		"SELECT COUNT(systemEvent) FROM SystemEvent systemEvent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SystemEvent exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -931,4 +902,4 @@ public class SystemEventPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-750519707
+// LIFERAY-SERVICE-BUILDER-HASH:1318106088

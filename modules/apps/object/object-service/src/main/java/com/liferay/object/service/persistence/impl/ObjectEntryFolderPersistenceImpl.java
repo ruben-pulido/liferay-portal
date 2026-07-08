@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -91,8 +89,9 @@ public class ObjectEntryFolderPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectEntryFolder>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object entry folders where uuid = &#63;.
@@ -132,16 +131,8 @@ public class ObjectEntryFolderPersistenceImpl
 			String uuid, OrderByComparator<ObjectEntryFolder> orderByComparator)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder;
-		}
-
-		throw new NoSuchObjectEntryFolderException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -182,8 +173,9 @@ public class ObjectEntryFolderPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<ObjectEntryFolder>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the object entry folder where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchObjectEntryFolderException</code> if it could not be found.
@@ -197,21 +189,8 @@ public class ObjectEntryFolderPersistenceImpl
 	public ObjectEntryFolder findByUUID_G(String uuid, long groupId)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByUUID_G(uuid, groupId);
-
-		if (objectEntryFolder == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryFolderException(message);
-		}
-
-		return objectEntryFolder;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -259,8 +238,9 @@ public class ObjectEntryFolderPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<ObjectEntryFolder>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object entry folders where uuid = &#63; and companyId = &#63;.
@@ -303,16 +283,8 @@ public class ObjectEntryFolderPersistenceImpl
 			OrderByComparator<ObjectEntryFolder> orderByComparator)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder;
-		}
-
-		throw new NoSuchObjectEntryFolderException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -357,8 +329,9 @@ public class ObjectEntryFolderPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<ObjectEntryFolder>
-		_uniquePersistenceFinderByERC_G_C;
+	private UniquePersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_uniquePersistenceFinderByERC_G_C;
 
 	/**
 	 * Returns the object entry folder where externalReferenceCode = &#63; and groupId = &#63; and companyId = &#63; or throws a <code>NoSuchObjectEntryFolderException</code> if it could not be found.
@@ -374,23 +347,9 @@ public class ObjectEntryFolderPersistenceImpl
 			String externalReferenceCode, long groupId, long companyId)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByERC_G_C(
-			externalReferenceCode, groupId, companyId);
-
-		if (objectEntryFolder == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectEntryFolderException(message);
-		}
-
-		return objectEntryFolder;
+		return _uniquePersistenceFinderByERC_G_C.find(
+			finderCache,
+			new Object[] {externalReferenceCode, groupId, companyId});
 	}
 
 	/**
@@ -449,8 +408,9 @@ public class ObjectEntryFolderPersistenceImpl
 			new Object[] {externalReferenceCode, groupId, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<ObjectEntryFolder>
-		_collectionPersistenceFinderByG_C_P;
+	private FilterCollectionPersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_collectionPersistenceFinderByG_C_P;
 
 	/**
 	 * Returns an ordered range of all the object entry folders where groupId = &#63; and companyId = &#63; and parentObjectEntryFolderId = &#63;.
@@ -496,17 +456,10 @@ public class ObjectEntryFolderPersistenceImpl
 			OrderByComparator<ObjectEntryFolder> orderByComparator)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByG_C_P_First(
-			groupId, companyId, parentObjectEntryFolderId, orderByComparator);
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder;
-		}
-
-		throw new NoSuchObjectEntryFolderException(
-			_collectionPersistenceFinderByG_C_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, parentObjectEntryFolderId}));
+		return _collectionPersistenceFinderByG_C_P.findFirst(
+			finderCache,
+			new Object[] {groupId, companyId, parentObjectEntryFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -606,8 +559,9 @@ public class ObjectEntryFolderPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<ObjectEntryFolder>
-		_collectionPersistenceFinderByG_C_LikeT;
+	private FilterCollectionPersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_collectionPersistenceFinderByG_C_LikeT;
 
 	/**
 	 * Returns all the object entry folders where groupId = &#63; and companyId = &#63; and treePath LIKE &#63;.
@@ -714,17 +668,9 @@ public class ObjectEntryFolderPersistenceImpl
 			OrderByComparator<ObjectEntryFolder> orderByComparator)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByG_C_LikeT_First(
-			groupId, companyId, treePath, orderByComparator);
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder;
-		}
-
-		throw new NoSuchObjectEntryFolderException(
-			_collectionPersistenceFinderByG_C_LikeT.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, companyId, treePath}));
+		return _collectionPersistenceFinderByG_C_LikeT.findFirst(
+			finderCache, new Object[] {groupId, companyId, treePath},
+			orderByComparator);
 	}
 
 	/**
@@ -855,8 +801,9 @@ public class ObjectEntryFolderPersistenceImpl
 			finderCache, new Object[] {groupId, companyId, treePath}, groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<ObjectEntryFolder>
-		_collectionPersistenceFinderByG_C_P_N_NotS;
+	private FilterCollectionPersistenceFinder
+		<ObjectEntryFolder, NoSuchObjectEntryFolderException>
+			_collectionPersistenceFinderByG_C_P_N_NotS;
 
 	/**
 	 * Returns all the object entry folders where groupId = &#63; and companyId = &#63; and parentObjectEntryFolderId = &#63; and name = &#63; and status &ne; &#63;.
@@ -984,20 +931,12 @@ public class ObjectEntryFolderPersistenceImpl
 			OrderByComparator<ObjectEntryFolder> orderByComparator)
 		throws NoSuchObjectEntryFolderException {
 
-		ObjectEntryFolder objectEntryFolder = fetchByG_C_P_N_NotS_First(
-			groupId, companyId, parentObjectEntryFolderId, name, status,
+		return _collectionPersistenceFinderByG_C_P_N_NotS.findFirst(
+			finderCache,
+			new Object[] {
+				groupId, companyId, parentObjectEntryFolderId, name, status
+			},
 			orderByComparator);
-
-		if (objectEntryFolder != null) {
-			return objectEntryFolder;
-		}
-
-		throw new NoSuchObjectEntryFolderException(
-			_collectionPersistenceFinderByG_C_P_N_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					groupId, companyId, parentObjectEntryFolderId, name, status
-				}));
 	}
 
 	/**
@@ -1453,9 +1392,10 @@ public class ObjectEntryFolderPersistenceImpl
 			_SQL_SELECT_OBJECTENTRYFOLDER_WHERE,
 			_SQL_COUNT_OBJECTENTRYFOLDER_WHERE,
 			ObjectEntryFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"objectEntryFolder.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ObjectEntryFolder::getUuid));
+				"objectEntryFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ObjectEntryFolder::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1467,8 +1407,8 @@ public class ObjectEntryFolderPersistenceImpl
 				ObjectEntryFolder::getGroupId),
 			_SQL_SELECT_OBJECTENTRYFOLDER_WHERE, "",
 			new FinderColumn<>(
-				"objectEntryFolder.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ObjectEntryFolder::getUuid),
+				"objectEntryFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ObjectEntryFolder::getUuid),
 			new FinderColumn<>(
 				"objectEntryFolder.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, ObjectEntryFolder::getGroupId));
@@ -1495,10 +1435,11 @@ public class ObjectEntryFolderPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYFOLDER_WHERE,
 				_SQL_COUNT_OBJECTENTRYFOLDER_WHERE,
 				ObjectEntryFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"objectEntryFolder.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ObjectEntryFolder::getUuid),
+					"objectEntryFolder.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ObjectEntryFolder::getUuid),
 				new FinderColumn<>(
 					"objectEntryFolder.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntryFolder::getCompanyId));
@@ -1566,17 +1507,7 @@ public class ObjectEntryFolderPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYFOLDER_WHERE,
 				_SQL_COUNT_OBJECTENTRYFOLDER_WHERE,
 				ObjectEntryFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ObjectEntryFolderImpl.class, ObjectEntryFolder.class,
-					"objectEntryFolder", "ObjectEntryFolder",
-					"objectEntryFolder.objectEntryFolderId",
-					"SELECT DISTINCT {objectEntryFolder.*} FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					"SELECT {ObjectEntryFolder.*} FROM (SELECT DISTINCT objectEntryFolder.objectEntryFolderId FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					") TEMP_TABLE INNER JOIN ObjectEntryFolder ON TEMP_TABLE.objectEntryFolderId = ObjectEntryFolder.objectEntryFolderId",
-					"SELECT COUNT(DISTINCT objectEntryFolder.objectEntryFolderId) AS COUNT_VALUE FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL,
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"objectEntryFolder.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntryFolder::getGroupId),
@@ -1611,17 +1542,7 @@ public class ObjectEntryFolderPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYFOLDER_WHERE,
 				_SQL_COUNT_OBJECTENTRYFOLDER_WHERE,
 				ObjectEntryFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ObjectEntryFolderImpl.class, ObjectEntryFolder.class,
-					"objectEntryFolder", "ObjectEntryFolder",
-					"objectEntryFolder.objectEntryFolderId",
-					"SELECT DISTINCT {objectEntryFolder.*} FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					"SELECT {ObjectEntryFolder.*} FROM (SELECT DISTINCT objectEntryFolder.objectEntryFolderId FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					") TEMP_TABLE INNER JOIN ObjectEntryFolder ON TEMP_TABLE.objectEntryFolderId = ObjectEntryFolder.objectEntryFolderId",
-					"SELECT COUNT(DISTINCT objectEntryFolder.objectEntryFolderId) AS COUNT_VALUE FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL,
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"objectEntryFolder.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntryFolder::getGroupId),
@@ -1667,17 +1588,7 @@ public class ObjectEntryFolderPersistenceImpl
 				_SQL_SELECT_OBJECTENTRYFOLDER_WHERE,
 				_SQL_COUNT_OBJECTENTRYFOLDER_WHERE,
 				ObjectEntryFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					ObjectEntryFolderImpl.class, ObjectEntryFolder.class,
-					"objectEntryFolder", "ObjectEntryFolder",
-					"objectEntryFolder.objectEntryFolderId",
-					"SELECT DISTINCT {objectEntryFolder.*} FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					"SELECT {ObjectEntryFolder.*} FROM (SELECT DISTINCT objectEntryFolder.objectEntryFolderId FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					") TEMP_TABLE INNER JOIN ObjectEntryFolder ON TEMP_TABLE.objectEntryFolderId = ObjectEntryFolder.objectEntryFolderId",
-					"SELECT COUNT(DISTINCT objectEntryFolder.objectEntryFolderId) AS COUNT_VALUE FROM ObjectEntryFolder objectEntryFolder WHERE ",
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL,
-					ObjectEntryFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"objectEntryFolder.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectEntryFolder::getGroupId),
@@ -1749,12 +1660,6 @@ public class ObjectEntryFolderPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTENTRYFOLDER_WHERE =
 		"SELECT COUNT(objectEntryFolder) FROM ObjectEntryFolder objectEntryFolder WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectEntryFolder exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectEntryFolderPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1764,4 +1669,4 @@ public class ObjectEntryFolderPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:356337899
+// LIFERAY-SERVICE-BUILDER-HASH:-2127971482

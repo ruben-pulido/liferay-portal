@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class SamlSpAuthRequestPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<SamlSpAuthRequest>
-		_collectionPersistenceFinderByLtCreateDate;
+	private CollectionPersistenceFinder
+		<SamlSpAuthRequest, NoSuchSpAuthRequestException>
+			_collectionPersistenceFinderByLtCreateDate;
 
 	/**
 	 * Returns all the saml sp auth requests where createDate &lt; &#63;.
@@ -171,16 +170,8 @@ public class SamlSpAuthRequestPersistenceImpl
 			OrderByComparator<SamlSpAuthRequest> orderByComparator)
 		throws NoSuchSpAuthRequestException {
 
-		SamlSpAuthRequest samlSpAuthRequest = fetchByLtCreateDate_First(
-			createDate, orderByComparator);
-
-		if (samlSpAuthRequest != null) {
-			return samlSpAuthRequest;
-		}
-
-		throw new NoSuchSpAuthRequestException(
-			_collectionPersistenceFinderByLtCreateDate.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {createDate}));
+		return _collectionPersistenceFinderByLtCreateDate.findFirst(
+			finderCache, new Object[] {createDate}, orderByComparator);
 	}
 
 	/**
@@ -222,8 +213,9 @@ public class SamlSpAuthRequestPersistenceImpl
 			finderCache, new Object[] {createDate});
 	}
 
-	private UniquePersistenceFinder<SamlSpAuthRequest>
-		_uniquePersistenceFinderBySIEI_SSARK;
+	private UniquePersistenceFinder
+		<SamlSpAuthRequest, NoSuchSpAuthRequestException>
+			_uniquePersistenceFinderBySIEI_SSARK;
 
 	/**
 	 * Returns the saml sp auth request where samlIdpEntityId = &#63; and samlSpAuthRequestKey = &#63; or throws a <code>NoSuchSpAuthRequestException</code> if it could not be found.
@@ -238,23 +230,8 @@ public class SamlSpAuthRequestPersistenceImpl
 			String samlIdpEntityId, String samlSpAuthRequestKey)
 		throws NoSuchSpAuthRequestException {
 
-		SamlSpAuthRequest samlSpAuthRequest = fetchBySIEI_SSARK(
-			samlIdpEntityId, samlSpAuthRequestKey);
-
-		if (samlSpAuthRequest == null) {
-			String message =
-				_uniquePersistenceFinderBySIEI_SSARK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {samlIdpEntityId, samlSpAuthRequestKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSpAuthRequestException(message);
-		}
-
-		return samlSpAuthRequest;
+		return _uniquePersistenceFinderBySIEI_SSARK.find(
+			finderCache, new Object[] {samlIdpEntityId, samlSpAuthRequestKey});
 	}
 
 	/**
@@ -522,7 +499,7 @@ public class SamlSpAuthRequestPersistenceImpl
 				_SQL_SELECT_SAMLSPAUTHREQUEST_WHERE,
 				_SQL_COUNT_SAMLSPAUTHREQUEST_WHERE,
 				SamlSpAuthRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"samlSpAuthRequest.", "createDate", FinderColumn.Type.DATE,
 					"<", true, true, SamlSpAuthRequest::getCreateDate));
@@ -601,16 +578,10 @@ public class SamlSpAuthRequestPersistenceImpl
 	private static final String _SQL_COUNT_SAMLSPAUTHREQUEST_WHERE =
 		"SELECT COUNT(samlSpAuthRequest) FROM SamlSpAuthRequest samlSpAuthRequest WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No SamlSpAuthRequest exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		SamlSpAuthRequestPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:344870367
+// LIFERAY-SERVICE-BUILDER-HASH:1183808806

@@ -13,6 +13,7 @@ import com.liferay.account.model.AccountGroupRel;
 import com.liferay.account.service.AccountGroupLocalService;
 import com.liferay.account.service.AccountGroupRelLocalService;
 import com.liferay.account.service.AccountGroupRelService;
+import com.liferay.account.service.persistence.AccountGroupPersistence;
 import com.liferay.account.service.test.util.AccountEntryTestUtil;
 import com.liferay.account.service.test.util.AccountGroupTestUtil;
 import com.liferay.account.service.test.util.UserRoleTestUtil;
@@ -22,11 +23,14 @@ import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
 import com.liferay.portal.kernel.test.context.ContextUserReplace;
+import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
+import com.liferay.portal.kernel.transaction.Propagation;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
+import com.liferay.portal.test.rule.TransactionalTestRule;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -44,8 +48,11 @@ public class AccountGroupRelServiceTest {
 
 	@ClassRule
 	@Rule
-	public static final LiferayIntegrationTestRule liferayIntegrationTestRule =
-		new LiferayIntegrationTestRule();
+	public static final AggregateTestRule aggregateTestRule =
+		new AggregateTestRule(
+			new LiferayIntegrationTestRule(),
+			new TransactionalTestRule(
+				Propagation.REQUIRED, "com.liferay.account.service"));
 
 	@Before
 	public void setUp() throws Exception {
@@ -377,8 +384,7 @@ public class AccountGroupRelServiceTest {
 	private void _updateAccountGroup(long companyId) {
 		_accountGroup.setCompanyId(companyId);
 
-		_accountGroup = _accountGroupLocalService.updateAccountGroup(
-			_accountGroup);
+		_accountGroup = _accountGroupPersistence.update(_accountGroup);
 	}
 
 	private AccountEntry _accountEntry;
@@ -386,6 +392,9 @@ public class AccountGroupRelServiceTest {
 
 	@Inject
 	private AccountGroupLocalService _accountGroupLocalService;
+
+	@Inject
+	private AccountGroupPersistence _accountGroupPersistence;
 
 	@Inject
 	private AccountGroupRelLocalService _accountGroupRelLocalService;

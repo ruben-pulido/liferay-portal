@@ -112,11 +112,7 @@ public class DLFileEntryMetadataPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DLFileEntryMetadata newDLFileEntryMetadata = _persistence.create(pk);
-
-		newDLFileEntryMetadata.setMvccVersion(RandomTestUtil.nextLong());
+		DLFileEntryMetadata newDLFileEntryMetadata = addDLFileEntryMetadata();
 
 		newDLFileEntryMetadata.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -135,7 +131,9 @@ public class DLFileEntryMetadataPersistenceTest {
 
 		newDLFileEntryMetadata.setFileVersionId(RandomTestUtil.nextLong());
 
-		_dlFileEntryMetadatas.add(_persistence.update(newDLFileEntryMetadata));
+		newDLFileEntryMetadata = _persistence.update(newDLFileEntryMetadata);
+
+		_dlFileEntryMetadatas.add(newDLFileEntryMetadata);
 
 		DLFileEntryMetadata existingDLFileEntryMetadata =
 			_persistence.findByPrimaryKey(
@@ -584,8 +582,6 @@ public class DLFileEntryMetadataPersistenceTest {
 
 		DLFileEntryMetadata dlFileEntryMetadata = _persistence.create(pk);
 
-		dlFileEntryMetadata.setMvccVersion(RandomTestUtil.nextLong());
-
 		dlFileEntryMetadata.setCtCollectionId(RandomTestUtil.nextLong());
 
 		dlFileEntryMetadata.setUuid(RandomTestUtil.randomString());
@@ -614,4 +610,4 @@ public class DLFileEntryMetadataPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-378334964
+// LIFERAY-SERVICE-BUILDER-HASH:-949263586

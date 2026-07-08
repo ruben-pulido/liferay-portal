@@ -45,17 +45,21 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.segments.constants.SegmentsEntryConstants;
+import com.liferay.segments.constants.SegmentsExperimentConstants;
 import com.liferay.segments.criteria.Criteria;
 import com.liferay.segments.criteria.CriteriaSerializer;
+import com.liferay.segments.exception.LockedSegmentsEntryException;
 import com.liferay.segments.exception.RequiredSegmentsEntryException;
 import com.liferay.segments.exception.SegmentsEntryKeyException;
 import com.liferay.segments.exception.SegmentsEntryNameException;
 import com.liferay.segments.internal.constants.SegmentsDestinationNames;
 import com.liferay.segments.internal.criteria.contributor.SegmentsEntrySegmentsCriteriaContributor;
 import com.liferay.segments.model.SegmentsEntry;
+import com.liferay.segments.model.SegmentsExperiment;
 import com.liferay.segments.service.SegmentsEntryRelLocalService;
 import com.liferay.segments.service.SegmentsEntryRoleLocalService;
 import com.liferay.segments.service.SegmentsExperienceLocalService;
+import com.liferay.segments.service.SegmentsExperimentLocalService;
 import com.liferay.segments.service.base.SegmentsEntryLocalServiceBaseImpl;
 import com.liferay.segments.service.persistence.SegmentsExperiencePersistence;
 
@@ -327,11 +331,11 @@ public class SegmentsEntryLocalServiceImpl
 
 	@Override
 	public List<SegmentsEntry> getSegmentsEntries(
-		long groupId, String source, int start, int end,
+		long groupId, String[] sources, int start, int end,
 		OrderByComparator<SegmentsEntry> orderByComparator) {
 
 		return segmentsEntryPersistence.findByG_SRC(
-			_portal.getCurrentAndAncestorSiteGroupIds(groupId), source, start,
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId), sources, start,
 			end, orderByComparator);
 	}
 
@@ -364,6 +368,12 @@ public class SegmentsEntryLocalServiceImpl
 	public int getSegmentsEntriesCount(long groupId) {
 		return segmentsEntryPersistence.countByGroupId(
 			_portal.getCurrentAndAncestorSiteGroupIds(groupId));
+	}
+
+	@Override
+	public int getSegmentsEntriesCount(long groupId, String[] sources) {
+		return segmentsEntryPersistence.countByG_SRC(
+			_portal.getCurrentAndAncestorSiteGroupIds(groupId), sources);
 	}
 
 	@Override
@@ -420,6 +430,7 @@ public class SegmentsEntryLocalServiceImpl
 			segmentsEntryId, segmentsEntry.getGroupId(), segmentsEntryKey);
 
 		_validateName(segmentsEntry.getGroupId(), nameMap);
+		_validateSegmentsExperiment(segmentsEntry);
 
 		segmentsEntry.setModifiedDate(
 			serviceContext.getModifiedDate(new Date()));
@@ -629,6 +640,23 @@ public class SegmentsEntryLocalServiceImpl
 		}
 	}
 
+	private void _validateSegmentsExperiment(SegmentsEntry segmentsEntry)
+		throws PortalException {
+
+		List<SegmentsExperiment> segmentsExperiments =
+			_segmentsExperimentLocalService.getSegmentsEntrySegmentsExperiments(
+				segmentsEntry.getExternalReferenceCode(),
+				segmentsEntry.getGroupId());
+
+		for (SegmentsExperiment segmentsExperiment : segmentsExperiments) {
+			if (segmentsExperiment.getStatus() ==
+					SegmentsExperimentConstants.STATUS_RUNNING) {
+
+				throw new LockedSegmentsEntryException();
+			}
+		}
+	}
+
 	@Reference
 	private GroupLocalService _groupLocalService;
 
@@ -652,6 +680,9 @@ public class SegmentsEntryLocalServiceImpl
 
 	@Reference
 	private SegmentsExperiencePersistence _segmentsExperiencePersistence;
+
+	@Reference
+	private SegmentsExperimentLocalService _segmentsExperimentLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;

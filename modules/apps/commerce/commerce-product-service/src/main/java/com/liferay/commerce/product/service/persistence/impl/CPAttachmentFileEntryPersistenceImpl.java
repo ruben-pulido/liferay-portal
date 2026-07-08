@@ -23,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -97,8 +95,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where uuid = &#63;.
@@ -139,16 +138,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -190,8 +181,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPAttachmentFileEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp attachment file entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPAttachmentFileEntryException</code> if it could not be found.
@@ -205,22 +197,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 	public CPAttachmentFileEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByUUID_G(
-			uuid, groupId);
-
-		if (cpAttachmentFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPAttachmentFileEntryException(message);
-		}
-
-		return cpAttachmentFileEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -269,8 +247,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where uuid = &#63; and companyId = &#63;.
@@ -313,16 +292,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -367,8 +338,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByFileEntryId;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByFileEntryId;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where fileEntryId = &#63;.
@@ -409,16 +381,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByFileEntryId_First(
-			fileEntryId, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByFileEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {fileEntryId}));
+		return _collectionPersistenceFinderByFileEntryId.findFirst(
+			finderCache, new Object[] {fileEntryId}, orderByComparator);
 	}
 
 	/**
@@ -460,8 +424,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {fileEntryId});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where classNameId = &#63; and classPK = &#63;.
@@ -504,16 +469,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -559,8 +517,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByLtD_S;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByLtD_S;
 
 	/**
 	 * Returns all the cp attachment file entries where displayDate &lt; &#63; and status = &#63;.
@@ -661,16 +620,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByLtD_S_First(
-			displayDate, status, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByLtD_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {displayDate, status}));
+		return _collectionPersistenceFinderByLtD_S.findFirst(
+			finderCache, new Object[] {displayDate, status}, orderByComparator);
 	}
 
 	/**
@@ -715,8 +666,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {displayDate, status});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByG_C_F;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByG_C_F;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where groupId = &#63; and classNameId = &#63; and fileEntryId = &#63;.
@@ -761,17 +713,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByG_C_F_First(
-			groupId, classNameId, fileEntryId, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByG_C_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, classNameId, fileEntryId}));
+		return _collectionPersistenceFinderByG_C_F.findFirst(
+			finderCache, new Object[] {groupId, classNameId, fileEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -822,8 +766,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {groupId, classNameId, fileEntryId});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_F;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_F;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and fileEntryId = &#63;.
@@ -868,17 +813,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_F_First(
-			classNameId, classPK, fileEntryId, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, fileEntryId}));
+		return _collectionPersistenceFinderByC_C_F.findFirst(
+			finderCache, new Object[] {classNameId, classPK, fileEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -929,8 +866,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, fileEntryId});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_C;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_C;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and cdnURL = &#63;.
@@ -975,17 +913,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_C_First(
-			classNameId, classPK, cdnURL, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, cdnURL}));
+		return _collectionPersistenceFinderByC_C_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK, cdnURL},
+			orderByComparator);
 	}
 
 	/**
@@ -1034,8 +964,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, cdnURL});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_LtD_S;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_LtD_S;
 
 	/**
 	 * Returns all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and displayDate &lt; &#63; and status = &#63;.
@@ -1151,17 +1082,10 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_LtD_S_First(
-			classNameId, classPK, displayDate, status, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_LtD_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, displayDate, status}));
+		return _collectionPersistenceFinderByC_C_LtD_S.findFirst(
+			finderCache,
+			new Object[] {classNameId, classPK, displayDate, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1220,8 +1144,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			new Object[] {classNameId, classPK, displayDate, status});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_T_ST;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_T_ST;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and type = &#63; and status = &#63;.
@@ -1268,17 +1193,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_T_ST_First(
-			classNameId, classPK, type, status, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_T_ST.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, type, status}));
+		return _collectionPersistenceFinderByC_C_T_ST.findFirst(
+			finderCache, new Object[] {classNameId, classPK, type, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1334,8 +1251,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, type, status});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_T_NotST;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_T_NotST;
 
 	/**
 	 * Returns all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and type = &#63; and status &ne; &#63;.
@@ -1450,17 +1368,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_T_NotST_First(
-			classNameId, classPK, type, status, orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_T_NotST.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, classPK, type, status}));
+		return _collectionPersistenceFinderByC_C_T_NotST.findFirst(
+			finderCache, new Object[] {classNameId, classPK, type, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1516,8 +1426,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK, type, status});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_G_T_ST;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_G_T_ST;
 
 	/**
 	 * Returns an ordered range of all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and galleryEnabled = &#63; and type = &#63; and status = &#63;.
@@ -1569,20 +1480,10 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByC_C_G_T_ST_First(
-			classNameId, classPK, galleryEnabled, type, status,
+		return _collectionPersistenceFinderByC_C_G_T_ST.findFirst(
+			finderCache,
+			new Object[] {classNameId, classPK, galleryEnabled, type, status},
 			orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_G_T_ST.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					classNameId, classPK, galleryEnabled, type, status
-				}));
 	}
 
 	/**
@@ -1647,8 +1548,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			new Object[] {classNameId, classPK, galleryEnabled, type, status});
 	}
 
-	private CollectionPersistenceFinder<CPAttachmentFileEntry>
-		_collectionPersistenceFinderByC_C_G_T_NotST;
+	private CollectionPersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_collectionPersistenceFinderByC_C_G_T_NotST;
 
 	/**
 	 * Returns all the cp attachment file entries where classNameId = &#63; and classPK = &#63; and galleryEnabled = &#63; and type = &#63; and status &ne; &#63;.
@@ -1774,21 +1676,10 @@ public class CPAttachmentFileEntryPersistenceImpl
 			OrderByComparator<CPAttachmentFileEntry> orderByComparator)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry =
-			fetchByC_C_G_T_NotST_First(
-				classNameId, classPK, galleryEnabled, type, status,
-				orderByComparator);
-
-		if (cpAttachmentFileEntry != null) {
-			return cpAttachmentFileEntry;
-		}
-
-		throw new NoSuchCPAttachmentFileEntryException(
-			_collectionPersistenceFinderByC_C_G_T_NotST.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					classNameId, classPK, galleryEnabled, type, status
-				}));
+		return _collectionPersistenceFinderByC_C_G_T_NotST.findFirst(
+			finderCache,
+			new Object[] {classNameId, classPK, galleryEnabled, type, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1853,8 +1744,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 			new Object[] {classNameId, classPK, galleryEnabled, type, status});
 	}
 
-	private UniquePersistenceFinder<CPAttachmentFileEntry>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CPAttachmentFileEntry, NoSuchCPAttachmentFileEntryException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cp attachment file entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCPAttachmentFileEntryException</code> if it could not be found.
@@ -1869,23 +1761,8 @@ public class CPAttachmentFileEntryPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPAttachmentFileEntryException {
 
-		CPAttachmentFileEntry cpAttachmentFileEntry = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpAttachmentFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPAttachmentFileEntryException(message);
-		}
-
-		return cpAttachmentFileEntry;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -2354,10 +2231,11 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"cpAttachmentFileEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CPAttachmentFileEntry::getUuid));
+				"cpAttachmentFileEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPAttachmentFileEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -2369,8 +2247,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 				CPAttachmentFileEntry::getGroupId),
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"cpAttachmentFileEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CPAttachmentFileEntry::getUuid),
+				"cpAttachmentFileEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPAttachmentFileEntry::getUuid),
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, CPAttachmentFileEntry::getGroupId));
@@ -2397,10 +2276,11 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpAttachmentFileEntry.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, CPAttachmentFileEntry::getUuid),
+					"cpAttachmentFileEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPAttachmentFileEntry::getUuid),
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2428,7 +2308,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "fileEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2455,7 +2335,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CPAttachmentFileEntry::getClassNameId),
@@ -2481,7 +2361,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "displayDate", FinderColumn.Type.DATE,
 				"<", true, true, CPAttachmentFileEntry::getDisplayDate),
@@ -2516,7 +2396,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, CPAttachmentFileEntry::getGroupId),
@@ -2554,7 +2434,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CPAttachmentFileEntry::getClassNameId),
@@ -2594,7 +2474,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 			_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 			_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 			CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpAttachmentFileEntry.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CPAttachmentFileEntry::getClassNameId),
@@ -2634,7 +2514,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2684,7 +2564,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2693,8 +2573,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 					"cpAttachmentFileEntry.", "classPK", FinderColumn.Type.LONG,
 					"=", true, true, CPAttachmentFileEntry::getClassPK),
 				new FinderColumn<>(
-					"cpAttachmentFileEntry.", "type", FinderColumn.Type.INTEGER,
-					"=", true, true, CPAttachmentFileEntry::getType),
+					"cpAttachmentFileEntry.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					CPAttachmentFileEntry::getType),
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "status",
 					FinderColumn.Type.INTEGER, "=", true, true,
@@ -2726,7 +2607,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2735,8 +2616,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 					"cpAttachmentFileEntry.", "classPK", FinderColumn.Type.LONG,
 					"=", true, true, CPAttachmentFileEntry::getClassPK),
 				new FinderColumn<>(
-					"cpAttachmentFileEntry.", "type", FinderColumn.Type.INTEGER,
-					"=", true, true, CPAttachmentFileEntry::getType),
+					"cpAttachmentFileEntry.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					CPAttachmentFileEntry::getType),
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "status",
 					FinderColumn.Type.INTEGER, "!=", true, true,
@@ -2788,7 +2670,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2801,8 +2683,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					CPAttachmentFileEntry::isGalleryEnabled),
 				new FinderColumn<>(
-					"cpAttachmentFileEntry.", "type", FinderColumn.Type.INTEGER,
-					"=", true, true, CPAttachmentFileEntry::getType),
+					"cpAttachmentFileEntry.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					CPAttachmentFileEntry::getType),
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "status",
 					FinderColumn.Type.INTEGER, "=", true, true,
@@ -2843,7 +2726,7 @@ public class CPAttachmentFileEntryPersistenceImpl
 				_SQL_SELECT_CPATTACHMENTFILEENTRY_WHERE,
 				_SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE,
 				CPAttachmentFileEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2856,8 +2739,9 @@ public class CPAttachmentFileEntryPersistenceImpl
 					FinderColumn.Type.BOOLEAN, "=", true, true,
 					CPAttachmentFileEntry::isGalleryEnabled),
 				new FinderColumn<>(
-					"cpAttachmentFileEntry.", "type", FinderColumn.Type.INTEGER,
-					"=", true, true, CPAttachmentFileEntry::getType),
+					"cpAttachmentFileEntry.", "type", "type_",
+					FinderColumn.Type.INTEGER, "=", true, true,
+					CPAttachmentFileEntry::getType),
 				new FinderColumn<>(
 					"cpAttachmentFileEntry.", "status",
 					FinderColumn.Type.INTEGER, "!=", true, true,
@@ -2939,12 +2823,6 @@ public class CPAttachmentFileEntryPersistenceImpl
 	private static final String _SQL_COUNT_CPATTACHMENTFILEENTRY_WHERE =
 		"SELECT COUNT(cpAttachmentFileEntry) FROM CPAttachmentFileEntry cpAttachmentFileEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPAttachmentFileEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPAttachmentFileEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -2954,4 +2832,4 @@ public class CPAttachmentFileEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-417680883
+// LIFERAY-SERVICE-BUILDER-HASH:-493090640

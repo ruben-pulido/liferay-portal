@@ -120,14 +120,9 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPSpecificationOptionListTypeDefinitionRel
-			newCPSpecificationOptionListTypeDefinitionRel = _persistence.create(
-				pk);
-
-		newCPSpecificationOptionListTypeDefinitionRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			newCPSpecificationOptionListTypeDefinitionRel =
+				addCPSpecificationOptionListTypeDefinitionRel();
 
 		newCPSpecificationOptionListTypeDefinitionRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -141,8 +136,11 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceTest {
 		newCPSpecificationOptionListTypeDefinitionRel.setListTypeDefinitionId(
 			RandomTestUtil.nextLong());
 
+		newCPSpecificationOptionListTypeDefinitionRel = _persistence.update(
+			newCPSpecificationOptionListTypeDefinitionRel);
+
 		_cpSpecificationOptionListTypeDefinitionRels.add(
-			_persistence.update(newCPSpecificationOptionListTypeDefinitionRel));
+			newCPSpecificationOptionListTypeDefinitionRel);
 
 		CPSpecificationOptionListTypeDefinitionRel
 			existingCPSpecificationOptionListTypeDefinitionRel =
@@ -612,9 +610,6 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceTest {
 			cpSpecificationOptionListTypeDefinitionRel = _persistence.create(
 				pk);
 
-		cpSpecificationOptionListTypeDefinitionRel.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		cpSpecificationOptionListTypeDefinitionRel.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -640,4 +635,4 @@ public class CPSpecificationOptionListTypeDefinitionRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1866321537
+// LIFERAY-SERVICE-BUILDER-HASH:55205659

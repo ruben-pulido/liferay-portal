@@ -116,11 +116,7 @@ public class DDLRecordSetPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		DDLRecordSet newDDLRecordSet = _persistence.create(pk);
-
-		newDDLRecordSet.setMvccVersion(RandomTestUtil.nextLong());
+		DDLRecordSet newDDLRecordSet = addDDLRecordSet();
 
 		newDDLRecordSet.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -160,7 +156,9 @@ public class DDLRecordSetPersistenceTest {
 
 		newDDLRecordSet.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_ddlRecordSets.add(_persistence.update(newDDLRecordSet));
+		newDDLRecordSet = _persistence.update(newDDLRecordSet);
+
+		_ddlRecordSets.add(newDDLRecordSet);
 
 		DDLRecordSet existingDDLRecordSet = _persistence.findByPrimaryKey(
 			newDDLRecordSet.getPrimaryKey());
@@ -633,8 +631,6 @@ public class DDLRecordSetPersistenceTest {
 
 		DDLRecordSet ddlRecordSet = _persistence.create(pk);
 
-		ddlRecordSet.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddlRecordSet.setCtCollectionId(RandomTestUtil.nextLong());
 
 		ddlRecordSet.setUuid(RandomTestUtil.randomString());
@@ -683,4 +679,4 @@ public class DDLRecordSetPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1652599719
+// LIFERAY-SERVICE-BUILDER-HASH:433063173

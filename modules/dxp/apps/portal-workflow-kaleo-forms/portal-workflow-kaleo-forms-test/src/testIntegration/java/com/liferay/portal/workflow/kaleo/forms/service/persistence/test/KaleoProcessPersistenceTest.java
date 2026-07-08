@@ -116,9 +116,7 @@ public class KaleoProcessPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		KaleoProcess newKaleoProcess = _persistence.create(pk);
+		KaleoProcess newKaleoProcess = addKaleoProcess();
 
 		newKaleoProcess.setUuid(RandomTestUtil.randomString());
 
@@ -143,7 +141,9 @@ public class KaleoProcessPersistenceTest {
 
 		newKaleoProcess.setWorkflowDefinitionVersion(RandomTestUtil.nextInt());
 
-		_kaleoProcesses.add(_persistence.update(newKaleoProcess));
+		newKaleoProcess = _persistence.update(newKaleoProcess);
+
+		_kaleoProcesses.add(newKaleoProcess);
 
 		KaleoProcess existingKaleoProcess = _persistence.findByPrimaryKey(
 			newKaleoProcess.getPrimaryKey());
@@ -598,4 +598,4 @@ public class KaleoProcessPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1447641047
+// LIFERAY-SERVICE-BUILDER-HASH:1864413963

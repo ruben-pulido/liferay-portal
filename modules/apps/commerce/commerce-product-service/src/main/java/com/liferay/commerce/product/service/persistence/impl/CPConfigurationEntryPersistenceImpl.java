@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -96,8 +94,9 @@ public class CPConfigurationEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CPConfigurationEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp configuration entries where uuid = &#63;.
@@ -138,16 +137,8 @@ public class CPConfigurationEntryPersistenceImpl
 			OrderByComparator<CPConfigurationEntry> orderByComparator)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpConfigurationEntry != null) {
-			return cpConfigurationEntry;
-		}
-
-		throw new NoSuchCPConfigurationEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -189,8 +180,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CPConfigurationEntry>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the cp configuration entry where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCPConfigurationEntryException</code> if it could not be found.
@@ -204,22 +196,8 @@ public class CPConfigurationEntryPersistenceImpl
 	public CPConfigurationEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByUUID_G(
-			uuid, groupId);
-
-		if (cpConfigurationEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPConfigurationEntryException(message);
-		}
-
-		return cpConfigurationEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -267,8 +245,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CPConfigurationEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp configuration entries where uuid = &#63; and companyId = &#63;.
@@ -311,16 +290,8 @@ public class CPConfigurationEntryPersistenceImpl
 			OrderByComparator<CPConfigurationEntry> orderByComparator)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpConfigurationEntry != null) {
-			return cpConfigurationEntry;
-		}
-
-		throw new NoSuchCPConfigurationEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -365,8 +336,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CPConfigurationEntry>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cp configuration entries where companyId = &#63;.
@@ -407,16 +379,8 @@ public class CPConfigurationEntryPersistenceImpl
 			OrderByComparator<CPConfigurationEntry> orderByComparator)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (cpConfigurationEntry != null) {
-			return cpConfigurationEntry;
-		}
-
-		throw new NoSuchCPConfigurationEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -458,8 +422,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CPConfigurationEntry>
-		_collectionPersistenceFinderByCPConfigurationListId;
+	private CollectionPersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_collectionPersistenceFinderByCPConfigurationListId;
 
 	/**
 	 * Returns an ordered range of all the cp configuration entries where CPConfigurationListId = &#63;.
@@ -500,19 +465,9 @@ public class CPConfigurationEntryPersistenceImpl
 			OrderByComparator<CPConfigurationEntry> orderByComparator)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry =
-			fetchByCPConfigurationListId_First(
-				CPConfigurationListId, orderByComparator);
-
-		if (cpConfigurationEntry != null) {
-			return cpConfigurationEntry;
-		}
-
-		throw new NoSuchCPConfigurationEntryException(
-			_collectionPersistenceFinderByCPConfigurationListId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPConfigurationListId}));
+		return _collectionPersistenceFinderByCPConfigurationListId.findFirst(
+			finderCache, new Object[] {CPConfigurationListId},
+			orderByComparator);
 	}
 
 	/**
@@ -555,8 +510,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {CPConfigurationListId});
 	}
 
-	private CollectionPersistenceFinder<CPConfigurationEntry>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the cp configuration entries where classNameId = &#63; and classPK = &#63;.
@@ -599,16 +555,9 @@ public class CPConfigurationEntryPersistenceImpl
 			OrderByComparator<CPConfigurationEntry> orderByComparator)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (cpConfigurationEntry != null) {
-			return cpConfigurationEntry;
-		}
-
-		throw new NoSuchCPConfigurationEntryException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -654,8 +603,9 @@ public class CPConfigurationEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<CPConfigurationEntry>
-		_uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns the cp configuration entry where classNameId = &#63; and classPK = &#63; and CPConfigurationListId = &#63; or throws a <code>NoSuchCPConfigurationEntryException</code> if it could not be found.
@@ -671,23 +621,9 @@ public class CPConfigurationEntryPersistenceImpl
 			long classNameId, long classPK, long CPConfigurationListId)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByC_C_C(
-			classNameId, classPK, CPConfigurationListId);
-
-		if (cpConfigurationEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, CPConfigurationListId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPConfigurationEntryException(message);
-		}
-
-		return cpConfigurationEntry;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache,
+			new Object[] {classNameId, classPK, CPConfigurationListId});
 	}
 
 	/**
@@ -746,8 +682,9 @@ public class CPConfigurationEntryPersistenceImpl
 			new Object[] {classNameId, classPK, CPConfigurationListId});
 	}
 
-	private UniquePersistenceFinder<CPConfigurationEntry>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CPConfigurationEntry, NoSuchCPConfigurationEntryException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cp configuration entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCPConfigurationEntryException</code> if it could not be found.
@@ -762,23 +699,8 @@ public class CPConfigurationEntryPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPConfigurationEntryException {
 
-		CPConfigurationEntry cpConfigurationEntry = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpConfigurationEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPConfigurationEntryException(message);
-		}
-
-		return cpConfigurationEntry;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1249,10 +1171,11 @@ public class CPConfigurationEntryPersistenceImpl
 			_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE,
 			_SQL_COUNT_CPCONFIGURATIONENTRY_WHERE,
 			CPConfigurationEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"cpConfigurationEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CPConfigurationEntry::getUuid));
+				"cpConfigurationEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPConfigurationEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1264,8 +1187,9 @@ public class CPConfigurationEntryPersistenceImpl
 				CPConfigurationEntry::getGroupId),
 			_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE, "",
 			new FinderColumn<>(
-				"cpConfigurationEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, CPConfigurationEntry::getUuid),
+				"cpConfigurationEntry.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPConfigurationEntry::getUuid),
 			new FinderColumn<>(
 				"cpConfigurationEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, CPConfigurationEntry::getGroupId));
@@ -1292,10 +1216,11 @@ public class CPConfigurationEntryPersistenceImpl
 				_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE,
 				_SQL_COUNT_CPCONFIGURATIONENTRY_WHERE,
 				CPConfigurationEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpConfigurationEntry.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, CPConfigurationEntry::getUuid),
+					"cpConfigurationEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPConfigurationEntry::getUuid),
 				new FinderColumn<>(
 					"cpConfigurationEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1323,7 +1248,7 @@ public class CPConfigurationEntryPersistenceImpl
 				_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE,
 				_SQL_COUNT_CPCONFIGURATIONENTRY_WHERE,
 				CPConfigurationEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpConfigurationEntry.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1354,7 +1279,7 @@ public class CPConfigurationEntryPersistenceImpl
 				_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE,
 				_SQL_COUNT_CPCONFIGURATIONENTRY_WHERE,
 				CPConfigurationEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpConfigurationEntry.", "CPConfigurationListId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1381,7 +1306,7 @@ public class CPConfigurationEntryPersistenceImpl
 			_SQL_SELECT_CPCONFIGURATIONENTRY_WHERE,
 			_SQL_COUNT_CPCONFIGURATIONENTRY_WHERE,
 			CPConfigurationEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"cpConfigurationEntry.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CPConfigurationEntry::getClassNameId),
@@ -1491,12 +1416,6 @@ public class CPConfigurationEntryPersistenceImpl
 	private static final String _SQL_COUNT_CPCONFIGURATIONENTRY_WHERE =
 		"SELECT COUNT(cpConfigurationEntry) FROM CPConfigurationEntry cpConfigurationEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPConfigurationEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPConfigurationEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1506,4 +1425,4 @@ public class CPConfigurationEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-520870063
+// LIFERAY-SERVICE-BUILDER-HASH:2096865675

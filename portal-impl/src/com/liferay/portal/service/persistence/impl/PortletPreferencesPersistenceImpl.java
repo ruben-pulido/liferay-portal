@@ -14,8 +14,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPortletPreferencesException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PortletPreferences;
 import com.liferay.portal.kernel.model.PortletPreferencesTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -73,8 +71,9 @@ public class PortletPreferencesPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByOwnerId;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByOwnerId;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63;.
@@ -115,16 +114,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByOwnerId_First(
-			ownerId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByOwnerId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ownerId}));
+		return _collectionPersistenceFinderByOwnerId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {ownerId},
+			orderByComparator);
 	}
 
 	/**
@@ -166,8 +158,9 @@ public class PortletPreferencesPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {ownerId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByPlid;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByPlid;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where plid = &#63;.
@@ -207,16 +200,9 @@ public class PortletPreferencesPersistenceImpl
 			long plid, OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByPlid_First(
-			plid, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByPlid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid}));
+		return _collectionPersistenceFinderByPlid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid},
+			orderByComparator);
 	}
 
 	/**
@@ -258,8 +244,9 @@ public class PortletPreferencesPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {plid});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByPortletId;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByPortletId;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where portletId = &#63;.
@@ -300,16 +287,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByPortletId_First(
-			portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByPortletId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {portletId}));
+		return _collectionPersistenceFinderByPortletId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -352,8 +332,9 @@ public class PortletPreferencesPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {portletId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByO_P;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByO_P;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and portletId = &#63;.
@@ -397,16 +378,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByO_P_First(
-			ownerType, portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByO_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ownerType, portletId}));
+		return _collectionPersistenceFinderByO_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {ownerType, portletId}, orderByComparator);
 	}
 
 	/**
@@ -454,8 +428,9 @@ public class PortletPreferencesPersistenceImpl
 			new Object[] {ownerType, portletId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByP_P;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByP_P;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where plid = &#63; and portletId = &#63;.
@@ -498,16 +473,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByP_P_First(
-			plid, portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByP_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {plid, portletId}));
+		return _collectionPersistenceFinderByP_P.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {plid, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -553,8 +521,9 @@ public class PortletPreferencesPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {plid, portletId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByO_O_P;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByO_O_P;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and plid = &#63;.
@@ -600,17 +569,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByO_O_P_First(
-			ownerId, ownerType, plid, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByO_O_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {ownerId, ownerType, plid}));
+		return _collectionPersistenceFinderByO_O_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {ownerId, ownerType, plid}, orderByComparator);
 	}
 
 	/**
@@ -661,8 +622,9 @@ public class PortletPreferencesPersistenceImpl
 			new Object[] {ownerId, ownerType, plid});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByO_O_PI;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByO_O_PI;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerId = &#63; and ownerType = &#63; and portletId = &#63;.
@@ -708,17 +670,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByO_O_PI_First(
-			ownerId, ownerType, portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByO_O_PI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {ownerId, ownerType, portletId}));
+		return _collectionPersistenceFinderByO_O_PI.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {ownerId, ownerType, portletId}, orderByComparator);
 	}
 
 	/**
@@ -769,8 +723,9 @@ public class PortletPreferencesPersistenceImpl
 			new Object[] {ownerId, ownerType, portletId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByO_P_P;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByO_P_P;
 
 	/**
 	 * Returns an ordered range of all the portlet preferenceses where ownerType = &#63; and plid = &#63; and portletId = &#63;.
@@ -816,17 +771,9 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByO_P_P_First(
-			ownerType, plid, portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByO_P_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {ownerType, plid, portletId}));
+		return _collectionPersistenceFinderByO_P_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {ownerType, plid, portletId}, orderByComparator);
 	}
 
 	/**
@@ -877,8 +824,9 @@ public class PortletPreferencesPersistenceImpl
 			new Object[] {ownerType, plid, portletId});
 	}
 
-	private CollectionPersistenceFinder<PortletPreferences>
-		_collectionPersistenceFinderByC_O_O_LikeP;
+	private CollectionPersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_collectionPersistenceFinderByC_O_O_LikeP;
 
 	/**
 	 * Returns all the portlet preferenceses where companyId = &#63; and ownerId = &#63; and ownerType = &#63; and portletId LIKE &#63;.
@@ -996,17 +944,10 @@ public class PortletPreferencesPersistenceImpl
 			OrderByComparator<PortletPreferences> orderByComparator)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByC_O_O_LikeP_First(
-			companyId, ownerId, ownerType, portletId, orderByComparator);
-
-		if (portletPreferences != null) {
-			return portletPreferences;
-		}
-
-		throw new NoSuchPortletPreferencesException(
-			_collectionPersistenceFinderByC_O_O_LikeP.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, ownerId, ownerType, portletId}));
+		return _collectionPersistenceFinderByC_O_O_LikeP.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, ownerId, ownerType, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -1065,8 +1006,9 @@ public class PortletPreferencesPersistenceImpl
 			new Object[] {companyId, ownerId, ownerType, portletId});
 	}
 
-	private UniquePersistenceFinder<PortletPreferences>
-		_uniquePersistenceFinderByO_O_P_P;
+	private UniquePersistenceFinder
+		<PortletPreferences, NoSuchPortletPreferencesException>
+			_uniquePersistenceFinderByO_O_P_P;
 
 	/**
 	 * Returns the portlet preferences where ownerId = &#63; and ownerType = &#63; and plid = &#63; and portletId = &#63; or throws a <code>NoSuchPortletPreferencesException</code> if it could not be found.
@@ -1083,23 +1025,9 @@ public class PortletPreferencesPersistenceImpl
 			long ownerId, int ownerType, long plid, String portletId)
 		throws NoSuchPortletPreferencesException {
 
-		PortletPreferences portletPreferences = fetchByO_O_P_P(
-			ownerId, ownerType, plid, portletId);
-
-		if (portletPreferences == null) {
-			String message =
-				_uniquePersistenceFinderByO_O_P_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {ownerId, ownerType, plid, portletId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPortletPreferencesException(message);
-		}
-
-		return portletPreferences;
+		return _uniquePersistenceFinderByO_O_P_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {ownerId, ownerType, plid, portletId});
 	}
 
 	/**
@@ -1432,7 +1360,7 @@ public class PortletPreferencesPersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 				PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"portletPreferences.", "ownerId", FinderColumn.Type.LONG,
 					"=", true, true, PortletPreferences::getOwnerId));
@@ -1457,6 +1385,7 @@ public class PortletPreferencesPersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 			PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"portletPreferences.", "plid", FinderColumn.Type.LONG, "=",
 				true, true, PortletPreferences::getPlid));
@@ -1483,7 +1412,7 @@ public class PortletPreferencesPersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 				PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"portletPreferences.", "portletId",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1510,6 +1439,7 @@ public class PortletPreferencesPersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 			PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"portletPreferences.", "ownerType", FinderColumn.Type.INTEGER,
 				"=", true, true, PortletPreferences::getOwnerType),
@@ -1538,6 +1468,7 @@ public class PortletPreferencesPersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 			PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"portletPreferences.", "plid", FinderColumn.Type.LONG, "=",
 				true, true, PortletPreferences::getPlid),
@@ -1572,6 +1503,7 @@ public class PortletPreferencesPersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 			PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"portletPreferences.", "ownerId", FinderColumn.Type.LONG, "=",
 				true, true, PortletPreferences::getOwnerId),
@@ -1613,7 +1545,7 @@ public class PortletPreferencesPersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 				PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"portletPreferences.", "ownerId", FinderColumn.Type.LONG,
 					"=", true, true, PortletPreferences::getOwnerId),
@@ -1655,6 +1587,7 @@ public class PortletPreferencesPersistenceImpl
 			_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 			_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 			PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"portletPreferences.", "ownerType", FinderColumn.Type.INTEGER,
 				"=", true, true, PortletPreferences::getOwnerType),
@@ -1695,7 +1628,7 @@ public class PortletPreferencesPersistenceImpl
 				_SQL_SELECT_PORTLETPREFERENCES_WHERE,
 				_SQL_COUNT_PORTLETPREFERENCES_WHERE,
 				PortletPreferencesModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"portletPreferences.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, PortletPreferences::getCompanyId),
@@ -1758,16 +1691,10 @@ public class PortletPreferencesPersistenceImpl
 	private static final String _SQL_COUNT_PORTLETPREFERENCES_WHERE =
 		"SELECT COUNT(portletPreferences) FROM PortletPreferences portletPreferences WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PortletPreferences exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PortletPreferencesPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return FinderCacheUtil.getFinderCache();
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:717851039
+// LIFERAY-SERVICE-BUILDER-HASH:-1484593519

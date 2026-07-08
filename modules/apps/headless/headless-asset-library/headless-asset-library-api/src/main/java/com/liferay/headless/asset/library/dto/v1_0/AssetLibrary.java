@@ -45,6 +45,9 @@ import java.util.function.Supplier;
 @GraphQLName(
 	description = "Represents an Asset Library", value = "AssetLibrary"
 )
+@io.swagger.v3.oas.annotations.media.Schema(
+	description = "Represents an Asset Library"
+)
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "AssetLibrary")
 public class AssetLibrary implements Serializable {
@@ -1470,8 +1473,8 @@ public class AssetLibrary implements Serializable {
 	@GraphQLName("Type")
 	public static enum Type {
 
-		ASSET_LIBRARY("AssetLibrary"), DESIGN_LIBRARY("DesignLibrary"),
-		PROJECT("Project"), SPACE("Space");
+		ASSET_LIBRARY("AssetLibrary"), CATALOG("Catalog"),
+		DESIGN_LIBRARY("DesignLibrary"), PROJECT("Project"), SPACE("Space");
 
 		@JsonCreator
 		public static Type create(String value) {
@@ -1595,4 +1598,4 @@ public class AssetLibrary implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1402354211
+// LIFERAY-REST-BUILDER-HASH:-1538681986

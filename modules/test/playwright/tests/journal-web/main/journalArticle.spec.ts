@@ -25,7 +25,7 @@ import {nextPage, setItemsPerPage} from '../../../utils/pagination';
 import addApprovedStructuredContent from '../../../utils/structured-content/addApprovedStructuredContent';
 import getBasicWebContentStructureId from '../../../utils/structured-content/getBasicWebContentStructureId';
 import {waitForAlert} from '../../../utils/waitForAlert';
-import {ClassicPage as CKEditor4ClassicPage} from '../../frontend-editor-ckeditor-sample-web/pages/ckeditor4/ClassicPage';
+import {ClassicPage as CKEditor4ClassicPage} from '../../frontend-editor-ckeditor4-sample-web/pages/ClassicPage';
 import {journalPagesTest} from './fixtures/journalPagesTest';
 import getDataStructureDefinition from './utils/getDataStructureDefinition';
 
@@ -170,9 +170,7 @@ baseTest(
 			.getByRole('menuitem', {name: 'Schedule Publication'})
 			.click();
 
-		await page
-			.getByPlaceholder('YYYY-MM-DD HH:mm')
-			.fill('9987-11-26 13:00');
+		await page.getByLabel('Date and Time').fill('9987-11-26 01:00 PM');
 
 		await page
 			.getByLabel('Schedule Publication')
@@ -457,7 +455,7 @@ translationAndAutosaveTest(
 
 		await journalEditArticlePage.scheduleArticle(
 			unSelectableWebContent,
-			'9987-11-26 13:00'
+			'9987-11-26 01:00 PM'
 		);
 
 		await journalEditArticlePage.goto({
@@ -556,7 +554,7 @@ baseTest(
 			.click();
 
 		let categoryCheckbox = page
-			.frameLocator(`iframe[title="Select ${vocabularyName1}"]`)
+			.getByRole('dialog', {name: `Select ${vocabularyName1}`})
 			.locator('li')
 			.filter({hasText: `${category1}`})
 			.getByRole('checkbox');
@@ -570,7 +568,7 @@ baseTest(
 			.click();
 
 		categoryCheckbox = page
-			.frameLocator(`iframe[title="Select ${vocabularyName2}"]`)
+			.getByRole('dialog', {name: `Select ${vocabularyName2}`})
 			.locator('li')
 			.filter({hasText: `${category1}`})
 			.getByRole('checkbox');
@@ -709,6 +707,10 @@ baseTest(
 		await journalPage.goto(site.friendlyUrlPath);
 
 		await setItemsPerPage(page, 20);
+
+		await expect(
+			page.getByText('Showing 1 to 20 of 42 entries.')
+		).toBeVisible();
 
 		await page.getByTestId('row').nth(0).getByRole('checkbox').check();
 		await page.getByTestId('row').nth(1).getByRole('checkbox').check();
@@ -871,7 +873,7 @@ privateContentIconTest(
 
 		await journalEditArticlePage.editArticle(title);
 
-		await journalEditArticlePage.openRelatedAsset('Basic Web Content');
+		await journalEditArticlePage.openRelatedAsset();
 
 		await journalEditArticlePage.assertPrivateContentIconInRelatedAssetPopUp(
 			'Basic Web Content'
@@ -979,12 +981,14 @@ baseTest(
 			await journalEditArticlePage.fillContent(getRandomString());
 
 			await clickAndExpectToBeVisible({
-				autoClick: true,
+				autoClick: false,
 				target: page.getByRole('option', {
 					name: language + ' Language: Translating 1/',
 				}),
 				trigger: translationButton,
 			});
+
+			await page.keyboard.press('Escape');
 		}
 
 		await journalEditArticlePage.publishArticle();
@@ -1103,7 +1107,7 @@ baseTest(
 		await translationButton.click();
 
 		await clickAndExpectToBeVisible({
-			autoClick: true,
+			autoClick: false,
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Not Translated',
 			}),
@@ -1155,12 +1159,14 @@ baseTest(
 		await translationButton.click();
 
 		await clickAndExpectToBeVisible({
-			autoClick: true,
+			autoClick: false,
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Translated',
 			}),
 			trigger: translationButton,
 		});
+
+		await page.keyboard.press('Escape');
 
 		await translationOptionsButton.click();
 
@@ -1260,6 +1266,18 @@ baseTest(
 			await fieldsWrapper.click();
 		}
 		await journalEditArticlePage.fillContent(getRandomString());
+
+		// Re-apply the Untranslated filter to refresh the view. The active
+		// filter option is inert (pointer-events: none), so toggle through
+		// another option to reselect it.
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('option', {
+				name: 'All Fields',
+			}),
+			trigger: translationFilterButton,
+		});
 
 		await clickAndExpectToBeVisible({
 			autoClick: true,
@@ -1404,7 +1422,7 @@ baseTest(
 		await translateNameAndMetadataFields(page);
 
 		await clickAndExpectToBeVisible({
-			autoClick: true,
+			autoClick: false,
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Translating 1/2',
 			}),
@@ -1493,7 +1511,7 @@ baseTest(
 			name: 'Select a language',
 		});
 
-		clickAndExpectToBeVisible({
+		await clickAndExpectToBeVisible({
 			autoClick: true,
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Not Translated',
@@ -1507,9 +1525,17 @@ baseTest(
 			name: localizableFieldName,
 		});
 
-		await fillAndClickOutside(page, localizableField);
+		// The Fields panel can load collapsed, so re-expand it before
+		// interacting with its fields. Close the language dropdown after each
+		// check so it does not cover the fields.
 
-		clickAndExpectToBeVisible({
+		await expect(async () => {
+			await openFieldset(page, 'Fields');
+
+			await localizableField.fill(getRandomString(), {timeout: 2000});
+		}).toPass();
+
+		await clickAndExpectToBeVisible({
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Translated',
 			}),
@@ -1517,9 +1543,13 @@ baseTest(
 			trigger: translationButton,
 		});
 
+		await page.keyboard.press('Escape');
+
+		await openFieldset(page, 'Fields');
+
 		await page.getByLabel('Add Duplicate Field Text').click();
 
-		clickAndExpectToBeVisible({
+		await clickAndExpectToBeVisible({
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Translating 2/3',
 			}),
@@ -1527,12 +1557,18 @@ baseTest(
 			trigger: translationButton,
 		});
 
-		await fillAndClickOutside(
-			page,
-			page.locator('input.ddm-field-text').nth(1)
-		);
+		await page.keyboard.press('Escape');
 
-		clickAndExpectToBeVisible({
+		await expect(async () => {
+			await openFieldset(page, 'Fields');
+
+			await page
+				.locator('input.ddm-field-text')
+				.nth(1)
+				.fill(getRandomString(), {timeout: 2000});
+		}).toPass();
+
+		await clickAndExpectToBeVisible({
 			target: page.getByRole('option', {
 				name: 'Catalan Language: Translated',
 			}),
@@ -1748,20 +1784,26 @@ baseTest(
 
 			await translationButton.click();
 
-			await clickAndExpectToBeVisible({
-				autoClick: true,
-				target: page.getByRole('option', {
+			await expect(
+				page.getByRole('option', {
 					name: 'Catalan Language: Translating 1/',
-				}),
-				trigger: translationButton,
-			});
+				})
+			).toBeVisible({timeout: 2000});
+
+			await page.keyboard.press('Escape');
 		}).toPass();
+
+		await clickAndExpectToBeVisible({
+			autoClick: true,
+			target: page.getByRole('option', {
+				name: 'English Language: Default',
+			}),
+			trigger: translationButton,
+		});
 
 		await journalEditArticlePage.publishArticle();
 
 		await waitForAlert(page, `Success:${title} was created successfully.`);
-
-		await page.getByLabel('Fin', {exact: true});
 
 		await journalPage.goToJournalArticleAction(
 			'Delete Translations',
@@ -1856,6 +1898,11 @@ baseTest(
 			siteUrl: site.friendlyUrlPath,
 			structureName,
 		});
+
+		// The Fields panel can load collapsed, so re-expand it before
+		// interacting with the structure field and its duplicate button.
+
+		await openFieldset(page, 'Fields');
 
 		const textField = page.getByRole('textbox', {
 			name: fieldName,
@@ -1977,35 +2024,56 @@ assetPublisherDeprecationTest(
 		await widgetPagePage.goto(widgetLayout, site.friendlyUrlPath);
 
 		await widgetPagePage.addPortlet('Asset Publisher');
+
 		await page
 			.locator('.portlet-asset-publisher')
 			.first()
 			.getByLabel('Options')
 			.click();
+
 		await page
 			.getByRole('menuitem', {exact: true, name: 'Configuration'})
 			.click();
+
 		const configurationFrame = page.frameLocator(
 			'iframe[id="modalIframe"]'
 		);
+
 		await configurationFrame
 			.getByRole('tab', {name: 'Asset Selection'})
 			.click();
+
 		await configurationFrame.getByText('Dynamic', {exact: true}).click();
-		await configurationFrame
-			.getByRole('tab', {name: 'Display Settings'})
-			.click();
-		await configurationFrame.getByLabel('Display Template').click();
-		await configurationFrame
-			.getByRole('option', {name: 'Full Content'})
-			.click();
+
+		await expect(async () => {
+			await configurationFrame
+				.getByRole('tab', {name: 'Display Settings'})
+				.click({timeout: 2000});
+
+			await configurationFrame
+				.getByLabel('Display Template')
+				.click({timeout: 2000});
+
+			await configurationFrame
+				.getByRole('option', {name: 'Full Content'})
+				.click({timeout: 2000});
+		}).toPass();
+
 		await configurationFrame.getByRole('button', {name: 'Save'}).click();
+
 		await page
 			.locator('.modal-header')
 			.getByLabel('Close', {exact: true})
 			.click();
 
-		await widgetPagePage.goto(widgetLayout, site.friendlyUrlPath);
+		await expect(async () => {
+			await widgetPagePage.goto(widgetLayout, site.friendlyUrlPath);
+
+			await expect(page.getByText('page1')).toBeVisible({timeout: 2000});
+			await expect(page.getByLabel('Go to page, 2')).toBeVisible({
+				timeout: 2000,
+			});
+		}).toPass();
 
 		await page.getByLabel('Go to page, 2').click();
 
@@ -2609,26 +2677,32 @@ baseTest(
 
 		await journalPage.goto(site.friendlyUrlPath);
 
-		await expect(page.getByText(title1)).toBeVisible();
-		await expect(page.getByText(title2)).toBeVisible();
+		const title1Link = page.getByRole('link', {exact: true, name: title1});
+		const title2Link = page.getByRole('link', {exact: true, name: title2});
 
-		await page.getByPlaceholder('Search for').fill(title1);
-		await page.getByLabel('Search for', {exact: true}).click();
+		await expect(title1Link).toBeVisible();
+		await expect(title2Link).toBeVisible();
 
-		await expect(page.getByText(title1, {exact: true})).toBeVisible();
-		await expect(page.getByText(title2)).not.toBeVisible();
+		const searchInput = page.getByPlaceholder('Search for');
+		const searchButton = page.getByLabel('Search for', {exact: true});
 
-		await page.getByPlaceholder('Search for').fill(title2);
-		await page.getByLabel('Search for', {exact: true}).click();
+		await searchInput.fill(title1);
+		await searchButton.click();
 
-		await expect(page.getByText(title1)).not.toBeVisible();
-		await expect(page.getByText(title2, {exact: true})).toBeVisible();
+		await expect(title1Link).toBeVisible();
+		await expect(title2Link).not.toBeVisible();
 
-		await page.getByPlaceholder('Search for').fill('Random Text');
-		await page.getByLabel('Search for', {exact: true}).click();
+		await searchInput.fill(title2);
+		await searchButton.click();
 
-		await expect(page.getByText(title1)).not.toBeVisible();
-		await expect(page.getByText(title2)).not.toBeVisible();
+		await expect(title1Link).not.toBeVisible();
+		await expect(title2Link).toBeVisible();
+
+		await searchInput.fill('Random Text');
+		await searchButton.click();
+
+		await expect(title1Link).not.toBeVisible();
+		await expect(title2Link).not.toBeVisible();
 	}
 );
 
@@ -2706,11 +2780,9 @@ baseTest(
 
 		await journalEditArticlePage.goto({siteUrl: site.friendlyUrlPath});
 
-		baseTest.step(
+		await baseTest.step(
 			'Change language without filling title for default language',
 			async () => {
-				await journalEditArticlePage.fillTitle('');
-
 				const translationButton = page.getByRole('combobox', {
 					name: 'Select a language',
 				});
@@ -2731,7 +2803,7 @@ baseTest(
 			}
 		);
 
-		baseTest.step('Cannot Publish With Permissions', async () => {
+		await baseTest.step('Cannot Publish With Permissions', async () => {
 			await clickAndExpectToBeVisible({
 				autoClick: true,
 				target: page.getByRole('menuitem', {
@@ -2749,10 +2821,13 @@ baseTest(
 
 			await expect(page.locator('.modal-dialog')).not.toBeVisible();
 
-			await page.getByLabel('Close').click();
+			await page
+				.locator('.alert-danger')
+				.getByRole('button', {name: 'Close'})
+				.click();
 		});
 
-		baseTest.step('Cannot Schedule Publication', async () => {
+		await baseTest.step('Cannot Schedule Publication', async () => {
 			await clickAndExpectToBeVisible({
 				autoClick: true,
 				target: page.getByRole('menuitem', {
@@ -2769,16 +2844,20 @@ baseTest(
 				.waitFor();
 
 			await expect(page.locator('.modal-dialog')).not.toBeVisible();
-			await page.getByLabel('Close').click();
+
+			await page
+				.locator('.alert-danger')
+				.getByRole('button', {name: 'Close'})
+				.click();
 		});
 
-		baseTest.step('Cannot Save as Draft', async () => {
+		await baseTest.step('Cannot Save as Draft', async () => {
 			await page.getByRole('button', {name: 'Save as Draft'}).click();
 
 			await expect(page.locator('.modal-dialog')).not.toBeVisible();
 		});
 
-		baseTest.step(
+		await baseTest.step(
 			'Can Save as Draft if default language title is filled',
 			async () => {
 				const translationButton = page.getByRole('combobox', {
@@ -2803,13 +2882,13 @@ baseTest(
 					trigger: translationButton,
 				});
 
-				await expect(page.locator('.modal-dialog')).toBeVisible();
-
-				await expect(async () => {
-					page.getByRole('heading', {
+				await clickAndExpectToBeVisible({
+					autoClick: true,
+					target: page.getByRole('heading', {
 						name: 'Save as Draft With Permissions',
-					});
-				}).toPass();
+					}),
+					trigger: page.getByRole('button', {name: 'Save as Draft'}),
+				});
 			}
 		);
 	}

@@ -115,18 +115,18 @@ public class RenameFinderColumnEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		RenameFinderColumnEntry newRenameFinderColumnEntry =
-			_persistence.create(pk);
+			addRenameFinderColumnEntry();
 
 		newRenameFinderColumnEntry.setGroupId(RandomTestUtil.nextLong());
 
 		newRenameFinderColumnEntry.setColumnToRename(
 			RandomTestUtil.randomString());
 
-		_renameFinderColumnEntries.add(
-			_persistence.update(newRenameFinderColumnEntry));
+		newRenameFinderColumnEntry = _persistence.update(
+			newRenameFinderColumnEntry);
+
+		_renameFinderColumnEntries.add(newRenameFinderColumnEntry);
 
 		RenameFinderColumnEntry existingRenameFinderColumnEntry =
 			_persistence.findByPrimaryKey(
@@ -511,4 +511,4 @@ public class RenameFinderColumnEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:881872030
+// LIFERAY-SERVICE-BUILDER-HASH:724611151

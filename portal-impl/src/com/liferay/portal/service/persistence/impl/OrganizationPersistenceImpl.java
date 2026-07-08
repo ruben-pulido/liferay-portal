@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.DuplicateOrganizationExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.NoSuchOrganizationException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Organization;
 import com.liferay.portal.kernel.model.OrganizationTable;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
@@ -95,8 +93,9 @@ public class OrganizationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the organizations where uuid = &#63;.
@@ -136,15 +135,9 @@ public class OrganizationPersistenceImpl
 			String uuid, OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByUuid_First(uuid, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -221,8 +214,9 @@ public class OrganizationPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the organizations where uuid = &#63; and companyId = &#63;.
@@ -265,16 +259,9 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -358,8 +345,9 @@ public class OrganizationPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the organizations where companyId = &#63;.
@@ -399,16 +387,9 @@ public class OrganizationPersistenceImpl
 			long companyId, OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -486,8 +467,9 @@ public class OrganizationPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByCompanyIdLocations;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByCompanyIdLocations;
 
 	/**
 	 * Returns an ordered range of all the organizations where companyId = &#63;.
@@ -527,17 +509,9 @@ public class OrganizationPersistenceImpl
 			long companyId, OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByCompanyIdLocations_First(
-			companyId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByCompanyIdLocations.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyIdLocations.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -615,8 +589,9 @@ public class OrganizationPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByLogoId;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByLogoId;
 
 	/**
 	 * Returns an ordered range of all the organizations where logoId = &#63;.
@@ -656,16 +631,9 @@ public class OrganizationPersistenceImpl
 			long logoId, OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByLogoId_First(
-			logoId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByLogoId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {logoId}));
+		return _collectionPersistenceFinderByLogoId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {logoId},
+			orderByComparator);
 	}
 
 	/**
@@ -742,8 +710,9 @@ public class OrganizationPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {logoId});
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByC_P;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByC_P;
 
 	/**
 	 * Returns an ordered range of all the organizations where companyId = &#63; and parentOrganizationId = &#63;.
@@ -787,17 +756,9 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByC_P_First(
-			companyId, parentOrganizationId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByC_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, parentOrganizationId}));
+		return _collectionPersistenceFinderByC_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, parentOrganizationId}, orderByComparator);
 	}
 
 	/**
@@ -884,8 +845,9 @@ public class OrganizationPersistenceImpl
 			new Object[] {companyId, parentOrganizationId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByC_LikeT;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByC_LikeT;
 
 	/**
 	 * Returns all the organizations where companyId = &#63; and treePath LIKE &#63;.
@@ -985,16 +947,9 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByC_LikeT_First(
-			companyId, treePath, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByC_LikeT.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, treePath}));
+		return _collectionPersistenceFinderByC_LikeT.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, treePath}, orderByComparator);
 	}
 
 	/**
@@ -1116,7 +1071,8 @@ public class OrganizationPersistenceImpl
 			new Object[] {companyId, treePath}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<Organization> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<Organization, NoSuchOrganizationException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the organization where companyId = &#63; and name = &#63; or throws a <code>NoSuchOrganizationException</code> if it could not be found.
@@ -1130,21 +1086,8 @@ public class OrganizationPersistenceImpl
 	public Organization findByC_N(long companyId, String name)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByC_N(companyId, name);
-
-		if (organization == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOrganizationException(message);
-		}
-
-		return organization;
+		return _uniquePersistenceFinderByC_N.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
 	/**
@@ -1193,8 +1136,9 @@ public class OrganizationPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByC_LikeN;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByC_LikeN;
 
 	/**
 	 * Returns all the organizations where companyId = &#63; and name LIKE &#63;.
@@ -1293,16 +1237,9 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByC_LikeN_First(
-			companyId, name, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByC_LikeN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name}));
+		return _collectionPersistenceFinderByC_LikeN.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -1419,8 +1356,9 @@ public class OrganizationPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByGtO_C_P;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByGtO_C_P;
 
 	/**
 	 * Returns all the organizations where organizationId &gt; &#63; and companyId = &#63; and parentOrganizationId = &#63;.
@@ -1531,19 +1469,10 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByGtO_C_P_First(
-			organizationId, companyId, parentOrganizationId, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByGtO_C_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					organizationId, companyId, parentOrganizationId
-				}));
+		return _collectionPersistenceFinderByGtO_C_P.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {organizationId, companyId, parentOrganizationId},
+			orderByComparator);
 	}
 
 	/**
@@ -1683,8 +1612,9 @@ public class OrganizationPersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Organization>
-		_collectionPersistenceFinderByC_P_LikeN;
+	private FilterCollectionPersistenceFinder
+		<Organization, NoSuchOrganizationException>
+			_collectionPersistenceFinderByC_P_LikeN;
 
 	/**
 	 * Returns all the organizations where companyId = &#63; and parentOrganizationId = &#63; and name LIKE &#63;.
@@ -1795,17 +1725,10 @@ public class OrganizationPersistenceImpl
 			OrderByComparator<Organization> orderByComparator)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByC_P_LikeN_First(
-			companyId, parentOrganizationId, name, orderByComparator);
-
-		if (organization != null) {
-			return organization;
-		}
-
-		throw new NoSuchOrganizationException(
-			_collectionPersistenceFinderByC_P_LikeN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, parentOrganizationId, name}));
+		return _collectionPersistenceFinderByC_P_LikeN.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, parentOrganizationId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -1944,7 +1867,7 @@ public class OrganizationPersistenceImpl
 			new Object[] {companyId, parentOrganizationId, name}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<Organization>
+	private UniquePersistenceFinder<Organization, NoSuchOrganizationException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -1960,23 +1883,9 @@ public class OrganizationPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchOrganizationException {
 
-		Organization organization = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (organization == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOrganizationException(message);
-		}
-
-		return organization;
+		return _uniquePersistenceFinderByERC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -3080,18 +2989,10 @@ public class OrganizationPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"organization.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, Organization::getUuid));
+					"organization.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, Organization::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -3114,18 +3015,10 @@ public class OrganizationPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"organization.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, Organization::getUuid),
+					"organization.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, Organization::getUuid),
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId));
@@ -3151,15 +3044,7 @@ public class OrganizationPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId));
@@ -3189,15 +3074,7 @@ public class OrganizationPersistenceImpl
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
 				"organization.parentOrganizationId != 0",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"organization.parentOrganizationId != 0", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId));
@@ -3223,15 +3100,7 @@ public class OrganizationPersistenceImpl
 					new String[] {"logoId"}, false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "logoId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getLogoId));
@@ -3257,15 +3126,7 @@ public class OrganizationPersistenceImpl
 					new String[] {"companyId", "parentOrganizationId"}, false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId),
@@ -3292,15 +3153,7 @@ public class OrganizationPersistenceImpl
 					new String[] {"companyId", "treePath"}, false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId),
@@ -3342,15 +3195,7 @@ public class OrganizationPersistenceImpl
 					new String[] {"companyId", "name"}, false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId),
@@ -3386,15 +3231,7 @@ public class OrganizationPersistenceImpl
 					false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "organizationId", FinderColumn.Type.LONG,
 					">", true, true, Organization::getOrganizationId),
@@ -3430,15 +3267,7 @@ public class OrganizationPersistenceImpl
 					false),
 				_SQL_SELECT_ORGANIZATION_WHERE, _SQL_COUNT_ORGANIZATION_WHERE,
 				OrganizationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OrganizationImpl.class, Organization.class, "organization",
-					"Organization_", "organization.organizationId",
-					"SELECT DISTINCT {organization.*} FROM Organization_ organization WHERE ",
-					"SELECT {Organization_.*} FROM (SELECT DISTINCT organization.organizationId FROM Organization_ organization WHERE ",
-					") TEMP_TABLE INNER JOIN Organization_ ON TEMP_TABLE.organizationId = Organization_.organizationId",
-					"SELECT COUNT(DISTINCT organization.organizationId) AS COUNT_VALUE FROM Organization_ organization WHERE ",
-					OrganizationModelImpl.ORDER_BY_SQL,
-					OrganizationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"organization.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, Organization::getCompanyId),
@@ -3504,12 +3333,6 @@ public class OrganizationPersistenceImpl
 	private static final String _SQL_COUNT_ORGANIZATION_WHERE =
 		"SELECT COUNT(organization) FROM Organization organization WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Organization exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		OrganizationPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type", "groups"});
 
@@ -3519,4 +3342,4 @@ public class OrganizationPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2057990335
+// LIFERAY-SERVICE-BUILDER-HASH:-1834481039

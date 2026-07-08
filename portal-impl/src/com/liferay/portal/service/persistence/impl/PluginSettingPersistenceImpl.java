@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.NoSuchPluginSettingException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.PluginSetting;
 import com.liferay.portal.kernel.model.PluginSettingTable;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
@@ -66,8 +64,9 @@ public class PluginSettingPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PluginSetting>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<PluginSetting, NoSuchPluginSettingException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the plugin settings where companyId = &#63;.
@@ -107,16 +106,9 @@ public class PluginSettingPersistenceImpl
 			long companyId, OrderByComparator<PluginSetting> orderByComparator)
 		throws NoSuchPluginSettingException {
 
-		PluginSetting pluginSetting = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (pluginSetting != null) {
-			return pluginSetting;
-		}
-
-		throw new NoSuchPluginSettingException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -158,7 +150,7 @@ public class PluginSettingPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private UniquePersistenceFinder<PluginSetting>
+	private UniquePersistenceFinder<PluginSetting, NoSuchPluginSettingException>
 		_uniquePersistenceFinderByC_P_P;
 
 	/**
@@ -175,23 +167,9 @@ public class PluginSettingPersistenceImpl
 			long companyId, String pluginId, String pluginType)
 		throws NoSuchPluginSettingException {
 
-		PluginSetting pluginSetting = fetchByC_P_P(
-			companyId, pluginId, pluginType);
-
-		if (pluginSetting == null) {
-			String message =
-				_uniquePersistenceFinderByC_P_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, pluginId, pluginType});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPluginSettingException(message);
-		}
-
-		return pluginSetting;
+		return _uniquePersistenceFinderByC_P_P.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, pluginId, pluginType});
 	}
 
 	/**
@@ -455,6 +433,7 @@ public class PluginSettingPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_PLUGINSETTING_WHERE, _SQL_COUNT_PLUGINSETTING_WHERE,
 				PluginSettingModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"pluginSetting.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, PluginSetting::getCompanyId));
@@ -503,12 +482,6 @@ public class PluginSettingPersistenceImpl
 	private static final String _SQL_COUNT_PLUGINSETTING_WHERE =
 		"SELECT COUNT(pluginSetting) FROM PluginSetting pluginSetting WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PluginSetting exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PluginSettingPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"active"});
 
@@ -518,4 +491,4 @@ public class PluginSettingPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:141921137
+// LIFERAY-SERVICE-BUILDER-HASH:-781199671

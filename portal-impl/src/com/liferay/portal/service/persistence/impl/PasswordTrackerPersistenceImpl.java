@@ -66,8 +66,9 @@ public class PasswordTrackerPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PasswordTracker>
-		_collectionPersistenceFinderByUserId;
+	private CollectionPersistenceFinder
+		<PasswordTracker, NoSuchPasswordTrackerException>
+			_collectionPersistenceFinderByUserId;
 
 	/**
 	 * Returns an ordered range of all the password trackers where userId = &#63;.
@@ -107,16 +108,9 @@ public class PasswordTrackerPersistenceImpl
 			long userId, OrderByComparator<PasswordTracker> orderByComparator)
 		throws NoSuchPasswordTrackerException {
 
-		PasswordTracker passwordTracker = fetchByUserId_First(
-			userId, orderByComparator);
-
-		if (passwordTracker != null) {
-			return passwordTracker;
-		}
-
-		throw new NoSuchPasswordTrackerException(
-			_collectionPersistenceFinderByUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {userId}));
+		return _collectionPersistenceFinderByUserId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {userId},
+			orderByComparator);
 	}
 
 	/**
@@ -382,7 +376,7 @@ public class PasswordTrackerPersistenceImpl
 				_SQL_SELECT_PASSWORDTRACKER_WHERE,
 				_SQL_COUNT_PASSWORDTRACKER_WHERE,
 				PasswordTrackerModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"passwordTracker.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, PasswordTracker::getUserId));
@@ -408,9 +402,6 @@ public class PasswordTrackerPersistenceImpl
 	private static final String _SQL_COUNT_PASSWORDTRACKER_WHERE =
 		"SELECT COUNT(passwordTracker) FROM PasswordTracker passwordTracker WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PasswordTracker exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"password"});
 
@@ -420,4 +411,4 @@ public class PasswordTrackerPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1617238209
+// LIFERAY-SERVICE-BUILDER-HASH:-1022216538

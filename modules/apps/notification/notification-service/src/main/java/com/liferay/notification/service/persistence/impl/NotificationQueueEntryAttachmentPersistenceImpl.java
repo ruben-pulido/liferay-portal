@@ -74,8 +74,10 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<NotificationQueueEntryAttachment>
-		_collectionPersistenceFinderByNotificationQueueEntryId;
+	private CollectionPersistenceFinder
+		<NotificationQueueEntryAttachment,
+		 NoSuchNotificationQueueEntryAttachmentException>
+			_collectionPersistenceFinderByNotificationQueueEntryId;
 
 	/**
 	 * Returns an ordered range of all the notification queue entry attachments where notificationQueueEntryId = &#63;.
@@ -120,19 +122,9 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 					orderByComparator)
 		throws NoSuchNotificationQueueEntryAttachmentException {
 
-		NotificationQueueEntryAttachment notificationQueueEntryAttachment =
-			fetchByNotificationQueueEntryId_First(
-				notificationQueueEntryId, orderByComparator);
-
-		if (notificationQueueEntryAttachment != null) {
-			return notificationQueueEntryAttachment;
-		}
-
-		throw new NoSuchNotificationQueueEntryAttachmentException(
-			_collectionPersistenceFinderByNotificationQueueEntryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationQueueEntryId}));
+		return _collectionPersistenceFinderByNotificationQueueEntryId.findFirst(
+			finderCache, new Object[] {notificationQueueEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -378,6 +370,11 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "notificationQueueEntryAttachmentId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_NOTIFICATIONQUEUEENTRYATTACHMENT;
 	}
@@ -417,7 +414,7 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONQUEUEENTRYATTACHMENT_WHERE,
 				_SQL_COUNT_NOTIFICATIONQUEUEENTRYATTACHMENT_WHERE,
 				NotificationQueueEntryAttachmentModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationQueueEntryAttachment.",
 					"notificationQueueEntryId", FinderColumn.Type.LONG, "=",
@@ -482,9 +479,6 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 		_SQL_COUNT_NOTIFICATIONQUEUEENTRYATTACHMENT_WHERE =
 			"SELECT COUNT(notificationQueueEntryAttachment) FROM NotificationQueueEntryAttachment notificationQueueEntryAttachment WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No NotificationQueueEntryAttachment exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"notificationQueueEntryAttachmentId"});
 
@@ -494,4 +488,4 @@ public class NotificationQueueEntryAttachmentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-310615528
+// LIFERAY-SERVICE-BUILDER-HASH:765278948

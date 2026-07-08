@@ -113,11 +113,7 @@ public class CSDiagramEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CSDiagramEntry newCSDiagramEntry = _persistence.create(pk);
-
-		newCSDiagramEntry.setMvccVersion(RandomTestUtil.nextLong());
+		CSDiagramEntry newCSDiagramEntry = addCSDiagramEntry();
 
 		newCSDiagramEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -148,7 +144,9 @@ public class CSDiagramEntryPersistenceTest {
 
 		newCSDiagramEntry.setSku(RandomTestUtil.randomString());
 
-		_csDiagramEntries.add(_persistence.update(newCSDiagramEntry));
+		newCSDiagramEntry = _persistence.update(newCSDiagramEntry);
+
+		_csDiagramEntries.add(newCSDiagramEntry);
 
 		CSDiagramEntry existingCSDiagramEntry = _persistence.findByPrimaryKey(
 			newCSDiagramEntry.getPrimaryKey());
@@ -587,8 +585,6 @@ public class CSDiagramEntryPersistenceTest {
 
 		CSDiagramEntry csDiagramEntry = _persistence.create(pk);
 
-		csDiagramEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		csDiagramEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		csDiagramEntry.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -628,4 +624,4 @@ public class CSDiagramEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2120872262
+// LIFERAY-SERVICE-BUILDER-HASH:-327564316

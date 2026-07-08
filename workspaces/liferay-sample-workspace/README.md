@@ -30,9 +30,17 @@ For `liferay-sample-etc-cron` and `liferay-sample-etc-spring-boot` the third typ
 
 ### List of Client Extensions
 
+- *liferay-sample-audiences-custom-attributes*
+
+	Add custom attributes to detect a visitor's audiences.
+
 - *liferay-sample-batch*
 
 	...
+
+- *liferay-sample-commerce-checkout-step*
+
+	Add a checkout step to the commerce checkout widget.
 
 - *liferay-sample-commerce-payment-integration*
 
@@ -70,9 +78,25 @@ For `liferay-sample-etc-cron` and `liferay-sample-etc-spring-boot` the third typ
 
 	Build a custom element that uses `react`, `react-dom`, and `vite`.
 
-- *liferay-sample-editor-config-contributor*
+- *liferay-sample-custom-element-7*
 
-	Build a JavaScript function to configure WYSIWYG editors.
+	Build a custom element that connects to a given frontend data set.
+
+- *liferay-sample-editor-config-contributor-1*
+
+	Build a JavaScript function to configure CKEditor 4 and AlloyEditor editors.
+
+- *liferay-sample-editor-config-contributor-2*
+
+	Build a JavaScript function to add the CKEditor 5 WordCount plugin.
+
+- *liferay-sample-editor-config-contributor-3*
+
+	Add a custom timestamp button to CKEditor 5 as an example of a customer style plugin implementation without portal dependencies.
+
+- *liferay-sample-editor-config-contributor-4*
+
+	Add a custom style (Featured Content) to the CKEditor 5 Styles dropdown as an example of extending the editor's style definitions via a client extension.
 
 - *liferay-sample-etc-cron*
 

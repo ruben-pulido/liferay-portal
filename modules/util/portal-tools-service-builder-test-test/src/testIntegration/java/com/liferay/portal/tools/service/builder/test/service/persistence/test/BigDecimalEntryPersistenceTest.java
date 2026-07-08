@@ -108,16 +108,16 @@ public class BigDecimalEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		BigDecimalEntry newBigDecimalEntry = _persistence.create(pk);
+		BigDecimalEntry newBigDecimalEntry = addBigDecimalEntry();
 
 		newBigDecimalEntry.setCompanyId(RandomTestUtil.nextLong());
 
 		newBigDecimalEntry.setBigDecimalValue(
 			new BigDecimal(RandomTestUtil.nextDouble()));
 
-		_bigDecimalEntries.add(_persistence.update(newBigDecimalEntry));
+		newBigDecimalEntry = _persistence.update(newBigDecimalEntry);
+
+		_bigDecimalEntries.add(newBigDecimalEntry);
 
 		BigDecimalEntry existingBigDecimalEntry = _persistence.findByPrimaryKey(
 			newBigDecimalEntry.getPrimaryKey());
@@ -395,4 +395,4 @@ public class BigDecimalEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1426400870
+// LIFERAY-SERVICE-BUILDER-HASH:1910733508

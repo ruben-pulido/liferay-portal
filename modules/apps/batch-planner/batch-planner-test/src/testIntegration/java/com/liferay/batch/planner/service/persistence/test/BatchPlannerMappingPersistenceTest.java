@@ -113,11 +113,7 @@ public class BatchPlannerMappingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		BatchPlannerMapping newBatchPlannerMapping = _persistence.create(pk);
-
-		newBatchPlannerMapping.setMvccVersion(RandomTestUtil.nextLong());
+		BatchPlannerMapping newBatchPlannerMapping = addBatchPlannerMapping();
 
 		newBatchPlannerMapping.setCompanyId(RandomTestUtil.nextLong());
 
@@ -145,7 +141,9 @@ public class BatchPlannerMappingPersistenceTest {
 
 		newBatchPlannerMapping.setScript(RandomTestUtil.randomString());
 
-		_batchPlannerMappings.add(_persistence.update(newBatchPlannerMapping));
+		newBatchPlannerMapping = _persistence.update(newBatchPlannerMapping);
+
+		_batchPlannerMappings.add(newBatchPlannerMapping);
 
 		BatchPlannerMapping existingBatchPlannerMapping =
 			_persistence.findByPrimaryKey(
@@ -545,8 +543,6 @@ public class BatchPlannerMappingPersistenceTest {
 
 		BatchPlannerMapping batchPlannerMapping = _persistence.create(pk);
 
-		batchPlannerMapping.setMvccVersion(RandomTestUtil.nextLong());
-
 		batchPlannerMapping.setCompanyId(RandomTestUtil.nextLong());
 
 		batchPlannerMapping.setUserId(RandomTestUtil.nextLong());
@@ -580,4 +576,4 @@ public class BatchPlannerMappingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:383857715
+// LIFERAY-SERVICE-BUILDER-HASH:1919057240

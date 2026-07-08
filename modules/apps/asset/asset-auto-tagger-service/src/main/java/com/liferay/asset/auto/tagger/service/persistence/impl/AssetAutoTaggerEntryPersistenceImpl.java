@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class AssetAutoTaggerEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AssetAutoTaggerEntry>
-		_collectionPersistenceFinderByAssetEntryId;
+	private CollectionPersistenceFinder
+		<AssetAutoTaggerEntry, NoSuchEntryException>
+			_collectionPersistenceFinderByAssetEntryId;
 
 	/**
 	 * Returns an ordered range of all the asset auto tagger entries where assetEntryId = &#63;.
@@ -124,16 +123,8 @@ public class AssetAutoTaggerEntryPersistenceImpl
 			OrderByComparator<AssetAutoTaggerEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetAutoTaggerEntry assetAutoTaggerEntry = fetchByAssetEntryId_First(
-			assetEntryId, orderByComparator);
-
-		if (assetAutoTaggerEntry != null) {
-			return assetAutoTaggerEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByAssetEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {assetEntryId}));
+		return _collectionPersistenceFinderByAssetEntryId.findFirst(
+			finderCache, new Object[] {assetEntryId}, orderByComparator);
 	}
 
 	/**
@@ -175,8 +166,9 @@ public class AssetAutoTaggerEntryPersistenceImpl
 			finderCache, new Object[] {assetEntryId});
 	}
 
-	private CollectionPersistenceFinder<AssetAutoTaggerEntry>
-		_collectionPersistenceFinderByAssetTagId;
+	private CollectionPersistenceFinder
+		<AssetAutoTaggerEntry, NoSuchEntryException>
+			_collectionPersistenceFinderByAssetTagId;
 
 	/**
 	 * Returns an ordered range of all the asset auto tagger entries where assetTagId = &#63;.
@@ -217,16 +209,8 @@ public class AssetAutoTaggerEntryPersistenceImpl
 			OrderByComparator<AssetAutoTaggerEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		AssetAutoTaggerEntry assetAutoTaggerEntry = fetchByAssetTagId_First(
-			assetTagId, orderByComparator);
-
-		if (assetAutoTaggerEntry != null) {
-			return assetAutoTaggerEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByAssetTagId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {assetTagId}));
+		return _collectionPersistenceFinderByAssetTagId.findFirst(
+			finderCache, new Object[] {assetTagId}, orderByComparator);
 	}
 
 	/**
@@ -268,7 +252,7 @@ public class AssetAutoTaggerEntryPersistenceImpl
 			finderCache, new Object[] {assetTagId});
 	}
 
-	private UniquePersistenceFinder<AssetAutoTaggerEntry>
+	private UniquePersistenceFinder<AssetAutoTaggerEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByA_A;
 
 	/**
@@ -283,23 +267,8 @@ public class AssetAutoTaggerEntryPersistenceImpl
 	public AssetAutoTaggerEntry findByA_A(long assetEntryId, long assetTagId)
 		throws NoSuchEntryException {
 
-		AssetAutoTaggerEntry assetAutoTaggerEntry = fetchByA_A(
-			assetEntryId, assetTagId);
-
-		if (assetAutoTaggerEntry == null) {
-			String message =
-				_uniquePersistenceFinderByA_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {assetEntryId, assetTagId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return assetAutoTaggerEntry;
+		return _uniquePersistenceFinderByA_A.find(
+			finderCache, new Object[] {assetEntryId, assetTagId});
 	}
 
 	/**
@@ -653,7 +622,7 @@ public class AssetAutoTaggerEntryPersistenceImpl
 				_SQL_SELECT_ASSETAUTOTAGGERENTRY_WHERE,
 				_SQL_COUNT_ASSETAUTOTAGGERENTRY_WHERE,
 				AssetAutoTaggerEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetAutoTaggerEntry.", "assetEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -681,7 +650,7 @@ public class AssetAutoTaggerEntryPersistenceImpl
 				_SQL_SELECT_ASSETAUTOTAGGERENTRY_WHERE,
 				_SQL_COUNT_ASSETAUTOTAGGERENTRY_WHERE,
 				AssetAutoTaggerEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"assetAutoTaggerEntry.", "assetTagId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -760,16 +729,10 @@ public class AssetAutoTaggerEntryPersistenceImpl
 	private static final String _SQL_COUNT_ASSETAUTOTAGGERENTRY_WHERE =
 		"SELECT COUNT(assetAutoTaggerEntry) FROM AssetAutoTaggerEntry assetAutoTaggerEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AssetAutoTaggerEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AssetAutoTaggerEntryPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-199745540
+// LIFERAY-SERVICE-BUILDER-HASH:181971987

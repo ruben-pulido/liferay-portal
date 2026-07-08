@@ -5,7 +5,6 @@
 
 package com.liferay.portal.tools.service.builder.test.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
@@ -66,8 +65,9 @@ public class PermissionCheckFinderEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<PermissionCheckFinderEntry>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<PermissionCheckFinderEntry, NoSuchPermissionCheckFinderEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the permission check finder entries where groupId = &#63;.
@@ -108,23 +108,9 @@ public class PermissionCheckFinderEntryPersistenceImpl
 			OrderByComparator<PermissionCheckFinderEntry> orderByComparator)
 		throws NoSuchPermissionCheckFinderEntryException {
 
-		PermissionCheckFinderEntry permissionCheckFinderEntry =
-			fetchByGroupId_First(groupId, orderByComparator);
-
-		if (permissionCheckFinderEntry != null) {
-			return permissionCheckFinderEntry;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchPermissionCheckFinderEntryException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -504,19 +490,7 @@ public class PermissionCheckFinderEntryPersistenceImpl
 				_SQL_SELECT_PERMISSIONCHECKFINDERENTRY_WHERE,
 				_SQL_COUNT_PERMISSIONCHECKFINDERENTRY_WHERE,
 				PermissionCheckFinderEntryModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					PermissionCheckFinderEntryImpl.class,
-					PermissionCheckFinderEntry.class,
-					"permissionCheckFinderEntry", "PermissionCheckFinderEntry",
-					"permissionCheckFinderEntry.permissionCheckFinderEntryId",
-					"SELECT DISTINCT {permissionCheckFinderEntry.*} FROM PermissionCheckFinderEntry permissionCheckFinderEntry WHERE ",
-					"SELECT {PermissionCheckFinderEntry.*} FROM (SELECT DISTINCT permissionCheckFinderEntry.permissionCheckFinderEntryId FROM PermissionCheckFinderEntry permissionCheckFinderEntry WHERE ",
-					") TEMP_TABLE INNER JOIN PermissionCheckFinderEntry ON TEMP_TABLE.permissionCheckFinderEntryId = PermissionCheckFinderEntry.permissionCheckFinderEntryId",
-					"SELECT COUNT(DISTINCT permissionCheckFinderEntry.permissionCheckFinderEntryId) AS COUNT_VALUE FROM PermissionCheckFinderEntry permissionCheckFinderEntry WHERE ",
-					PermissionCheckFinderEntryModelImpl.ORDER_BY_SQL,
-					PermissionCheckFinderEntryModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new ArrayableFinderColumn<>(
 					"permissionCheckFinderEntry.", "groupId",
 					FinderColumn.Type.LONG, "=", false, true, true,
@@ -549,9 +523,6 @@ public class PermissionCheckFinderEntryPersistenceImpl
 	private static final String _SQL_COUNT_PERMISSIONCHECKFINDERENTRY_WHERE =
 		"SELECT COUNT(permissionCheckFinderEntry) FROM PermissionCheckFinderEntry permissionCheckFinderEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PermissionCheckFinderEntry exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"integer", "type"});
 
@@ -561,4 +532,4 @@ public class PermissionCheckFinderEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-833753221
+// LIFERAY-SERVICE-BUILDER-HASH:-1297583294

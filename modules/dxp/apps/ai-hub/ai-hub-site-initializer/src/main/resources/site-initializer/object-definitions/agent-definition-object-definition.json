@@ -4,10 +4,11 @@
 	"className": "com.liferay.object.model.ObjectDefinition#P8M2",
 	"enableFormContainer": false,
 	"enableIndexSearch": true,
+	"enableObjectEntryHistory": true,
 	"externalReferenceCode": "L_AI_HUB_AGENT_DEFINITION",
 	"friendlyURLSeparator": "l",
 	"label": {
-		"en_US": "Agent Definition"
+		"en_US": "AI Hub Agent Definition"
 	},
 	"modifiable": true,
 	"name": "AIHubAgentDefinition",
@@ -74,6 +75,19 @@
 			"type": "String"
 		},
 		{
+			"DBType": "Boolean",
+			"businessType": "Boolean",
+			"defaultValue": false,
+			"externalReferenceCode": "SYSTEM",
+			"indexed": true,
+			"label": {
+				"en_US": "System"
+			},
+			"name": "system",
+			"system": true,
+			"type": "Boolean"
+		},
+		{
 			"DBType": "String",
 			"businessType": "Text",
 			"defaultValue": "null",
@@ -113,7 +127,7 @@
 			"indexed": true,
 			"indexedLanguageId": "en_US",
 			"label": {
-				"en_US": "Account to Agent Definitions"
+				"en_US": "Account to AI Hub Agent Definitions"
 			},
 			"name": "r_accountToAIHubAgentDefinitions_accountEntryId",
 			"objectDefinitionExternalReferenceCode1": "L_ACCOUNT",
@@ -138,7 +152,7 @@
 	"objectFolderExternalReferenceCode": "default",
 	"panelCategoryKey": "control_panel.object",
 	"pluralLabel": {
-		"en_US": "Agent Definitions"
+		"en_US": "AI Hub Agent Definitions"
 	},
 	"portlet": true,
 	"scope": "company",

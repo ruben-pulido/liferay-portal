@@ -69,7 +69,7 @@ public class CTMessagePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTMessage>
+	private CollectionPersistenceFinder<CTMessage, NoSuchMessageException>
 		_collectionPersistenceFinderByCtCollectionId;
 
 	/**
@@ -110,16 +110,8 @@ public class CTMessagePersistenceImpl
 			long ctCollectionId, OrderByComparator<CTMessage> orderByComparator)
 		throws NoSuchMessageException {
 
-		CTMessage ctMessage = fetchByCtCollectionId_First(
-			ctCollectionId, orderByComparator);
-
-		if (ctMessage != null) {
-			return ctMessage;
-		}
-
-		throw new NoSuchMessageException(
-			_collectionPersistenceFinderByCtCollectionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ctCollectionId}));
+		return _collectionPersistenceFinderByCtCollectionId.findFirst(
+			finderCache, new Object[] {ctCollectionId}, orderByComparator);
 	}
 
 	/**
@@ -353,7 +345,8 @@ public class CTMessagePersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"ctCollectionId"}, false),
 				_SQL_SELECT_CTMESSAGE_WHERE, _SQL_COUNT_CTMESSAGE_WHERE,
-				CTMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTMessageModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctMessage.", "ctCollectionId", FinderColumn.Type.LONG, "=",
 					true, true, CTMessage::getCtCollectionId));
@@ -412,13 +405,10 @@ public class CTMessagePersistenceImpl
 	private static final String _SQL_COUNT_CTMESSAGE_WHERE =
 		"SELECT COUNT(ctMessage) FROM CTMessage ctMessage WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTMessage exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-536133942
+// LIFERAY-SERVICE-BUILDER-HASH:-1486607077

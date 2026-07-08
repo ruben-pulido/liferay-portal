@@ -52,6 +52,7 @@ import com.liferay.expando.kernel.service.ExpandoRowLocalService;
 import com.liferay.expando.kernel.util.ExpandoBridgeUtil;
 import com.liferay.exportimport.kernel.exception.ExportImportContentValidationException;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.friendly.url.constants.FriendlyURLEntryConstants;
 import com.liferay.friendly.url.exception.NoSuchFriendlyURLEntryLocalizationException;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.model.FriendlyURLEntryLocalization;
@@ -108,8 +109,6 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.configuration.module.configuration.ConfigurationProvider;
 import com.liferay.portal.kernel.comment.CommentManager;
-import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DefaultActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.IndexableActionableDynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
@@ -943,13 +942,23 @@ public class JournalArticleLocalServiceImpl
 	public void checkArticles(long companyId) throws PortalException {
 		Date date = new Date();
 
-		long checkInterval = getArticleCheckInterval(companyId);
+		JournalServiceConfiguration journalServiceConfiguration =
+			configurationProvider.getCompanyConfiguration(
+				JournalServiceConfiguration.class, companyId);
 
-		checkArticlesByExpirationDate(companyId, date, checkInterval);
+		long checkInterval =
+			journalServiceConfiguration.checkInterval() * Time.MINUTE;
+
+		int journalArticleCheckLimit =
+			journalServiceConfiguration.journalArticleCheckLimit();
+
+		checkArticlesByExpirationDate(
+			companyId, date, checkInterval, journalArticleCheckLimit);
 
 		checkArticlesByReviewDate(companyId, date);
 
-		checkArticlesByDisplayDate(date, checkInterval);
+		checkArticlesByDisplayDate(
+			companyId, date, checkInterval, journalArticleCheckLimit);
 
 		_companyIdPreviousCheckDate.put(companyId, date);
 	}
@@ -1156,7 +1165,8 @@ public class JournalArticleLocalServiceImpl
 
 			if (!friendlyURLEntries.isEmpty()) {
 				friendlyURLEntryLocalService.deleteFriendlyURLEntry(
-					article.getGroupId(), JournalArticle.class,
+					article.getGroupId(),
+					_classNameLocalService.getClassNameId(JournalArticle.class),
 					article.getResourcePrimKey());
 			}
 
@@ -1544,12 +1554,34 @@ public class JournalArticleLocalServiceImpl
 				groupId, articleId, QueryUtil.ALL_POS, QueryUtil.ALL_POS,
 				ArticleVersionComparator.getInstance(true));
 
-			for (JournalArticle article : articles) {
-				if (!article.isExpired()) {
-					journalArticleLocalService.expireArticle(
-						userId, groupId, article.getArticleId(),
-						article.getVersion(), articleURL, serviceContext);
+			boolean expired = false;
+			boolean indexingEnabled = serviceContext.isIndexingEnabled();
+
+			try {
+				serviceContext.setIndexingEnabled(false);
+
+				for (JournalArticle article : articles) {
+					if (!article.isExpired()) {
+						journalArticleLocalService.expireArticle(
+							userId, groupId, article.getArticleId(),
+							article.getVersion(), articleURL, serviceContext);
+
+						expired = true;
+					}
 				}
+			}
+			finally {
+				serviceContext.setIndexingEnabled(indexingEnabled);
+			}
+
+			if (expired && serviceContext.isIndexingEnabled()) {
+				Indexer<JournalArticle> indexer =
+					IndexerRegistryUtil.nullSafeGetIndexer(
+						JournalArticle.class);
+
+				indexer.reindex(
+					getLatestArticle(
+						groupId, articleId, WorkflowConstants.STATUS_ANY));
 			}
 		}
 		else {
@@ -1630,7 +1662,11 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				groupId, JournalArticle.class, urlTitle);
+				groupId,
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
+				urlTitle);
 
 		if (friendlyURLEntry != null) {
 			JournalArticle article = fetchLatestArticle(
@@ -1869,7 +1905,11 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				groupId, JournalArticle.class, urlTitle);
+				groupId,
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
+				urlTitle);
 
 		if (friendlyURLEntry != null) {
 			JournalArticle article = fetchLatestArticle(
@@ -2060,7 +2100,11 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				groupId, JournalArticle.class, urlTitle);
+				groupId,
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
+				urlTitle);
 
 		if (friendlyURLEntry != null) {
 			return getLatestArticle(
@@ -3153,7 +3197,11 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				groupId, JournalArticle.class, urlTitle);
+				groupId,
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
+				urlTitle);
 
 		if (friendlyURLEntry != null) {
 			articles = journalArticlePersistence.findByR_ST(
@@ -3464,7 +3512,11 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				groupId, JournalArticle.class, urlTitle);
+				groupId,
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
+				urlTitle);
 
 		if (friendlyURLEntry != null) {
 			article = fetchLatestArticle(friendlyURLEntry.getClassPK(), status);
@@ -4272,7 +4324,10 @@ public class JournalArticleLocalServiceImpl
 
 		FriendlyURLEntry friendlyURLEntry =
 			friendlyURLEntryLocalService.fetchFriendlyURLEntry(
-				article.getGroupId(), JournalArticle.class,
+				article.getGroupId(),
+				_classNameLocalService.getClassNameId(JournalArticle.class),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
 				article.getUrlTitle());
 
 		if (friendlyURLEntry == null) {
@@ -5989,7 +6044,8 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void checkArticlesByCompanyIdAndExpirationDate(
-			long companyId, Date expirationDate, Date nextExpirationDate)
+			long companyId, Date expirationDate, Date nextExpirationDate,
+			int journalArticleCheckLimit)
 		throws PortalException {
 
 		IndexableActionableDynamicQuery indexableActionableDynamicQuery =
@@ -6022,6 +6078,8 @@ public class JournalArticleLocalServiceImpl
 							RestrictionsFactoryUtil.eq(
 								"status",
 								WorkflowConstants.STATUS_SCHEDULED))));
+
+				dynamicQuery.setLimit(0, journalArticleCheckLimit);
 			});
 		indexableActionableDynamicQuery.setCompanyId(companyId);
 		indexableActionableDynamicQuery.setPerformActionMethod(
@@ -6077,11 +6135,11 @@ public class JournalArticleLocalServiceImpl
 						return indexer.getDocument(article);
 					}
 				}
-				catch (PortalException portalException) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(
+				catch (Exception exception) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(
 							"Unable to expire article " + article.getId(),
-							portalException);
+							exception);
 					}
 				}
 
@@ -6092,8 +6150,8 @@ public class JournalArticleLocalServiceImpl
 	}
 
 	protected void checkArticlesByDisplayDate(
-			Date displayDate, long checkInterval)
-		throws PortalException {
+		long companyId, Date displayDate, long checkInterval,
+		int journalArticleCheckLimit) {
 
 		Date nextExpirationDate = new Date(
 			displayDate.getTime() + checkInterval);
@@ -6106,63 +6164,62 @@ public class JournalArticleLocalServiceImpl
 					WorkflowConstants.STATUS_SCHEDULED));
 		}
 
-		ActionableDynamicQuery actionableDynamicQuery =
-			getActionableDynamicQuery();
+		List<JournalArticle> articles = journalArticlePersistence.dslQuery(
+			DSLQueryFactoryUtil.select(
+				JournalArticleTable.INSTANCE
+			).from(
+				JournalArticleTable.INSTANCE
+			).where(
+				JournalArticleTable.INSTANCE.companyId.eq(
+					companyId
+				).and(
+					JournalArticleTable.INSTANCE.displayDate.lt(displayDate)
+				).and(
+					JournalArticleTable.INSTANCE.expirationDate.isNull(
+					).or(
+						JournalArticleTable.INSTANCE.expirationDate.gte(
+							nextExpirationDate)
+					).withParentheses()
+				).and(
+					JournalArticleTable.INSTANCE.status.eq(
+						WorkflowConstants.STATUS_SCHEDULED)
+				)
+			).limit(
+				0, journalArticleCheckLimit
+			),
+			false);
 
-		actionableDynamicQuery.setAddCriteriaMethod(
-			dynamicQuery -> {
-				Property displayDateProperty = PropertyFactoryUtil.forName(
-					"displayDate");
-
-				dynamicQuery.add(displayDateProperty.lt(displayDate));
-
-				dynamicQuery.add(
-					RestrictionsFactoryUtil.or(
-						RestrictionsFactoryUtil.isNull("expirationDate"),
-						RestrictionsFactoryUtil.ge(
-							"expirationDate", nextExpirationDate)));
-
-				Property statusProperty = PropertyFactoryUtil.forName("status");
-
-				dynamicQuery.add(
-					statusProperty.eq(WorkflowConstants.STATUS_SCHEDULED));
-			});
-		actionableDynamicQuery.setPerformActionMethod(
-			(JournalArticle article) -> {
-				try {
-					if (_log.isDebugEnabled()) {
-						_log.debug("Publishing article " + article.getId());
-					}
-
-					long userId = _portal.getValidUserId(
-						article.getCompanyId(), article.getStatusByUserId());
-
-					ServiceContext serviceContext = new ServiceContext();
-
-					serviceContext.setCommand(Constants.UPDATE);
-					serviceContext.setScopeGroupId(article.getGroupId());
-
-					journalArticleLocalService.updateStatus(
-						userId, article.getId(),
-						WorkflowConstants.STATUS_APPROVED, new HashMap<>(),
-						serviceContext);
+		for (JournalArticle article : articles) {
+			try {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Publishing article " + article.getId());
 				}
-				catch (PortalException portalException) {
-					if (_log.isDebugEnabled()) {
-						_log.debug(
-							"Unable to publish article " + article.getId(),
-							portalException);
-					}
-				}
-			});
-		actionableDynamicQuery.setTransactionConfig(
-			DefaultActionableDynamicQuery.REQUIRES_NEW_TRANSACTION_CONFIG);
 
-		actionableDynamicQuery.performActions();
+				long userId = _portal.getValidUserId(
+					article.getCompanyId(), article.getStatusByUserId());
+
+				ServiceContext serviceContext = new ServiceContext();
+
+				serviceContext.setCommand(Constants.UPDATE);
+				serviceContext.setScopeGroupId(article.getGroupId());
+
+				journalArticleLocalService.updateStatus(
+					userId, article.getId(), WorkflowConstants.STATUS_APPROVED,
+					new HashMap<>(), serviceContext);
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to publish article " + article.getId(),
+						exception);
+				}
+			}
+		}
 	}
 
 	protected void checkArticlesByExpirationDate(
-			long companyId, Date expirationDate, long checkInterval)
+			long companyId, Date expirationDate, long checkInterval,
+			int journalArticleCheckLimit)
 		throws PortalException {
 
 		Date nextExpirationDate = new Date(
@@ -6177,7 +6234,8 @@ public class JournalArticleLocalServiceImpl
 		}
 
 		checkArticlesByCompanyIdAndExpirationDate(
-			companyId, expirationDate, nextExpirationDate);
+			companyId, expirationDate, nextExpirationDate,
+			journalArticleCheckLimit);
 
 		_companyIdPreviousCheckDate.computeIfAbsent(
 			companyId,
@@ -6380,19 +6438,6 @@ public class JournalArticleLocalServiceImpl
 			}
 
 			ddmFormFieldValue.setValue(newValue);
-		}
-	}
-
-	protected long getArticleCheckInterval(long companyId) {
-		try {
-			JournalServiceConfiguration journalServiceConfiguration =
-				configurationProvider.getCompanyConfiguration(
-					JournalServiceConfiguration.class, companyId);
-
-			return journalServiceConfiguration.checkInterval() * Time.MINUTE;
-		}
-		catch (PortalException portalException) {
-			throw new RuntimeException(portalException);
 		}
 	}
 
@@ -7226,23 +7271,32 @@ public class JournalArticleLocalServiceImpl
 		JournalArticle previousApprovedArticle = getPreviousApprovedArticle(
 			article);
 
+		AssetEntry assetEntry = _assetEntryLocalService.fetchEntry(
+			JournalArticle.class.getName(), article.getResourcePrimKey());
+
+		if (assetEntry == null) {
+			return;
+		}
+
 		if (previousApprovedArticle.getVersion() == article.getVersion()) {
-			AssetEntry assetEntry = _assetEntryLocalService.updateVisible(
-				JournalArticle.class.getName(), article.getResourcePrimKey(),
-				false);
+			assetEntry = _assetEntryLocalService.updateVisible(
+				assetEntry, false);
 
 			if (article.getStatus() == WorkflowConstants.STATUS_EXPIRED) {
 				assetEntry.setExpirationDate(article.getExpirationDate());
 
-				_assetEntryLocalService.updateAssetEntry(assetEntry);
+				assetEntry = _assetEntryLocalService.updateAssetEntry(
+					assetEntry);
 			}
 		}
 		else {
-			AssetEntry assetEntry = _assetEntryLocalService.updateEntry(
-				JournalArticle.class.getName(), article.getResourcePrimKey(),
-				previousApprovedArticle.getDisplayDate(),
-				previousApprovedArticle.getExpirationDate(),
-				isListable(article), true);
+			assetEntry.setListable(isListable(article));
+			assetEntry.setPublishDate(previousApprovedArticle.getDisplayDate());
+			assetEntry.setExpirationDate(
+				previousApprovedArticle.getExpirationDate());
+
+			assetEntry = _assetEntryLocalService.updateVisible(
+				assetEntry, true);
 
 			assetEntry.setModifiedDate(
 				previousApprovedArticle.getModifiedDate());

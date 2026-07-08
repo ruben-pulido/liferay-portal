@@ -13,7 +13,6 @@ import com.liferay.dynamic.data.mapping.model.impl.DDMDataProviderInstanceModelI
 import com.liferay.dynamic.data.mapping.service.persistence.DDMDataProviderInstancePersistence;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMDataProviderInstanceUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.impl.constants.DDMPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -21,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -91,8 +88,9 @@ public class DDMDataProviderInstancePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMDataProviderInstance>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<DDMDataProviderInstance, NoSuchDataProviderInstanceException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the ddm data provider instances where uuid = &#63;.
@@ -133,16 +131,8 @@ public class DDMDataProviderInstancePersistenceImpl
 			OrderByComparator<DDMDataProviderInstance> orderByComparator)
 		throws NoSuchDataProviderInstanceException {
 
-		DDMDataProviderInstance ddmDataProviderInstance = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (ddmDataProviderInstance != null) {
-			return ddmDataProviderInstance;
-		}
-
-		throw new NoSuchDataProviderInstanceException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -184,8 +174,9 @@ public class DDMDataProviderInstancePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DDMDataProviderInstance>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<DDMDataProviderInstance, NoSuchDataProviderInstanceException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the ddm data provider instance where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchDataProviderInstanceException</code> if it could not be found.
@@ -199,22 +190,8 @@ public class DDMDataProviderInstancePersistenceImpl
 	public DDMDataProviderInstance findByUUID_G(String uuid, long groupId)
 		throws NoSuchDataProviderInstanceException {
 
-		DDMDataProviderInstance ddmDataProviderInstance = fetchByUUID_G(
-			uuid, groupId);
-
-		if (ddmDataProviderInstance == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchDataProviderInstanceException(message);
-		}
-
-		return ddmDataProviderInstance;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -263,8 +240,9 @@ public class DDMDataProviderInstancePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DDMDataProviderInstance>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<DDMDataProviderInstance, NoSuchDataProviderInstanceException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the ddm data provider instances where uuid = &#63; and companyId = &#63;.
@@ -307,16 +285,8 @@ public class DDMDataProviderInstancePersistenceImpl
 			OrderByComparator<DDMDataProviderInstance> orderByComparator)
 		throws NoSuchDataProviderInstanceException {
 
-		DDMDataProviderInstance ddmDataProviderInstance = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ddmDataProviderInstance != null) {
-			return ddmDataProviderInstance;
-		}
-
-		throw new NoSuchDataProviderInstanceException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -361,8 +331,9 @@ public class DDMDataProviderInstancePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DDMDataProviderInstance>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DDMDataProviderInstance, NoSuchDataProviderInstanceException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the ddm data provider instances where groupId = &#63;.
@@ -403,23 +374,9 @@ public class DDMDataProviderInstancePersistenceImpl
 			OrderByComparator<DDMDataProviderInstance> orderByComparator)
 		throws NoSuchDataProviderInstanceException {
 
-		DDMDataProviderInstance ddmDataProviderInstance = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (ddmDataProviderInstance != null) {
-			return ddmDataProviderInstance;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchDataProviderInstanceException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -573,8 +530,9 @@ public class DDMDataProviderInstancePersistenceImpl
 			finderCache, new Object[] {groupIds}, groupIds);
 	}
 
-	private CollectionPersistenceFinder<DDMDataProviderInstance>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<DDMDataProviderInstance, NoSuchDataProviderInstanceException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the ddm data provider instances where companyId = &#63;.
@@ -615,16 +573,8 @@ public class DDMDataProviderInstancePersistenceImpl
 			OrderByComparator<DDMDataProviderInstance> orderByComparator)
 		throws NoSuchDataProviderInstanceException {
 
-		DDMDataProviderInstance ddmDataProviderInstance =
-			fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (ddmDataProviderInstance != null) {
-			return ddmDataProviderInstance;
-		}
-
-		throw new NoSuchDataProviderInstanceException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -999,10 +949,11 @@ public class DDMDataProviderInstancePersistenceImpl
 			_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE,
 			_SQL_COUNT_DDMDATAPROVIDERINSTANCE_WHERE,
 			DDMDataProviderInstanceModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"ddmDataProviderInstance.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, DDMDataProviderInstance::getUuid));
+				"ddmDataProviderInstance.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				DDMDataProviderInstance::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1014,8 +965,9 @@ public class DDMDataProviderInstancePersistenceImpl
 				DDMDataProviderInstance::getGroupId),
 			_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE, "",
 			new FinderColumn<>(
-				"ddmDataProviderInstance.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, DDMDataProviderInstance::getUuid),
+				"ddmDataProviderInstance.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				DDMDataProviderInstance::getUuid),
 			new FinderColumn<>(
 				"ddmDataProviderInstance.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, DDMDataProviderInstance::getGroupId));
@@ -1042,9 +994,9 @@ public class DDMDataProviderInstancePersistenceImpl
 				_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE,
 				_SQL_COUNT_DDMDATAPROVIDERINSTANCE_WHERE,
 				DDMDataProviderInstanceModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"ddmDataProviderInstance.", "uuid",
+					"ddmDataProviderInstance.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					DDMDataProviderInstance::getUuid),
 				new FinderColumn<>(
@@ -1074,19 +1026,7 @@ public class DDMDataProviderInstancePersistenceImpl
 				_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE,
 				_SQL_COUNT_DDMDATAPROVIDERINSTANCE_WHERE,
 				DDMDataProviderInstanceModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DDMDataProviderInstanceImpl.class,
-					DDMDataProviderInstance.class, "ddmDataProviderInstance",
-					"DDMDataProviderInstance",
-					"ddmDataProviderInstance.dataProviderInstanceId",
-					"SELECT DISTINCT {ddmDataProviderInstance.*} FROM DDMDataProviderInstance ddmDataProviderInstance WHERE ",
-					"SELECT {DDMDataProviderInstance.*} FROM (SELECT DISTINCT ddmDataProviderInstance.dataProviderInstanceId FROM DDMDataProviderInstance ddmDataProviderInstance WHERE ",
-					") TEMP_TABLE INNER JOIN DDMDataProviderInstance ON TEMP_TABLE.dataProviderInstanceId = DDMDataProviderInstance.dataProviderInstanceId",
-					"SELECT COUNT(DISTINCT ddmDataProviderInstance.dataProviderInstanceId) AS COUNT_VALUE FROM DDMDataProviderInstance ddmDataProviderInstance WHERE ",
-					DDMDataProviderInstanceModelImpl.ORDER_BY_SQL,
-					DDMDataProviderInstanceModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new ArrayableFinderColumn<>(
 					"ddmDataProviderInstance.", "groupId",
 					FinderColumn.Type.LONG, "=", false, true, true,
@@ -1114,7 +1054,7 @@ public class DDMDataProviderInstancePersistenceImpl
 				_SQL_SELECT_DDMDATAPROVIDERINSTANCE_WHERE,
 				_SQL_COUNT_DDMDATAPROVIDERINSTANCE_WHERE,
 				DDMDataProviderInstanceModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"ddmDataProviderInstance.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1177,12 +1117,6 @@ public class DDMDataProviderInstancePersistenceImpl
 	private static final String _SQL_COUNT_DDMDATAPROVIDERINSTANCE_WHERE =
 		"SELECT COUNT(ddmDataProviderInstance) FROM DDMDataProviderInstance ddmDataProviderInstance WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMDataProviderInstance exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMDataProviderInstancePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type"});
 
@@ -1192,4 +1126,4 @@ public class DDMDataProviderInstancePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1491037943
+// LIFERAY-SERVICE-BUILDER-HASH:-614665623

@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,7 +79,7 @@ public class LockPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<Lock>
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -121,15 +119,8 @@ public class LockPersistenceImpl
 			String uuid, OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByUuid_First(uuid, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +161,7 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<Lock>
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -213,15 +204,8 @@ public class LockPersistenceImpl
 			OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -266,7 +250,7 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<Lock>
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
 		_collectionPersistenceFinderByClassName;
 
 	/**
@@ -306,15 +290,8 @@ public class LockPersistenceImpl
 			String className, OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByClassName_First(className, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByClassName.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {className}));
+		return _collectionPersistenceFinderByClassName.findFirst(
+			finderCache, new Object[] {className}, orderByComparator);
 	}
 
 	/**
@@ -355,7 +332,7 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {className});
 	}
 
-	private CollectionPersistenceFinder<Lock>
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
 		_collectionPersistenceFinderByLtExpirationDate;
 
 	/**
@@ -448,17 +425,8 @@ public class LockPersistenceImpl
 			Date expirationDate, OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByLtExpirationDate_First(
-			expirationDate, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByLtExpirationDate.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {expirationDate}));
+		return _collectionPersistenceFinderByLtExpirationDate.findFirst(
+			finderCache, new Object[] {expirationDate}, orderByComparator);
 	}
 
 	/**
@@ -499,7 +467,8 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {expirationDate});
 	}
 
-	private CollectionPersistenceFinder<Lock> _collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
+		_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the locks where companyId = &#63; and className = &#63;.
@@ -541,15 +510,9 @@ public class LockPersistenceImpl
 			OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByC_C_First(companyId, className, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, className}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {companyId, className},
+			orderByComparator);
 	}
 
 	/**
@@ -595,7 +558,8 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {companyId, className});
 	}
 
-	private UniquePersistenceFinder<Lock> _uniquePersistenceFinderByC_K;
+	private UniquePersistenceFinder<Lock, NoSuchLockException>
+		_uniquePersistenceFinderByC_K;
 
 	/**
 	 * Returns the lock where className = &#63; and key = &#63; or throws a <code>NoSuchLockException</code> if it could not be found.
@@ -609,21 +573,8 @@ public class LockPersistenceImpl
 	public Lock findByC_K(String className, String key)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByC_K(className, key);
-
-		if (lock == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {className, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLockException(message);
-		}
-
-		return lock;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {className, key});
 	}
 
 	/**
@@ -671,7 +622,7 @@ public class LockPersistenceImpl
 			finderCache, new Object[] {className, key});
 	}
 
-	private CollectionPersistenceFinder<Lock>
+	private CollectionPersistenceFinder<Lock, NoSuchLockException>
 		_collectionPersistenceFinderByC_U_C;
 
 	/**
@@ -716,17 +667,9 @@ public class LockPersistenceImpl
 			OrderByComparator<Lock> orderByComparator)
 		throws NoSuchLockException {
 
-		Lock lock = fetchByC_U_C_First(
-			companyId, userId, className, orderByComparator);
-
-		if (lock != null) {
-			return lock;
-		}
-
-		throw new NoSuchLockException(
-			_collectionPersistenceFinderByC_U_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, userId, className}));
+		return _collectionPersistenceFinderByC_U_C.findFirst(
+			finderCache, new Object[] {companyId, userId, className},
+			orderByComparator);
 	}
 
 	/**
@@ -998,10 +941,10 @@ public class LockPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"lock_.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				Lock::getUuid));
+				"lock_.", "uuid", "uuid_", FinderColumn.Type.STRING, "=", true,
+				true, Lock::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -1023,10 +966,10 @@ public class LockPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"lock_.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-					Lock::getUuid),
+					"lock_.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Lock::getUuid),
 				new FinderColumn<>(
 					"lock_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Lock::getCompanyId));
@@ -1051,7 +994,7 @@ public class LockPersistenceImpl
 					"countByClassName", new String[] {String.class.getName()},
 					new String[] {"className"}, 0, 1, false, null),
 				_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"lock_.", "className", FinderColumn.Type.STRING, "=", true,
 					true, Lock::getClassName));
@@ -1075,7 +1018,7 @@ public class LockPersistenceImpl
 					new String[] {Date.class.getName()},
 					new String[] {"expirationDate"}, false),
 				_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"lock_.", "expirationDate", FinderColumn.Type.DATE, "<",
 					true, true, Lock::getExpirationDate));
@@ -1099,7 +1042,7 @@ public class LockPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "className"}, 0, 2, false, null),
 			_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"lock_.", "companyId", FinderColumn.Type.LONG, "=", true, true,
 				Lock::getCompanyId),
@@ -1120,8 +1063,8 @@ public class LockPersistenceImpl
 				"lock_.", "className", FinderColumn.Type.STRING, "=", true,
 				true, Lock::getClassName),
 			new FinderColumn<>(
-				"lock_.", "key", FinderColumn.Type.STRING, "=", true, true,
-				Lock::getKey));
+				"lock_.", "key", "key_", FinderColumn.Type.STRING, "=", true,
+				true, Lock::getKey));
 
 		_collectionPersistenceFinderByC_U_C = new CollectionPersistenceFinder<>(
 			this,
@@ -1150,7 +1093,7 @@ public class LockPersistenceImpl
 				new String[] {"companyId", "userId", "className"}, 0, 4, false,
 				null),
 			_SQL_SELECT_LOCK__WHERE, _SQL_COUNT_LOCK__WHERE,
-			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LockModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"lock_.", "companyId", FinderColumn.Type.LONG, "=", true, true,
 				Lock::getCompanyId),
@@ -1215,12 +1158,6 @@ public class LockPersistenceImpl
 	private static final String _SQL_COUNT_LOCK__WHERE =
 		"SELECT COUNT(lock_) FROM Lock lock_ WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Lock exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LockPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "key"});
 
@@ -1230,4 +1167,4 @@ public class LockPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:502856618
+// LIFERAY-SERVICE-BUILDER-HASH:-1491781396

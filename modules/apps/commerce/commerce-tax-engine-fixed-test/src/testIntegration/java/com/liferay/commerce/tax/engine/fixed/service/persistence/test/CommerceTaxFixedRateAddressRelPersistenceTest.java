@@ -115,13 +115,8 @@ public class CommerceTaxFixedRateAddressRelPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceTaxFixedRateAddressRel newCommerceTaxFixedRateAddressRel =
-			_persistence.create(pk);
-
-		newCommerceTaxFixedRateAddressRel.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCommerceTaxFixedRateAddressRel();
 
 		newCommerceTaxFixedRateAddressRel.setGroupId(RandomTestUtil.nextLong());
 
@@ -155,8 +150,10 @@ public class CommerceTaxFixedRateAddressRelPersistenceTest {
 
 		newCommerceTaxFixedRateAddressRel.setRate(RandomTestUtil.nextDouble());
 
-		_commerceTaxFixedRateAddressRels.add(
-			_persistence.update(newCommerceTaxFixedRateAddressRel));
+		newCommerceTaxFixedRateAddressRel = _persistence.update(
+			newCommerceTaxFixedRateAddressRel);
+
+		_commerceTaxFixedRateAddressRels.add(newCommerceTaxFixedRateAddressRel);
 
 		CommerceTaxFixedRateAddressRel existingCommerceTaxFixedRateAddressRel =
 			_persistence.findByPrimaryKey(
@@ -529,9 +526,6 @@ public class CommerceTaxFixedRateAddressRelPersistenceTest {
 		CommerceTaxFixedRateAddressRel commerceTaxFixedRateAddressRel =
 			_persistence.create(pk);
 
-		commerceTaxFixedRateAddressRel.setMvccVersion(
-			RandomTestUtil.nextLong());
-
 		commerceTaxFixedRateAddressRel.setGroupId(RandomTestUtil.nextLong());
 
 		commerceTaxFixedRateAddressRel.setCompanyId(RandomTestUtil.nextLong());
@@ -573,4 +567,4 @@ public class CommerceTaxFixedRateAddressRelPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1021583881
+// LIFERAY-SERVICE-BUILDER-HASH:596740637

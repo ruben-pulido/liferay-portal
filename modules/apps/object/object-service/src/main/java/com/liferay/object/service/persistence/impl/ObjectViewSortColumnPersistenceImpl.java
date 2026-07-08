@@ -78,8 +78,9 @@ public class ObjectViewSortColumnPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectViewSortColumn>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ObjectViewSortColumn, NoSuchObjectViewSortColumnException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the object view sort columns where uuid = &#63;.
@@ -120,16 +121,8 @@ public class ObjectViewSortColumnPersistenceImpl
 			OrderByComparator<ObjectViewSortColumn> orderByComparator)
 		throws NoSuchObjectViewSortColumnException {
 
-		ObjectViewSortColumn objectViewSortColumn = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (objectViewSortColumn != null) {
-			return objectViewSortColumn;
-		}
-
-		throw new NoSuchObjectViewSortColumnException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -171,8 +164,9 @@ public class ObjectViewSortColumnPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectViewSortColumn>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ObjectViewSortColumn, NoSuchObjectViewSortColumnException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the object view sort columns where uuid = &#63; and companyId = &#63;.
@@ -215,16 +209,8 @@ public class ObjectViewSortColumnPersistenceImpl
 			OrderByComparator<ObjectViewSortColumn> orderByComparator)
 		throws NoSuchObjectViewSortColumnException {
 
-		ObjectViewSortColumn objectViewSortColumn = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectViewSortColumn != null) {
-			return objectViewSortColumn;
-		}
-
-		throw new NoSuchObjectViewSortColumnException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -269,8 +255,9 @@ public class ObjectViewSortColumnPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectViewSortColumn>
-		_collectionPersistenceFinderByObjectViewId;
+	private CollectionPersistenceFinder
+		<ObjectViewSortColumn, NoSuchObjectViewSortColumnException>
+			_collectionPersistenceFinderByObjectViewId;
 
 	/**
 	 * Returns an ordered range of all the object view sort columns where objectViewId = &#63;.
@@ -311,16 +298,8 @@ public class ObjectViewSortColumnPersistenceImpl
 			OrderByComparator<ObjectViewSortColumn> orderByComparator)
 		throws NoSuchObjectViewSortColumnException {
 
-		ObjectViewSortColumn objectViewSortColumn = fetchByObjectViewId_First(
-			objectViewId, orderByComparator);
-
-		if (objectViewSortColumn != null) {
-			return objectViewSortColumn;
-		}
-
-		throw new NoSuchObjectViewSortColumnException(
-			_collectionPersistenceFinderByObjectViewId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {objectViewId}));
+		return _collectionPersistenceFinderByObjectViewId.findFirst(
+			finderCache, new Object[] {objectViewId}, orderByComparator);
 	}
 
 	/**
@@ -362,8 +341,9 @@ public class ObjectViewSortColumnPersistenceImpl
 			finderCache, new Object[] {objectViewId});
 	}
 
-	private CollectionPersistenceFinder<ObjectViewSortColumn>
-		_collectionPersistenceFinderByOVI_OFN;
+	private CollectionPersistenceFinder
+		<ObjectViewSortColumn, NoSuchObjectViewSortColumnException>
+			_collectionPersistenceFinderByOVI_OFN;
 
 	/**
 	 * Returns an ordered range of all the object view sort columns where objectViewId = &#63; and objectFieldName = &#63;.
@@ -406,17 +386,9 @@ public class ObjectViewSortColumnPersistenceImpl
 			OrderByComparator<ObjectViewSortColumn> orderByComparator)
 		throws NoSuchObjectViewSortColumnException {
 
-		ObjectViewSortColumn objectViewSortColumn = fetchByOVI_OFN_First(
-			objectViewId, objectFieldName, orderByComparator);
-
-		if (objectViewSortColumn != null) {
-			return objectViewSortColumn;
-		}
-
-		throw new NoSuchObjectViewSortColumnException(
-			_collectionPersistenceFinderByOVI_OFN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectViewId, objectFieldName}));
+		return _collectionPersistenceFinderByOVI_OFN.findFirst(
+			finderCache, new Object[] {objectViewId, objectFieldName},
+			orderByComparator);
 	}
 
 	/**
@@ -710,10 +682,11 @@ public class ObjectViewSortColumnPersistenceImpl
 			_SQL_SELECT_OBJECTVIEWSORTCOLUMN_WHERE,
 			_SQL_COUNT_OBJECTVIEWSORTCOLUMN_WHERE,
 			ObjectViewSortColumnModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
-				"objectViewSortColumn.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, ObjectViewSortColumn::getUuid));
+				"objectViewSortColumn.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				ObjectViewSortColumn::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -737,10 +710,11 @@ public class ObjectViewSortColumnPersistenceImpl
 				_SQL_SELECT_OBJECTVIEWSORTCOLUMN_WHERE,
 				_SQL_COUNT_OBJECTVIEWSORTCOLUMN_WHERE,
 				ObjectViewSortColumnModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"objectViewSortColumn.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, ObjectViewSortColumn::getUuid),
+					"objectViewSortColumn.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ObjectViewSortColumn::getUuid),
 				new FinderColumn<>(
 					"objectViewSortColumn.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -769,7 +743,7 @@ public class ObjectViewSortColumnPersistenceImpl
 				_SQL_SELECT_OBJECTVIEWSORTCOLUMN_WHERE,
 				_SQL_COUNT_OBJECTVIEWSORTCOLUMN_WHERE,
 				ObjectViewSortColumnModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"objectViewSortColumn.", "objectViewId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -799,7 +773,7 @@ public class ObjectViewSortColumnPersistenceImpl
 				_SQL_SELECT_OBJECTVIEWSORTCOLUMN_WHERE,
 				_SQL_COUNT_OBJECTVIEWSORTCOLUMN_WHERE,
 				ObjectViewSortColumnModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"objectViewSortColumn.", "objectViewId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -863,9 +837,6 @@ public class ObjectViewSortColumnPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTVIEWSORTCOLUMN_WHERE =
 		"SELECT COUNT(objectViewSortColumn) FROM ObjectViewSortColumn objectViewSortColumn WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectViewSortColumn exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -875,4 +846,4 @@ public class ObjectViewSortColumnPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:228455872
+// LIFERAY-SERVICE-BUILDER-HASH:-709731140

@@ -8,88 +8,112 @@ import {expect, mergeTests} from '@playwright/test';
 import {apiHelpersTest} from '../../../../fixtures/apiHelpersTest';
 import {commercePagesTest} from '../../../../fixtures/commercePagesTest';
 import {dataApiHelpersTest} from '../../../../fixtures/dataApiHelpersTest';
+import {displayPageTemplatesPagesTest} from '../../../../fixtures/displayPageTemplatesPagesTest';
 import {featureFlagsTest} from '../../../../fixtures/featureFlagsTest';
 import {loginTest} from '../../../../fixtures/loginTest';
+import {pageEditorPagesTest} from '../../../../fixtures/pageEditorPagesTest';
 import getRandomString from '../../../../utils/getRandomString';
 import {
 	performLoginViaApi,
 	performLogout,
 } from '../../../../utils/performLogin';
-import {classicCommerceSetUp, guestCheckoutSetUp} from '../../utils/commerce';
+import {
+	classicCommerceSetUp,
+	enableGuestPageView,
+	guestCheckoutSetUp,
+	speedwellSetUp,
+} from '../../utils/commerce';
 
 export const test = mergeTests(
 	apiHelpersTest,
 	commercePagesTest,
 	dataApiHelpersTest,
+	displayPageTemplatesPagesTest,
 	featureFlagsTest({
 		'LPD-10562': {enabled: true},
-		'LPD-20379': {enabled: true},
 	}),
-	loginTest()
+	loginTest(),
+	pageEditorPagesTest
 );
 
-test('LPD-35678 Guest can directly checkout a new order in B2B channel site', async ({
-	apiHelpers,
-	checkoutPage,
-	commerceAdminChannelDetailsPage,
-	commerceAdminChannelsPage,
-	commerceMiniCartPage,
-	commerceThemeClassicCatalogPage,
-	page,
-}) => {
-	test.setTimeout(90000);
-
-	const {channel, site} = await classicCommerceSetUp(
+test(
+	'Guest can directly checkout a new order in B2B channel site',
+	{tag: ['@LPD-35678', '@LPD-84664', '@LPD-93817']},
+	async ({
 		apiHelpers,
-		`B2B_${getRandomString()}`
-	);
-
-	await guestCheckoutSetUp(
-		channel,
+		checkoutPage,
 		commerceAdminChannelDetailsPage,
 		commerceAdminChannelsPage,
+		commerceMiniCartPage,
+		commerceThemeClassicCatalogPage,
 		page,
-		site
-	);
+	}) => {
+		test.setTimeout(90000);
 
-	try {
-		await commerceThemeClassicCatalogPage
-			.productCardAddToCartButton('Wear Sensors')
-			.click();
-
-		await page.waitForLoadState('networkidle');
-
-		await expect(commerceMiniCartPage.miniCartButton).toHaveClass(
-			'has-badge mini-cart-opener'
+		const {channel, site} = await classicCommerceSetUp(
+			apiHelpers,
+			`B2B_${getRandomString()}`
 		);
 
-		await commerceMiniCartPage.miniCartButton.click();
+		await guestCheckoutSetUp(
+			channel,
+			commerceAdminChannelDetailsPage,
+			commerceAdminChannelsPage,
+			page,
+			site
+		);
 
-		await commerceMiniCartPage.proceedAsGuest.click();
+		try {
+			await test.step('Add an item to the cart and open the mini cart', async () => {
+				await commerceThemeClassicCatalogPage
+					.productCardAddToCartButton('Wear Sensors')
+					.click();
 
-		await checkoutPage.performCheckout({
-			shippingAddress: {
-				asGuest: true,
-				city: 'testCity',
-				countryLabel: 'United States',
-				name: 'John Doe Guest',
-				regionLabel: 'Florida',
-				street: 'testStreet',
-				zip: '12345',
-			},
-		});
-	}
-	finally {
-		await performLoginViaApi({page, screenName: 'test'});
+				await page.waitForLoadState('networkidle');
 
-		const orders =
-			await apiHelpers.headlessCommerceAdminOrder.getOrdersPage();
+				await expect(commerceMiniCartPage.miniCartButton).toHaveClass(
+					'has-badge mini-cart-opener'
+				);
 
-		if (orders.items[0]) {
-			apiHelpers.data.push({id: orders.items[0].id, type: 'order'});
+				await commerceMiniCartPage.miniCartButton.click();
+			});
+
+			await test.step('Proceed as guest from the mini cart and verify the checkout survives a page reload', async () => {
+				await commerceMiniCartPage.proceedAsGuest.click();
+
+				await expect(checkoutPage.activeCheckoutStep).toBeVisible();
+
+				await page.reload();
+
+				await expect(checkoutPage.activeCheckoutStep).toBeVisible();
+			});
+
+			await test.step('Complete the checkout flow', async () => {
+				await checkoutPage.performCheckout({
+					shippingAddress: {
+						asGuest: true,
+						city: 'testCity',
+						countryLabel: 'United States',
+						name: 'John Doe Guest',
+						regionLabel: 'Florida',
+						street: 'testStreet',
+						zip: '12345',
+					},
+				});
+			});
+		}
+		finally {
+			await performLoginViaApi({page, screenName: 'test'});
+
+			const orders =
+				await apiHelpers.headlessCommerceAdminOrder.getOrdersPage();
+
+			if (orders.items[0]) {
+				apiHelpers.data.push({id: orders.items[0].id, type: 'order'});
+			}
 		}
 	}
-});
+);
 
 test(
 	'Guest can checkout a new order on sign-in in B2B channel site',
@@ -615,5 +639,286 @@ test(
 				apiHelpers.data.push({id: orders.items[0].id, type: 'order'});
 			}
 		}
+	}
+);
+
+test(
+	'Guest users do not see restricted storefront tabs or the wish list CTA',
+	{tag: ['@LPD-92440', '@LPD-93812']},
+	async ({
+		apiHelpers,
+		commerceAdminChannelDetailsPage,
+		commerceAdminChannelsPage,
+		commerceThemeClassicCatalogPage,
+		displayPageTemplatesPage,
+		page,
+		pageEditorPage,
+	}) => {
+		const productName = 'Wear Sensors';
+
+		const {channel, site} = await classicCommerceSetUp(
+			apiHelpers,
+			`B2B_${getRandomString()}`
+		);
+
+		await guestCheckoutSetUp(
+			channel,
+			commerceAdminChannelDetailsPage,
+			commerceAdminChannelsPage,
+			page,
+			site,
+			[{pageName: 'Product Detail', parentPageName: 'Catalog'}]
+		);
+
+		await test.step('Verify the storefront navigation bar is not shown to guests', async () => {
+			await expect(page.locator('.navbar-site')).toHaveCount(0);
+		});
+
+		await test.step('Verify the wish list CTA is hidden from the guest on the listing page', async () => {
+			await expect(
+				commerceThemeClassicCatalogPage.productCardAddToCartButton(
+					productName
+				)
+			).toBeVisible();
+
+			await expect(
+				commerceThemeClassicCatalogPage.productCardAddToWishListButton(
+					productName
+				)
+			).toHaveCount(0);
+		});
+
+		await test.step('Verify the wish list CTA is hidden from the guest on the product detail page', async () => {
+			await commerceThemeClassicCatalogPage
+				.productCardLink(productName)
+				.click();
+
+			await expect(
+				page.getByRole('heading', {name: productName})
+			).toBeVisible();
+
+			await expect(page.locator('.add-to-wish-list')).toHaveCount(0);
+		});
+
+		let productCardDisplayPageURL: string;
+
+		await test.step('Create a product display page template with the product card fragment', async () => {
+			await performLoginViaApi({page, screenName: 'test'});
+
+			const className =
+				await apiHelpers.jsonWebServicesClassName.fetchClassName(
+					'com.liferay.commerce.product.model.CPDefinition'
+				);
+
+			const product =
+				await apiHelpers.headlessCommerceAdminCatalog.getProductByName(
+					productName
+				);
+
+			const displayPageTemplateName = getRandomString();
+
+			await apiHelpers.jsonWebServicesLayoutPageTemplateEntry.addDisplayPageLayoutPageTemplateEntry(
+				{
+					classNameId: className.classNameId,
+					groupId: String(site.id),
+					name: displayPageTemplateName,
+				}
+			);
+
+			await displayPageTemplatesPage.goto(site.friendlyUrlPath);
+			await displayPageTemplatesPage.editTemplate(
+				displayPageTemplateName
+			);
+
+			await pageEditorPage.addFragment('Product', 'Product Card');
+
+			await displayPageTemplatesPage.publishTemplate();
+
+			productCardDisplayPageURL = `/web${site.friendlyUrlPath}/e/${displayPageTemplateName}/${className.classNameId}/${product.id}`;
+		});
+
+		await test.step('Verify the wish list CTA is hidden from the guest on the product card fragment', async () => {
+			await performLogout(page);
+
+			await page.goto(productCardDisplayPageURL);
+
+			await expect(page.locator('.product-card')).toBeVisible();
+
+			await expect(page.locator('.add-to-wish-list')).toHaveCount(0);
+		});
+	}
+);
+
+test(
+	'Guest cannot use the mini cart quick add when guest checkout is disabled in B2B channel site',
+	{tag: '@LPD-94001'},
+	async ({apiHelpers, commerceMiniCartPage, page}) => {
+		test.setTimeout(90000);
+
+		const {site} = await classicCommerceSetUp(
+			apiHelpers,
+			`B2B_${getRandomString()}`
+		);
+
+		await enableGuestPageView(page, site);
+
+		try {
+			await test.step('Open the mini cart as a guest', async () => {
+				await performLogout(page);
+
+				await page.goto(`/web${site.friendlyUrlPath}`);
+
+				await commerceMiniCartPage.miniCartButton.click();
+			});
+
+			await test.step('Verify the quick add is disabled', async () => {
+				await expect(
+					commerceMiniCartPage.searchProductsInput
+				).toBeDisabled();
+
+				await expect(
+					commerceMiniCartPage.quickAddToCartButton
+				).toBeDisabled();
+			});
+		}
+		finally {
+			await performLoginViaApi({page, screenName: 'test'});
+		}
+	}
+);
+
+test(
+	'Guest checkout survives sign-in after the order in the URL is merged away',
+	{tag: '@LPD-95478'},
+	async ({
+		apiHelpers,
+		commerceAdminChannelDetailsPage,
+		commerceAdminChannelsPage,
+		commerceCartSummaryPage,
+		commerceMiniCartPage,
+		commerceThemeMiniumCatalogPage,
+		page,
+	}) => {
+		test.setTimeout(120000);
+
+		const {channel, site} = await speedwellSetUp(
+			apiHelpers,
+			`Speedwell_${getRandomString()}`
+		);
+
+		const account = await apiHelpers.headlessAdminUser.postAccount({
+			name: getRandomString(),
+			type: 'person',
+		});
+
+		await apiHelpers.headlessAdminUser.assignUserToAccountByEmailAddress(
+			account.id,
+			['test@liferay.com']
+		);
+
+		await guestCheckoutSetUp(
+			channel,
+			commerceAdminChannelDetailsPage,
+			commerceAdminChannelsPage,
+			page,
+			site
+		);
+
+		let order;
+
+		await test.step('Provision the full-page authentication layout via the channel health check', async () => {
+			await performLoginViaApi({page, screenName: 'test'});
+
+			await commerceAdminChannelsPage.goto();
+
+			await (
+				await commerceAdminChannelsPage.channelsTableRowLink(
+					channel.name
+				)
+			).click();
+
+			await (
+				await commerceAdminChannelDetailsPage.commerceChannelHealthChecksTableRowAction(
+					'Fix Issue',
+					'Guest Checkout Authentication'
+				)
+			).click();
+
+			await page.waitForLoadState('networkidle');
+		});
+
+		await test.step('Give the user an open order so the guest order is merged into it on sign-in', async () => {
+			const product =
+				await apiHelpers.headlessCommerceAdminCatalog.getProductByName(
+					'Calipers'
+				);
+
+			const sku = product.skus[0];
+
+			order = await apiHelpers.headlessCommerceDeliveryCart.postCart(
+				{
+					accountId: account.id,
+					cartItems: [{quantity: 1, skuId: sku.id}],
+				},
+				channel.id
+			);
+
+			await performLogout(page);
+		});
+
+		await test.step('As a guest, open the order summary via View Details and continue to the authentication page', async () => {
+			await page.goto(`/web${site.friendlyUrlPath}/catalog`, {
+				waitUntil: 'networkidle',
+			});
+
+			const productName = 'Wear Sensors';
+
+			await commerceThemeMiniumCatalogPage.catalogSearch.fill(
+				productName
+			);
+
+			await commerceThemeMiniumCatalogPage.catalogSearch.press('Enter');
+
+			await page.waitForLoadState('networkidle');
+
+			await commerceThemeMiniumCatalogPage
+				.productCardAddToCartButton(productName)
+				.click();
+
+			await page.waitForLoadState('networkidle');
+
+			await commerceMiniCartPage.miniCartButton.click();
+
+			await expect(
+				commerceMiniCartPage.miniCartItem(productName)
+			).toBeVisible();
+
+			await commerceMiniCartPage.viewDetailsButton.click();
+
+			await page.waitForLoadState('networkidle');
+
+			await commerceCartSummaryPage.checkoutButton.click();
+
+			await page.waitForLoadState('networkidle');
+		});
+
+		await test.step('Sign in on the authentication page and verify the checkout renders against the merged order', async () => {
+			await page
+				.locator('input[id*="LoginPortlet_login"]')
+				.fill('test@liferay.com');
+			await page.locator('input[id*="LoginPortlet_pass"]').fill('test');
+			await page.getByRole('button', {name: 'Sign In'}).last().click();
+
+			await page.waitForLoadState('networkidle');
+
+			await expect(page.locator('.alert-danger')).toHaveCount(0);
+
+			const cartItems =
+				await apiHelpers.headlessCommerceDeliveryCart.getCartItems(
+					order.id
+				);
+
+			expect(cartItems.items).toHaveLength(2);
+		});
 	}
 );

@@ -11,7 +11,6 @@ import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFileEntryTable;
 import com.liferay.document.library.kernel.service.persistence.DLFileEntryPersistence;
 import com.liferay.document.library.kernel.service.persistence.DLFileEntryUtil;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -20,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -91,7 +88,7 @@ public class DLFileEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -132,15 +129,9 @@ public class DLFileEntryPersistenceImpl
 			String uuid, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByUuid_First(uuid, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -182,7 +173,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DLFileEntry>
+	private UniquePersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -197,21 +188,8 @@ public class DLFileEntryPersistenceImpl
 	public DLFileEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByUUID_G(uuid, groupId);
-
-		if (dlFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryException(message);
-		}
-
-		return dlFileEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -260,7 +238,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -304,16 +282,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -359,8 +330,9 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntry>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntry, NoSuchFileEntryException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the document library file entries where groupId = &#63;.
@@ -400,16 +372,9 @@ public class DLFileEntryPersistenceImpl
 			long groupId, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId},
+			orderByComparator);
 	}
 
 	/**
@@ -486,7 +451,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -527,16 +492,9 @@ public class DLFileEntryPersistenceImpl
 			long companyId, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -578,7 +536,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByRepositoryId;
 
 	/**
@@ -619,16 +577,9 @@ public class DLFileEntryPersistenceImpl
 			long repositoryId, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByRepositoryId_First(
-			repositoryId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByRepositoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {repositoryId}));
+		return _collectionPersistenceFinderByRepositoryId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {repositoryId},
+			orderByComparator);
 	}
 
 	/**
@@ -670,7 +621,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {repositoryId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByMimeType;
 
 	/**
@@ -711,16 +662,9 @@ public class DLFileEntryPersistenceImpl
 			String mimeType, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByMimeType_First(
-			mimeType, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByMimeType.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {mimeType}));
+		return _collectionPersistenceFinderByMimeType.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {mimeType},
+			orderByComparator);
 	}
 
 	/**
@@ -762,7 +706,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {mimeType});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByFileEntryTypeId;
 
 	/**
@@ -804,16 +748,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByFileEntryTypeId_First(
-			fileEntryTypeId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByFileEntryTypeId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {fileEntryTypeId}));
+		return _collectionPersistenceFinderByFileEntryTypeId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {fileEntryTypeId},
+			orderByComparator);
 	}
 
 	/**
@@ -856,7 +793,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {fileEntryTypeId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderBySmallImageId;
 
 	/**
@@ -897,16 +834,9 @@ public class DLFileEntryPersistenceImpl
 			long smallImageId, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchBySmallImageId_First(
-			smallImageId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderBySmallImageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {smallImageId}));
+		return _collectionPersistenceFinderBySmallImageId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {smallImageId},
+			orderByComparator);
 	}
 
 	/**
@@ -948,7 +878,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {smallImageId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByLargeImageId;
 
 	/**
@@ -989,16 +919,9 @@ public class DLFileEntryPersistenceImpl
 			long largeImageId, OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByLargeImageId_First(
-			largeImageId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByLargeImageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {largeImageId}));
+		return _collectionPersistenceFinderByLargeImageId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {largeImageId},
+			orderByComparator);
 	}
 
 	/**
@@ -1040,7 +963,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {largeImageId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByCustom1ImageId;
 
 	/**
@@ -1082,16 +1005,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByCustom1ImageId_First(
-			custom1ImageId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByCustom1ImageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {custom1ImageId}));
+		return _collectionPersistenceFinderByCustom1ImageId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {custom1ImageId},
+			orderByComparator);
 	}
 
 	/**
@@ -1133,7 +1049,7 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {custom1ImageId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByCustom2ImageId;
 
 	/**
@@ -1175,16 +1091,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByCustom2ImageId_First(
-			custom2ImageId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByCustom2ImageId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {custom2ImageId}));
+		return _collectionPersistenceFinderByCustom2ImageId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {custom2ImageId},
+			orderByComparator);
 	}
 
 	/**
@@ -1226,8 +1135,9 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {custom2ImageId});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntry>
-		_collectionPersistenceFinderByG_U;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntry, NoSuchFileEntryException>
+			_collectionPersistenceFinderByG_U;
 
 	/**
 	 * Returns an ordered range of all the document library file entries where groupId = &#63; and userId = &#63;.
@@ -1270,16 +1180,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_U_First(
-			groupId, userId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByG_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, userId}));
+		return _collectionPersistenceFinderByG_U.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {groupId, userId},
+			orderByComparator);
 	}
 
 	/**
@@ -1363,8 +1266,9 @@ public class DLFileEntryPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntry>
-		_collectionPersistenceFinderByG_F;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntry, NoSuchFileEntryException>
+			_collectionPersistenceFinderByG_F;
 
 	/**
 	 * Returns an ordered range of all the document library file entries where groupId = &#63; and folderId = &#63;.
@@ -1408,26 +1312,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_F_First(
-			groupId, folderId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", folderId=");
-		sb.append(folderId);
-
-		sb.append("}");
-
-		throw new NoSuchFileEntryException(sb.toString());
+		return _collectionPersistenceFinderByG_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, new long[] {folderId}}, orderByComparator);
 	}
 
 	/**
@@ -1594,7 +1481,7 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {groupId, ArrayUtil.sortedUnique(folderIds)}, groupId);
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByR_F;
 
 	/**
@@ -1639,17 +1526,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByR_F_First(
-			repositoryId, folderId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByR_F.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {repositoryId, folderId}));
+		return _collectionPersistenceFinderByR_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {repositoryId, folderId}, orderByComparator);
 	}
 
 	/**
@@ -1697,7 +1576,7 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {repositoryId, folderId});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByF_N;
 
 	/**
@@ -1741,16 +1620,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByF_N_First(
-			folderId, name, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByF_N.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {folderId, name}));
+		return _collectionPersistenceFinderByF_N.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {folderId, name},
+			orderByComparator);
 	}
 
 	/**
@@ -1796,8 +1668,9 @@ public class DLFileEntryPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {folderId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntry>
-		_collectionPersistenceFinderByG_U_F;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntry, NoSuchFileEntryException>
+			_collectionPersistenceFinderByG_U_F;
 
 	/**
 	 * Returns an ordered range of all the document library file entries where groupId = &#63; and userId = &#63; and folderId = &#63;.
@@ -1843,29 +1716,10 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_U_F_First(
-			groupId, userId, folderId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", userId=");
-		sb.append(userId);
-
-		sb.append(", folderId=");
-		sb.append(folderId);
-
-		sb.append("}");
-
-		throw new NoSuchFileEntryException(sb.toString());
+		return _collectionPersistenceFinderByG_U_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, userId, new long[] {folderId}},
+			orderByComparator);
 	}
 
 	/**
@@ -2043,7 +1897,7 @@ public class DLFileEntryPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<DLFileEntry>
+	private UniquePersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_uniquePersistenceFinderByG_F_N;
 
 	/**
@@ -2059,22 +1913,9 @@ public class DLFileEntryPersistenceImpl
 	public DLFileEntry findByG_F_N(long groupId, long folderId, String name)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_F_N(groupId, folderId, name);
-
-		if (dlFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_F_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, folderId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryException(message);
-		}
-
-		return dlFileEntry;
+		return _uniquePersistenceFinderByG_F_N.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, folderId, name});
 	}
 
 	/**
@@ -2127,7 +1968,7 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {groupId, folderId, name});
 	}
 
-	private UniquePersistenceFinder<DLFileEntry>
+	private UniquePersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_uniquePersistenceFinderByG_F_FN;
 
 	/**
@@ -2144,22 +1985,9 @@ public class DLFileEntryPersistenceImpl
 			long groupId, long folderId, String fileName)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_F_FN(groupId, folderId, fileName);
-
-		if (dlFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_F_FN.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, folderId, fileName});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryException(message);
-		}
-
-		return dlFileEntry;
+		return _uniquePersistenceFinderByG_F_FN.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, folderId, fileName});
 	}
 
 	/**
@@ -2213,7 +2041,7 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {groupId, folderId, fileName});
 	}
 
-	private UniquePersistenceFinder<DLFileEntry>
+	private UniquePersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_uniquePersistenceFinderByG_F_T;
 
 	/**
@@ -2229,22 +2057,9 @@ public class DLFileEntryPersistenceImpl
 	public DLFileEntry findByG_F_T(long groupId, long folderId, String title)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_F_T(groupId, folderId, title);
-
-		if (dlFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByG_F_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, folderId, title});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryException(message);
-		}
-
-		return dlFileEntry;
+		return _uniquePersistenceFinderByG_F_T.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, folderId, title});
 	}
 
 	/**
@@ -2297,8 +2112,9 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {groupId, folderId, title});
 	}
 
-	private FilterCollectionPersistenceFinder<DLFileEntry>
-		_collectionPersistenceFinderByG_F_F;
+	private FilterCollectionPersistenceFinder
+		<DLFileEntry, NoSuchFileEntryException>
+			_collectionPersistenceFinderByG_F_F;
 
 	/**
 	 * Returns an ordered range of all the document library file entries where groupId = &#63; and folderId = &#63; and fileEntryTypeId = &#63;.
@@ -2344,29 +2160,10 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByG_F_F_First(
-			groupId, folderId, fileEntryTypeId, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", folderId=");
-		sb.append(folderId);
-
-		sb.append(", fileEntryTypeId=");
-		sb.append(fileEntryTypeId);
-
-		sb.append("}");
-
-		throw new NoSuchFileEntryException(sb.toString());
+		return _collectionPersistenceFinderByG_F_F.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {groupId, new long[] {folderId}, fileEntryTypeId},
+			orderByComparator);
 	}
 
 	/**
@@ -2561,7 +2358,7 @@ public class DLFileEntryPersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByC_C_C;
 
 	/**
@@ -2608,17 +2405,9 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByC_C_C_First(
-			companyId, classNameId, classPK, orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C_C.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK}, orderByComparator);
 	}
 
 	/**
@@ -2669,7 +2458,7 @@ public class DLFileEntryPersistenceImpl
 			new Object[] {companyId, classNameId, classPK});
 	}
 
-	private CollectionPersistenceFinder<DLFileEntry>
+	private CollectionPersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_collectionPersistenceFinderByS_L_C1_C2;
 
 	/**
@@ -2722,20 +2511,12 @@ public class DLFileEntryPersistenceImpl
 			OrderByComparator<DLFileEntry> orderByComparator)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByS_L_C1_C2_First(
-			smallImageId, largeImageId, custom1ImageId, custom2ImageId,
+		return _collectionPersistenceFinderByS_L_C1_C2.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {
+				smallImageId, largeImageId, custom1ImageId, custom2ImageId
+			},
 			orderByComparator);
-
-		if (dlFileEntry != null) {
-			return dlFileEntry;
-		}
-
-		throw new NoSuchFileEntryException(
-			_collectionPersistenceFinderByS_L_C1_C2.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					smallImageId, largeImageId, custom1ImageId, custom2ImageId
-				}));
 	}
 
 	/**
@@ -2802,7 +2583,7 @@ public class DLFileEntryPersistenceImpl
 			});
 	}
 
-	private UniquePersistenceFinder<DLFileEntry>
+	private UniquePersistenceFinder<DLFileEntry, NoSuchFileEntryException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -2817,22 +2598,9 @@ public class DLFileEntryPersistenceImpl
 	public DLFileEntry findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchFileEntryException {
 
-		DLFileEntry dlFileEntry = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (dlFileEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFileEntryException(message);
-		}
-
-		return dlFileEntry;
+		return _uniquePersistenceFinderByERC_G.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -3290,10 +3058,11 @@ public class DLFileEntryPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
-			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"dlFileEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileEntry::getUuid));
+				"dlFileEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DLFileEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -3305,8 +3074,8 @@ public class DLFileEntryPersistenceImpl
 				DLFileEntry::getGroupId),
 			_SQL_SELECT_DLFILEENTRY_WHERE, "",
 			new FinderColumn<>(
-				"dlFileEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DLFileEntry::getUuid),
+				"dlFileEntry.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DLFileEntry::getUuid),
 			new FinderColumn<>(
 				"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DLFileEntry::getGroupId));
@@ -3332,9 +3101,10 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"dlFileEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, DLFileEntry::getUuid),
+					"dlFileEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, DLFileEntry::getUuid),
 				new FinderColumn<>(
 					"dlFileEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getCompanyId));
@@ -3360,15 +3130,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryImpl.class, DLFileEntry.class, "dlFileEntry",
-					"DLFileEntry", "dlFileEntry.fileEntryId",
-					"SELECT DISTINCT {dlFileEntry.*} FROM DLFileEntry dlFileEntry WHERE ",
-					"SELECT {DLFileEntry.*} FROM (SELECT DISTINCT dlFileEntry.fileEntryId FROM DLFileEntry dlFileEntry WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntry ON TEMP_TABLE.fileEntryId = DLFileEntry.fileEntryId",
-					"SELECT COUNT(DISTINCT dlFileEntry.fileEntryId) AS COUNT_VALUE FROM DLFileEntry dlFileEntry WHERE ",
-					DLFileEntryModelImpl.ORDER_BY_SQL,
-					DLFileEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getGroupId));
@@ -3394,6 +3156,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getCompanyId));
@@ -3420,6 +3183,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"repositoryId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "repositoryId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getRepositoryId));
@@ -3445,6 +3209,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"mimeType"}, 0, 1, false, null),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "mimeType", FinderColumn.Type.STRING, "=",
 					true, true, DLFileEntry::getMimeType));
@@ -3473,6 +3238,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"fileEntryTypeId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "fileEntryTypeId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileEntry::getFileEntryTypeId));
@@ -3499,6 +3265,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"smallImageId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "smallImageId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getSmallImageId));
@@ -3525,6 +3292,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"largeImageId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "largeImageId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getLargeImageId));
@@ -3552,6 +3320,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"custom1ImageId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "custom1ImageId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileEntry::getCustom1ImageId));
@@ -3579,6 +3348,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"custom2ImageId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "custom2ImageId", FinderColumn.Type.LONG,
 					"=", true, true, DLFileEntry::getCustom2ImageId));
@@ -3604,15 +3374,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"groupId", "userId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryImpl.class, DLFileEntry.class, "dlFileEntry",
-					"DLFileEntry", "dlFileEntry.fileEntryId",
-					"SELECT DISTINCT {dlFileEntry.*} FROM DLFileEntry dlFileEntry WHERE ",
-					"SELECT {DLFileEntry.*} FROM (SELECT DISTINCT dlFileEntry.fileEntryId FROM DLFileEntry dlFileEntry WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntry ON TEMP_TABLE.fileEntryId = DLFileEntry.fileEntryId",
-					"SELECT COUNT(DISTINCT dlFileEntry.fileEntryId) AS COUNT_VALUE FROM DLFileEntry dlFileEntry WHERE ",
-					DLFileEntryModelImpl.ORDER_BY_SQL,
-					DLFileEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getGroupId),
@@ -3641,15 +3403,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"groupId", "folderId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryImpl.class, DLFileEntry.class, "dlFileEntry",
-					"DLFileEntry", "dlFileEntry.fileEntryId",
-					"SELECT DISTINCT {dlFileEntry.*} FROM DLFileEntry dlFileEntry WHERE ",
-					"SELECT {DLFileEntry.*} FROM (SELECT DISTINCT dlFileEntry.fileEntryId FROM DLFileEntry dlFileEntry WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntry ON TEMP_TABLE.fileEntryId = DLFileEntry.fileEntryId",
-					"SELECT COUNT(DISTINCT dlFileEntry.fileEntryId) AS COUNT_VALUE FROM DLFileEntry dlFileEntry WHERE ",
-					DLFileEntryModelImpl.ORDER_BY_SQL,
-					DLFileEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getGroupId),
@@ -3676,7 +3430,8 @@ public class DLFileEntryPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"repositoryId", "folderId"}, false),
 			_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
-			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"dlFileEntry.", "repositoryId", FinderColumn.Type.LONG, "=",
 				true, true, DLFileEntry::getRepositoryId),
@@ -3703,7 +3458,8 @@ public class DLFileEntryPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"folderId", "name"}, 0, 2, false, null),
 			_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
-			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"dlFileEntry.", "folderId", FinderColumn.Type.LONG, "=", true,
 				true, DLFileEntry::getFolderId),
@@ -3739,15 +3495,7 @@ public class DLFileEntryPersistenceImpl
 					new String[] {"groupId", "userId", "folderId"}, false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryImpl.class, DLFileEntry.class, "dlFileEntry",
-					"DLFileEntry", "dlFileEntry.fileEntryId",
-					"SELECT DISTINCT {dlFileEntry.*} FROM DLFileEntry dlFileEntry WHERE ",
-					"SELECT {DLFileEntry.*} FROM (SELECT DISTINCT dlFileEntry.fileEntryId FROM DLFileEntry dlFileEntry WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntry ON TEMP_TABLE.fileEntryId = DLFileEntry.fileEntryId",
-					"SELECT COUNT(DISTINCT dlFileEntry.fileEntryId) AS COUNT_VALUE FROM DLFileEntry dlFileEntry WHERE ",
-					DLFileEntryModelImpl.ORDER_BY_SQL,
-					DLFileEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getGroupId),
@@ -3855,15 +3603,7 @@ public class DLFileEntryPersistenceImpl
 					false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					DLFileEntryImpl.class, DLFileEntry.class, "dlFileEntry",
-					"DLFileEntry", "dlFileEntry.fileEntryId",
-					"SELECT DISTINCT {dlFileEntry.*} FROM DLFileEntry dlFileEntry WHERE ",
-					"SELECT {DLFileEntry.*} FROM (SELECT DISTINCT dlFileEntry.fileEntryId FROM DLFileEntry dlFileEntry WHERE ",
-					") TEMP_TABLE INNER JOIN DLFileEntry ON TEMP_TABLE.fileEntryId = DLFileEntry.fileEntryId",
-					"SELECT COUNT(DISTINCT dlFileEntry.fileEntryId) AS COUNT_VALUE FROM DLFileEntry dlFileEntry WHERE ",
-					DLFileEntryModelImpl.ORDER_BY_SQL,
-					DLFileEntryModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getGroupId),
@@ -3899,7 +3639,8 @@ public class DLFileEntryPersistenceImpl
 				},
 				new String[] {"companyId", "classNameId", "classPK"}, false),
 			_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
-			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"dlFileEntry.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, DLFileEntry::getCompanyId),
@@ -3952,6 +3693,7 @@ public class DLFileEntryPersistenceImpl
 					false),
 				_SQL_SELECT_DLFILEENTRY_WHERE, _SQL_COUNT_DLFILEENTRY_WHERE,
 				DLFileEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlFileEntry.", "smallImageId", FinderColumn.Type.LONG, "=",
 					true, true, DLFileEntry::getSmallImageId),
@@ -4003,12 +3745,6 @@ public class DLFileEntryPersistenceImpl
 	private static final String _SQL_COUNT_DLFILEENTRY_WHERE =
 		"SELECT COUNT(dlFileEntry) FROM DLFileEntry dlFileEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DLFileEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DLFileEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "size"});
 
@@ -4018,4 +3754,4 @@ public class DLFileEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1390330507
+// LIFERAY-SERVICE-BUILDER-HASH:-637523695

@@ -108,11 +108,7 @@ public class UserTrackerPathPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		UserTrackerPath newUserTrackerPath = _persistence.create(pk);
-
-		newUserTrackerPath.setMvccVersion(RandomTestUtil.nextLong());
+		UserTrackerPath newUserTrackerPath = addUserTrackerPath();
 
 		newUserTrackerPath.setCompanyId(RandomTestUtil.nextLong());
 
@@ -122,7 +118,9 @@ public class UserTrackerPathPersistenceTest {
 
 		newUserTrackerPath.setPathDate(RandomTestUtil.nextDate());
 
-		_userTrackerPaths.add(_persistence.update(newUserTrackerPath));
+		newUserTrackerPath = _persistence.update(newUserTrackerPath);
+
+		_userTrackerPaths.add(newUserTrackerPath);
 
 		UserTrackerPath existingUserTrackerPath = _persistence.findByPrimaryKey(
 			newUserTrackerPath.getPrimaryKey());
@@ -403,8 +401,6 @@ public class UserTrackerPathPersistenceTest {
 
 		UserTrackerPath userTrackerPath = _persistence.create(pk);
 
-		userTrackerPath.setMvccVersion(RandomTestUtil.nextLong());
-
 		userTrackerPath.setCompanyId(RandomTestUtil.nextLong());
 
 		userTrackerPath.setUserTrackerId(RandomTestUtil.nextLong());
@@ -424,4 +420,4 @@ public class UserTrackerPathPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:433784273
+// LIFERAY-SERVICE-BUILDER-HASH:-519655772

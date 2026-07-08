@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,7 +85,7 @@ public class JournalFeedPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<JournalFeed>
+	private CollectionPersistenceFinder<JournalFeed, NoSuchFeedException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -128,15 +126,8 @@ public class JournalFeedPersistenceImpl
 			String uuid, OrderByComparator<JournalFeed> orderByComparator)
 		throws NoSuchFeedException {
 
-		JournalFeed journalFeed = fetchByUuid_First(uuid, orderByComparator);
-
-		if (journalFeed != null) {
-			return journalFeed;
-		}
-
-		throw new NoSuchFeedException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,7 +168,7 @@ public class JournalFeedPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<JournalFeed>
+	private UniquePersistenceFinder<JournalFeed, NoSuchFeedException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -192,21 +183,8 @@ public class JournalFeedPersistenceImpl
 	public JournalFeed findByUUID_G(String uuid, long groupId)
 		throws NoSuchFeedException {
 
-		JournalFeed journalFeed = fetchByUUID_G(uuid, groupId);
-
-		if (journalFeed == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFeedException(message);
-		}
-
-		return journalFeed;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -254,7 +232,7 @@ public class JournalFeedPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<JournalFeed>
+	private CollectionPersistenceFinder<JournalFeed, NoSuchFeedException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -298,16 +276,8 @@ public class JournalFeedPersistenceImpl
 			OrderByComparator<JournalFeed> orderByComparator)
 		throws NoSuchFeedException {
 
-		JournalFeed journalFeed = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (journalFeed != null) {
-			return journalFeed;
-		}
-
-		throw new NoSuchFeedException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,7 +322,7 @@ public class JournalFeedPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<JournalFeed>
+	private FilterCollectionPersistenceFinder<JournalFeed, NoSuchFeedException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -393,16 +363,8 @@ public class JournalFeedPersistenceImpl
 			long groupId, OrderByComparator<JournalFeed> orderByComparator)
 		throws NoSuchFeedException {
 
-		JournalFeed journalFeed = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (journalFeed != null) {
-			return journalFeed;
-		}
-
-		throw new NoSuchFeedException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -478,7 +440,8 @@ public class JournalFeedPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private UniquePersistenceFinder<JournalFeed> _uniquePersistenceFinderByG_F;
+	private UniquePersistenceFinder<JournalFeed, NoSuchFeedException>
+		_uniquePersistenceFinderByG_F;
 
 	/**
 	 * Returns the journal feed where groupId = &#63; and feedId = &#63; or throws a <code>NoSuchFeedException</code> if it could not be found.
@@ -492,21 +455,8 @@ public class JournalFeedPersistenceImpl
 	public JournalFeed findByG_F(long groupId, String feedId)
 		throws NoSuchFeedException {
 
-		JournalFeed journalFeed = fetchByG_F(groupId, feedId);
-
-		if (journalFeed == null) {
-			String message =
-				_uniquePersistenceFinderByG_F.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, feedId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFeedException(message);
-		}
-
-		return journalFeed;
+		return _uniquePersistenceFinderByG_F.find(
+			finderCache, new Object[] {groupId, feedId});
 	}
 
 	/**
@@ -768,6 +718,11 @@ public class JournalFeedPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "id";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_JOURNALFEED;
 	}
@@ -877,10 +832,11 @@ public class JournalFeedPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_JOURNALFEED_WHERE, _SQL_COUNT_JOURNALFEED_WHERE,
-			JournalFeedModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			JournalFeedModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"journalFeed.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, JournalFeed::getUuid));
+				"journalFeed.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, JournalFeed::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -892,8 +848,8 @@ public class JournalFeedPersistenceImpl
 				JournalFeed::getGroupId),
 			_SQL_SELECT_JOURNALFEED_WHERE, "",
 			new FinderColumn<>(
-				"journalFeed.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, JournalFeed::getUuid),
+				"journalFeed.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, JournalFeed::getUuid),
 			new FinderColumn<>(
 				"journalFeed.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, JournalFeed::getGroupId));
@@ -919,9 +875,10 @@ public class JournalFeedPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_JOURNALFEED_WHERE, _SQL_COUNT_JOURNALFEED_WHERE,
 				JournalFeedModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"journalFeed.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, JournalFeed::getUuid),
+					"journalFeed.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, JournalFeed::getUuid),
 				new FinderColumn<>(
 					"journalFeed.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFeed::getCompanyId));
@@ -947,15 +904,7 @@ public class JournalFeedPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_JOURNALFEED_WHERE, _SQL_COUNT_JOURNALFEED_WHERE,
 				JournalFeedModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					JournalFeedImpl.class, JournalFeed.class, "journalFeed",
-					"JournalFeed", "journalFeed.id_",
-					"SELECT DISTINCT {journalFeed.*} FROM JournalFeed journalFeed WHERE ",
-					"SELECT {JournalFeed.*} FROM (SELECT DISTINCT journalFeed.id_ FROM JournalFeed journalFeed WHERE ",
-					") TEMP_TABLE INNER JOIN JournalFeed ON TEMP_TABLE.id_ = JournalFeed.id_",
-					"SELECT COUNT(DISTINCT journalFeed.id_) AS COUNT_VALUE FROM JournalFeed journalFeed WHERE ",
-					JournalFeedModelImpl.ORDER_BY_SQL,
-					JournalFeedModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"journalFeed.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFeed::getGroupId));
@@ -1033,12 +982,6 @@ public class JournalFeedPersistenceImpl
 	private static final String _SQL_COUNT_JOURNALFEED_WHERE =
 		"SELECT COUNT(journalFeed) FROM JournalFeed journalFeed WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No JournalFeed exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		JournalFeedPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "id"});
 
@@ -1048,4 +991,4 @@ public class JournalFeedPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-103124819
+// LIFERAY-SERVICE-BUILDER-HASH:446970240

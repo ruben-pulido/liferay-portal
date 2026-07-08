@@ -71,8 +71,9 @@ public class BigDecimalEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<BigDecimalEntry>
-		_collectionPersistenceFinderByBigDecimalValue;
+	private CollectionPersistenceFinder
+		<BigDecimalEntry, NoSuchBigDecimalEntryException>
+			_collectionPersistenceFinderByBigDecimalValue;
 
 	/**
 	 * Returns an ordered range of all the big decimal entries where bigDecimalValue = &#63;.
@@ -113,16 +114,8 @@ public class BigDecimalEntryPersistenceImpl
 			OrderByComparator<BigDecimalEntry> orderByComparator)
 		throws NoSuchBigDecimalEntryException {
 
-		BigDecimalEntry bigDecimalEntry = fetchByBigDecimalValue_First(
-			bigDecimalValue, orderByComparator);
-
-		if (bigDecimalEntry != null) {
-			return bigDecimalEntry;
-		}
-
-		throw new NoSuchBigDecimalEntryException(
-			_collectionPersistenceFinderByBigDecimalValue.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {bigDecimalValue}));
+		return _collectionPersistenceFinderByBigDecimalValue.findFirst(
+			finderCache, new Object[] {bigDecimalValue}, orderByComparator);
 	}
 
 	/**
@@ -164,8 +157,9 @@ public class BigDecimalEntryPersistenceImpl
 			finderCache, new Object[] {bigDecimalValue});
 	}
 
-	private CollectionPersistenceFinder<BigDecimalEntry>
-		_collectionPersistenceFinderByGtBigDecimalValue;
+	private CollectionPersistenceFinder
+		<BigDecimalEntry, NoSuchBigDecimalEntryException>
+			_collectionPersistenceFinderByGtBigDecimalValue;
 
 	/**
 	 * Returns all the big decimal entries where bigDecimalValue &gt; &#63;.
@@ -261,17 +255,8 @@ public class BigDecimalEntryPersistenceImpl
 			OrderByComparator<BigDecimalEntry> orderByComparator)
 		throws NoSuchBigDecimalEntryException {
 
-		BigDecimalEntry bigDecimalEntry = fetchByGtBigDecimalValue_First(
-			bigDecimalValue, orderByComparator);
-
-		if (bigDecimalEntry != null) {
-			return bigDecimalEntry;
-		}
-
-		throw new NoSuchBigDecimalEntryException(
-			_collectionPersistenceFinderByGtBigDecimalValue.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {bigDecimalValue}));
+		return _collectionPersistenceFinderByGtBigDecimalValue.findFirst(
+			finderCache, new Object[] {bigDecimalValue}, orderByComparator);
 	}
 
 	/**
@@ -313,8 +298,9 @@ public class BigDecimalEntryPersistenceImpl
 			finderCache, new Object[] {bigDecimalValue});
 	}
 
-	private CollectionPersistenceFinder<BigDecimalEntry>
-		_collectionPersistenceFinderByLtBigDecimalValue;
+	private CollectionPersistenceFinder
+		<BigDecimalEntry, NoSuchBigDecimalEntryException>
+			_collectionPersistenceFinderByLtBigDecimalValue;
 
 	/**
 	 * Returns all the big decimal entries where bigDecimalValue &lt; &#63;.
@@ -410,17 +396,8 @@ public class BigDecimalEntryPersistenceImpl
 			OrderByComparator<BigDecimalEntry> orderByComparator)
 		throws NoSuchBigDecimalEntryException {
 
-		BigDecimalEntry bigDecimalEntry = fetchByLtBigDecimalValue_First(
-			bigDecimalValue, orderByComparator);
-
-		if (bigDecimalEntry != null) {
-			return bigDecimalEntry;
-		}
-
-		throw new NoSuchBigDecimalEntryException(
-			_collectionPersistenceFinderByLtBigDecimalValue.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {bigDecimalValue}));
+		return _collectionPersistenceFinderByLtBigDecimalValue.findFirst(
+			finderCache, new Object[] {bigDecimalValue}, orderByComparator);
 	}
 
 	/**
@@ -1013,7 +990,7 @@ public class BigDecimalEntryPersistenceImpl
 				_SQL_SELECT_BIGDECIMALENTRY_WHERE,
 				_SQL_COUNT_BIGDECIMALENTRY_WHERE,
 				BigDecimalEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bigDecimalEntry.", "bigDecimalValue",
 					FinderColumn.Type.BIG_DECIMAL, "=", true, true,
@@ -1040,7 +1017,7 @@ public class BigDecimalEntryPersistenceImpl
 				_SQL_SELECT_BIGDECIMALENTRY_WHERE,
 				_SQL_COUNT_BIGDECIMALENTRY_WHERE,
 				BigDecimalEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bigDecimalEntry.", "bigDecimalValue",
 					FinderColumn.Type.BIG_DECIMAL, ">", true, true,
@@ -1067,7 +1044,7 @@ public class BigDecimalEntryPersistenceImpl
 				_SQL_SELECT_BIGDECIMALENTRY_WHERE,
 				_SQL_COUNT_BIGDECIMALENTRY_WHERE,
 				BigDecimalEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"bigDecimalEntry.", "bigDecimalValue",
 					FinderColumn.Type.BIG_DECIMAL, "<", true, true,
@@ -1110,13 +1087,10 @@ public class BigDecimalEntryPersistenceImpl
 	private static final String _SQL_COUNT_BIGDECIMALENTRY_WHERE =
 		"SELECT COUNT(bigDecimalEntry) FROM BigDecimalEntry bigDecimalEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No BigDecimalEntry exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-884613542
+// LIFERAY-SERVICE-BUILDER-HASH:1168908773

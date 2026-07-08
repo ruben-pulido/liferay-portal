@@ -52,8 +52,7 @@ components:
             type: object
         Creator:
             description:
-                Represents the user who created the content. Properties follow the [creator](https://schema.org/creator)
-                specification.
+                Represents the user who created the content. Properties follow the [creator](https://schema.org/creator) specification.
             properties:
                 additionalName:
                     description:
@@ -107,8 +106,7 @@ components:
             type: object
         Keyword:
             description:
-                Represents a keyword that describes content. Properties follow the
-                [keywords](https://schema.org/keywords) specification.
+                Represents a keyword that describes content. Properties follow the [keywords](https://schema.org/keywords) specification.
             properties:
                 actions:
                     additionalProperties:
@@ -182,10 +180,37 @@ components:
             required:
                 -   name
             type: object
+        Project:
+            properties:
+                externalReferenceCode:
+                    description:
+                        The project's external reference code.
+                    type: string
+                id:
+                    description:
+                        The project's site ID.
+                    format: int64
+                    type: integer
+                name:
+                    description:
+                        The project's name.
+                    readOnly: true
+                    type: string
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized project's name.
+                    readOnly: true
+                    type: object
+                scopeKey:
+                    description:
+                        The project's scope key.
+                    type: string
+            type: object
         TaxonomyCategory:
             description:
-                Represents a category, which is a hierarchical classification that can be associated with particular
-                asset types. Properties follow the [category](https://schema.org/category) specification.
+                Represents a category, which is a hierarchical classification that can be associated with particular asset types. Properties follow the [category](https://schema.org/category) specification.
             properties:
                 actions:
                     additionalProperties:
@@ -313,6 +338,10 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+                system:
+                    description:
+                        Whether this is a system category, which cannot be renamed, modified, or deleted.
+                    type: boolean
                 taxonomyCategoryProperties:
                     # @review
                     description:
@@ -366,8 +395,7 @@ components:
             type: object
         TaxonomyVocabulary:
             description:
-                Represents a vocabulary, which is a grouping of categories for a specific purpose (e.g., classification,
-                sorting, etc.).
+                Represents a vocabulary, which is a grouping of categories for a specific purpose (e.g., classification, sorting, etc.).
             properties:
                 actions:
                     additionalProperties:
@@ -454,6 +482,12 @@ components:
                     items:
                         type: permission
                     type: array
+                projects:
+                    description:
+                        A list of projects that this vocabulary is associated with.
+                    items:
+                        $ref: "#/components/schemas/Project"
+                    type: array
                 siteExternalReferenceCode:
                     description:
                         The external reference code of the site to which this vocabulary is scoped.
@@ -465,6 +499,10 @@ components:
                     format: int64
                     readOnly: true
                     type: integer
+                system:
+                    description:
+                        Whether this is a system vocabulary, which cannot be renamed or deleted.
+                    type: boolean
                 uuid:
                     description:
                         The UUID of the vocabulary.
@@ -485,8 +523,7 @@ components:
             type: object
 info:
     description:
-        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID
-        'com.liferay.headless.admin.taxonomy.client', and version '4.0.48'."
+        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID 'com.liferay.headless.admin.taxonomy.client', and version '4.0.50'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -641,8 +678,7 @@ paths:
         put:
             # @review
             description:
-                Updates the asset library's keyword with the given external reference code, or creates it if it not
-                exists.
+                Updates the asset library's keyword with the given external reference code, or creates it if it not exists.
             operationId: putAssetLibraryKeywordByExternalReferenceCode
             parameters:
                 -   in: path
@@ -873,8 +909,7 @@ paths:
         put:
             # @review
             description:
-                Updates the asset library's taxonomy category with the given external reference code, or creates it if
-                it not exists.
+                Updates the asset library's taxonomy category with the given external reference code, or creates it if it not exists.
             operationId: putAssetLibraryTaxonomyCategoryByExternalReferenceCode
             parameters:
                 -   in: path
@@ -1053,8 +1088,7 @@ paths:
         put:
             # @review
             description:
-                Updates the asset library's taxonomy vocabulary with the given external reference code, or creates it if
-                it not exists.
+                Updates the asset library's taxonomy vocabulary with the given external reference code, or creates it if it not exists.
             operationId: putAssetLibraryTaxonomyVocabularyByExternalReferenceCode
             parameters:
                 -   in: path
@@ -1225,8 +1259,7 @@ paths:
             tags: ["Keyword"]
         put:
             description:
-                Replaces the keyword with the information sent in the request body. Any missing fields are deleted,
-                unless required.
+                Replaces the keyword with the information sent in the request body. Any missing fields are deleted, unless required.
             operationId: putKeyword
             parameters:
                 -   in: path
@@ -1757,8 +1790,7 @@ paths:
         put:
             # @review
             description:
-                Updates the site's taxonomy category with the given external reference code, or creates it if it not
-                exists.
+                Updates the site's taxonomy category with the given external reference code, or creates it if it not exists.
             operationId: putSiteTaxonomyCategoryByExternalReferenceCode
             parameters:
                 -   in: path
@@ -1941,8 +1973,7 @@ paths:
         put:
             # @review
             description:
-                Updates the site's taxonomy vocabulary with the given external reference code, or creates it if it not
-                exists.
+                Updates the site's taxonomy vocabulary with the given external reference code, or creates it if it not exists.
             operationId: putSiteTaxonomyVocabularyByExternalReferenceCode
             parameters:
                 -   in: path
@@ -2063,8 +2094,7 @@ paths:
     "/taxonomy-categories/{parentTaxonomyCategoryId}/taxonomy-categories":
         get:
             description:
-                Retrieves a taxonomy category's child taxonomy categories. Results can be paginated, filtered, searched,
-                and sorted.
+                Retrieves a taxonomy category's child taxonomy categories. Results can be paginated, filtered, searched, and sorted.
             operationId: getTaxonomyCategoryTaxonomyCategoriesPage
             parameters:
                 -   in: path
@@ -2223,8 +2253,7 @@ paths:
             tags: ["TaxonomyCategory"]
         put:
             description:
-                Replaces the taxonomy category with the information sent in the request body. Any missing fields are
-                deleted unless they are required.
+                Replaces the taxonomy category with the information sent in the request body. Any missing fields are deleted unless they are required.
             operationId: putTaxonomyCategory
             parameters:
                 -   in: path
@@ -2373,8 +2402,7 @@ paths:
             tags: ["TaxonomyVocabulary"]
         put:
             description:
-                Replaces the taxonomy vocabulary with the information sent in the request body. Any missing fields are
-                deleted unless they are required.
+                Replaces the taxonomy vocabulary with the information sent in the request body. Any missing fields are deleted unless they are required.
             operationId: putTaxonomyVocabulary
             parameters:
                 -   in: path
@@ -2603,8 +2631,7 @@ paths:
         put:
             # @review
             description:
-                Updates the site's taxonomy category with the given external reference code, or creates it if it not
-                exists.
+                Updates the site's taxonomy category with the given external reference code, or creates it if it not exists.
             operationId: putTaxonomyVocabularyTaxonomyCategoryByExternalReferenceCode
             parameters:
                 -   in: path

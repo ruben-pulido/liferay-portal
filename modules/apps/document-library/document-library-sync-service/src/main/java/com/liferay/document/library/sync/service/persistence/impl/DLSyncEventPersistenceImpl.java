@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -76,7 +74,7 @@ public class DLSyncEventPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DLSyncEvent>
+	private CollectionPersistenceFinder<DLSyncEvent, NoSuchEventException>
 		_collectionPersistenceFinderByGtModifiedTime;
 
 	/**
@@ -170,16 +168,8 @@ public class DLSyncEventPersistenceImpl
 			long modifiedTime, OrderByComparator<DLSyncEvent> orderByComparator)
 		throws NoSuchEventException {
 
-		DLSyncEvent dlSyncEvent = fetchByGtModifiedTime_First(
-			modifiedTime, orderByComparator);
-
-		if (dlSyncEvent != null) {
-			return dlSyncEvent;
-		}
-
-		throw new NoSuchEventException(
-			_collectionPersistenceFinderByGtModifiedTime.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {modifiedTime}));
+		return _collectionPersistenceFinderByGtModifiedTime.findFirst(
+			finderCache, new Object[] {modifiedTime}, orderByComparator);
 	}
 
 	/**
@@ -220,7 +210,7 @@ public class DLSyncEventPersistenceImpl
 			finderCache, new Object[] {modifiedTime});
 	}
 
-	private UniquePersistenceFinder<DLSyncEvent>
+	private UniquePersistenceFinder<DLSyncEvent, NoSuchEventException>
 		_uniquePersistenceFinderByTypePK;
 
 	/**
@@ -232,21 +222,8 @@ public class DLSyncEventPersistenceImpl
 	 */
 	@Override
 	public DLSyncEvent findByTypePK(long typePK) throws NoSuchEventException {
-		DLSyncEvent dlSyncEvent = fetchByTypePK(typePK);
-
-		if (dlSyncEvent == null) {
-			String message =
-				_uniquePersistenceFinderByTypePK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {typePK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEventException(message);
-		}
-
-		return dlSyncEvent;
+		return _uniquePersistenceFinderByTypePK.find(
+			finderCache, new Object[] {typePK});
 	}
 
 	/**
@@ -490,6 +467,7 @@ public class DLSyncEventPersistenceImpl
 					new String[] {"modifiedTime"}, false),
 				_SQL_SELECT_DLSYNCEVENT_WHERE, _SQL_COUNT_DLSYNCEVENT_WHERE,
 				DLSyncEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"dlSyncEvent.", "modifiedTime", FinderColumn.Type.LONG, ">",
 					true, true, DLSyncEvent::getModifiedTime));
@@ -559,12 +537,6 @@ public class DLSyncEventPersistenceImpl
 	private static final String _SQL_COUNT_DLSYNCEVENT_WHERE =
 		"SELECT COUNT(dlSyncEvent) FROM DLSyncEvent dlSyncEvent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DLSyncEvent exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DLSyncEventPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -574,4 +546,4 @@ public class DLSyncEventPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:249876538
+// LIFERAY-SERVICE-BUILDER-HASH:-695164853

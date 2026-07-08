@@ -27,6 +27,7 @@ describe('createTaskAction', () => {
 			createTaskAction({
 				addProjectURL: '/add-project',
 				addTaskURL: '/add-task',
+				projectObjectDefinitionId: 123,
 			});
 
 			expect(mockNavigate).not.toHaveBeenCalled();
@@ -40,6 +41,7 @@ describe('createTaskAction', () => {
 				addProjectURL: '/add-project',
 				addTaskURL: '/add-task',
 				closeModal: mockCloseModal,
+				projectObjectDefinitionId: 123,
 			});
 		});
 	});
@@ -49,6 +51,7 @@ describe('createTaskAction', () => {
 			createTaskAction({
 				addProjectURL: '/add-project',
 				addTaskURL: '/add-task',
+				projectObjectDefinitionId: 123,
 				redirect: 'http://localhost/redirect-url',
 			});
 

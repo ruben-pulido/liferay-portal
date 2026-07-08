@@ -80,7 +80,7 @@ test(
 	'Can delete a draft content from Recycle Bin',
 	{tag: '@LPD-83737'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
-		const spaceName = `Space ${getRandomString()}`;
+		const spaceName = getRandomString();
 
 		await test.step('Create a new Space', async () => {
 			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
@@ -133,8 +133,8 @@ test(
 	{tag: '@LPD-55831'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		await test.step('Create a new Space', async () => {
 			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
@@ -195,9 +195,9 @@ test(
 	{tag: '@LPD-62787'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName1 = `First Content ${getRandomString()}`;
-		const contentName2 = `Second Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+		const spaceName = getRandomString();
 
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -284,98 +284,13 @@ test(
 );
 
 test(
-	'Can delete over a Select All expanded selection from Recycle Bin',
-	{tag: '@LPD-87393'},
-	async ({apiHelpers, assetsPage, page, recycleBinPage}) => {
-		const spaceName = `Space ${getRandomString()}`;
-
-		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-			name: spaceName,
-			settings: {
-				logoColor: 'outline-3',
-				sharingEnabled: true,
-				trashEnabled: true,
-			},
-			type: 'Space',
-		});
-
-		for (let i = 0; i < 21; i++) {
-			await apiHelpers.objectEntry.postObjectEntry(
-				{
-					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
-					title: `title ${getRandomString()}`,
-				},
-				'cms/basic-web-contents',
-				spaceName
-			);
-		}
-
-		await test.step('Login as CMS Administrator', async () => {
-			const user = await addCMSAdministrator(apiHelpers);
-
-			await performUserSwitch(page, user.alternateName);
-		});
-
-		await test.step('Delete all the contents so they can go into the Recycle Bin', async () => {
-			await assetsPage.gotoContents(spaceName);
-
-			await assetsPage.selectAllItems(true);
-
-			await page
-				.getByTestId(/visualization-mode/)
-				.getByLabel('Actions')
-				.click();
-
-			await page.getByRole('menuitem', {name: 'Delete'}).click();
-
-			await expect(page.getByText('No Content Yet')).toBeVisible();
-		});
-
-		await test.step('Go to the Recycle Bin and delete the contents permanently', async () => {
-			await recycleBinPage.goto();
-
-			await assetsPage.selectAllItems(true);
-
-			await page
-				.getByTestId('visualization-mode-table')
-				.getByLabel('Actions')
-				.click();
-
-			await page.getByRole('menuitem', {name: 'Delete'}).click();
-
-			await expect(
-				page.getByText('You are about to permanently delete all items.')
-			).toBeVisible();
-
-			await page.getByRole('button', {name: 'Delete'}).click();
-
-			await waitForAlert(
-				page,
-				'Info:Delete action started for all assets.',
-				{
-					type: 'info',
-				}
-			);
-
-			await waitForAlert(
-				page,
-				`Success:All items were successfully deleted.`,
-				{first: true}
-			);
-
-			await expect(page.getByText('No Assets Yet')).toBeVisible();
-		});
-	}
-);
-
-test(
 	'Can empty the Recycle Bin',
 	{tag: '@LPD-62787'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName1 = `First Content ${getRandomString()}`;
-		const contentName2 = `Second Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+		const spaceName = getRandomString();
 
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -460,8 +375,8 @@ test(
 	{tag: '@LPD-55830'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		await test.step('Create a new Space', async () => {
 			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
@@ -547,9 +462,9 @@ test(
 	{tag: '@LPD-87118'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName1 = `First Content ${getRandomString()}`;
-		const contentName2 = `Second Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+		const spaceName = getRandomString();
 
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -634,8 +549,8 @@ test(
 	{tag: '@LPD-87118'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -695,136 +610,12 @@ test(
 );
 
 test(
-	'Can restore a folder and its contents from Recycle Bin',
-	{tag: '@LPD-59716'},
-	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
-		test.slow();
-
-		const contentName = `Content ${getRandomString()}`;
-		const folderName = getRandomString();
-		const nestedFolderName = `nested-${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
-
-		await test.step('Create a new Space', async () => {
-			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
-				name: spaceName,
-				settings: {},
-				type: 'Space',
-			});
-		});
-
-		const folderData =
-			await apiHelpers.objectFolder.createObjectEntryFolder({
-				parentObjectEntryFolderExternalReferenceCode: 'L_CONTENTS',
-				scopeKey: spaceName,
-				title: folderName,
-			});
-
-		const nestedFolderData =
-			await apiHelpers.objectFolder.createObjectEntryFolder({
-				parentObjectEntryFolderExternalReferenceCode:
-					folderData.externalReferenceCode,
-				scopeKey: spaceName,
-				title: nestedFolderName,
-			});
-
-		const applicationName = 'cms/basic-web-contents';
-		await apiHelpers.objectEntry.postObjectEntry(
-			{
-				objectEntryFolderExternalReferenceCode:
-					nestedFolderData.externalReferenceCode,
-				title: contentName,
-			},
-			applicationName,
-			spaceName
-		);
-
-		await test.step('Move the folder to Recycle Bin', async () => {
-			await contentsPage.goto();
-
-			await contentsPage.deleteFolder(folderName);
-		});
-
-		await test.step('Assert navigation within Recycle Bin', async () => {
-			await recycleBinPage.goto();
-
-			await recycleBinPage.navigateTo(folderName);
-
-			await recycleBinPage.navigateTo(nestedFolderName);
-
-			await recycleBinPage
-				.getItem(contentName)
-				.waitFor({state: 'visible'});
-
-			await expect(
-				page.getByRole('row', {name: contentName})
-			).toBeVisible();
-		});
-
-		await test.step('Restore the folder from Recycle Bin', async () => {
-			await recycleBinPage.goto();
-
-			await recycleBinPage.execItemAction({
-				action: 'Restore',
-				filter: folderName,
-			});
-
-			await waitForAlert(
-				page,
-				`Success:${folderName} was restored to Contents.`,
-				{autoClose: false}
-			);
-		});
-
-		await test.step('Assert folder and its contents are restored', async () => {
-			await contentsPage.goto();
-
-			await contentsPage.navigateTo(folderName);
-
-			await contentsPage.navigateTo(nestedFolderName);
-
-			await recycleBinPage
-				.getItem(contentName)
-				.waitFor({state: 'visible'});
-
-			await expect(
-				page.getByRole('row', {name: contentName})
-			).toBeVisible();
-		});
-
-		await test.step('Clean up', async () => {
-			await apiHelpers.objectFolder.deleteObjectEntryFolder(
-				folderData.id
-			);
-
-			await recycleBinPage.goto();
-
-			await recycleBinPage.execItemAction({
-				action: 'Delete',
-				filter: folderName,
-			});
-
-			await expect(
-				recycleBinPage.deleteItemConfirmationText
-			).toBeVisible();
-
-			await recycleBinPage.deleteButton.last().click();
-
-			await waitForAlert(
-				page,
-				`Success:${folderName} has been permanently deleted.`
-			);
-		});
-	}
-);
-
-test(
 	'Can use the success toast options of undo and redirect to Recycle Bin after deleting content',
 	{tag: '@LPD-53983'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
 		const applicationName = 'cms/basic-web-contents';
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		await test.step('Create a new Space', async () => {
 			await apiHelpers.headlessAssetLibrary.createAssetLibrary({
@@ -900,8 +691,8 @@ test(
 	'Default user can trash a CMS content and empty the Recycle Bin',
 	{tag: '@LPD-83226'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -964,8 +755,8 @@ test(
 	'Space member with delete permission sees trashed content and can empty the Recycle Bin',
 	{tag: '@LPD-83226'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
-		const contentName = `Content ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
 
 		const space = await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -1070,9 +861,9 @@ test(
 	'Space member sees assets trashed by another user in their Space',
 	{tag: '@LPD-89591'},
 	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
-		const contentName = `Content ${getRandomString()}`;
-		const folderName = `Folder ${getRandomString()}`;
-		const spaceName = `Space ${getRandomString()}`;
+		const contentName = getRandomString();
+		const folderName = getRandomString();
+		const spaceName = getRandomString();
 
 		const space = await apiHelpers.headlessAssetLibrary.createAssetLibrary({
 			name: spaceName,
@@ -1153,6 +944,288 @@ test(
 					.getByTestId('visualization-mode-table')
 					.getByLabel('Actions')
 			).toBeHidden();
+		});
+	}
+);
+
+test(
+	'Recycle Bin row shows Space, Content Type, Removed By, and Removed Date',
+	{tag: '@LPD-89104'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
+
+		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {trashEnabled: true},
+			type: 'Space',
+		});
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName,
+			},
+			'cms/basic-web-contents',
+			spaceName
+		);
+
+		await test.step('Trash the content', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.deleteContent(contentName);
+		});
+
+		await test.step('Row exposes the four metadata columns', async () => {
+			await recycleBinPage.goto();
+
+			const row = page.getByRole('row', {name: contentName});
+
+			await expect(row).toContainText(spaceName);
+			await expect(row).toContainText('Basic Web Content');
+			await expect(row).toContainText('Test Test');
+
+			await expect(row).toContainText(String(new Date().getFullYear()));
+		});
+	}
+);
+
+test(
+	'Filtering the Recycle Bin by Space narrows results to that space',
+	{tag: '@LPD-89104'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const spaceName1 = getRandomString();
+		const spaceName2 = getRandomString();
+		const contentName1 = getRandomString();
+		const contentName2 = getRandomString();
+
+		const createdSpaces: Record<string, any> = {};
+
+		for (const name of [spaceName1, spaceName2]) {
+			createdSpaces[name] =
+				await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+					name,
+					settings: {trashEnabled: true},
+					type: 'Space',
+				});
+		}
+
+		for (const [space, content] of [
+			[spaceName1, contentName1],
+			[spaceName2, contentName2],
+		]) {
+			await apiHelpers.objectEntry.postObjectEntry(
+				{
+					objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+					title: content,
+				},
+				'cms/basic-web-contents',
+				space
+			);
+		}
+
+		await test.step('Trash one content per space', async () => {
+			for (const content of [contentName1, contentName2]) {
+				await contentsPage.goto();
+
+				await contentsPage.deleteContent(content);
+			}
+		});
+
+		await test.step('Both rows are visible with no filter applied', async () => {
+			await recycleBinPage.goto();
+
+			await expect(
+				page.getByRole('row', {name: contentName1})
+			).toBeVisible();
+			await expect(
+				page.getByRole('row', {name: contentName2})
+			).toBeVisible();
+		});
+
+		await test.step('Apply a Space filter limited to Space A', async () => {
+			await page.getByRole('button', {name: 'Filter'}).click();
+
+			await page.getByRole('menuitem', {name: 'Space'}).click();
+
+			await page
+				.getByRole('checkbox', {
+					name: createdSpaces[spaceName1].assetLibraryKey,
+				})
+				.check();
+
+			await page.getByRole('button', {name: 'Add Filter'}).click();
+		});
+
+		await test.step('Only Space A content remains visible', async () => {
+			await expect(
+				page.getByRole('row', {name: contentName1})
+			).toBeVisible();
+			await expect(
+				page.getByRole('row', {name: contentName2})
+			).toBeHidden();
+		});
+	}
+);
+
+test(
+	'The Recycle Bin filter menu does not offer the extension filter',
+	{tag: '@LPD-95408'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
+
+		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {trashEnabled: true},
+			type: 'Space',
+		});
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName,
+			},
+			'cms/basic-web-contents',
+			spaceName
+		);
+
+		await test.step('Trash the content', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.deleteContent(contentName);
+		});
+
+		await test.step('The filter menu offers Space but not Extension', async () => {
+			await recycleBinPage.goto();
+
+			await expect(
+				page.getByRole('row', {name: contentName})
+			).toBeVisible();
+
+			await page.getByRole('button', {name: 'Filter'}).click();
+
+			await expect(
+				page.getByRole('menuitem', {name: 'Space'})
+			).toBeVisible();
+
+			await expect(
+				page.getByRole('menuitem', {name: 'Extension'})
+			).toBeHidden();
+		});
+	}
+);
+
+test(
+	'The Recycle Bin filter menu groups the filters by type',
+	{tag: '@LPD-95407'},
+	async ({apiHelpers, contentsPage, page, recycleBinPage}) => {
+		const contentName = getRandomString();
+		const spaceName = getRandomString();
+
+		await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {trashEnabled: true},
+			type: 'Space',
+		});
+
+		await apiHelpers.objectEntry.postObjectEntry(
+			{
+				objectEntryFolderExternalReferenceCode: 'L_CONTENTS',
+				title: contentName,
+			},
+			'cms/basic-web-contents',
+			spaceName
+		);
+
+		await test.step('Trash the content', async () => {
+			await contentsPage.goto();
+
+			await contentsPage.deleteContent(contentName);
+		});
+
+		await test.step('The filter menu shows the filters grouped', async () => {
+			await recycleBinPage.goto();
+
+			await expect(
+				page.getByRole('row', {name: contentName})
+			).toBeVisible();
+
+			await page.getByRole('button', {name: 'Filter'}).click();
+
+			await expect(
+				page
+					.getByRole('group', {exact: true, name: 'Filter By'})
+					.getByRole('menuitem', {name: 'Space'})
+			).toBeVisible();
+
+			await expect(
+				page
+					.getByRole('group', {name: 'Filter by Date'})
+					.getByRole('menuitem', {name: 'Create Date'})
+			).toBeVisible();
+		});
+	}
+);
+
+test(
+	'Space General Settings Recycle Bin panel honors trashEnabled and max age validation',
+	{tag: '@LPD-89104'},
+	async ({apiHelpers, page}) => {
+		const spaceName = getRandomString();
+
+		const space = await apiHelpers.headlessAssetLibrary.createAssetLibrary({
+			name: spaceName,
+			settings: {},
+			type: 'Space',
+		});
+
+		const {classNameId} =
+			await apiHelpers.jsonWebServicesClassName.fetchClassName(
+				'com.liferay.depot.model.DepotEntry'
+			);
+
+		await page.goto(`/web/cms/e/space-settings/${classNameId}/${space.id}`);
+
+		const enableCheckbox = page.getByRole('checkbox', {
+			name: 'Enable Recycle Bin',
+		});
+		const maxAgeField = page.getByRole('spinbutton', {
+			name: 'Trash Entries Max Age',
+		});
+		const saveButton = page.getByRole('button', {name: 'Save'});
+
+		await test.step('Panel renders with the checkbox checked and the max age field visible by default', async () => {
+			await expect(enableCheckbox).toBeChecked();
+			await expect(maxAgeField).toBeVisible();
+		});
+
+		await test.step('Disabling the bin hides the max age field', async () => {
+			await enableCheckbox.uncheck();
+			await expect(maxAgeField).toBeHidden();
+		});
+
+		await test.step('Re-enabling the bin shows the max age field again', async () => {
+			await enableCheckbox.check();
+			await expect(maxAgeField).toBeVisible();
+		});
+
+		await test.step('Max age is required when the bin is enabled', async () => {
+			await maxAgeField.fill('');
+			await saveButton.click();
+			await expect(
+				page.getByText('This field is required.')
+			).toBeVisible();
+		});
+
+		await test.step('Save succeeds when the bin is disabled with no max age', async () => {
+			await enableCheckbox.uncheck();
+			await expect(maxAgeField).toBeHidden();
+			await saveButton.click();
+			await waitForAlert(
+				page,
+				`Success:${spaceName} was saved successfully`
+			);
 		});
 	}
 );

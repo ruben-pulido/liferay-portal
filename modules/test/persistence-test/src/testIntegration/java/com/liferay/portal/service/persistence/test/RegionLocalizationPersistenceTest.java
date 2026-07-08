@@ -107,11 +107,7 @@ public class RegionLocalizationPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		RegionLocalization newRegionLocalization = _persistence.create(pk);
-
-		newRegionLocalization.setMvccVersion(RandomTestUtil.nextLong());
+		RegionLocalization newRegionLocalization = addRegionLocalization();
 
 		newRegionLocalization.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -123,7 +119,9 @@ public class RegionLocalizationPersistenceTest {
 
 		newRegionLocalization.setTitle(RandomTestUtil.randomString());
 
-		_regionLocalizations.add(_persistence.update(newRegionLocalization));
+		newRegionLocalization = _persistence.update(newRegionLocalization);
+
+		_regionLocalizations.add(newRegionLocalization);
 
 		RegionLocalization existingRegionLocalization =
 			_persistence.findByPrimaryKey(
@@ -465,8 +463,6 @@ public class RegionLocalizationPersistenceTest {
 
 		RegionLocalization regionLocalization = _persistence.create(pk);
 
-		regionLocalization.setMvccVersion(RandomTestUtil.nextLong());
-
 		regionLocalization.setCtCollectionId(RandomTestUtil.nextLong());
 
 		regionLocalization.setCompanyId(RandomTestUtil.nextLong());
@@ -488,4 +484,4 @@ public class RegionLocalizationPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-333817586
+// LIFERAY-SERVICE-BUILDER-HASH:-476112908

@@ -73,8 +73,9 @@ public class CommerceOrderPaymentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceOrderPayment>
-		_collectionPersistenceFinderByCommerceOrderId;
+	private CollectionPersistenceFinder
+		<CommerceOrderPayment, NoSuchOrderPaymentException>
+			_collectionPersistenceFinderByCommerceOrderId;
 
 	/**
 	 * Returns an ordered range of all the commerce order payments where commerceOrderId = &#63;.
@@ -115,16 +116,8 @@ public class CommerceOrderPaymentPersistenceImpl
 			OrderByComparator<CommerceOrderPayment> orderByComparator)
 		throws NoSuchOrderPaymentException {
 
-		CommerceOrderPayment commerceOrderPayment =
-			fetchByCommerceOrderId_First(commerceOrderId, orderByComparator);
-
-		if (commerceOrderPayment != null) {
-			return commerceOrderPayment;
-		}
-
-		throw new NoSuchOrderPaymentException(
-			_collectionPersistenceFinderByCommerceOrderId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {commerceOrderId}));
+		return _collectionPersistenceFinderByCommerceOrderId.findFirst(
+			finderCache, new Object[] {commerceOrderId}, orderByComparator);
 	}
 
 	/**
@@ -398,7 +391,7 @@ public class CommerceOrderPaymentPersistenceImpl
 				_SQL_SELECT_COMMERCEORDERPAYMENT_WHERE,
 				_SQL_COUNT_COMMERCEORDERPAYMENT_WHERE,
 				CommerceOrderPaymentModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceOrderPayment.", "commerceOrderId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -458,13 +451,10 @@ public class CommerceOrderPaymentPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEORDERPAYMENT_WHERE =
 		"SELECT COUNT(commerceOrderPayment) FROM CommerceOrderPayment commerceOrderPayment WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceOrderPayment exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-7331264
+// LIFERAY-SERVICE-BUILDER-HASH:-72435322

@@ -111,11 +111,7 @@ public class WebsitePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		Website newWebsite = _persistence.create(pk);
-
-		newWebsite.setMvccVersion(RandomTestUtil.nextLong());
+		Website newWebsite = addWebsite();
 
 		newWebsite.setUuid(RandomTestUtil.randomString());
 
@@ -143,7 +139,9 @@ public class WebsitePersistenceTest {
 
 		newWebsite.setLastPublishDate(RandomTestUtil.nextDate());
 
-		_websites.add(_persistence.update(newWebsite));
+		newWebsite = _persistence.update(newWebsite);
+
+		_websites.add(newWebsite);
 
 		Website existingWebsite = _persistence.findByPrimaryKey(
 			newWebsite.getPrimaryKey());
@@ -569,8 +567,6 @@ public class WebsitePersistenceTest {
 
 		Website website = _persistence.create(pk);
 
-		website.setMvccVersion(RandomTestUtil.nextLong());
-
 		website.setUuid(RandomTestUtil.randomString());
 
 		website.setExternalReferenceCode(RandomTestUtil.randomString());
@@ -607,4 +603,4 @@ public class WebsitePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-142910279
+// LIFERAY-SERVICE-BUILDER-HASH:759185851

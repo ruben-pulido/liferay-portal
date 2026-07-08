@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -83,8 +81,9 @@ public class DDMTemplateVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMTemplateVersion>
-		_collectionPersistenceFinderByTemplateId;
+	private CollectionPersistenceFinder
+		<DDMTemplateVersion, NoSuchTemplateVersionException>
+			_collectionPersistenceFinderByTemplateId;
 
 	/**
 	 * Returns an ordered range of all the ddm template versions where templateId = &#63;.
@@ -125,16 +124,8 @@ public class DDMTemplateVersionPersistenceImpl
 			OrderByComparator<DDMTemplateVersion> orderByComparator)
 		throws NoSuchTemplateVersionException {
 
-		DDMTemplateVersion ddmTemplateVersion = fetchByTemplateId_First(
-			templateId, orderByComparator);
-
-		if (ddmTemplateVersion != null) {
-			return ddmTemplateVersion;
-		}
-
-		throw new NoSuchTemplateVersionException(
-			_collectionPersistenceFinderByTemplateId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {templateId}));
+		return _collectionPersistenceFinderByTemplateId.findFirst(
+			finderCache, new Object[] {templateId}, orderByComparator);
 	}
 
 	/**
@@ -176,8 +167,9 @@ public class DDMTemplateVersionPersistenceImpl
 			finderCache, new Object[] {templateId});
 	}
 
-	private UniquePersistenceFinder<DDMTemplateVersion>
-		_uniquePersistenceFinderByT_V;
+	private UniquePersistenceFinder
+		<DDMTemplateVersion, NoSuchTemplateVersionException>
+			_uniquePersistenceFinderByT_V;
 
 	/**
 	 * Returns the ddm template version where templateId = &#63; and version = &#63; or throws a <code>NoSuchTemplateVersionException</code> if it could not be found.
@@ -191,22 +183,8 @@ public class DDMTemplateVersionPersistenceImpl
 	public DDMTemplateVersion findByT_V(long templateId, String version)
 		throws NoSuchTemplateVersionException {
 
-		DDMTemplateVersion ddmTemplateVersion = fetchByT_V(templateId, version);
-
-		if (ddmTemplateVersion == null) {
-			String message =
-				_uniquePersistenceFinderByT_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {templateId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTemplateVersionException(message);
-		}
-
-		return ddmTemplateVersion;
+		return _uniquePersistenceFinderByT_V.find(
+			finderCache, new Object[] {templateId, version});
 	}
 
 	/**
@@ -254,8 +232,9 @@ public class DDMTemplateVersionPersistenceImpl
 			finderCache, new Object[] {templateId, version});
 	}
 
-	private CollectionPersistenceFinder<DDMTemplateVersion>
-		_collectionPersistenceFinderByT_S;
+	private CollectionPersistenceFinder
+		<DDMTemplateVersion, NoSuchTemplateVersionException>
+			_collectionPersistenceFinderByT_S;
 
 	/**
 	 * Returns an ordered range of all the ddm template versions where templateId = &#63; and status = &#63;.
@@ -298,16 +277,8 @@ public class DDMTemplateVersionPersistenceImpl
 			OrderByComparator<DDMTemplateVersion> orderByComparator)
 		throws NoSuchTemplateVersionException {
 
-		DDMTemplateVersion ddmTemplateVersion = fetchByT_S_First(
-			templateId, status, orderByComparator);
-
-		if (ddmTemplateVersion != null) {
-			return ddmTemplateVersion;
-		}
-
-		throw new NoSuchTemplateVersionException(
-			_collectionPersistenceFinderByT_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {templateId, status}));
+		return _collectionPersistenceFinderByT_S.findFirst(
+			finderCache, new Object[] {templateId, status}, orderByComparator);
 	}
 
 	/**
@@ -651,7 +622,7 @@ public class DDMTemplateVersionPersistenceImpl
 				_SQL_SELECT_DDMTEMPLATEVERSION_WHERE,
 				_SQL_COUNT_DDMTEMPLATEVERSION_WHERE,
 				DDMTemplateVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddmTemplateVersion.", "templateId", FinderColumn.Type.LONG,
 					"=", true, true, DDMTemplateVersion::getTemplateId));
@@ -693,6 +664,7 @@ public class DDMTemplateVersionPersistenceImpl
 			_SQL_SELECT_DDMTEMPLATEVERSION_WHERE,
 			_SQL_COUNT_DDMTEMPLATEVERSION_WHERE,
 			DDMTemplateVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ddmTemplateVersion.", "templateId", FinderColumn.Type.LONG,
 				"=", true, true, DDMTemplateVersion::getTemplateId),
@@ -757,16 +729,10 @@ public class DDMTemplateVersionPersistenceImpl
 	private static final String _SQL_COUNT_DDMTEMPLATEVERSION_WHERE =
 		"SELECT COUNT(ddmTemplateVersion) FROM DDMTemplateVersion ddmTemplateVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMTemplateVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMTemplateVersionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1237305015
+// LIFERAY-SERVICE-BUILDER-HASH:-539251751

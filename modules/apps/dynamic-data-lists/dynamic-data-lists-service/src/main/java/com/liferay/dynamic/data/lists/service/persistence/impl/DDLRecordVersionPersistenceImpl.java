@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -82,8 +80,9 @@ public class DDLRecordVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDLRecordVersion>
-		_collectionPersistenceFinderByRecordId;
+	private CollectionPersistenceFinder
+		<DDLRecordVersion, NoSuchRecordVersionException>
+			_collectionPersistenceFinderByRecordId;
 
 	/**
 	 * Returns an ordered range of all the ddl record versions where recordId = &#63;.
@@ -124,16 +123,8 @@ public class DDLRecordVersionPersistenceImpl
 			OrderByComparator<DDLRecordVersion> orderByComparator)
 		throws NoSuchRecordVersionException {
 
-		DDLRecordVersion ddlRecordVersion = fetchByRecordId_First(
-			recordId, orderByComparator);
-
-		if (ddlRecordVersion != null) {
-			return ddlRecordVersion;
-		}
-
-		throw new NoSuchRecordVersionException(
-			_collectionPersistenceFinderByRecordId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {recordId}));
+		return _collectionPersistenceFinderByRecordId.findFirst(
+			finderCache, new Object[] {recordId}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class DDLRecordVersionPersistenceImpl
 			finderCache, new Object[] {recordId});
 	}
 
-	private CollectionPersistenceFinder<DDLRecordVersion>
-		_collectionPersistenceFinderByR_R;
+	private CollectionPersistenceFinder
+		<DDLRecordVersion, NoSuchRecordVersionException>
+			_collectionPersistenceFinderByR_R;
 
 	/**
 	 * Returns an ordered range of all the ddl record versions where recordSetId = &#63; and recordSetVersion = &#63;.
@@ -218,17 +210,9 @@ public class DDLRecordVersionPersistenceImpl
 			OrderByComparator<DDLRecordVersion> orderByComparator)
 		throws NoSuchRecordVersionException {
 
-		DDLRecordVersion ddlRecordVersion = fetchByR_R_First(
-			recordSetId, recordSetVersion, orderByComparator);
-
-		if (ddlRecordVersion != null) {
-			return ddlRecordVersion;
-		}
-
-		throw new NoSuchRecordVersionException(
-			_collectionPersistenceFinderByR_R.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {recordSetId, recordSetVersion}));
+		return _collectionPersistenceFinderByR_R.findFirst(
+			finderCache, new Object[] {recordSetId, recordSetVersion},
+			orderByComparator);
 	}
 
 	/**
@@ -274,8 +258,9 @@ public class DDLRecordVersionPersistenceImpl
 			finderCache, new Object[] {recordSetId, recordSetVersion});
 	}
 
-	private UniquePersistenceFinder<DDLRecordVersion>
-		_uniquePersistenceFinderByR_V;
+	private UniquePersistenceFinder
+		<DDLRecordVersion, NoSuchRecordVersionException>
+			_uniquePersistenceFinderByR_V;
 
 	/**
 	 * Returns the ddl record version where recordId = &#63; and version = &#63; or throws a <code>NoSuchRecordVersionException</code> if it could not be found.
@@ -289,21 +274,8 @@ public class DDLRecordVersionPersistenceImpl
 	public DDLRecordVersion findByR_V(long recordId, String version)
 		throws NoSuchRecordVersionException {
 
-		DDLRecordVersion ddlRecordVersion = fetchByR_V(recordId, version);
-
-		if (ddlRecordVersion == null) {
-			String message =
-				_uniquePersistenceFinderByR_V.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {recordId, version});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRecordVersionException(message);
-		}
-
-		return ddlRecordVersion;
+		return _uniquePersistenceFinderByR_V.find(
+			finderCache, new Object[] {recordId, version});
 	}
 
 	/**
@@ -351,8 +323,9 @@ public class DDLRecordVersionPersistenceImpl
 			finderCache, new Object[] {recordId, version});
 	}
 
-	private CollectionPersistenceFinder<DDLRecordVersion>
-		_collectionPersistenceFinderByR_S;
+	private CollectionPersistenceFinder
+		<DDLRecordVersion, NoSuchRecordVersionException>
+			_collectionPersistenceFinderByR_S;
 
 	/**
 	 * Returns an ordered range of all the ddl record versions where recordId = &#63; and status = &#63;.
@@ -395,16 +368,8 @@ public class DDLRecordVersionPersistenceImpl
 			OrderByComparator<DDLRecordVersion> orderByComparator)
 		throws NoSuchRecordVersionException {
 
-		DDLRecordVersion ddlRecordVersion = fetchByR_S_First(
-			recordId, status, orderByComparator);
-
-		if (ddlRecordVersion != null) {
-			return ddlRecordVersion;
-		}
-
-		throw new NoSuchRecordVersionException(
-			_collectionPersistenceFinderByR_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {recordId, status}));
+		return _collectionPersistenceFinderByR_S.findFirst(
+			finderCache, new Object[] {recordId, status}, orderByComparator);
 	}
 
 	/**
@@ -449,8 +414,9 @@ public class DDLRecordVersionPersistenceImpl
 			finderCache, new Object[] {recordId, status});
 	}
 
-	private CollectionPersistenceFinder<DDLRecordVersion>
-		_collectionPersistenceFinderByU_R_R_S;
+	private CollectionPersistenceFinder
+		<DDLRecordVersion, NoSuchRecordVersionException>
+			_collectionPersistenceFinderByU_R_R_S;
 
 	/**
 	 * Returns an ordered range of all the ddl record versions where userId = &#63; and recordSetId = &#63; and recordSetVersion = &#63; and status = &#63;.
@@ -499,17 +465,10 @@ public class DDLRecordVersionPersistenceImpl
 			OrderByComparator<DDLRecordVersion> orderByComparator)
 		throws NoSuchRecordVersionException {
 
-		DDLRecordVersion ddlRecordVersion = fetchByU_R_R_S_First(
-			userId, recordSetId, recordSetVersion, status, orderByComparator);
-
-		if (ddlRecordVersion != null) {
-			return ddlRecordVersion;
-		}
-
-		throw new NoSuchRecordVersionException(
-			_collectionPersistenceFinderByU_R_R_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {userId, recordSetId, recordSetVersion, status}));
+		return _collectionPersistenceFinderByU_R_R_S.findFirst(
+			finderCache,
+			new Object[] {userId, recordSetId, recordSetVersion, status},
+			orderByComparator);
 	}
 
 	/**
@@ -861,7 +820,7 @@ public class DDLRecordVersionPersistenceImpl
 				_SQL_SELECT_DDLRECORDVERSION_WHERE,
 				_SQL_COUNT_DDLRECORDVERSION_WHERE,
 				DDLRecordVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddlRecordVersion.", "recordId", FinderColumn.Type.LONG,
 					"=", true, true, DDLRecordVersion::getRecordId));
@@ -889,6 +848,7 @@ public class DDLRecordVersionPersistenceImpl
 			_SQL_SELECT_DDLRECORDVERSION_WHERE,
 			_SQL_COUNT_DDLRECORDVERSION_WHERE,
 			DDLRecordVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ddlRecordVersion.", "recordSetId", FinderColumn.Type.LONG, "=",
 				true, true, DDLRecordVersion::getRecordSetId),
@@ -934,6 +894,7 @@ public class DDLRecordVersionPersistenceImpl
 			_SQL_SELECT_DDLRECORDVERSION_WHERE,
 			_SQL_COUNT_DDLRECORDVERSION_WHERE,
 			DDLRecordVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"ddlRecordVersion.", "recordId", FinderColumn.Type.LONG, "=",
 				true, true, DDLRecordVersion::getRecordId),
@@ -979,7 +940,7 @@ public class DDLRecordVersionPersistenceImpl
 				_SQL_SELECT_DDLRECORDVERSION_WHERE,
 				_SQL_COUNT_DDLRECORDVERSION_WHERE,
 				DDLRecordVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
 					"ddlRecordVersion.", "userId", FinderColumn.Type.LONG, "=",
 					true, true, DDLRecordVersion::getUserId),
@@ -1051,16 +1012,10 @@ public class DDLRecordVersionPersistenceImpl
 	private static final String _SQL_COUNT_DDLRECORDVERSION_WHERE =
 		"SELECT COUNT(ddlRecordVersion) FROM DDLRecordVersion ddlRecordVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDLRecordVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDLRecordVersionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2058254621
+// LIFERAY-SERVICE-BUILDER-HASH:-1608757247

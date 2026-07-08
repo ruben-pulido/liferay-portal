@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -86,7 +84,7 @@ public class DDMContentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<DDMContent>
+	private CollectionPersistenceFinder<DDMContent, NoSuchContentException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -127,15 +125,8 @@ public class DDMContentPersistenceImpl
 			String uuid, OrderByComparator<DDMContent> orderByComparator)
 		throws NoSuchContentException {
 
-		DDMContent ddmContent = fetchByUuid_First(uuid, orderByComparator);
-
-		if (ddmContent != null) {
-			return ddmContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -176,7 +167,7 @@ public class DDMContentPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<DDMContent>
+	private UniquePersistenceFinder<DDMContent, NoSuchContentException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -191,21 +182,8 @@ public class DDMContentPersistenceImpl
 	public DDMContent findByUUID_G(String uuid, long groupId)
 		throws NoSuchContentException {
 
-		DDMContent ddmContent = fetchByUUID_G(uuid, groupId);
-
-		if (ddmContent == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchContentException(message);
-		}
-
-		return ddmContent;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -253,7 +231,7 @@ public class DDMContentPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<DDMContent>
+	private CollectionPersistenceFinder<DDMContent, NoSuchContentException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -297,16 +275,8 @@ public class DDMContentPersistenceImpl
 			OrderByComparator<DDMContent> orderByComparator)
 		throws NoSuchContentException {
 
-		DDMContent ddmContent = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ddmContent != null) {
-			return ddmContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,7 +321,7 @@ public class DDMContentPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<DDMContent>
+	private CollectionPersistenceFinder<DDMContent, NoSuchContentException>
 		_collectionPersistenceFinderByGroupId;
 
 	/**
@@ -392,16 +362,8 @@ public class DDMContentPersistenceImpl
 			long groupId, OrderByComparator<DDMContent> orderByComparator)
 		throws NoSuchContentException {
 
-		DDMContent ddmContent = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (ddmContent != null) {
-			return ddmContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -442,7 +404,7 @@ public class DDMContentPersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private CollectionPersistenceFinder<DDMContent>
+	private CollectionPersistenceFinder<DDMContent, NoSuchContentException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -483,16 +445,8 @@ public class DDMContentPersistenceImpl
 			long companyId, OrderByComparator<DDMContent> orderByComparator)
 		throws NoSuchContentException {
 
-		DDMContent ddmContent = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ddmContent != null) {
-			return ddmContent;
-		}
-
-		throw new NoSuchContentException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -844,10 +798,11 @@ public class DDMContentPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_DDMCONTENT_WHERE, _SQL_COUNT_DDMCONTENT_WHERE,
-			DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"ddmContent.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMContent::getUuid));
+				"ddmContent.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DDMContent::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -859,8 +814,8 @@ public class DDMContentPersistenceImpl
 				DDMContent::getGroupId),
 			_SQL_SELECT_DDMCONTENT_WHERE, "",
 			new FinderColumn<>(
-				"ddmContent.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, DDMContent::getUuid),
+				"ddmContent.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, DDMContent::getUuid),
 			new FinderColumn<>(
 				"ddmContent.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, DDMContent::getGroupId));
@@ -885,10 +840,11 @@ public class DDMContentPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_DDMCONTENT_WHERE, _SQL_COUNT_DDMCONTENT_WHERE,
-				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"ddmContent.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, DDMContent::getUuid),
+					"ddmContent.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, DDMContent::getUuid),
 				new FinderColumn<>(
 					"ddmContent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DDMContent::getCompanyId));
@@ -913,7 +869,8 @@ public class DDMContentPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_DDMCONTENT_WHERE, _SQL_COUNT_DDMCONTENT_WHERE,
-				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ddmContent.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, DDMContent::getGroupId));
@@ -938,7 +895,8 @@ public class DDMContentPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_DDMCONTENT_WHERE, _SQL_COUNT_DDMCONTENT_WHERE,
-				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				DDMContentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ddmContent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, DDMContent::getCompanyId));
@@ -1000,12 +958,6 @@ public class DDMContentPersistenceImpl
 	private static final String _SQL_COUNT_DDMCONTENT_WHERE =
 		"SELECT COUNT(ddmContent) FROM DDMContent ddmContent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No DDMContent exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DDMContentPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "data"});
 
@@ -1015,4 +967,4 @@ public class DDMContentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2124130152
+// LIFERAY-SERVICE-BUILDER-HASH:937218906

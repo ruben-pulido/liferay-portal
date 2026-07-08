@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class CommerceTermEntryRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceTermEntryRel>
-		_collectionPersistenceFinderByCommerceTermEntryId;
+	private CollectionPersistenceFinder
+		<CommerceTermEntryRel, NoSuchTermEntryRelException>
+			_collectionPersistenceFinderByCommerceTermEntryId;
 
 	/**
 	 * Returns an ordered range of all the commerce term entry rels where commerceTermEntryId = &#63;.
@@ -118,19 +117,8 @@ public class CommerceTermEntryRelPersistenceImpl
 			OrderByComparator<CommerceTermEntryRel> orderByComparator)
 		throws NoSuchTermEntryRelException {
 
-		CommerceTermEntryRel commerceTermEntryRel =
-			fetchByCommerceTermEntryId_First(
-				commerceTermEntryId, orderByComparator);
-
-		if (commerceTermEntryRel != null) {
-			return commerceTermEntryRel;
-		}
-
-		throw new NoSuchTermEntryRelException(
-			_collectionPersistenceFinderByCommerceTermEntryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceTermEntryId}));
+		return _collectionPersistenceFinderByCommerceTermEntryId.findFirst(
+			finderCache, new Object[] {commerceTermEntryId}, orderByComparator);
 	}
 
 	/**
@@ -172,8 +160,9 @@ public class CommerceTermEntryRelPersistenceImpl
 			finderCache, new Object[] {commerceTermEntryId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTermEntryRel>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommerceTermEntryRel, NoSuchTermEntryRelException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce term entry rels where classNameId = &#63; and commerceTermEntryId = &#63;.
@@ -216,17 +205,9 @@ public class CommerceTermEntryRelPersistenceImpl
 			OrderByComparator<CommerceTermEntryRel> orderByComparator)
 		throws NoSuchTermEntryRelException {
 
-		CommerceTermEntryRel commerceTermEntryRel = fetchByC_C_First(
-			classNameId, commerceTermEntryId, orderByComparator);
-
-		if (commerceTermEntryRel != null) {
-			return commerceTermEntryRel;
-		}
-
-		throw new NoSuchTermEntryRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, commerceTermEntryId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, commerceTermEntryId},
+			orderByComparator);
 	}
 
 	/**
@@ -272,8 +253,9 @@ public class CommerceTermEntryRelPersistenceImpl
 			finderCache, new Object[] {classNameId, commerceTermEntryId});
 	}
 
-	private UniquePersistenceFinder<CommerceTermEntryRel>
-		_uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder
+		<CommerceTermEntryRel, NoSuchTermEntryRelException>
+			_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns the commerce term entry rel where classNameId = &#63; and classPK = &#63; and commerceTermEntryId = &#63; or throws a <code>NoSuchTermEntryRelException</code> if it could not be found.
@@ -289,23 +271,9 @@ public class CommerceTermEntryRelPersistenceImpl
 			long classNameId, long classPK, long commerceTermEntryId)
 		throws NoSuchTermEntryRelException {
 
-		CommerceTermEntryRel commerceTermEntryRel = fetchByC_C_C(
-			classNameId, classPK, commerceTermEntryId);
-
-		if (commerceTermEntryRel == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, commerceTermEntryId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTermEntryRelException(message);
-		}
-
-		return commerceTermEntryRel;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache,
+			new Object[] {classNameId, classPK, commerceTermEntryId});
 	}
 
 	/**
@@ -596,7 +564,7 @@ public class CommerceTermEntryRelPersistenceImpl
 				_SQL_SELECT_COMMERCETERMENTRYREL_WHERE,
 				_SQL_COUNT_COMMERCETERMENTRYREL_WHERE,
 				CommerceTermEntryRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTermEntryRel.", "commerceTermEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -623,7 +591,7 @@ public class CommerceTermEntryRelPersistenceImpl
 			_SQL_SELECT_COMMERCETERMENTRYREL_WHERE,
 			_SQL_COUNT_COMMERCETERMENTRYREL_WHERE,
 			CommerceTermEntryRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"commerceTermEntryRel.", "classNameId", FinderColumn.Type.LONG,
 				"=", true, true, CommerceTermEntryRel::getClassNameId),
@@ -710,16 +678,10 @@ public class CommerceTermEntryRelPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCETERMENTRYREL_WHERE =
 		"SELECT COUNT(commerceTermEntryRel) FROM CommerceTermEntryRel commerceTermEntryRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceTermEntryRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceTermEntryRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1221851163
+// LIFERAY-SERVICE-BUILDER-HASH:-1630880553

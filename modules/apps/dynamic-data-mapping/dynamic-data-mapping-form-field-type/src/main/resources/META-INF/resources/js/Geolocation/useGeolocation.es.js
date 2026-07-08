@@ -44,9 +44,6 @@ const parseJSONValue = (value) => {
 };
 
 const setupMapOpenStreetMaps = (callback) => {
-	Leaflet.Icon.Default.imagePath =
-		'https://npmcdn.com/leaflet@1.7.1/dist/images/';
-
 	if (!window['L']) {
 		window['L'] = Leaflet;
 	}
@@ -99,6 +96,7 @@ export function useGeolocation({
 	viewMode,
 }) {
 	const mapRef = useRef(null);
+	const onPositionChangeRef = useRef(null);
 
 	useEffect(() => {
 		if (!disabled || viewMode) {
@@ -123,9 +121,12 @@ export function useGeolocation({
 					`#map_${instanceId}`
 				);
 
-				mapRef.current.removeAllListeners('positionChange');
+				onPositionChangeRef.current?.removeListener();
 
-				mapRef.current.on('positionChange', onChange);
+				onPositionChangeRef.current = mapRef.current.on(
+					'positionChange',
+					onChange
+				);
 
 				if (value) {
 					mapRef.current.setCenter(parseJSONValue(value));
@@ -161,10 +162,18 @@ export function useGeolocation({
 
 	useEffect(() => {
 		if (mapRef.current) {
-			mapRef.current.removeAllListeners('positionChange');
+			onPositionChangeRef.current?.removeListener();
 
-			mapRef.current.on('positionChange', onChange);
+			onPositionChangeRef.current = mapRef.current.on(
+				'positionChange',
+				onChange
+			);
 		}
+
+		return () => {
+			onPositionChangeRef.current?.removeListener();
+			onPositionChangeRef.current = null;
+		};
 	}, [onChange]);
 
 	useEffect(() => {

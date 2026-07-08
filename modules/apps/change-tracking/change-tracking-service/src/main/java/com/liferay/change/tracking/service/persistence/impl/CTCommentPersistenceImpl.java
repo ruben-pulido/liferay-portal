@@ -72,7 +72,7 @@ public class CTCommentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CTComment>
+	private CollectionPersistenceFinder<CTComment, NoSuchCommentException>
 		_collectionPersistenceFinderByCtCollectionId;
 
 	/**
@@ -113,16 +113,8 @@ public class CTCommentPersistenceImpl
 			long ctCollectionId, OrderByComparator<CTComment> orderByComparator)
 		throws NoSuchCommentException {
 
-		CTComment ctComment = fetchByCtCollectionId_First(
-			ctCollectionId, orderByComparator);
-
-		if (ctComment != null) {
-			return ctComment;
-		}
-
-		throw new NoSuchCommentException(
-			_collectionPersistenceFinderByCtCollectionId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ctCollectionId}));
+		return _collectionPersistenceFinderByCtCollectionId.findFirst(
+			finderCache, new Object[] {ctCollectionId}, orderByComparator);
 	}
 
 	/**
@@ -163,7 +155,7 @@ public class CTCommentPersistenceImpl
 			finderCache, new Object[] {ctCollectionId});
 	}
 
-	private CollectionPersistenceFinder<CTComment>
+	private CollectionPersistenceFinder<CTComment, NoSuchCommentException>
 		_collectionPersistenceFinderByCtEntryId;
 
 	/**
@@ -204,16 +196,8 @@ public class CTCommentPersistenceImpl
 			long ctEntryId, OrderByComparator<CTComment> orderByComparator)
 		throws NoSuchCommentException {
 
-		CTComment ctComment = fetchByCtEntryId_First(
-			ctEntryId, orderByComparator);
-
-		if (ctComment != null) {
-			return ctComment;
-		}
-
-		throw new NoSuchCommentException(
-			_collectionPersistenceFinderByCtEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {ctEntryId}));
+		return _collectionPersistenceFinderByCtEntryId.findFirst(
+			finderCache, new Object[] {ctEntryId}, orderByComparator);
 	}
 
 	/**
@@ -470,7 +454,8 @@ public class CTCommentPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"ctCollectionId"}, false),
 				_SQL_SELECT_CTCOMMENT_WHERE, _SQL_COUNT_CTCOMMENT_WHERE,
-				CTCommentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTCommentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctComment.", "ctCollectionId", FinderColumn.Type.LONG, "=",
 					true, true, CTComment::getCtCollectionId));
@@ -495,7 +480,8 @@ public class CTCommentPersistenceImpl
 					"countByCtEntryId", new String[] {Long.class.getName()},
 					new String[] {"ctEntryId"}, false),
 				_SQL_SELECT_CTCOMMENT_WHERE, _SQL_COUNT_CTCOMMENT_WHERE,
-				CTCommentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				CTCommentModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"ctComment.", "ctEntryId", FinderColumn.Type.LONG, "=",
 					true, true, CTComment::getCtEntryId));
@@ -554,13 +540,10 @@ public class CTCommentPersistenceImpl
 	private static final String _SQL_COUNT_CTCOMMENT_WHERE =
 		"SELECT COUNT(ctComment) FROM CTComment ctComment WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTComment exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2011937464
+// LIFERAY-SERVICE-BUILDER-HASH:-396676477

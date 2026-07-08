@@ -73,8 +73,9 @@ public class ContactsCardTemplatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ContactsCardTemplate>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<ContactsCardTemplate, NoSuchContactsCardTemplateException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the contacts card templates where groupId = &#63;.
@@ -115,16 +116,8 @@ public class ContactsCardTemplatePersistenceImpl
 			OrderByComparator<ContactsCardTemplate> orderByComparator)
 		throws NoSuchContactsCardTemplateException {
 
-		ContactsCardTemplate contactsCardTemplate = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (contactsCardTemplate != null) {
-			return contactsCardTemplate;
-		}
-
-		throw new NoSuchContactsCardTemplateException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -382,7 +375,7 @@ public class ContactsCardTemplatePersistenceImpl
 				_SQL_SELECT_CONTACTSCARDTEMPLATE_WHERE,
 				_SQL_COUNT_CONTACTSCARDTEMPLATE_WHERE,
 				ContactsCardTemplateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"contactsCardTemplate.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, ContactsCardTemplate::getGroupId));
@@ -441,9 +434,6 @@ public class ContactsCardTemplatePersistenceImpl
 	private static final String _SQL_COUNT_CONTACTSCARDTEMPLATE_WHERE =
 		"SELECT COUNT(contactsCardTemplate) FROM ContactsCardTemplate contactsCardTemplate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ContactsCardTemplate exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"settings", "type"});
 
@@ -453,4 +443,4 @@ public class ContactsCardTemplatePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1566799102
+// LIFERAY-SERVICE-BUILDER-HASH:-973543632

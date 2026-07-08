@@ -115,13 +115,8 @@ public class DDMDataProviderInstanceLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		DDMDataProviderInstanceLink newDDMDataProviderInstanceLink =
-			_persistence.create(pk);
-
-		newDDMDataProviderInstanceLink.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addDDMDataProviderInstanceLink();
 
 		newDDMDataProviderInstanceLink.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -134,8 +129,10 @@ public class DDMDataProviderInstanceLinkPersistenceTest {
 		newDDMDataProviderInstanceLink.setStructureId(
 			RandomTestUtil.nextLong());
 
-		_ddmDataProviderInstanceLinks.add(
-			_persistence.update(newDDMDataProviderInstanceLink));
+		newDDMDataProviderInstanceLink = _persistence.update(
+			newDDMDataProviderInstanceLink);
+
+		_ddmDataProviderInstanceLinks.add(newDDMDataProviderInstanceLink);
 
 		DDMDataProviderInstanceLink existingDDMDataProviderInstanceLink =
 			_persistence.findByPrimaryKey(
@@ -545,8 +542,6 @@ public class DDMDataProviderInstanceLinkPersistenceTest {
 		DDMDataProviderInstanceLink ddmDataProviderInstanceLink =
 			_persistence.create(pk);
 
-		ddmDataProviderInstanceLink.setMvccVersion(RandomTestUtil.nextLong());
-
 		ddmDataProviderInstanceLink.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -569,4 +564,4 @@ public class DDMDataProviderInstanceLinkPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1988504142
+// LIFERAY-SERVICE-BUILDER-HASH:-1641794036

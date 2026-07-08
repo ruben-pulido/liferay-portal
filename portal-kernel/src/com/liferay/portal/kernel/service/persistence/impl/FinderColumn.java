@@ -20,8 +20,8 @@ import java.util.function.Function;
 public class FinderColumn<T extends BaseModel<T>> {
 
 	public FinderColumn(
-		String entityAlias, String columnName, Type type, String comparator,
-		boolean caseSensitive, boolean convertNull,
+		String entityAlias, String columnName, String dbColumnName, Type type,
+		String comparator, boolean caseSensitive, boolean convertNull,
 		Function<T, Object> valueExtractor) {
 
 		this.type = type;
@@ -40,29 +40,50 @@ public class FinderColumn<T extends BaseModel<T>> {
 		}
 
 		if ((type == Type.STRING) && !caseSensitive) {
-			sqlBind = StringBundler.concat(
+			hqlBind = StringBundler.concat(
 				"lower(", entityAlias, columnName, ") ", comparator, " ?");
 		}
 		else {
-			sqlBind = StringBundler.concat(
+			hqlBind = StringBundler.concat(
 				entityAlias, columnName, " ", comparator, " ?");
 		}
 
 		if (type == Type.STRING) {
-			sqlNull = StringBundler.concat(
+			hqlNull = StringBundler.concat(
 				"(", entityAlias, columnName, " IS NULL OR ", entityAlias,
 				columnName, " ", comparator, " '')");
 		}
 		else {
-			sqlNull = null;
+			hqlNull = null;
 		}
 
 		if (comparator.equals("<>") || comparator.equals("!=")) {
-			sqlIsNull = entityAlias + columnName + " IS NOT NULL";
+			hqlIsNull = entityAlias + columnName + " IS NOT NULL";
 		}
 		else {
-			sqlIsNull = entityAlias + columnName + " IS NULL";
+			hqlIsNull = entityAlias + columnName + " IS NULL";
 		}
+
+		if (Objects.equals(columnName, dbColumnName)) {
+			sqlBind = hqlBind;
+			sqlIsNull = hqlIsNull;
+			sqlNull = hqlNull;
+		}
+		else {
+			sqlBind = StringUtil.replace(hqlBind, columnName, dbColumnName);
+			sqlIsNull = StringUtil.replace(hqlIsNull, columnName, dbColumnName);
+			sqlNull = StringUtil.replace(hqlNull, columnName, dbColumnName);
+		}
+	}
+
+	public FinderColumn(
+		String entityAlias, String columnName, Type type, String comparator,
+		boolean caseSensitive, boolean convertNull,
+		Function<T, Object> valueExtractor) {
+
+		this(
+			entityAlias, columnName, columnName, type, comparator,
+			caseSensitive, convertNull, valueExtractor);
 	}
 
 	public void bindValue(QueryPos queryPos, Object normalizedValue) {
@@ -107,26 +128,46 @@ public class FinderColumn<T extends BaseModel<T>> {
 		return _keyFragment;
 	}
 
-	public String getSqlFragment(Object normalizedValue) {
+	public String getSqlFragment(Object normalizedValue, boolean sqlQuery) {
 		if (type.isPrimitive()) {
-			return sqlBind;
+			if (sqlQuery) {
+				return sqlBind;
+			}
+
+			return hqlBind;
 		}
 
 		if ((type == Type.STRING) && convertNull) {
 			String stringValue = (String)normalizedValue;
 
 			if (stringValue.isEmpty()) {
-				return sqlNull;
+				if (sqlQuery) {
+					return sqlNull;
+				}
+
+				return hqlNull;
 			}
 
-			return sqlBind;
+			if (sqlQuery) {
+				return sqlBind;
+			}
+
+			return hqlBind;
 		}
 
 		if (normalizedValue == null) {
-			return sqlIsNull;
+			if (sqlQuery) {
+				return sqlIsNull;
+			}
+
+			return hqlIsNull;
 		}
 
-		return sqlBind;
+		if (sqlQuery) {
+			return sqlBind;
+		}
+
+		return hqlBind;
 	}
 
 	public boolean matches(T entity, Object normalizedValue) {
@@ -236,6 +277,9 @@ public class FinderColumn<T extends BaseModel<T>> {
 
 	protected final boolean caseSensitive;
 	protected final boolean convertNull;
+	protected final String hqlBind;
+	protected final String hqlIsNull;
+	protected final String hqlNull;
 	protected final String sqlBind;
 	protected final String sqlIsNull;
 	protected final String sqlNull;

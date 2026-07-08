@@ -116,11 +116,7 @@ public class MBCategoryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		MBCategory newMBCategory = _persistence.create(pk);
-
-		newMBCategory.setMvccVersion(RandomTestUtil.nextLong());
+		MBCategory newMBCategory = addMBCategory();
 
 		newMBCategory.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -160,7 +156,9 @@ public class MBCategoryPersistenceTest {
 
 		newMBCategory.setStatusDate(RandomTestUtil.nextDate());
 
-		_mbCategories.add(_persistence.update(newMBCategory));
+		newMBCategory = _persistence.update(newMBCategory);
+
+		_mbCategories.add(newMBCategory);
 
 		MBCategory existingMBCategory = _persistence.findByPrimaryKey(
 			newMBCategory.getPrimaryKey());
@@ -759,8 +757,6 @@ public class MBCategoryPersistenceTest {
 
 		MBCategory mbCategory = _persistence.create(pk);
 
-		mbCategory.setMvccVersion(RandomTestUtil.nextLong());
-
 		mbCategory.setCtCollectionId(RandomTestUtil.nextLong());
 
 		mbCategory.setUuid(RandomTestUtil.randomString());
@@ -809,4 +805,4 @@ public class MBCategoryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1571122642
+// LIFERAY-SERVICE-BUILDER-HASH:902096164

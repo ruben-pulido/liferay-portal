@@ -115,11 +115,8 @@ public class NotificationTemplatePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		NotificationTemplate newNotificationTemplate = _persistence.create(pk);
-
-		newNotificationTemplate.setMvccVersion(RandomTestUtil.nextLong());
+		NotificationTemplate newNotificationTemplate =
+			addNotificationTemplate();
 
 		newNotificationTemplate.setUuid(RandomTestUtil.randomString());
 
@@ -155,8 +152,9 @@ public class NotificationTemplatePersistenceTest {
 
 		newNotificationTemplate.setType(RandomTestUtil.randomString());
 
-		_notificationTemplates.add(
-			_persistence.update(newNotificationTemplate));
+		newNotificationTemplate = _persistence.update(newNotificationTemplate);
+
+		_notificationTemplates.add(newNotificationTemplate);
 
 		NotificationTemplate existingNotificationTemplate =
 			_persistence.findByPrimaryKey(
@@ -623,8 +621,6 @@ public class NotificationTemplatePersistenceTest {
 
 		NotificationTemplate notificationTemplate = _persistence.create(pk);
 
-		notificationTemplate.setMvccVersion(RandomTestUtil.nextLong());
-
 		notificationTemplate.setUuid(RandomTestUtil.randomString());
 
 		notificationTemplate.setExternalReferenceCode(
@@ -669,4 +665,4 @@ public class NotificationTemplatePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1768484062
+// LIFERAY-SERVICE-BUILDER-HASH:1298978744

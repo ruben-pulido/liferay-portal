@@ -81,7 +81,7 @@ public class ObjectDefinitionDeployerImplTest {
 
 	@Before
 	public void setUp() throws Exception {
-		DSRTestUtil.getOrAddGroup(ObjectDefinitionDeployerImplTest.class);
+		DSRTestUtil.getOrAddGroup();
 
 		AccountEntry accountEntry = _accountEntryLocalService.addAccountEntry(
 			StringPool.BLANK, TestPropsValues.getUserId(), 0,
@@ -110,6 +110,9 @@ public class ObjectDefinitionDeployerImplTest {
 			_classNameLocalService.getClassNameId(
 				_objectDefinition.getClassName()),
 			_objectEntry.getObjectEntryId());
+
+		_objectEntry = _objectEntryLocalService.getObjectEntry(
+			_group.getClassPK());
 	}
 
 	@Test
@@ -146,7 +149,7 @@ public class ObjectDefinitionDeployerImplTest {
 
 		Assert.assertNotNull(
 			_roleLocalService.fetchRoleByExternalReferenceCode(
-				"L_DSR_CONTRIBUTOR", TestPropsValues.getCompanyId()));
+				"L_DSR_CONTENT_CONTRIBUTOR", TestPropsValues.getCompanyId()));
 
 		Role role = _roleLocalService.fetchRoleByExternalReferenceCode(
 			"L_DSR_SELLER", TestPropsValues.getCompanyId());
@@ -203,7 +206,7 @@ public class ObjectDefinitionDeployerImplTest {
 			List.of(ActionKeys.VIEW), role.getRoleId());
 
 		role = _roleLocalService.fetchRole(
-			TestPropsValues.getCompanyId(), "DSR Contributor");
+			TestPropsValues.getCompanyId(), "DSR Content Contributor");
 
 		_assertHasResourcePermissions(
 			actionIds, layoutSetPrototype.getGroupId(),

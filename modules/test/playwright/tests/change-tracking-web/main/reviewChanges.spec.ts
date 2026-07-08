@@ -241,7 +241,13 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 		await apiHelpers.headlessDelivery.postBlog(site2.id);
 	}
 
-	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
+	await expect(async () => {
+		await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
+
+		await expect(
+			page.getByText(site2.name + ' (3):  Blogs Entry (3)')
+		).toBeVisible({timeout: 10000});
+	}).toPass();
 
 	await expect(page.getByText('Liferay DXP Site (1): Tag (1)')).toBeVisible();
 	await expect(
@@ -251,14 +257,22 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 		)
 	).toBeVisible();
 	await expect(
-		page.getByText(site2.name + ' (3):  Blogs Entry (3)')
+		page.getByText(site2.name + ' (2):  Blogs Entry (2)')
 	).toBeVisible();
 
 	await apiHelpers.headlessChangeTracking.publishCTCollection(
 		ctCollection.body.id
 	);
 
-	await changeTrackingPage.goToReviewChangesHistory(ctCollection.body.name);
+	await expect(async () => {
+		await changeTrackingPage.goToReviewChangesHistory(
+			ctCollection.body.name
+		);
+
+		await expect(
+			page.getByText(site2.name + ' (3):   Blogs Entry (3)')
+		).toBeVisible({timeout: 10000});
+	}).toPass();
 
 	await expect(page.getByText('Liferay DXP Site (1): Tag (1)')).toBeVisible();
 	await expect(
@@ -268,7 +282,7 @@ test('LPD-29088 Assert Publication Overview panel is visible', async ({
 		)
 	).toBeVisible();
 	await expect(
-		page.getByText(site2.name + ' (3):   Blogs Entry (3)')
+		page.getByText(site2.name + ' (2):   Blogs Entry (2)')
 	).toBeVisible();
 });
 
@@ -1012,7 +1026,7 @@ test('LPD-78919 Unified view in FragmentEntryLink review page is shown', async (
 	await renderViewDropdown.waitFor({state: 'visible', timeout: 15000});
 
 	await clickAndExpectToBeVisible({
-		autoClick: true,
+		autoClick: false,
 		target: page.getByRole('menuitem', {name: 'Unified View'}),
 		trigger: renderViewDropdown,
 	});
@@ -1315,7 +1329,7 @@ test('LPS-179026 Can preview changes for WikiPages', async ({
 
 	await changeTrackingPage.goToReviewChanges(ctCollection.body.name);
 
-	await changeTrackingPage.reviewChange(wikiPageTitle);
+	await changeTrackingPage.reviewChange(wikiPageTitle + ' (1.1)');
 
 	await changeTrackingPage.selectRenderView('Unified View');
 

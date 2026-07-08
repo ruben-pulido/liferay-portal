@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -87,8 +85,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructure>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructure, NoSuchPageTemplateStructureException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the layout page template structures where uuid = &#63;.
@@ -129,16 +128,8 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructure> orderByComparator)
 		throws NoSuchPageTemplateStructureException {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (layoutPageTemplateStructure != null) {
-			return layoutPageTemplateStructure;
-		}
-
-		throw new NoSuchPageTemplateStructureException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -180,8 +171,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<LayoutPageTemplateStructure>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<LayoutPageTemplateStructure, NoSuchPageTemplateStructureException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the layout page template structure where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchPageTemplateStructureException</code> if it could not be found.
@@ -195,22 +187,8 @@ public class LayoutPageTemplateStructurePersistenceImpl
 	public LayoutPageTemplateStructure findByUUID_G(String uuid, long groupId)
 		throws NoSuchPageTemplateStructureException {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure = fetchByUUID_G(
-			uuid, groupId);
-
-		if (layoutPageTemplateStructure == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageTemplateStructureException(message);
-		}
-
-		return layoutPageTemplateStructure;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -259,8 +237,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructure>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructure, NoSuchPageTemplateStructureException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the layout page template structures where uuid = &#63; and companyId = &#63;.
@@ -303,16 +282,8 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructure> orderByComparator)
 		throws NoSuchPageTemplateStructureException {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (layoutPageTemplateStructure != null) {
-			return layoutPageTemplateStructure;
-		}
-
-		throw new NoSuchPageTemplateStructureException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -357,8 +328,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<LayoutPageTemplateStructure>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<LayoutPageTemplateStructure, NoSuchPageTemplateStructureException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the layout page template structures where groupId = &#63;.
@@ -399,16 +371,8 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			OrderByComparator<LayoutPageTemplateStructure> orderByComparator)
 		throws NoSuchPageTemplateStructureException {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure =
-			fetchByGroupId_First(groupId, orderByComparator);
-
-		if (layoutPageTemplateStructure != null) {
-			return layoutPageTemplateStructure;
-		}
-
-		throw new NoSuchPageTemplateStructureException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -450,8 +414,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			finderCache, new Object[] {groupId});
 	}
 
-	private UniquePersistenceFinder<LayoutPageTemplateStructure>
-		_uniquePersistenceFinderByG_P;
+	private UniquePersistenceFinder
+		<LayoutPageTemplateStructure, NoSuchPageTemplateStructureException>
+			_uniquePersistenceFinderByG_P;
 
 	/**
 	 * Returns the layout page template structure where groupId = &#63; and plid = &#63; or throws a <code>NoSuchPageTemplateStructureException</code> if it could not be found.
@@ -465,22 +430,8 @@ public class LayoutPageTemplateStructurePersistenceImpl
 	public LayoutPageTemplateStructure findByG_P(long groupId, long plid)
 		throws NoSuchPageTemplateStructureException {
 
-		LayoutPageTemplateStructure layoutPageTemplateStructure = fetchByG_P(
-			groupId, plid);
-
-		if (layoutPageTemplateStructure == null) {
-			String message =
-				_uniquePersistenceFinderByG_P.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, plid});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPageTemplateStructureException(message);
-		}
-
-		return layoutPageTemplateStructure;
+		return _uniquePersistenceFinderByG_P.find(
+			finderCache, new Object[] {groupId, plid});
 	}
 
 	/**
@@ -870,9 +821,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 			_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 			_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 			LayoutPageTemplateStructureModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"layoutPageTemplateStructure.", "uuid",
+				"layoutPageTemplateStructure.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				LayoutPageTemplateStructure::getUuid));
 
@@ -886,7 +837,7 @@ public class LayoutPageTemplateStructurePersistenceImpl
 				LayoutPageTemplateStructure::getGroupId),
 			_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE, "",
 			new FinderColumn<>(
-				"layoutPageTemplateStructure.", "uuid",
+				"layoutPageTemplateStructure.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				LayoutPageTemplateStructure::getUuid),
 			new FinderColumn<>(
@@ -916,9 +867,9 @@ public class LayoutPageTemplateStructurePersistenceImpl
 				_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 				_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 				LayoutPageTemplateStructureModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"layoutPageTemplateStructure.", "uuid",
+					"layoutPageTemplateStructure.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					LayoutPageTemplateStructure::getUuid),
 				new FinderColumn<>(
@@ -948,7 +899,7 @@ public class LayoutPageTemplateStructurePersistenceImpl
 				_SQL_SELECT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 				_SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE,
 				LayoutPageTemplateStructureModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"layoutPageTemplateStructure.", "groupId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1029,12 +980,6 @@ public class LayoutPageTemplateStructurePersistenceImpl
 	private static final String _SQL_COUNT_LAYOUTPAGETEMPLATESTRUCTURE_WHERE =
 		"SELECT COUNT(layoutPageTemplateStructure) FROM LayoutPageTemplateStructure layoutPageTemplateStructure WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutPageTemplateStructure exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LayoutPageTemplateStructurePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1044,4 +989,4 @@ public class LayoutPageTemplateStructurePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1689828911
+// LIFERAY-SERVICE-BUILDER-HASH:1626589071

@@ -6,7 +6,6 @@
 package com.liferay.portal.service.impl;
 
 import com.liferay.exportimport.kernel.staging.LayoutStagingUtil;
-import com.liferay.exportimport.kernel.staging.MergeLayoutPrototypesThreadLocal;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.dao.orm.EntityCacheUtil;
@@ -263,20 +262,10 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 		return layoutSetPersistence.update(layoutSet);
 	}
 
-	/**
-	 * Updates the state of the layout set prototype link.
-	 *
-	 * @param groupId the primary key of the group
-	 * @param privateLayout whether the layout set is private to the group
-	 * @param layoutSetPrototypeLinkEnabled whether the layout set prototype is
-	 *        link enabled
-	 * @param layoutSetPrototypeUuid the uuid of the layout set prototype to
-	 *        link with
-	 */
 	@Override
 	public void updateLayoutSetPrototypeLinkEnabled(
-			long groupId, boolean privateLayout,
-			boolean layoutSetPrototypeLinkEnabled,
+			long groupId, boolean mergeLayoutSetPrototype,
+			boolean privateLayout, boolean layoutSetPrototypeLinkEnabled,
 			String layoutSetPrototypeUuid)
 		throws PortalException {
 
@@ -285,22 +274,14 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 		LayoutSetBranch layoutSetBranch = _getLayoutSetBranch(layoutSet);
 
+		String previousLayoutSetPrototypeUuid = null;
+
 		if (layoutSetBranch == null) {
+			previousLayoutSetPrototypeUuid =
+				layoutSet.getLayoutSetPrototypeUuid();
+
 			if (Validator.isNull(layoutSetPrototypeUuid)) {
 				layoutSetPrototypeUuid = layoutSet.getLayoutSetPrototypeUuid();
-			}
-
-			if (!layoutSetPrototypeUuid.equals(
-					layoutSet.getLayoutSetPrototypeUuid())) {
-
-				UnicodeProperties unicodeProperties =
-					layoutSet.getSettingsProperties();
-
-				unicodeProperties.remove(Sites.LAST_MERGE_TIME);
-				unicodeProperties.remove(Sites.LAST_RESET_TIME);
-				unicodeProperties.remove(Sites.LAST_MERGE_VERSION);
-
-				layoutSet.setSettingsProperties(unicodeProperties);
 			}
 
 			layoutSet.setLayoutSetPrototypeUuid(layoutSetPrototypeUuid);
@@ -315,6 +296,9 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 			layoutSet = layoutSetPersistence.update(layoutSet);
 		}
 		else {
+			previousLayoutSetPrototypeUuid =
+				layoutSetBranch.getLayoutSetPrototypeUuid();
+
 			if (Validator.isNull(layoutSetPrototypeUuid)) {
 				layoutSetPrototypeUuid =
 					layoutSetBranch.getLayoutSetPrototypeUuid();
@@ -335,13 +319,17 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 			_layoutSetBranchPersistence.update(layoutSetBranch);
 		}
 
-		try {
-			MergeLayoutPrototypesThreadLocal.setSkipMerge(false);
+		if (!mergeLayoutSetPrototype || !layoutSetPrototypeLinkEnabled ||
+			Validator.isNotNull(previousLayoutSetPrototypeUuid) ||
+			Validator.isNull(layoutSetPrototypeUuid)) {
 
+			return;
+		}
+
+		try {
 			Sites sites = _sitesSnapshot.get();
 
-			sites.mergeLayoutSetPrototypeLayouts(
-				_groupPersistence.findByPrimaryKey(groupId), layoutSet);
+			sites.mergeLayoutSetPrototypeLayouts(layoutSet);
 		}
 		catch (Exception exception) {
 			if (_log.isWarnEnabled()) {
@@ -350,6 +338,18 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 					exception);
 			}
 		}
+	}
+
+	@Override
+	public void updateLayoutSetPrototypeLinkEnabled(
+			long groupId, boolean privateLayout,
+			boolean layoutSetPrototypeLinkEnabled,
+			String layoutSetPrototypeUuid)
+		throws PortalException {
+
+		layoutSetLocalService.updateLayoutSetPrototypeLinkEnabled(
+			groupId, true, privateLayout, layoutSetPrototypeLinkEnabled,
+			layoutSetPrototypeUuid);
 	}
 
 	@Override
@@ -368,7 +368,8 @@ public class LayoutSetLocalServiceImpl extends LayoutSetLocalServiceBaseImpl {
 
 			long logoId = layoutSet.getLogoId();
 
-			layoutSet = layoutSetPersistence.findByG_P(groupId, privateLayout);
+			layoutSet = layoutSetPersistence.fetchByG_P(
+				groupId, privateLayout, false);
 
 			layoutSet.setModifiedDate(new Date());
 			layoutSet.setLogoId(logoId);

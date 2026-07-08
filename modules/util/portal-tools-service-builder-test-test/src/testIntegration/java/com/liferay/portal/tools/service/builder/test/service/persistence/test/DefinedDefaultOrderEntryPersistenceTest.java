@@ -116,17 +116,17 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		DefinedDefaultOrderEntry newDefinedDefaultOrderEntry =
-			_persistence.create(pk);
+			addDefinedDefaultOrderEntry();
 
 		newDefinedDefaultOrderEntry.setModifiedDate(RandomTestUtil.nextDate());
 
 		newDefinedDefaultOrderEntry.setName(RandomTestUtil.randomString());
 
-		_definedDefaultOrderEntries.add(
-			_persistence.update(newDefinedDefaultOrderEntry));
+		newDefinedDefaultOrderEntry = _persistence.update(
+			newDefinedDefaultOrderEntry);
+
+		_definedDefaultOrderEntries.add(newDefinedDefaultOrderEntry);
 
 		DefinedDefaultOrderEntry existingDefinedDefaultOrderEntry =
 			_persistence.findByPrimaryKey(
@@ -523,4 +523,4 @@ public class DefinedDefaultOrderEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1356629846
+// LIFERAY-SERVICE-BUILDER-HASH:-1414399271

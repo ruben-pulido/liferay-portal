@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -80,8 +78,10 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommercePaymentMethodGroupRelQualifier>
-		_collectionPersistenceFinderByCommercePaymentMethodGroupRelId;
+	private CollectionPersistenceFinder
+		<CommercePaymentMethodGroupRelQualifier,
+		 NoSuchPaymentMethodGroupRelQualifierException>
+			_collectionPersistenceFinderByCommercePaymentMethodGroupRelId;
 
 	/**
 	 * Returns an ordered range of all the commerce payment method group rel qualifiers where commercePaymentMethodGroupRelId = &#63;.
@@ -127,20 +127,10 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 					orderByComparator)
 		throws NoSuchPaymentMethodGroupRelQualifierException {
 
-		CommercePaymentMethodGroupRelQualifier
-			commercePaymentMethodGroupRelQualifier =
-				fetchByCommercePaymentMethodGroupRelId_First(
-					commercePaymentMethodGroupRelId, orderByComparator);
-
-		if (commercePaymentMethodGroupRelQualifier != null) {
-			return commercePaymentMethodGroupRelQualifier;
-		}
-
-		throw new NoSuchPaymentMethodGroupRelQualifierException(
-			_collectionPersistenceFinderByCommercePaymentMethodGroupRelId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commercePaymentMethodGroupRelId}));
+		return _collectionPersistenceFinderByCommercePaymentMethodGroupRelId.
+			findFirst(
+				finderCache, new Object[] {commercePaymentMethodGroupRelId},
+				orderByComparator);
 	}
 
 	/**
@@ -190,8 +180,10 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 			count(finderCache, new Object[] {commercePaymentMethodGroupRelId});
 	}
 
-	private CollectionPersistenceFinder<CommercePaymentMethodGroupRelQualifier>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommercePaymentMethodGroupRelQualifier,
+		 NoSuchPaymentMethodGroupRelQualifierException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce payment method group rel qualifiers where classNameId = &#63; and commercePaymentMethodGroupRelId = &#63;.
@@ -238,19 +230,10 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 				orderByComparator)
 		throws NoSuchPaymentMethodGroupRelQualifierException {
 
-		CommercePaymentMethodGroupRelQualifier
-			commercePaymentMethodGroupRelQualifier = fetchByC_C_First(
-				classNameId, commercePaymentMethodGroupRelId,
-				orderByComparator);
-
-		if (commercePaymentMethodGroupRelQualifier != null) {
-			return commercePaymentMethodGroupRelQualifier;
-		}
-
-		throw new NoSuchPaymentMethodGroupRelQualifierException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {classNameId, commercePaymentMethodGroupRelId}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache,
+			new Object[] {classNameId, commercePaymentMethodGroupRelId},
+			orderByComparator);
 	}
 
 	/**
@@ -304,8 +287,10 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 			new Object[] {classNameId, commercePaymentMethodGroupRelId});
 	}
 
-	private UniquePersistenceFinder<CommercePaymentMethodGroupRelQualifier>
-		_uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder
+		<CommercePaymentMethodGroupRelQualifier,
+		 NoSuchPaymentMethodGroupRelQualifierException>
+			_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns the commerce payment method group rel qualifier where classNameId = &#63; and classPK = &#63; and commercePaymentMethodGroupRelId = &#63; or throws a <code>NoSuchPaymentMethodGroupRelQualifierException</code> if it could not be found.
@@ -322,26 +307,11 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 			long commercePaymentMethodGroupRelId)
 		throws NoSuchPaymentMethodGroupRelQualifierException {
 
-		CommercePaymentMethodGroupRelQualifier
-			commercePaymentMethodGroupRelQualifier = fetchByC_C_C(
-				classNameId, classPK, commercePaymentMethodGroupRelId);
-
-		if (commercePaymentMethodGroupRelQualifier == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						classNameId, classPK, commercePaymentMethodGroupRelId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPaymentMethodGroupRelQualifierException(message);
-		}
-
-		return commercePaymentMethodGroupRelQualifier;
+		return _uniquePersistenceFinderByC_C_C.find(
+			finderCache,
+			new Object[] {
+				classNameId, classPK, commercePaymentMethodGroupRelId
+			});
 	}
 
 	/**
@@ -640,6 +610,11 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commercePaymentMethodGroupRelQualifierId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER;
 	}
@@ -680,11 +655,12 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 				_SQL_SELECT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER_WHERE,
 				_SQL_COUNT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER_WHERE,
 				CommercePaymentMethodGroupRelQualifierModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePaymentMethodGroupRelQualifier.",
-					"commercePaymentMethodGroupRelId", FinderColumn.Type.LONG,
-					"=", true, true,
+					"commercePaymentMethodGroupRelId",
+					"CPaymentMethodGroupRelId", FinderColumn.Type.LONG, "=",
+					true, true,
 					CommercePaymentMethodGroupRelQualifier::
 						getCommercePaymentMethodGroupRelId));
 
@@ -710,15 +686,15 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 			_SQL_SELECT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER_WHERE,
 			_SQL_COUNT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER_WHERE,
 			CommercePaymentMethodGroupRelQualifierModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commercePaymentMethodGroupRelQualifier.", "classNameId",
 				FinderColumn.Type.LONG, "=", true, true,
 				CommercePaymentMethodGroupRelQualifier::getClassNameId),
 			new FinderColumn<>(
 				"commercePaymentMethodGroupRelQualifier.",
-				"commercePaymentMethodGroupRelId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"commercePaymentMethodGroupRelId", "CPaymentMethodGroupRelId",
+				FinderColumn.Type.LONG, "=", true, true,
 				CommercePaymentMethodGroupRelQualifier::
 					getCommercePaymentMethodGroupRelId));
 
@@ -749,8 +725,8 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 				CommercePaymentMethodGroupRelQualifier::getClassPK),
 			new FinderColumn<>(
 				"commercePaymentMethodGroupRelQualifier.",
-				"commercePaymentMethodGroupRelId", FinderColumn.Type.LONG, "=",
-				true, true,
+				"commercePaymentMethodGroupRelId", "CPaymentMethodGroupRelId",
+				FinderColumn.Type.LONG, "=", true, true,
 				CommercePaymentMethodGroupRelQualifier::
 					getCommercePaymentMethodGroupRelId));
 
@@ -812,12 +788,6 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 		_SQL_COUNT_COMMERCEPAYMENTMETHODGROUPRELQUALIFIER_WHERE =
 			"SELECT COUNT(commercePaymentMethodGroupRelQualifier) FROM CommercePaymentMethodGroupRelQualifier commercePaymentMethodGroupRelQualifier WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommercePaymentMethodGroupRelQualifier exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommercePaymentMethodGroupRelQualifierPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {
 			"commercePaymentMethodGroupRelQualifierId",
@@ -830,4 +800,4 @@ public class CommercePaymentMethodGroupRelQualifierPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:333952271
+// LIFERAY-SERVICE-BUILDER-HASH:-1706113754

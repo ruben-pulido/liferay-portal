@@ -124,9 +124,7 @@ public abstract class TopLevelBuildRunner<T extends TopLevelBuildData>
 		}
 
 		return JenkinsResultsParserUtil.getMostAvailableMasterURL(
-			"http://" + cohortName + ".liferay.com", null, 1, jobName,
-			getLabelExpression(jobName), getSlaveRAMMinimum(),
-			JenkinsMaster.getSlavesPerHostDefault());
+			"http://" + cohortName + ".liferay.com", null, 1, jobName);
 	}
 
 	protected String getBuildParameter(String key) {
@@ -144,11 +142,6 @@ public abstract class TopLevelBuildRunner<T extends TopLevelBuildData>
 			key, getJob());
 
 		return jobProperty.getValue();
-	}
-
-	@Override
-	protected int getSlaveRAMMinimum() {
-		return 24;
 	}
 
 	protected TopLevelBuild getTopLevelBuild() {
@@ -333,6 +326,9 @@ public abstract class TopLevelBuildRunner<T extends TopLevelBuildData>
 		catch (IOException ioException) {
 			throw new RuntimeException(ioException);
 		}
+
+		invocationParameters.put(
+			"PARENT_BUILD_URL", _topLevelBuild.getBuildURL());
 
 		StringBuilder sb = new StringBuilder();
 

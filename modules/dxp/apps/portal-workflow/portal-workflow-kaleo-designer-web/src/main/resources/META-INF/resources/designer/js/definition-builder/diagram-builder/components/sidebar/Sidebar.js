@@ -148,6 +148,18 @@ if (Liferay.FeatureFlags['LPD-62272']) {
 		showDeleteButton: true,
 		title: Liferay.Language.get('ai-decision'),
 	};
+	contents['http-request'] = {
+		sections: [
+			'nodeInformation',
+			'httpEndpoint',
+			'payload',
+			'variables',
+			'connectionTimeout',
+			'authentication',
+		],
+		showDeleteButton: true,
+		title: Liferay.Language.get('http-request'),
+	};
 	contents['llm'] = {
 		sections: [
 			'nodeInformation',
@@ -157,6 +169,11 @@ if (Liferay.FeatureFlags['LPD-62272']) {
 		],
 		showDeleteButton: true,
 		title: Liferay.Language.get('llm-node'),
+	};
+	contents['service'] = {
+		sections: ['nodeInformation', 'serviceConfiguration'],
+		showDeleteButton: true,
+		title: Liferay.Language.get('service-node'),
 	};
 }
 

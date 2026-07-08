@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -96,7 +94,7 @@ public class KBFolderPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<KBFolder>
+	private CollectionPersistenceFinder<KBFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -136,15 +134,8 @@ public class KBFolderPersistenceImpl
 			String uuid, OrderByComparator<KBFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByUuid_First(uuid, orderByComparator);
-
-		if (kbFolder != null) {
-			return kbFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -185,7 +176,8 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<KBFolder> _uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder<KBFolder, NoSuchFolderException>
+		_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the kb folder where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchFolderException</code> if it could not be found.
@@ -199,21 +191,8 @@ public class KBFolderPersistenceImpl
 	public KBFolder findByUUID_G(String uuid, long groupId)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByUUID_G(uuid, groupId);
-
-		if (kbFolder == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return kbFolder;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -261,7 +240,7 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<KBFolder>
+	private CollectionPersistenceFinder<KBFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -304,16 +283,8 @@ public class KBFolderPersistenceImpl
 			OrderByComparator<KBFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (kbFolder != null) {
-			return kbFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,7 +329,7 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<KBFolder>
+	private CollectionPersistenceFinder<KBFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -398,16 +369,8 @@ public class KBFolderPersistenceImpl
 			long companyId, OrderByComparator<KBFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (kbFolder != null) {
-			return kbFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -448,7 +411,7 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<KBFolder>
+	private FilterCollectionPersistenceFinder<KBFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByG_P;
 
 	/**
@@ -491,17 +454,9 @@ public class KBFolderPersistenceImpl
 			OrderByComparator<KBFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByG_P_First(
-			groupId, parentKBFolderId, orderByComparator);
-
-		if (kbFolder != null) {
-			return kbFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentKBFolderId}));
+		return _collectionPersistenceFinderByG_P.findFirst(
+			finderCache, new Object[] {groupId, parentKBFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -584,7 +539,8 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentKBFolderId}, groupId);
 	}
 
-	private UniquePersistenceFinder<KBFolder> _uniquePersistenceFinderByG_P_N;
+	private UniquePersistenceFinder<KBFolder, NoSuchFolderException>
+		_uniquePersistenceFinderByG_P_N;
 
 	/**
 	 * Returns the kb folder where groupId = &#63; and parentKBFolderId = &#63; and name = &#63; or throws a <code>NoSuchFolderException</code> if it could not be found.
@@ -600,22 +556,8 @@ public class KBFolderPersistenceImpl
 			long groupId, long parentKBFolderId, String name)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByG_P_N(groupId, parentKBFolderId, name);
-
-		if (kbFolder == null) {
-			String message =
-				_uniquePersistenceFinderByG_P_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, parentKBFolderId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return kbFolder;
+		return _uniquePersistenceFinderByG_P_N.find(
+			finderCache, new Object[] {groupId, parentKBFolderId, name});
 	}
 
 	/**
@@ -669,7 +611,8 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentKBFolderId, name});
 	}
 
-	private UniquePersistenceFinder<KBFolder> _uniquePersistenceFinderByG_P_UT;
+	private UniquePersistenceFinder<KBFolder, NoSuchFolderException>
+		_uniquePersistenceFinderByG_P_UT;
 
 	/**
 	 * Returns the kb folder where groupId = &#63; and parentKBFolderId = &#63; and urlTitle = &#63; or throws a <code>NoSuchFolderException</code> if it could not be found.
@@ -685,22 +628,8 @@ public class KBFolderPersistenceImpl
 			long groupId, long parentKBFolderId, String urlTitle)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByG_P_UT(groupId, parentKBFolderId, urlTitle);
-
-		if (kbFolder == null) {
-			String message =
-				_uniquePersistenceFinderByG_P_UT.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, parentKBFolderId, urlTitle});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return kbFolder;
+		return _uniquePersistenceFinderByG_P_UT.find(
+			finderCache, new Object[] {groupId, parentKBFolderId, urlTitle});
 	}
 
 	/**
@@ -756,7 +685,7 @@ public class KBFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentKBFolderId, urlTitle});
 	}
 
-	private FilterCollectionPersistenceFinder<KBFolder>
+	private FilterCollectionPersistenceFinder<KBFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByG_P_S;
 
 	/**
@@ -801,17 +730,9 @@ public class KBFolderPersistenceImpl
 			OrderByComparator<KBFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByG_P_S_First(
-			groupId, parentKBFolderId, status, orderByComparator);
-
-		if (kbFolder != null) {
-			return kbFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentKBFolderId, status}));
+		return _collectionPersistenceFinderByG_P_S.findFirst(
+			finderCache, new Object[] {groupId, parentKBFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -902,7 +823,8 @@ public class KBFolderPersistenceImpl
 			groupId);
 	}
 
-	private UniquePersistenceFinder<KBFolder> _uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder<KBFolder, NoSuchFolderException>
+		_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the kb folder where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchFolderException</code> if it could not be found.
@@ -916,22 +838,8 @@ public class KBFolderPersistenceImpl
 	public KBFolder findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchFolderException {
 
-		KBFolder kbFolder = fetchByERC_G(externalReferenceCode, groupId);
-
-		if (kbFolder == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return kbFolder;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1356,10 +1264,10 @@ public class KBFolderPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_KBFOLDER_WHERE, _SQL_COUNT_KBFOLDER_WHERE,
-			KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"kbFolder.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				KBFolder::getUuid));
+				"kbFolder.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, KBFolder::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1370,8 +1278,8 @@ public class KBFolderPersistenceImpl
 				convertNullFunction(KBFolder::getUuid), KBFolder::getGroupId),
 			_SQL_SELECT_KBFOLDER_WHERE, "",
 			new FinderColumn<>(
-				"kbFolder.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-				KBFolder::getUuid),
+				"kbFolder.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, KBFolder::getUuid),
 			new FinderColumn<>(
 				"kbFolder.", "groupId", FinderColumn.Type.LONG, "=", true, true,
 				KBFolder::getGroupId));
@@ -1396,10 +1304,11 @@ public class KBFolderPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_KBFOLDER_WHERE, _SQL_COUNT_KBFOLDER_WHERE,
-				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"kbFolder.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, KBFolder::getUuid),
+					"kbFolder.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, KBFolder::getUuid),
 				new FinderColumn<>(
 					"kbFolder.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, KBFolder::getCompanyId));
@@ -1424,7 +1333,8 @@ public class KBFolderPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_KBFOLDER_WHERE, _SQL_COUNT_KBFOLDER_WHERE,
-				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kbFolder.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, KBFolder::getCompanyId));
@@ -1449,16 +1359,8 @@ public class KBFolderPersistenceImpl
 					new String[] {Long.class.getName(), Long.class.getName()},
 					new String[] {"groupId", "parentKBFolderId"}, false),
 				_SQL_SELECT_KBFOLDER_WHERE, _SQL_COUNT_KBFOLDER_WHERE,
-				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					KBFolderImpl.class, KBFolder.class, "kbFolder", "KBFolder",
-					"kbFolder.kbFolderId",
-					"SELECT DISTINCT {kbFolder.*} FROM KBFolder kbFolder WHERE ",
-					"SELECT {KBFolder.*} FROM (SELECT DISTINCT kbFolder.kbFolderId FROM KBFolder kbFolder WHERE ",
-					") TEMP_TABLE INNER JOIN KBFolder ON TEMP_TABLE.kbFolderId = KBFolder.kbFolderId",
-					"SELECT COUNT(DISTINCT kbFolder.kbFolderId) AS COUNT_VALUE FROM KBFolder kbFolder WHERE ",
-					KBFolderModelImpl.ORDER_BY_SQL,
-					KBFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kbFolder.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, KBFolder::getGroupId),
@@ -1540,16 +1442,8 @@ public class KBFolderPersistenceImpl
 					new String[] {"groupId", "parentKBFolderId", "status"},
 					false),
 				_SQL_SELECT_KBFOLDER_WHERE, _SQL_COUNT_KBFOLDER_WHERE,
-				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					KBFolderImpl.class, KBFolder.class, "kbFolder", "KBFolder",
-					"kbFolder.kbFolderId",
-					"SELECT DISTINCT {kbFolder.*} FROM KBFolder kbFolder WHERE ",
-					"SELECT {KBFolder.*} FROM (SELECT DISTINCT kbFolder.kbFolderId FROM KBFolder kbFolder WHERE ",
-					") TEMP_TABLE INNER JOIN KBFolder ON TEMP_TABLE.kbFolderId = KBFolder.kbFolderId",
-					"SELECT COUNT(DISTINCT kbFolder.kbFolderId) AS COUNT_VALUE FROM KBFolder kbFolder WHERE ",
-					KBFolderModelImpl.ORDER_BY_SQL,
-					KBFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				KBFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"kbFolder.", "groupId", FinderColumn.Type.LONG, "=", true,
 					true, KBFolder::getGroupId),
@@ -1633,12 +1527,6 @@ public class KBFolderPersistenceImpl
 	private static final String _SQL_COUNT_KBFOLDER_WHERE =
 		"SELECT COUNT(kbFolder) FROM KBFolder kbFolder WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No KBFolder exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		KBFolderPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1648,4 +1536,4 @@ public class KBFolderPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-470323255
+// LIFERAY-SERVICE-BUILDER-HASH:-1023895803

@@ -112,11 +112,7 @@ public class CPDefinitionLinkPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CPDefinitionLink newCPDefinitionLink = _persistence.create(pk);
-
-		newCPDefinitionLink.setMvccVersion(RandomTestUtil.nextLong());
+		CPDefinitionLink newCPDefinitionLink = addCPDefinitionLink();
 
 		newCPDefinitionLink.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -156,7 +152,9 @@ public class CPDefinitionLinkPersistenceTest {
 
 		newCPDefinitionLink.setStatusDate(RandomTestUtil.nextDate());
 
-		_cpDefinitionLinks.add(_persistence.update(newCPDefinitionLink));
+		newCPDefinitionLink = _persistence.update(newCPDefinitionLink);
+
+		_cpDefinitionLinks.add(newCPDefinitionLink);
 
 		CPDefinitionLink existingCPDefinitionLink =
 			_persistence.findByPrimaryKey(newCPDefinitionLink.getPrimaryKey());
@@ -684,8 +682,6 @@ public class CPDefinitionLinkPersistenceTest {
 
 		CPDefinitionLink cpDefinitionLink = _persistence.create(pk);
 
-		cpDefinitionLink.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpDefinitionLink.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpDefinitionLink.setUuid(RandomTestUtil.randomString());
@@ -735,4 +731,4 @@ public class CPDefinitionLinkPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:138413576
+// LIFERAY-SERVICE-BUILDER-HASH:-1352959647

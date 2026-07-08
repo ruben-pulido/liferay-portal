@@ -3,6 +3,7 @@ definition {
 
 	property browser.chrome.version = "139.0";
 	property ci.retries.disabled = "true";
+	property custom.properties = "feature.flag.LPD-57655=false";
 	property portal.release = "true";
 	property portal.upstream = "true";
 	property testray.main.component.name = "Export/Import";
@@ -168,6 +169,16 @@ definition {
 			LAR.importSiteCP(
 				larFileName = ${larFileName},
 				siteName = "Site Name");
+
+			PagesAdmin.openPagesAdmin(siteURLKey = "site-name");
+
+			while ((IsElementNotPresent(key_pageName = "Test Page Name", locator1 = "PagesAdmin#LIST_GROUP_ITEM_ENTRY_TITLE_LINK")) && (maxIterations = "5")) {
+				Refresh();
+			}
+
+			AssertElementPresent(
+				key_pageName = "Test Page Name",
+				locator1 = "PagesAdmin#LIST_GROUP_ITEM_ENTRY_TITLE_LINK");
 		}
 	}
 
@@ -352,6 +363,11 @@ definition {
 
 			LexiconEntry.gotoAdd();
 
+			Type(
+				inputFieldId = "ExportPortlet_name",
+				locator1 = "TextInput#INPUT_ID",
+				value1 = "Test Site Name");
+
 			LAR.exportWithAssertionOnSuccess();
 
 			LAR.downloadLar();
@@ -375,10 +391,22 @@ definition {
 				siteName = "Site Name");
 		}
 
-		task ("Assert the mapped image is shown in view mode") {
+		task ("Assert the mapped image is shown in view mode on the original site") {
 			ContentPagesNavigator.openViewContentPage(
 				pageName = "Test Page Name",
 				siteName = "Test Site Name");
+
+			AssertVisible(
+				id = "image-square",
+				key_image = "Document_1",
+				key_imageDescription = "",
+				locator1 = "Fragment#CONTRIBUTED_FRAGMENT_EDITABLE_FIELD_IMAGE_PROPERTIES");
+		}
+
+		task ("Assert the mapped image is shown in view mode on the imported site") {
+			ContentPagesNavigator.openViewContentPage(
+				pageName = "Test Page Name",
+				siteName = "Site Name");
 
 			AssertVisible(
 				id = "image-square",
@@ -613,6 +641,8 @@ definition {
 			LAR.openExportAdmin(siteScopeName = "test-site-name");
 
 			LexiconEntry.gotoAdd();
+
+			LAR.configureExportOptions();
 
 			LAR.exportWithAssertionOnSuccess();
 

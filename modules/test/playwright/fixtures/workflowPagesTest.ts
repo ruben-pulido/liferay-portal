@@ -23,15 +23,21 @@ import {MetricsPage} from '../pages/portal-workflow-metrics-web/MetricsPage';
 import {PerformanceByAssigneePage} from '../pages/portal-workflow-metrics-web/PerformanceByAssigneePage';
 import {PerformanceByStepPage} from '../pages/portal-workflow-metrics-web/PerformanceByStepPage';
 import {ProcessMetricsPage} from '../pages/portal-workflow-metrics-web/ProcessMetricsPage';
+import {SLAPage} from '../pages/portal-workflow-metrics-web/SLAPage';
 import {WorkflowTaskDetailsPage} from '../pages/portal-workflow-task-web/WorkflowTaskDetailsPage';
 import {WorkflowTasksPage} from '../pages/portal-workflow-task-web/WorkflowTasksPage';
 import {WorkflowPage} from '../pages/portal-workflow-web/WorkflowPage';
+import {GlobalMenuPage} from '../pages/product-navigation-applications-menu/GlobalMenuPage';
 import {PersonalMenuPage} from '../pages/users-admin-web/PersonalMenuPage';
 
 const workflowPagesTest = test.extend<{
 	actionPage: ActionPage;
 	actionReassignmentPage: ActionReassignmentPage;
 	allItemsPage: AllItemsPage;
+	assignWorkflowToAssetType: (
+		workflowDefinitionName: string,
+		assetType: string
+	) => Promise<void>;
 	conditionNode: ConditionNode;
 	configurationTabPage: ConfigurationTabPage;
 	definitionInfoPage: DefinitionInfoPage;
@@ -45,6 +51,7 @@ const workflowPagesTest = test.extend<{
 	processBuilderPage: ProcessBuilderPage;
 	processMetricsPage: ProcessMetricsPage;
 	scriptManagementPage: ScriptManagementPage;
+	slaPage: SLAPage;
 	sourceViewPage: SourceViewPage;
 	timerPage: TimerPage;
 	transitionInfoPage: TransitionInfoPage;
@@ -60,6 +67,31 @@ const workflowPagesTest = test.extend<{
 	},
 	allItemsPage: async ({page}, use) => {
 		await use(new AllItemsPage(page));
+	},
+	assignWorkflowToAssetType: async ({configurationTabPage, page}, use) => {
+		const assignedAssetTypes: string[] = [];
+		const globalMenuPage = new GlobalMenuPage(page);
+
+		await use(async (workflowDefinitionName, assetType) => {
+			await globalMenuPage.goToApplications('Process Builder');
+
+			await configurationTabPage.configurationTabLink.click();
+
+			await configurationTabPage.assignWorkflowToAssetType(
+				workflowDefinitionName,
+				assetType
+			);
+
+			assignedAssetTypes.push(assetType);
+		});
+
+		for (const assetType of assignedAssetTypes.reverse()) {
+			await globalMenuPage.goToApplications('Process Builder');
+
+			await configurationTabPage.configurationTabLink.click();
+
+			await configurationTabPage.unassignWorkflowFromAssetType(assetType);
+		}
 	},
 	conditionNode: async ({page}, use) => {
 		await use(new ConditionNode(page));
@@ -99,6 +131,9 @@ const workflowPagesTest = test.extend<{
 	},
 	scriptManagementPage: async ({page}, use) => {
 		await use(new ScriptManagementPage(page));
+	},
+	slaPage: async ({page}, use) => {
+		await use(new SLAPage(page));
 	},
 	sourceViewPage: async ({page}, use) => {
 		await use(new SourceViewPage(page));

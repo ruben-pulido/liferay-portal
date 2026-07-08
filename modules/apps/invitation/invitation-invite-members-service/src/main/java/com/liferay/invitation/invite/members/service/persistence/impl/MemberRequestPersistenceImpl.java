@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -78,7 +76,7 @@ public class MemberRequestPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private UniquePersistenceFinder<MemberRequest>
+	private UniquePersistenceFinder<MemberRequest, NoSuchMemberRequestException>
 		_uniquePersistenceFinderByKey;
 
 	/**
@@ -92,21 +90,8 @@ public class MemberRequestPersistenceImpl
 	public MemberRequest findByKey(String key)
 		throws NoSuchMemberRequestException {
 
-		MemberRequest memberRequest = fetchByKey(key);
-
-		if (memberRequest == null) {
-			String message =
-				_uniquePersistenceFinderByKey.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMemberRequestException(message);
-		}
-
-		return memberRequest;
+		return _uniquePersistenceFinderByKey.find(
+			finderCache, new Object[] {key});
 	}
 
 	/**
@@ -149,8 +134,9 @@ public class MemberRequestPersistenceImpl
 			finderCache, new Object[] {key});
 	}
 
-	private CollectionPersistenceFinder<MemberRequest>
-		_collectionPersistenceFinderByReceiverUserId;
+	private CollectionPersistenceFinder
+		<MemberRequest, NoSuchMemberRequestException>
+			_collectionPersistenceFinderByReceiverUserId;
 
 	/**
 	 * Returns an ordered range of all the member requests where receiverUserId = &#63;.
@@ -191,16 +177,8 @@ public class MemberRequestPersistenceImpl
 			OrderByComparator<MemberRequest> orderByComparator)
 		throws NoSuchMemberRequestException {
 
-		MemberRequest memberRequest = fetchByReceiverUserId_First(
-			receiverUserId, orderByComparator);
-
-		if (memberRequest != null) {
-			return memberRequest;
-		}
-
-		throw new NoSuchMemberRequestException(
-			_collectionPersistenceFinderByReceiverUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {receiverUserId}));
+		return _collectionPersistenceFinderByReceiverUserId.findFirst(
+			finderCache, new Object[] {receiverUserId}, orderByComparator);
 	}
 
 	/**
@@ -242,8 +220,9 @@ public class MemberRequestPersistenceImpl
 			finderCache, new Object[] {receiverUserId});
 	}
 
-	private CollectionPersistenceFinder<MemberRequest>
-		_collectionPersistenceFinderByR_S;
+	private CollectionPersistenceFinder
+		<MemberRequest, NoSuchMemberRequestException>
+			_collectionPersistenceFinderByR_S;
 
 	/**
 	 * Returns an ordered range of all the member requests where receiverUserId = &#63; and status = &#63;.
@@ -286,17 +265,9 @@ public class MemberRequestPersistenceImpl
 			OrderByComparator<MemberRequest> orderByComparator)
 		throws NoSuchMemberRequestException {
 
-		MemberRequest memberRequest = fetchByR_S_First(
-			receiverUserId, status, orderByComparator);
-
-		if (memberRequest != null) {
-			return memberRequest;
-		}
-
-		throw new NoSuchMemberRequestException(
-			_collectionPersistenceFinderByR_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {receiverUserId, status}));
+		return _collectionPersistenceFinderByR_S.findFirst(
+			finderCache, new Object[] {receiverUserId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -342,7 +313,7 @@ public class MemberRequestPersistenceImpl
 			finderCache, new Object[] {receiverUserId, status});
 	}
 
-	private UniquePersistenceFinder<MemberRequest>
+	private UniquePersistenceFinder<MemberRequest, NoSuchMemberRequestException>
 		_uniquePersistenceFinderByG_R_S;
 
 	/**
@@ -359,23 +330,8 @@ public class MemberRequestPersistenceImpl
 			long groupId, long receiverUserId, int status)
 		throws NoSuchMemberRequestException {
 
-		MemberRequest memberRequest = fetchByG_R_S(
-			groupId, receiverUserId, status);
-
-		if (memberRequest == null) {
-			String message =
-				_uniquePersistenceFinderByG_R_S.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, receiverUserId, status});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchMemberRequestException(message);
-		}
-
-		return memberRequest;
+		return _uniquePersistenceFinderByG_R_S.find(
+			finderCache, new Object[] {groupId, receiverUserId, status});
 	}
 
 	/**
@@ -647,8 +603,8 @@ public class MemberRequestPersistenceImpl
 				1, false, convertNullFunction(MemberRequest::getKey)),
 			_SQL_SELECT_MEMBERREQUEST_WHERE, "",
 			new FinderColumn<>(
-				"memberRequest.", "key", FinderColumn.Type.STRING, "=", true,
-				true, MemberRequest::getKey));
+				"memberRequest.", "key", "key_", FinderColumn.Type.STRING, "=",
+				true, true, MemberRequest::getKey));
 
 		_collectionPersistenceFinderByReceiverUserId =
 			new CollectionPersistenceFinder<>(
@@ -673,6 +629,7 @@ public class MemberRequestPersistenceImpl
 					new String[] {"receiverUserId"}, false),
 				_SQL_SELECT_MEMBERREQUEST_WHERE, _SQL_COUNT_MEMBERREQUEST_WHERE,
 				MemberRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"memberRequest.", "receiverUserId", FinderColumn.Type.LONG,
 					"=", true, true, MemberRequest::getReceiverUserId));
@@ -696,7 +653,8 @@ public class MemberRequestPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"receiverUserId", "status"}, false),
 			_SQL_SELECT_MEMBERREQUEST_WHERE, _SQL_COUNT_MEMBERREQUEST_WHERE,
-			MemberRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			MemberRequestModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"memberRequest.", "receiverUserId", FinderColumn.Type.LONG, "=",
 				true, true, MemberRequest::getReceiverUserId),
@@ -780,12 +738,6 @@ public class MemberRequestPersistenceImpl
 	private static final String _SQL_COUNT_MEMBERREQUEST_WHERE =
 		"SELECT COUNT(memberRequest) FROM MemberRequest memberRequest WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No MemberRequest exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		MemberRequestPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"key"});
 
@@ -795,4 +747,4 @@ public class MemberRequestPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1853187952
+// LIFERAY-SERVICE-BUILDER-HASH:401410941

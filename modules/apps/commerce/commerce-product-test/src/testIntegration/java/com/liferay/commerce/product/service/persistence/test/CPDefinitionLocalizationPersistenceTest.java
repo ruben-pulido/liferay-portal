@@ -111,12 +111,8 @@ public class CPDefinitionLocalizationPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CPDefinitionLocalization newCPDefinitionLocalization =
-			_persistence.create(pk);
-
-		newCPDefinitionLocalization.setMvccVersion(RandomTestUtil.nextLong());
+			addCPDefinitionLocalization();
 
 		newCPDefinitionLocalization.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -147,8 +143,10 @@ public class CPDefinitionLocalizationPersistenceTest {
 		newCPDefinitionLocalization.setShortDescription(
 			RandomTestUtil.randomString());
 
-		_cpDefinitionLocalizations.add(
-			_persistence.update(newCPDefinitionLocalization));
+		newCPDefinitionLocalization = _persistence.update(
+			newCPDefinitionLocalization);
+
+		_cpDefinitionLocalizations.add(newCPDefinitionLocalization);
 
 		CPDefinitionLocalization existingCPDefinitionLocalization =
 			_persistence.findByPrimaryKey(
@@ -536,8 +534,6 @@ public class CPDefinitionLocalizationPersistenceTest {
 		CPDefinitionLocalization cpDefinitionLocalization = _persistence.create(
 			pk);
 
-		cpDefinitionLocalization.setMvccVersion(RandomTestUtil.nextLong());
-
 		cpDefinitionLocalization.setCtCollectionId(RandomTestUtil.nextLong());
 
 		cpDefinitionLocalization.setCompanyId(RandomTestUtil.nextLong());
@@ -574,4 +570,4 @@ public class CPDefinitionLocalizationPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-445156844
+// LIFERAY-SERVICE-BUILDER-HASH:111763230

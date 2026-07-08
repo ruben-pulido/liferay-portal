@@ -1,8 +1,12 @@
 import * as API from 'shared/api';
+import * as useStatefulPaginationModule from 'shared/hooks/useStatefulPagination';
 
 import IndividualsList from '../IndividualsList';
 import React from 'react';
 import {createMemoryHistory} from 'history';
+import {createOrderIOMap, NAME} from 'shared/util/pagination';
+import {Map, Set} from 'immutable';
+import {RangeKeyTimeRanges} from 'shared/util/constants';
 import {render} from '@testing-library/react';
 import {Router} from 'react-router';
 import {waitForLoadingToBeRemoved} from 'test/helpers';
@@ -114,5 +118,115 @@ describe('Individuals List', () => {
 		expect(
 			getByText('Access our documentation to learn more.')
 		).toBeInTheDocument();
+	});
+
+	it('passes Last 30 Days as the default range key to the search API', async () => {
+		// @ts-ignore
+		API.individuals.search.mockReturnValue(
+			Promise.resolve({items: [], total: 0})
+		);
+
+		const history = createMemoryHistory();
+
+		render(
+			<Router history={history}>
+				<IndividualsList />
+			</Router>
+		);
+
+		await waitForLoadingToBeRemoved(document.body);
+
+		// @ts-ignore
+		expect(API.individuals.search).toHaveBeenCalledWith(
+			expect.objectContaining({
+				rangeEnd: null,
+				rangeKey: 30,
+				rangeStart: null
+			})
+		);
+	});
+
+	it('passes the selected range key when activeUsers filter changes', async () => {
+		(API.individuals.search as jest.Mock).mockReturnValue(
+			Promise.resolve({items: [], total: 0})
+		);
+
+		const spy = jest
+			.spyOn(useStatefulPaginationModule, 'useStatefulPagination')
+			.mockReturnValue({
+				delta: 20,
+				filterBy: Map({
+					activeUsers: Set([RangeKeyTimeRanges.Last7Days])
+				}) as any,
+				onDeltaChange: jest.fn(),
+				onFilterByChange: jest.fn(),
+				onOrderIOMapChange: jest.fn(),
+				onPageChange: jest.fn(),
+				onQueryChange: jest.fn(),
+				orderIOMap: createOrderIOMap(NAME),
+				page: 1,
+				query: '',
+				resetPage: jest.fn()
+			});
+
+		const history = createMemoryHistory();
+
+		render(
+			<Router history={history}>
+				<IndividualsList />
+			</Router>
+		);
+
+		await waitForLoadingToBeRemoved(document.body);
+
+		expect(API.individuals.search as jest.Mock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				rangeKey: 7
+			})
+		);
+
+		spy.mockRestore();
+	});
+
+	it('passes null rangeKey when activeUsers filter is cleared', async () => {
+		(API.individuals.search as jest.Mock).mockReturnValue(
+			Promise.resolve({items: [], total: 0})
+		);
+
+		const spy = jest
+			.spyOn(useStatefulPaginationModule, 'useStatefulPagination')
+			.mockReturnValue({
+				delta: 20,
+				filterBy: Map({
+					activeUsers: Set([])
+				}) as any,
+				onDeltaChange: jest.fn(),
+				onFilterByChange: jest.fn(),
+				onOrderIOMapChange: jest.fn(),
+				onPageChange: jest.fn(),
+				onQueryChange: jest.fn(),
+				orderIOMap: createOrderIOMap(NAME),
+				page: 1,
+				query: '',
+				resetPage: jest.fn()
+			});
+
+		const history = createMemoryHistory();
+
+		render(
+			<Router history={history}>
+				<IndividualsList />
+			</Router>
+		);
+
+		await waitForLoadingToBeRemoved(document.body);
+
+		expect(API.individuals.search as jest.Mock).toHaveBeenCalledWith(
+			expect.objectContaining({
+				rangeKey: null
+			})
+		);
+
+		spy.mockRestore();
 	});
 });

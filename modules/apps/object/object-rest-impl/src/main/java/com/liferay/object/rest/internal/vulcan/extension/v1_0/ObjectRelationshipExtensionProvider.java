@@ -95,7 +95,7 @@ public class ObjectRelationshipExtensionProvider
 					return null;
 				}
 
-				long primaryKey = getPrimaryKey(entity);
+				long primaryKey = getPrimaryKey(entity, objectDefinition);
 
 				if (_isManyToOneObjectRelationship(
 						objectDefinition, objectRelationship,
@@ -198,7 +198,7 @@ public class ObjectRelationshipExtensionProvider
 				"No object definition exists with class name " + className);
 		}
 
-		long primaryKey = getPrimaryKey(entity);
+		long primaryKey = getPrimaryKey(entity, objectDefinition);
 
 		for (Map.Entry<String, Serializable> entry :
 				extendedProperties.entrySet()) {
@@ -255,6 +255,7 @@ public class ObjectRelationshipExtensionProvider
 					nestedObjectEntry.getId(),
 					ServiceContextUtil.createServiceContext(
 						objectDefinition.getCompanyId(),
+						relatedObjectDefinition.isEnableCategorization(),
 						_getGroupId(
 							objectDefinition, nestedObjectEntry.getScopeKey()),
 						nestedObjectEntry, userId));

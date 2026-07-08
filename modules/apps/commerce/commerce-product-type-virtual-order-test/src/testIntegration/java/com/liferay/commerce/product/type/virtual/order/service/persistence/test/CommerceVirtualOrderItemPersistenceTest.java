@@ -116,12 +116,8 @@ public class CommerceVirtualOrderItemPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CommerceVirtualOrderItem newCommerceVirtualOrderItem =
-			_persistence.create(pk);
-
-		newCommerceVirtualOrderItem.setMvccVersion(RandomTestUtil.nextLong());
+			addCommerceVirtualOrderItem();
 
 		newCommerceVirtualOrderItem.setUuid(RandomTestUtil.randomString());
 
@@ -153,8 +149,10 @@ public class CommerceVirtualOrderItemPersistenceTest {
 
 		newCommerceVirtualOrderItem.setEndDate(RandomTestUtil.nextDate());
 
-		_commerceVirtualOrderItems.add(
-			_persistence.update(newCommerceVirtualOrderItem));
+		newCommerceVirtualOrderItem = _persistence.update(
+			newCommerceVirtualOrderItem);
+
+		_commerceVirtualOrderItems.add(newCommerceVirtualOrderItem);
 
 		CommerceVirtualOrderItem existingCommerceVirtualOrderItem =
 			_persistence.findByPrimaryKey(
@@ -609,8 +607,6 @@ public class CommerceVirtualOrderItemPersistenceTest {
 		CommerceVirtualOrderItem commerceVirtualOrderItem = _persistence.create(
 			pk);
 
-		commerceVirtualOrderItem.setMvccVersion(RandomTestUtil.nextLong());
-
 		commerceVirtualOrderItem.setUuid(RandomTestUtil.randomString());
 
 		commerceVirtualOrderItem.setGroupId(RandomTestUtil.nextLong());
@@ -652,4 +648,4 @@ public class CommerceVirtualOrderItemPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:987144243
+// LIFERAY-SERVICE-BUILDER-HASH:-988058295

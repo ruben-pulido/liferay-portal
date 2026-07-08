@@ -569,12 +569,10 @@ export async function initializerSetUp(
 	return {catalog: catalogs.items[0], channel: channels.items[0], site};
 }
 
-export async function guestCheckoutSetUp(
-	channel: any,
-	commerceAdminChannelDetailsPage: CommerceAdminChannelDetailsPage,
-	commerceAdminChannelsPage: CommerceAdminChannelsPage,
+export async function enableGuestPageView(
 	page: Page,
-	site: Site
+	site: Site,
+	childPages?: Array<{pageName: string; parentPageName: string}>
 ): Promise<void> {
 	const siteURL = `/web${site.friendlyUrlPath}`;
 
@@ -617,7 +615,67 @@ export async function guestCheckoutSetUp(
 		'success'
 	);
 
+	if (childPages && childPages.length) {
+		const permissionsDialog = page.getByRole('dialog', {
+			name: 'Permissions',
+		});
+
+		await permissionsDialog.getByRole('button', {name: 'Close'}).click();
+
+		await expect(permissionsDialog).toBeHidden();
+
+		for (const {pageName, parentPageName} of childPages) {
+			await page
+				.getByRole('menuitem', {
+					exact: true,
+					name: `${parentPageName} Content Page`,
+				})
+				.click({force: true});
+
+			await page
+				.getByRole('checkbox', {
+					exact: true,
+					name: `Select ${pageName}`,
+				})
+				.click();
+
+			await page.getByRole('button', {name: 'Permissions'}).click();
+
+			const permissionsFrame = page.frameLocator(
+				'iframe[title="Permissions"]'
+			);
+
+			const childGuestActionViewCheckbox =
+				permissionsFrame.locator('#guest_ACTION_VIEW');
+
+			await expect(childGuestActionViewCheckbox).toBeVisible();
+
+			await childGuestActionViewCheckbox.check();
+
+			await permissionsFrame.getByRole('button', {name: 'Save'}).click();
+
+			await waitForAlert(permissionsFrame, 'success');
+
+			await permissionsDialog
+				.getByRole('button', {name: 'Close'})
+				.click();
+
+			await expect(permissionsDialog).toBeHidden();
+		}
+	}
+
 	await page.reload();
+}
+
+export async function guestCheckoutSetUp(
+	channel: any,
+	commerceAdminChannelDetailsPage: CommerceAdminChannelDetailsPage,
+	commerceAdminChannelsPage: CommerceAdminChannelsPage,
+	page: Page,
+	site: Site,
+	childPages?: Array<{pageName: string; parentPageName: string}>
+): Promise<void> {
+	await enableGuestPageView(page, site, childPages);
 
 	await commerceAdminChannelsPage.goto();
 
@@ -637,7 +695,7 @@ export async function guestCheckoutSetUp(
 
 	await performLogout(page);
 
-	await page.goto(siteURL, {waitUntil: 'networkidle'});
+	await page.goto(`/web${site.friendlyUrlPath}`, {waitUntil: 'networkidle'});
 
 	await expect(page.locator('.btn-account-selector')).not.toBeVisible();
 }
@@ -649,6 +707,19 @@ export async function miniumSetUp(
 	return initializerSetUp(
 		apiHelpers,
 		'minium-initializer',
+		null,
+		null,
+		siteName
+	);
+}
+
+export async function speedwellSetUp(
+	apiHelpers: DataApiHelpers,
+	siteName?: string
+) {
+	return initializerSetUp(
+		apiHelpers,
+		'speedwell-initializer',
 		null,
 		null,
 		siteName

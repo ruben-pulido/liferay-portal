@@ -109,11 +109,7 @@ public class SocialRequestPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SocialRequest newSocialRequest = _persistence.create(pk);
-
-		newSocialRequest.setMvccVersion(RandomTestUtil.nextLong());
+		SocialRequest newSocialRequest = addSocialRequest();
 
 		newSocialRequest.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -141,7 +137,9 @@ public class SocialRequestPersistenceTest {
 
 		newSocialRequest.setStatus(RandomTestUtil.nextInt());
 
-		_socialRequests.add(_persistence.update(newSocialRequest));
+		newSocialRequest = _persistence.update(newSocialRequest);
+
+		_socialRequests.add(newSocialRequest);
 
 		SocialRequest existingSocialRequest = _persistence.findByPrimaryKey(
 			newSocialRequest.getPrimaryKey());
@@ -625,8 +623,6 @@ public class SocialRequestPersistenceTest {
 
 		SocialRequest socialRequest = _persistence.create(pk);
 
-		socialRequest.setMvccVersion(RandomTestUtil.nextLong());
-
 		socialRequest.setCtCollectionId(RandomTestUtil.nextLong());
 
 		socialRequest.setUuid(RandomTestUtil.randomString());
@@ -664,4 +660,4 @@ public class SocialRequestPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:989258346
+// LIFERAY-SERVICE-BUILDER-HASH:1136392361

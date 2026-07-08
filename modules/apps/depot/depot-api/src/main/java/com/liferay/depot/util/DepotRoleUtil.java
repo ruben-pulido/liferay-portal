@@ -35,16 +35,22 @@ public class DepotRoleUtil {
 			return roles;
 		}
 
+		return filter(
+			roles, DepotRolesConstants.getSubtype(depotEntry.getType()));
+	}
+
+	public static List<Role> filter(List<Role> roles, String subtype) {
+		if (Validator.isNull(subtype)) {
+			return roles;
+		}
+
 		return ListUtil.filter(
 			roles,
 			role -> {
-				String subtype = role.getSubtype();
+				String roleSubtype = role.getSubtype();
 
-				return Validator.isNull(subtype) ||
-					   Objects.equals(
-						   subtype,
-						   DepotRolesConstants.getSubtype(
-							   depotEntry.getType()));
+				return Validator.isNull(roleSubtype) ||
+					   Objects.equals(roleSubtype, subtype);
 			});
 	}
 

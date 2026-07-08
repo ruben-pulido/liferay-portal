@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -80,8 +78,9 @@ public class JournalContentSearchPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where companyId = &#63;.
@@ -122,16 +121,8 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -173,8 +164,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByPortletId;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByPortletId;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where portletId = &#63;.
@@ -215,16 +207,8 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByPortletId_First(
-			portletId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByPortletId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {portletId}));
+		return _collectionPersistenceFinderByPortletId.findFirst(
+			finderCache, new Object[] {portletId}, orderByComparator);
 	}
 
 	/**
@@ -266,8 +250,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {portletId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByArticleId;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByArticleId;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where articleId = &#63;.
@@ -308,16 +293,8 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByArticleId_First(
-			articleId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByArticleId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {articleId}));
+		return _collectionPersistenceFinderByArticleId.findFirst(
+			finderCache, new Object[] {articleId}, orderByComparator);
 	}
 
 	/**
@@ -359,8 +336,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {articleId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByG_P;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByG_P;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63;.
@@ -403,17 +381,9 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_P_First(
-			groupId, privateLayout, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByG_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, privateLayout}));
+		return _collectionPersistenceFinderByG_P.findFirst(
+			finderCache, new Object[] {groupId, privateLayout},
+			orderByComparator);
 	}
 
 	/**
@@ -459,8 +429,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {groupId, privateLayout});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByG_A;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByG_A;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and articleId = &#63;.
@@ -503,16 +474,8 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_A_First(
-			groupId, articleId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByG_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, articleId}));
+		return _collectionPersistenceFinderByG_A.findFirst(
+			finderCache, new Object[] {groupId, articleId}, orderByComparator);
 	}
 
 	/**
@@ -557,8 +520,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {groupId, articleId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByG_P_L;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByG_P_L;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63;.
@@ -603,17 +567,9 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_P_L_First(
-			groupId, privateLayout, layoutId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByG_P_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, privateLayout, layoutId}));
+		return _collectionPersistenceFinderByG_P_L.findFirst(
+			finderCache, new Object[] {groupId, privateLayout, layoutId},
+			orderByComparator);
 	}
 
 	/**
@@ -666,8 +622,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {groupId, privateLayout, layoutId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByG_P_A;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByG_P_A;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and articleId = &#63;.
@@ -712,17 +669,9 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_P_A_First(
-			groupId, privateLayout, articleId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByG_P_A.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, privateLayout, articleId}));
+		return _collectionPersistenceFinderByG_P_A.findFirst(
+			finderCache, new Object[] {groupId, privateLayout, articleId},
+			orderByComparator);
 	}
 
 	/**
@@ -775,8 +724,9 @@ public class JournalContentSearchPersistenceImpl
 			finderCache, new Object[] {groupId, privateLayout, articleId});
 	}
 
-	private CollectionPersistenceFinder<JournalContentSearch>
-		_collectionPersistenceFinderByG_P_L_P;
+	private CollectionPersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_collectionPersistenceFinderByG_P_L_P;
 
 	/**
 	 * Returns an ordered range of all the journal content searches where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63;.
@@ -826,17 +776,10 @@ public class JournalContentSearchPersistenceImpl
 			OrderByComparator<JournalContentSearch> orderByComparator)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_P_L_P_First(
-			groupId, privateLayout, layoutId, portletId, orderByComparator);
-
-		if (journalContentSearch != null) {
-			return journalContentSearch;
-		}
-
-		throw new NoSuchContentSearchException(
-			_collectionPersistenceFinderByG_P_L_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, privateLayout, layoutId, portletId}));
+		return _collectionPersistenceFinderByG_P_L_P.findFirst(
+			finderCache,
+			new Object[] {groupId, privateLayout, layoutId, portletId},
+			orderByComparator);
 	}
 
 	/**
@@ -895,8 +838,9 @@ public class JournalContentSearchPersistenceImpl
 			new Object[] {groupId, privateLayout, layoutId, portletId});
 	}
 
-	private UniquePersistenceFinder<JournalContentSearch>
-		_uniquePersistenceFinderByG_P_L_P_A;
+	private UniquePersistenceFinder
+		<JournalContentSearch, NoSuchContentSearchException>
+			_uniquePersistenceFinderByG_P_L_P_A;
 
 	/**
 	 * Returns the journal content search where groupId = &#63; and privateLayout = &#63; and layoutId = &#63; and portletId = &#63; and articleId = &#63; or throws a <code>NoSuchContentSearchException</code> if it could not be found.
@@ -915,25 +859,11 @@ public class JournalContentSearchPersistenceImpl
 			String portletId, String articleId)
 		throws NoSuchContentSearchException {
 
-		JournalContentSearch journalContentSearch = fetchByG_P_L_P_A(
-			groupId, privateLayout, layoutId, portletId, articleId);
-
-		if (journalContentSearch == null) {
-			String message =
-				_uniquePersistenceFinderByG_P_L_P_A.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						groupId, privateLayout, layoutId, portletId, articleId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchContentSearchException(message);
-		}
-
-		return journalContentSearch;
+		return _uniquePersistenceFinderByG_P_L_P_A.find(
+			finderCache,
+			new Object[] {
+				groupId, privateLayout, layoutId, portletId, articleId
+			});
 	}
 
 	/**
@@ -1281,7 +1211,7 @@ public class JournalContentSearchPersistenceImpl
 				_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 				_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 				JournalContentSearchModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"journalContentSearch.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1309,7 +1239,7 @@ public class JournalContentSearchPersistenceImpl
 				_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 				_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 				JournalContentSearchModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"journalContentSearch.", "portletId",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1337,7 +1267,7 @@ public class JournalContentSearchPersistenceImpl
 				_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 				_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 				JournalContentSearchModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"journalContentSearch.", "articleId",
 					FinderColumn.Type.STRING, "=", true, true,
@@ -1364,7 +1294,7 @@ public class JournalContentSearchPersistenceImpl
 			_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 			_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 			JournalContentSearchModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"journalContentSearch.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, JournalContentSearch::getGroupId),
@@ -1394,7 +1324,7 @@ public class JournalContentSearchPersistenceImpl
 			_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 			_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 			JournalContentSearchModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"journalContentSearch.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, JournalContentSearch::getGroupId),
@@ -1429,7 +1359,7 @@ public class JournalContentSearchPersistenceImpl
 			_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 			_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 			JournalContentSearchModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"journalContentSearch.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, JournalContentSearch::getGroupId),
@@ -1470,7 +1400,7 @@ public class JournalContentSearchPersistenceImpl
 			_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 			_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 			JournalContentSearchModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-			"",
+			"", "", null,
 			new FinderColumn<>(
 				"journalContentSearch.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, JournalContentSearch::getGroupId),
@@ -1520,7 +1450,7 @@ public class JournalContentSearchPersistenceImpl
 				_SQL_SELECT_JOURNALCONTENTSEARCH_WHERE,
 				_SQL_COUNT_JOURNALCONTENTSEARCH_WHERE,
 				JournalContentSearchModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"journalContentSearch.", "groupId", FinderColumn.Type.LONG,
 					"=", true, true, JournalContentSearch::getGroupId),
@@ -1629,16 +1559,10 @@ public class JournalContentSearchPersistenceImpl
 	private static final String _SQL_COUNT_JOURNALCONTENTSEARCH_WHERE =
 		"SELECT COUNT(journalContentSearch) FROM JournalContentSearch journalContentSearch WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No JournalContentSearch exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		JournalContentSearchPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:822525880
+// LIFERAY-SERVICE-BUILDER-HASH:215603288

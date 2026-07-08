@@ -8,9 +8,11 @@ import {ApiHelpers, DataApiHelpers} from './ApiHelpers';
 interface postSiteTaxonomyVocabularyProps {
 	assetLibraries?: AssetLibrary[];
 	assetTypes?: AssetType[];
+	externalReferenceCode?: string;
 	multiValued?: boolean;
 	name: string;
 	siteId: string;
+	system?: boolean;
 	visibilityType?: string;
 }
 
@@ -51,6 +53,11 @@ interface postAssetLibraryKeywordProps {
 }
 
 interface postSiteKeywordProps {
+	assetLibraries?: Array<{
+		externalReferenceCode?: string;
+		id?: number;
+		scopeKey?: string;
+	}>;
 	name: string;
 	siteId: string;
 }
@@ -122,9 +129,11 @@ export class HeadlessAdminTaxonomyApiHelper {
 	async postSiteTaxonomyVocabulary({
 		assetLibraries,
 		assetTypes,
+		externalReferenceCode,
 		multiValued = true,
 		name,
 		siteId,
+		system,
 		visibilityType,
 	}: postSiteTaxonomyVocabularyProps): Promise<TTaxonomyVocabulary> {
 		const taxonomyVocabulary = await this.apiHelpers.post(
@@ -133,14 +142,20 @@ export class HeadlessAdminTaxonomyApiHelper {
 				data: {
 					assetLibraries,
 					assetTypes,
+					externalReferenceCode,
 					multiValued,
 					name,
+					system,
 					visibilityType,
 				},
 			}
 		);
 
-		if (this.apiHelpers instanceof DataApiHelpers) {
+		// A system vocabulary cannot be deleted while its feature flag is
+		// enabled, so it is not auto-tracked. Callers must clean it up
+		// explicitly (for example, by disabling the flag first).
+
+		if (!system && this.apiHelpers instanceof DataApiHelpers) {
 			this.apiHelpers.data.push({
 				id: taxonomyVocabulary.id,
 				type: 'taxonomyVocabulary',
@@ -211,15 +226,18 @@ export class HeadlessAdminTaxonomyApiHelper {
 	 *
 	 * @param name the name of the tag
 	 * @param siteId the id of the site in which the tag will be created
+	 * @param assetLibraries the spaces the tag is scoped to (CMS only); omit to
+	 * make the tag available in all spaces
 	 */
 
 	async postSiteKeyword({
+		assetLibraries,
 		name,
 		siteId,
 	}: postSiteKeywordProps): Promise<{id: number}> {
 		const keyword = await this.apiHelpers.post(
 			`${this.apiHelpers.baseUrl}${this.basePath}/sites/${siteId}/keywords`,
-			{data: {name}}
+			{data: {assetLibraries, name}}
 		);
 
 		if (this.apiHelpers instanceof DataApiHelpers) {

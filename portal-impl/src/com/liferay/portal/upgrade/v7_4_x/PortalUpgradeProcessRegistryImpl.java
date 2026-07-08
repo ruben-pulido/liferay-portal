@@ -766,6 +766,45 @@ public class PortalUpgradeProcessRegistryImpl
 		upgradeVersionTreeMap.put(
 			new Version(38, 4, 1),
 			new RegionExternalReferenceCodeUpgradeProcess());
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 4, 2),
+			UpgradeProcessFactory.addColumns(
+				"Ticket", "emailAddress VARCHAR(254) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 5, 0),
+			UpgradeProcessFactory.addColumns(
+				"Layout", "styleBookEntryScopeERC VARCHAR(75) null"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 6, 0),
+			UpgradeProcessFactory.addColumns(
+				"AssetVocabularyGroupRel", "depotEntryType INTEGER"),
+			UpgradeProcessFactory.runSQL(
+				"update AssetVocabularyGroupRel set depotEntryType = 1"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 7, 0),
+			UpgradeProcessFactory.addColumns(
+				"AssetCategory", "system_ BOOLEAN"));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 7, 1),
+			UpgradeModulesFactory.create(
+				new String[] {"com.liferay.portal.vulcan.impl"}, null));
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 7, 2),
+			new LayoutRemoveUnusedTypeSettingsUpgradeProcess());
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 7, 3),
+			new LayoutSetPrototypeRemoveReadyForPropagationUpgradeProcess());
+
+		upgradeVersionTreeMap.put(
+			new Version(38, 7, 4),
+			new LayoutSetRemoveUnusedSettingsUpgradeProcess());
 	}
 
 }

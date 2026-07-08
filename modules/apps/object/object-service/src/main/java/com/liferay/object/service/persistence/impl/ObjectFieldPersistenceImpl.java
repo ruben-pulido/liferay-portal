@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -88,7 +86,7 @@ public class ObjectFieldPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -129,15 +127,8 @@ public class ObjectFieldPersistenceImpl
 			String uuid, OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByUuid_First(uuid, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -178,7 +169,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -222,16 +213,8 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -276,7 +259,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -317,16 +300,8 @@ public class ObjectFieldPersistenceImpl
 			long companyId, OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -367,7 +342,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByListTypeDefinitionId;
 
 	/**
@@ -409,18 +384,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByListTypeDefinitionId_First(
-			listTypeDefinitionId, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByListTypeDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {listTypeDefinitionId}));
+		return _collectionPersistenceFinderByListTypeDefinitionId.findFirst(
+			finderCache, new Object[] {listTypeDefinitionId},
+			orderByComparator);
 	}
 
 	/**
@@ -463,7 +429,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {listTypeDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByObjectDefinitionId;
 
 	/**
@@ -505,18 +471,8 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByObjectDefinitionId_First(
-			objectDefinitionId, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByObjectDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId}));
+		return _collectionPersistenceFinderByObjectDefinitionId.findFirst(
+			finderCache, new Object[] {objectDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -558,7 +514,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByC_U;
 
 	/**
@@ -602,16 +558,8 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByC_U_First(
-			companyId, userId, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByC_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId}));
+		return _collectionPersistenceFinderByC_U.findFirst(
+			finderCache, new Object[] {companyId, userId}, orderByComparator);
 	}
 
 	/**
@@ -656,7 +604,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {companyId, userId});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByC_BT;
 
 	/**
@@ -700,17 +648,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByC_BT_First(
-			companyId, businessType, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByC_BT.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, businessType}));
+		return _collectionPersistenceFinderByC_BT.findFirst(
+			finderCache, new Object[] {companyId, businessType},
+			orderByComparator);
 	}
 
 	/**
@@ -756,7 +696,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {companyId, businessType});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByLTDI_S;
 
 	/**
@@ -800,17 +740,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByLTDI_S_First(
-			listTypeDefinitionId, state, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByLTDI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {listTypeDefinitionId, state}));
+		return _collectionPersistenceFinderByLTDI_S.findFirst(
+			finderCache, new Object[] {listTypeDefinitionId, state},
+			orderByComparator);
 	}
 
 	/**
@@ -856,7 +788,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {listTypeDefinitionId, state});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_BT;
 
 	/**
@@ -900,17 +832,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_BT_First(
-			objectDefinitionId, businessType, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_BT.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, businessType}));
+		return _collectionPersistenceFinderByODI_BT.findFirst(
+			finderCache, new Object[] {objectDefinitionId, businessType},
+			orderByComparator);
 	}
 
 	/**
@@ -956,7 +880,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, businessType});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_DTN;
 
 	/**
@@ -1000,17 +924,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_DTN_First(
-			objectDefinitionId, dbTableName, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_DTN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, dbTableName}));
+		return _collectionPersistenceFinderByODI_DTN.findFirst(
+			finderCache, new Object[] {objectDefinitionId, dbTableName},
+			orderByComparator);
 	}
 
 	/**
@@ -1056,7 +972,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, dbTableName});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_I;
 
 	/**
@@ -1100,17 +1016,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_I_First(
-			objectDefinitionId, indexed, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_I.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, indexed}));
+		return _collectionPersistenceFinderByODI_I.findFirst(
+			finderCache, new Object[] {objectDefinitionId, indexed},
+			orderByComparator);
 	}
 
 	/**
@@ -1156,7 +1064,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, indexed});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_L;
 
 	/**
@@ -1200,17 +1108,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_L_First(
-			objectDefinitionId, localized, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_L.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, localized}));
+		return _collectionPersistenceFinderByODI_L.findFirst(
+			finderCache, new Object[] {objectDefinitionId, localized},
+			orderByComparator);
 	}
 
 	/**
@@ -1256,7 +1156,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, localized});
 	}
 
-	private UniquePersistenceFinder<ObjectField>
+	private UniquePersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_uniquePersistenceFinderByODI_N;
 
 	/**
@@ -1271,22 +1171,8 @@ public class ObjectFieldPersistenceImpl
 	public ObjectField findByODI_N(long objectDefinitionId, String name)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_N(objectDefinitionId, name);
-
-		if (objectField == null) {
-			String message =
-				_uniquePersistenceFinderByODI_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectFieldException(message);
-		}
-
-		return objectField;
+		return _uniquePersistenceFinderByODI_N.find(
+			finderCache, new Object[] {objectDefinitionId, name});
 	}
 
 	/**
@@ -1335,7 +1221,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, name});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_S;
 
 	/**
@@ -1379,17 +1265,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_S_First(
-			objectDefinitionId, system, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, system}));
+		return _collectionPersistenceFinderByODI_S.findFirst(
+			finderCache, new Object[] {objectDefinitionId, system},
+			orderByComparator);
 	}
 
 	/**
@@ -1435,7 +1313,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, system});
 	}
 
-	private UniquePersistenceFinder<ObjectField>
+	private UniquePersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_uniquePersistenceFinderByERC_C_ODI;
 
 	/**
@@ -1453,25 +1331,11 @@ public class ObjectFieldPersistenceImpl
 			long objectDefinitionId)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByERC_C_ODI(
-			externalReferenceCode, companyId, objectDefinitionId);
-
-		if (objectField == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C_ODI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						externalReferenceCode, companyId, objectDefinitionId
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchObjectFieldException(message);
-		}
-
-		return objectField;
+		return _uniquePersistenceFinderByERC_C_ODI.find(
+			finderCache,
+			new Object[] {
+				externalReferenceCode, companyId, objectDefinitionId
+			});
 	}
 
 	/**
@@ -1533,7 +1397,7 @@ public class ObjectFieldPersistenceImpl
 			});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_DBT_I;
 
 	/**
@@ -1579,17 +1443,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_DBT_I_First(
-			objectDefinitionId, dbType, indexed, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_DBT_I.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, dbType, indexed}));
+		return _collectionPersistenceFinderByODI_DBT_I.findFirst(
+			finderCache, new Object[] {objectDefinitionId, dbType, indexed},
+			orderByComparator);
 	}
 
 	/**
@@ -1642,7 +1498,7 @@ public class ObjectFieldPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId, dbType, indexed});
 	}
 
-	private CollectionPersistenceFinder<ObjectField>
+	private CollectionPersistenceFinder<ObjectField, NoSuchObjectFieldException>
 		_collectionPersistenceFinderByODI_L_S;
 
 	/**
@@ -1688,17 +1544,9 @@ public class ObjectFieldPersistenceImpl
 			OrderByComparator<ObjectField> orderByComparator)
 		throws NoSuchObjectFieldException {
 
-		ObjectField objectField = fetchByODI_L_S_First(
-			objectDefinitionId, localized, system, orderByComparator);
-
-		if (objectField != null) {
-			return objectField;
-		}
-
-		throw new NoSuchObjectFieldException(
-			_collectionPersistenceFinderByODI_L_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, localized, system}));
+		return _collectionPersistenceFinderByODI_L_S.findFirst(
+			finderCache, new Object[] {objectDefinitionId, localized, system},
+			orderByComparator);
 	}
 
 	/**
@@ -2028,10 +1876,11 @@ public class ObjectFieldPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"objectField.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectField::getUuid));
+				"objectField.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ObjectField::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -2054,9 +1903,10 @@ public class ObjectFieldPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"objectField.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, ObjectField::getUuid),
+					"objectField.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, ObjectField::getUuid),
 				new FinderColumn<>(
 					"objectField.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectField::getCompanyId));
@@ -2082,6 +1932,7 @@ public class ObjectFieldPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectField::getCompanyId));
@@ -2110,6 +1961,7 @@ public class ObjectFieldPersistenceImpl
 					new String[] {"listTypeDefinitionId"}, false),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "listTypeDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2139,6 +1991,7 @@ public class ObjectFieldPersistenceImpl
 					new String[] {"objectDefinitionId"}, false),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2163,7 +2016,8 @@ public class ObjectFieldPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"companyId", "userId"}, false),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"objectField.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, ObjectField::getCompanyId),
@@ -2190,7 +2044,8 @@ public class ObjectFieldPersistenceImpl
 				new String[] {Long.class.getName(), String.class.getName()},
 				new String[] {"companyId", "businessType"}, 0, 2, false, null),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"objectField.", "companyId", FinderColumn.Type.LONG, "=", true,
 				true, ObjectField::getCompanyId),
@@ -2223,13 +2078,15 @@ public class ObjectFieldPersistenceImpl
 					new String[] {"listTypeDefinitionId", "state_"}, false),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "listTypeDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
 					ObjectField::getListTypeDefinitionId),
 				new FinderColumn<>(
-					"objectField.", "state", FinderColumn.Type.BOOLEAN, "=",
-					true, true, ObjectField::isState));
+					"objectField.", "state", "state_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					ObjectField::isState));
 
 		_collectionPersistenceFinderByODI_BT =
 			new CollectionPersistenceFinder<>(
@@ -2254,6 +2111,7 @@ public class ObjectFieldPersistenceImpl
 					false, null),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2285,6 +2143,7 @@ public class ObjectFieldPersistenceImpl
 					false, null),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2312,7 +2171,8 @@ public class ObjectFieldPersistenceImpl
 				new String[] {Long.class.getName(), Boolean.class.getName()},
 				new String[] {"objectDefinitionId", "indexed"}, false),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"objectField.", "objectDefinitionId", FinderColumn.Type.LONG,
 				"=", true, true, ObjectField::getObjectDefinitionId),
@@ -2339,7 +2199,8 @@ public class ObjectFieldPersistenceImpl
 				new String[] {Long.class.getName(), Boolean.class.getName()},
 				new String[] {"objectDefinitionId", "localized"}, false),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"objectField.", "objectDefinitionId", FinderColumn.Type.LONG,
 				"=", true, true, ObjectField::getObjectDefinitionId),
@@ -2382,13 +2243,14 @@ public class ObjectFieldPersistenceImpl
 				new String[] {Long.class.getName(), Boolean.class.getName()},
 				new String[] {"objectDefinitionId", "system_"}, false),
 			_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
-			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"objectField.", "objectDefinitionId", FinderColumn.Type.LONG,
 				"=", true, true, ObjectField::getObjectDefinitionId),
 			new FinderColumn<>(
-				"objectField.", "system", FinderColumn.Type.BOOLEAN, "=", true,
-				true, ObjectField::isSystem));
+				"objectField.", "system", "system_", FinderColumn.Type.BOOLEAN,
+				"=", true, true, ObjectField::isSystem));
 
 		_uniquePersistenceFinderByERC_C_ODI = new UniquePersistenceFinder<>(
 			this,
@@ -2449,6 +2311,7 @@ public class ObjectFieldPersistenceImpl
 					2, false, null),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2491,6 +2354,7 @@ public class ObjectFieldPersistenceImpl
 					false),
 				_SQL_SELECT_OBJECTFIELD_WHERE, _SQL_COUNT_OBJECTFIELD_WHERE,
 				ObjectFieldModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"objectField.", "objectDefinitionId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -2499,8 +2363,9 @@ public class ObjectFieldPersistenceImpl
 					"objectField.", "localized", FinderColumn.Type.BOOLEAN, "=",
 					true, true, ObjectField::isLocalized),
 				new FinderColumn<>(
-					"objectField.", "system", FinderColumn.Type.BOOLEAN, "=",
-					true, true, ObjectField::isSystem));
+					"objectField.", "system", "system_",
+					FinderColumn.Type.BOOLEAN, "=", true, true,
+					ObjectField::isSystem));
 
 		ObjectFieldUtil.setPersistence(this);
 	}
@@ -2556,12 +2421,6 @@ public class ObjectFieldPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTFIELD_WHERE =
 		"SELECT COUNT(objectField) FROM ObjectField objectField WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectField exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ObjectFieldPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "state", "system"});
 
@@ -2571,4 +2430,4 @@ public class ObjectFieldPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2044541500
+// LIFERAY-SERVICE-BUILDER-HASH:1401100620

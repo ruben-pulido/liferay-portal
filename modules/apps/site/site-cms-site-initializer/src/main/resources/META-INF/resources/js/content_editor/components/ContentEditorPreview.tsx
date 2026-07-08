@@ -59,6 +59,7 @@ export default function ContentEditorPreview({
 
 	const localizationLanguageId = useLocalizationLanguageId(defaultLanguageId);
 
+	const previewId = useId();
 	const previewWidthMax = useObservedMaxWidth(previewRef);
 	const previewWidth = Math.min(previewWidthMax, resizeWidth!);
 	const titleId = useId();
@@ -110,10 +111,6 @@ export default function ContentEditorPreview({
 		window
 	);
 
-	if (!Liferay.FeatureFlags['LPD-44507']) {
-		return null;
-	}
-
 	return (
 		<div
 			aria-labelledby={titleId}
@@ -121,6 +118,7 @@ export default function ContentEditorPreview({
 				resizing,
 				visible: isVisible,
 			})}
+			id={previewId}
 			onTransitionEnd={({propertyName}) => {
 				if (isVisible && propertyName === 'visibility') {
 					previewRef.current?.focus();
@@ -150,6 +148,7 @@ export default function ContentEditorPreview({
 			) : null}
 
 			<ResizeHandle
+				aria-controls={previewId}
 				maxWidth={previewWidthMax}
 				minWidth={PREVIEW_WIDTH_MIN}
 				onWidthChange={(width: number) => {

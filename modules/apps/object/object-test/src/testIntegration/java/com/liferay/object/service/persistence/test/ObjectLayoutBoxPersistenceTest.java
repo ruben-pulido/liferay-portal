@@ -106,11 +106,7 @@ public class ObjectLayoutBoxPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		ObjectLayoutBox newObjectLayoutBox = _persistence.create(pk);
-
-		newObjectLayoutBox.setMvccVersion(RandomTestUtil.nextLong());
+		ObjectLayoutBox newObjectLayoutBox = addObjectLayoutBox();
 
 		newObjectLayoutBox.setUuid(RandomTestUtil.randomString());
 
@@ -134,7 +130,9 @@ public class ObjectLayoutBoxPersistenceTest {
 
 		newObjectLayoutBox.setType(RandomTestUtil.randomString());
 
-		_objectLayoutBoxes.add(_persistence.update(newObjectLayoutBox));
+		newObjectLayoutBox = _persistence.update(newObjectLayoutBox);
+
+		_objectLayoutBoxes.add(newObjectLayoutBox);
 
 		ObjectLayoutBox existingObjectLayoutBox = _persistence.findByPrimaryKey(
 			newObjectLayoutBox.getPrimaryKey());
@@ -430,8 +428,6 @@ public class ObjectLayoutBoxPersistenceTest {
 
 		ObjectLayoutBox objectLayoutBox = _persistence.create(pk);
 
-		objectLayoutBox.setMvccVersion(RandomTestUtil.nextLong());
-
 		objectLayoutBox.setUuid(RandomTestUtil.randomString());
 
 		objectLayoutBox.setCompanyId(RandomTestUtil.nextLong());
@@ -465,4 +461,4 @@ public class ObjectLayoutBoxPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-751702664
+// LIFERAY-SERVICE-BUILDER-HASH:1746601135

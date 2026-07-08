@@ -22,8 +22,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -96,8 +94,9 @@ public class CPSpecificationOptionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CPSpecificationOption>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the cp specification options where uuid = &#63;.
@@ -138,16 +137,8 @@ public class CPSpecificationOptionPersistenceImpl
 			OrderByComparator<CPSpecificationOption> orderByComparator)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (cpSpecificationOption != null) {
-			return cpSpecificationOption;
-		}
-
-		throw new NoSuchCPSpecificationOptionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -223,8 +214,9 @@ public class CPSpecificationOptionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CPSpecificationOption>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the cp specification options where uuid = &#63; and companyId = &#63;.
@@ -267,16 +259,8 @@ public class CPSpecificationOptionPersistenceImpl
 			OrderByComparator<CPSpecificationOption> orderByComparator)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (cpSpecificationOption != null) {
-			return cpSpecificationOption;
-		}
-
-		throw new NoSuchCPSpecificationOptionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -358,8 +342,9 @@ public class CPSpecificationOptionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CPSpecificationOption>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the cp specification options where companyId = &#63;.
@@ -400,16 +385,8 @@ public class CPSpecificationOptionPersistenceImpl
 			OrderByComparator<CPSpecificationOption> orderByComparator)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (cpSpecificationOption != null) {
-			return cpSpecificationOption;
-		}
-
-		throw new NoSuchCPSpecificationOptionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -486,8 +463,9 @@ public class CPSpecificationOptionPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CPSpecificationOption>
-		_collectionPersistenceFinderByCPOptionCategoryId;
+	private FilterCollectionPersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_collectionPersistenceFinderByCPOptionCategoryId;
 
 	/**
 	 * Returns an ordered range of all the cp specification options where CPOptionCategoryId = &#63;.
@@ -528,19 +506,8 @@ public class CPSpecificationOptionPersistenceImpl
 			OrderByComparator<CPSpecificationOption> orderByComparator)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption =
-			fetchByCPOptionCategoryId_First(
-				CPOptionCategoryId, orderByComparator);
-
-		if (cpSpecificationOption != null) {
-			return cpSpecificationOption;
-		}
-
-		throw new NoSuchCPSpecificationOptionException(
-			_collectionPersistenceFinderByCPOptionCategoryId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPOptionCategoryId}));
+		return _collectionPersistenceFinderByCPOptionCategoryId.findFirst(
+			finderCache, new Object[] {CPOptionCategoryId}, orderByComparator);
 	}
 
 	/**
@@ -617,8 +584,9 @@ public class CPSpecificationOptionPersistenceImpl
 			finderCache, new Object[] {CPOptionCategoryId});
 	}
 
-	private UniquePersistenceFinder<CPSpecificationOption>
-		_uniquePersistenceFinderByC_K;
+	private UniquePersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_uniquePersistenceFinderByC_K;
 
 	/**
 	 * Returns the cp specification option where companyId = &#63; and key = &#63; or throws a <code>NoSuchCPSpecificationOptionException</code> if it could not be found.
@@ -632,22 +600,8 @@ public class CPSpecificationOptionPersistenceImpl
 	public CPSpecificationOption findByC_K(long companyId, String key)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption = fetchByC_K(
-			companyId, key);
-
-		if (cpSpecificationOption == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPSpecificationOptionException(message);
-		}
-
-		return cpSpecificationOption;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {companyId, key});
 	}
 
 	/**
@@ -695,8 +649,9 @@ public class CPSpecificationOptionPersistenceImpl
 			finderCache, new Object[] {companyId, key});
 	}
 
-	private UniquePersistenceFinder<CPSpecificationOption>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CPSpecificationOption, NoSuchCPSpecificationOptionException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the cp specification option where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchCPSpecificationOptionException</code> if it could not be found.
@@ -711,23 +666,8 @@ public class CPSpecificationOptionPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCPSpecificationOptionException {
 
-		CPSpecificationOption cpSpecificationOption = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (cpSpecificationOption == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCPSpecificationOptionException(message);
-		}
-
-		return cpSpecificationOption;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1188,22 +1128,11 @@ public class CPSpecificationOptionPersistenceImpl
 				_SQL_SELECT_CPSPECIFICATIONOPTION_WHERE,
 				_SQL_COUNT_CPSPECIFICATIONOPTION_WHERE,
 				CPSpecificationOptionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPSpecificationOptionImpl.class,
-					CPSpecificationOption.class, "cpSpecificationOption",
-					"CPSpecificationOption",
-					"cpSpecificationOption.CPSpecificationOptionId",
-					"SELECT DISTINCT {cpSpecificationOption.*} FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					"SELECT {CPSpecificationOption.*} FROM (SELECT DISTINCT cpSpecificationOption.CPSpecificationOptionId FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					") TEMP_TABLE INNER JOIN CPSpecificationOption ON TEMP_TABLE.CPSpecificationOptionId = CPSpecificationOption.CPSpecificationOptionId",
-					"SELECT COUNT(DISTINCT cpSpecificationOption.CPSpecificationOptionId) AS COUNT_VALUE FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					CPSpecificationOptionModelImpl.ORDER_BY_SQL,
-					CPSpecificationOptionModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpSpecificationOption.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, CPSpecificationOption::getUuid));
+					"cpSpecificationOption.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPSpecificationOption::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1227,22 +1156,11 @@ public class CPSpecificationOptionPersistenceImpl
 				_SQL_SELECT_CPSPECIFICATIONOPTION_WHERE,
 				_SQL_COUNT_CPSPECIFICATIONOPTION_WHERE,
 				CPSpecificationOptionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPSpecificationOptionImpl.class,
-					CPSpecificationOption.class, "cpSpecificationOption",
-					"CPSpecificationOption",
-					"cpSpecificationOption.CPSpecificationOptionId",
-					"SELECT DISTINCT {cpSpecificationOption.*} FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					"SELECT {CPSpecificationOption.*} FROM (SELECT DISTINCT cpSpecificationOption.CPSpecificationOptionId FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					") TEMP_TABLE INNER JOIN CPSpecificationOption ON TEMP_TABLE.CPSpecificationOptionId = CPSpecificationOption.CPSpecificationOptionId",
-					"SELECT COUNT(DISTINCT cpSpecificationOption.CPSpecificationOptionId) AS COUNT_VALUE FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					CPSpecificationOptionModelImpl.ORDER_BY_SQL,
-					CPSpecificationOptionModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"cpSpecificationOption.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, CPSpecificationOption::getUuid),
+					"cpSpecificationOption.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					CPSpecificationOption::getUuid),
 				new FinderColumn<>(
 					"cpSpecificationOption.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1270,19 +1188,7 @@ public class CPSpecificationOptionPersistenceImpl
 				_SQL_SELECT_CPSPECIFICATIONOPTION_WHERE,
 				_SQL_COUNT_CPSPECIFICATIONOPTION_WHERE,
 				CPSpecificationOptionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPSpecificationOptionImpl.class,
-					CPSpecificationOption.class, "cpSpecificationOption",
-					"CPSpecificationOption",
-					"cpSpecificationOption.CPSpecificationOptionId",
-					"SELECT DISTINCT {cpSpecificationOption.*} FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					"SELECT {CPSpecificationOption.*} FROM (SELECT DISTINCT cpSpecificationOption.CPSpecificationOptionId FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					") TEMP_TABLE INNER JOIN CPSpecificationOption ON TEMP_TABLE.CPSpecificationOptionId = CPSpecificationOption.CPSpecificationOptionId",
-					"SELECT COUNT(DISTINCT cpSpecificationOption.CPSpecificationOptionId) AS COUNT_VALUE FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					CPSpecificationOptionModelImpl.ORDER_BY_SQL,
-					CPSpecificationOptionModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpSpecificationOption.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1313,19 +1219,7 @@ public class CPSpecificationOptionPersistenceImpl
 				_SQL_SELECT_CPSPECIFICATIONOPTION_WHERE,
 				_SQL_COUNT_CPSPECIFICATIONOPTION_WHERE,
 				CPSpecificationOptionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CPSpecificationOptionImpl.class,
-					CPSpecificationOption.class, "cpSpecificationOption",
-					"CPSpecificationOption",
-					"cpSpecificationOption.CPSpecificationOptionId",
-					"SELECT DISTINCT {cpSpecificationOption.*} FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					"SELECT {CPSpecificationOption.*} FROM (SELECT DISTINCT cpSpecificationOption.CPSpecificationOptionId FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					") TEMP_TABLE INNER JOIN CPSpecificationOption ON TEMP_TABLE.CPSpecificationOptionId = CPSpecificationOption.CPSpecificationOptionId",
-					"SELECT COUNT(DISTINCT cpSpecificationOption.CPSpecificationOptionId) AS COUNT_VALUE FROM CPSpecificationOption cpSpecificationOption WHERE ",
-					CPSpecificationOptionModelImpl.ORDER_BY_SQL,
-					CPSpecificationOptionModelImpl.
-						ORDER_BY_SQL_INLINE_DISTINCT),
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"cpSpecificationOption.", "CPOptionCategoryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1344,8 +1238,9 @@ public class CPSpecificationOptionPersistenceImpl
 				"cpSpecificationOption.", "companyId", FinderColumn.Type.LONG,
 				"=", true, true, CPSpecificationOption::getCompanyId),
 			new FinderColumn<>(
-				"cpSpecificationOption.", "key", FinderColumn.Type.STRING, "=",
-				true, true, CPSpecificationOption::getKey));
+				"cpSpecificationOption.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CPSpecificationOption::getKey));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -1423,12 +1318,6 @@ public class CPSpecificationOptionPersistenceImpl
 	private static final String _SQL_COUNT_CPSPECIFICATIONOPTION_WHERE =
 		"SELECT COUNT(cpSpecificationOption) FROM CPSpecificationOption cpSpecificationOption WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CPSpecificationOption exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CPSpecificationOptionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "key"});
 
@@ -1438,4 +1327,4 @@ public class CPSpecificationOptionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1728288268
+// LIFERAY-SERVICE-BUILDER-HASH:2026949558

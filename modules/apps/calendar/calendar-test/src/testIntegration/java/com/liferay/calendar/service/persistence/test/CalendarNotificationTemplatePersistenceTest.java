@@ -115,13 +115,8 @@ public class CalendarNotificationTemplatePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		CalendarNotificationTemplate newCalendarNotificationTemplate =
-			_persistence.create(pk);
-
-		newCalendarNotificationTemplate.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addCalendarNotificationTemplate();
 
 		newCalendarNotificationTemplate.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -163,8 +158,10 @@ public class CalendarNotificationTemplatePersistenceTest {
 		newCalendarNotificationTemplate.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_calendarNotificationTemplates.add(
-			_persistence.update(newCalendarNotificationTemplate));
+		newCalendarNotificationTemplate = _persistence.update(
+			newCalendarNotificationTemplate);
+
+		_calendarNotificationTemplates.add(newCalendarNotificationTemplate);
 
 		CalendarNotificationTemplate existingCalendarNotificationTemplate =
 			_persistence.findByPrimaryKey(
@@ -655,8 +652,6 @@ public class CalendarNotificationTemplatePersistenceTest {
 		CalendarNotificationTemplate calendarNotificationTemplate =
 			_persistence.create(pk);
 
-		calendarNotificationTemplate.setMvccVersion(RandomTestUtil.nextLong());
-
 		calendarNotificationTemplate.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -704,4 +699,4 @@ public class CalendarNotificationTemplatePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-129455837
+// LIFERAY-SERVICE-BUILDER-HASH:-10957153

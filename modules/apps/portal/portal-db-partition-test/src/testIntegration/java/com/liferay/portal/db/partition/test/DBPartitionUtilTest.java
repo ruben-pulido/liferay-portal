@@ -556,6 +556,22 @@ public class DBPartitionUtilTest extends BaseDBPartitionTestCase {
 	}
 
 	@Test
+	public void testIncrementCounter() throws Exception {
+		long count = DBPartitionUtil.incrementCounter();
+
+		try (SafeCloseable safeCloseable =
+				CompanyThreadLocal.setCompanyIdWithSafeCloseable(
+					COMPANY_IDS[0])) {
+
+			Assert.assertEquals(count + 1, DBPartitionUtil.incrementCounter());
+
+			Assert.assertEquals(
+				Long.valueOf(COMPANY_IDS[0]),
+				CompanyThreadLocal.getCompanyId());
+		}
+	}
+
+	@Test
 	@TestInfo("LPS-137423")
 	public void testRemoveDBPartition() throws Exception {
 		addDBPartitions();

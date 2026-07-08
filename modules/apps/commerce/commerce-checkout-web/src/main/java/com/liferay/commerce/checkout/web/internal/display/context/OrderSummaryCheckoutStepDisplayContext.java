@@ -6,6 +6,7 @@
 package com.liferay.commerce.checkout.web.internal.display.context;
 
 import com.liferay.account.model.AccountEntry;
+import com.liferay.account.validator.AccountEntryValidatorResult;
 import com.liferay.commerce.configuration.CommerceOrderCheckoutConfiguration;
 import com.liferay.commerce.constants.CommerceCheckoutWebKeys;
 import com.liferay.commerce.constants.CommerceConstants;
@@ -123,6 +124,26 @@ public class OrderSummaryCheckoutStepDisplayContext {
 			CommerceWebKeys.COMMERCE_CONTEXT);
 		_commerceOrder = (CommerceOrder)httpServletRequest.getAttribute(
 			CommerceCheckoutWebKeys.COMMERCE_ORDER);
+	}
+
+	public AccountEntryValidatorResult getAccountEntryValidatorResult() {
+		List<AccountEntryValidatorResult> accountEntryValidatorResults =
+			(List<AccountEntryValidatorResult>)_httpServletRequest.getAttribute(
+				CommerceWebKeys.COMMERCE_ACCOUNT_VALIDATION_RESULTS);
+
+		if (accountEntryValidatorResults == null) {
+			return null;
+		}
+
+		for (AccountEntryValidatorResult accountEntryValidatorResult :
+				accountEntryValidatorResults) {
+
+			if (!accountEntryValidatorResult.isValid()) {
+				return accountEntryValidatorResult;
+			}
+		}
+
+		return null;
 	}
 
 	public CommerceOrder getCommerceOrder() {

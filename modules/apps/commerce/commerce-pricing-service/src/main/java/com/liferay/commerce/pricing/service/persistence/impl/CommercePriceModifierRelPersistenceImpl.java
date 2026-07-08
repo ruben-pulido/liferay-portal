@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -83,8 +81,9 @@ public class CommercePriceModifierRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommercePriceModifierRel>
-		_collectionPersistenceFinderByCommercePriceModifierId;
+	private CollectionPersistenceFinder
+		<CommercePriceModifierRel, NoSuchPriceModifierRelException>
+			_collectionPersistenceFinderByCommercePriceModifierId;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63;.
@@ -125,19 +124,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			OrderByComparator<CommercePriceModifierRel> orderByComparator)
 		throws NoSuchPriceModifierRelException {
 
-		CommercePriceModifierRel commercePriceModifierRel =
-			fetchByCommercePriceModifierId_First(
-				commercePriceModifierId, orderByComparator);
-
-		if (commercePriceModifierRel != null) {
-			return commercePriceModifierRel;
-		}
-
-		throw new NoSuchPriceModifierRelException(
-			_collectionPersistenceFinderByCommercePriceModifierId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commercePriceModifierId}));
+		return _collectionPersistenceFinderByCommercePriceModifierId.findFirst(
+			finderCache, new Object[] {commercePriceModifierId},
+			orderByComparator);
 	}
 
 	/**
@@ -180,8 +169,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			finderCache, new Object[] {commercePriceModifierId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifierRel>
-		_collectionPersistenceFinderByCPM_CN;
+	private CollectionPersistenceFinder
+		<CommercePriceModifierRel, NoSuchPriceModifierRelException>
+			_collectionPersistenceFinderByCPM_CN;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifier rels where commercePriceModifierId = &#63; and classNameId = &#63;.
@@ -224,17 +214,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			OrderByComparator<CommercePriceModifierRel> orderByComparator)
 		throws NoSuchPriceModifierRelException {
 
-		CommercePriceModifierRel commercePriceModifierRel = fetchByCPM_CN_First(
-			commercePriceModifierId, classNameId, orderByComparator);
-
-		if (commercePriceModifierRel != null) {
-			return commercePriceModifierRel;
-		}
-
-		throw new NoSuchPriceModifierRelException(
-			_collectionPersistenceFinderByCPM_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {commercePriceModifierId, classNameId}));
+		return _collectionPersistenceFinderByCPM_CN.findFirst(
+			finderCache, new Object[] {commercePriceModifierId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -280,8 +262,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			finderCache, new Object[] {commercePriceModifierId, classNameId});
 	}
 
-	private CollectionPersistenceFinder<CommercePriceModifierRel>
-		_collectionPersistenceFinderByCN_CPK;
+	private CollectionPersistenceFinder
+		<CommercePriceModifierRel, NoSuchPriceModifierRelException>
+			_collectionPersistenceFinderByCN_CPK;
 
 	/**
 	 * Returns an ordered range of all the commerce price modifier rels where classNameId = &#63; and classPK = &#63;.
@@ -324,16 +307,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			OrderByComparator<CommercePriceModifierRel> orderByComparator)
 		throws NoSuchPriceModifierRelException {
 
-		CommercePriceModifierRel commercePriceModifierRel = fetchByCN_CPK_First(
-			classNameId, classPK, orderByComparator);
-
-		if (commercePriceModifierRel != null) {
-			return commercePriceModifierRel;
-		}
-
-		throw new NoSuchPriceModifierRelException(
-			_collectionPersistenceFinderByCN_CPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByCN_CPK.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -379,8 +355,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<CommercePriceModifierRel>
-		_uniquePersistenceFinderByCPM_CN_CPK;
+	private UniquePersistenceFinder
+		<CommercePriceModifierRel, NoSuchPriceModifierRelException>
+			_uniquePersistenceFinderByCPM_CN_CPK;
 
 	/**
 	 * Returns the commerce price modifier rel where commercePriceModifierId = &#63; and classNameId = &#63; and classPK = &#63; or throws a <code>NoSuchPriceModifierRelException</code> if it could not be found.
@@ -396,25 +373,9 @@ public class CommercePriceModifierRelPersistenceImpl
 			long commercePriceModifierId, long classNameId, long classPK)
 		throws NoSuchPriceModifierRelException {
 
-		CommercePriceModifierRel commercePriceModifierRel = fetchByCPM_CN_CPK(
-			commercePriceModifierId, classNameId, classPK);
-
-		if (commercePriceModifierRel == null) {
-			String message =
-				_uniquePersistenceFinderByCPM_CN_CPK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						commercePriceModifierId, classNameId, classPK
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchPriceModifierRelException(message);
-		}
-
-		return commercePriceModifierRel;
+		return _uniquePersistenceFinderByCPM_CN_CPK.find(
+			finderCache,
+			new Object[] {commercePriceModifierId, classNameId, classPK});
 	}
 
 	/**
@@ -789,7 +750,7 @@ public class CommercePriceModifierRelPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIERREL_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIERREL_WHERE,
 				CommercePriceModifierRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceModifierRel.", "commercePriceModifierId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -820,7 +781,7 @@ public class CommercePriceModifierRelPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIERREL_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIERREL_WHERE,
 				CommercePriceModifierRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceModifierRel.", "commercePriceModifierId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -852,7 +813,7 @@ public class CommercePriceModifierRelPersistenceImpl
 				_SQL_SELECT_COMMERCEPRICEMODIFIERREL_WHERE,
 				_SQL_COUNT_COMMERCEPRICEMODIFIERREL_WHERE,
 				CommercePriceModifierRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commercePriceModifierRel.", "classNameId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -947,16 +908,10 @@ public class CommercePriceModifierRelPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEPRICEMODIFIERREL_WHERE =
 		"SELECT COUNT(commercePriceModifierRel) FROM CommercePriceModifierRel commercePriceModifierRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommercePriceModifierRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommercePriceModifierRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:281355058
+// LIFERAY-SERVICE-BUILDER-HASH:1112421471

@@ -37,7 +37,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.osgi.service.component.annotations.Component;
@@ -124,12 +127,28 @@ public class UpdateStructureStrutsAction implements StrutsAction {
 				serviceBuilderObjectRelationship :
 					_objectRelationshipLocalService.
 						getObjectRelationshipsByObjectDefinitionId2(
-							objectDefinitionId, false)) {
+							objectDefinitionId, true)) {
 
-			if (!serviceBuilderObjectRelationship.isReverse()) {
-				_objectRelationshipLocalService.deleteObjectRelationship(
-					serviceBuilderObjectRelationship);
+			if (serviceBuilderObjectRelationship.isReverse()) {
+				continue;
 			}
+
+			if (serviceBuilderObjectRelationship.isEdge()) {
+				serviceBuilderObjectRelationship =
+					_objectRelationshipLocalService.updateObjectRelationship(
+						serviceBuilderObjectRelationship.
+							getExternalReferenceCode(),
+						serviceBuilderObjectRelationship.
+							getObjectRelationshipId(),
+						serviceBuilderObjectRelationship.
+							getParameterObjectFieldId(),
+						serviceBuilderObjectRelationship.getDeletionType(),
+						false, serviceBuilderObjectRelationship.getLabelMap(),
+						null);
+			}
+
+			_objectRelationshipLocalService.deleteObjectRelationship(
+				serviceBuilderObjectRelationship);
 		}
 	}
 
@@ -181,6 +200,50 @@ public class UpdateStructureStrutsAction implements StrutsAction {
 		}
 
 		return objectRelationships;
+	}
+
+	private void _updateObjectRelationships(
+			ObjectDefinition objectDefinition, long objectDefinitionId,
+			ObjectDefinitionResource objectDefinitionResource)
+		throws Exception {
+
+		ObjectDefinition existingObjectDefinition =
+			objectDefinitionResource.getObjectDefinition(objectDefinitionId);
+
+		ObjectRelationship[] existingObjectRelationships =
+			existingObjectDefinition.getObjectRelationships();
+
+		if (ArrayUtil.isEmpty(existingObjectRelationships)) {
+			return;
+		}
+
+		Map<String, ObjectRelationship> objectRelationshipsMap =
+			new LinkedHashMap<>();
+
+		ObjectRelationship[] objectRelationships =
+			objectDefinition.getObjectRelationships();
+
+		if (objectRelationships != null) {
+			for (ObjectRelationship objectRelationship : objectRelationships) {
+				objectRelationshipsMap.put(
+					objectRelationship.getName(), objectRelationship);
+			}
+		}
+
+		for (ObjectRelationship existingObjectRelationship :
+				existingObjectRelationships) {
+
+			objectRelationshipsMap.putIfAbsent(
+				existingObjectRelationship.getName(),
+				existingObjectRelationship);
+		}
+
+		Collection<ObjectRelationship> objectRelationshipsCollection =
+			objectRelationshipsMap.values();
+
+		objectDefinition.setObjectRelationships(
+			() -> objectRelationshipsCollection.toArray(
+				new ObjectRelationship[0]));
 	}
 
 	private void _updateStructure(
@@ -280,6 +343,24 @@ public class UpdateStructureStrutsAction implements StrutsAction {
 									_companyId,
 									objectDefinition.getObjectDefinitionId());
 
+					if (serviceBuilderObjectRelationship.isEdge()) {
+						serviceBuilderObjectRelationship =
+							_objectRelationshipLocalService.
+								updateObjectRelationship(
+									serviceBuilderObjectRelationship.
+										getExternalReferenceCode(),
+									serviceBuilderObjectRelationship.
+										getObjectRelationshipId(),
+									serviceBuilderObjectRelationship.
+										getParameterObjectFieldId(),
+									serviceBuilderObjectRelationship.
+										getDeletionType(),
+									false,
+									serviceBuilderObjectRelationship.
+										getLabelMap(),
+									null);
+					}
+
 					_objectRelationshipLocalService.deleteObjectRelationship(
 						serviceBuilderObjectRelationship);
 				}
@@ -310,6 +391,10 @@ public class UpdateStructureStrutsAction implements StrutsAction {
 							objectDefinition);
 				}
 			}
+
+			_updateObjectRelationships(
+				_objectDefinition, _objectDefinitionId,
+				objectDefinitionResource);
 
 			objectDefinitionResource.putObjectDefinition(
 				_objectDefinitionId, _objectDefinition);

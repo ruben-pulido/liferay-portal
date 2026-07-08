@@ -76,8 +76,9 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceShippingFixedOptionRel>
-		_collectionPersistenceFinderByCommerceShippingFixedOptionId;
+	private CollectionPersistenceFinder
+		<CommerceShippingFixedOptionRel, NoSuchShippingFixedOptionRelException>
+			_collectionPersistenceFinderByCommerceShippingFixedOptionId;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping fixed option rels where commerceShippingFixedOptionId = &#63;.
@@ -121,19 +122,10 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 					orderByComparator)
 		throws NoSuchShippingFixedOptionRelException {
 
-		CommerceShippingFixedOptionRel commerceShippingFixedOptionRel =
-			fetchByCommerceShippingFixedOptionId_First(
-				commerceShippingFixedOptionId, orderByComparator);
-
-		if (commerceShippingFixedOptionRel != null) {
-			return commerceShippingFixedOptionRel;
-		}
-
-		throw new NoSuchShippingFixedOptionRelException(
-			_collectionPersistenceFinderByCommerceShippingFixedOptionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceShippingFixedOptionId}));
+		return _collectionPersistenceFinderByCommerceShippingFixedOptionId.
+			findFirst(
+				finderCache, new Object[] {commerceShippingFixedOptionId},
+				orderByComparator);
 	}
 
 	/**
@@ -183,8 +175,9 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 			count(finderCache, new Object[] {commerceShippingFixedOptionId});
 	}
 
-	private CollectionPersistenceFinder<CommerceShippingFixedOptionRel>
-		_collectionPersistenceFinderByCommerceShippingMethodId;
+	private CollectionPersistenceFinder
+		<CommerceShippingFixedOptionRel, NoSuchShippingFixedOptionRelException>
+			_collectionPersistenceFinderByCommerceShippingMethodId;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping fixed option rels where commerceShippingMethodId = &#63;.
@@ -225,19 +218,9 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 			OrderByComparator<CommerceShippingFixedOptionRel> orderByComparator)
 		throws NoSuchShippingFixedOptionRelException {
 
-		CommerceShippingFixedOptionRel commerceShippingFixedOptionRel =
-			fetchByCommerceShippingMethodId_First(
-				commerceShippingMethodId, orderByComparator);
-
-		if (commerceShippingFixedOptionRel != null) {
-			return commerceShippingFixedOptionRel;
-		}
-
-		throw new NoSuchShippingFixedOptionRelException(
-			_collectionPersistenceFinderByCommerceShippingMethodId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceShippingMethodId}));
+		return _collectionPersistenceFinderByCommerceShippingMethodId.findFirst(
+			finderCache, new Object[] {commerceShippingMethodId},
+			orderByComparator);
 	}
 
 	/**
@@ -283,8 +266,9 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 			finderCache, new Object[] {commerceShippingMethodId});
 	}
 
-	private CollectionPersistenceFinder<CommerceShippingFixedOptionRel>
-		_collectionPersistenceFinderByC_C;
+	private CollectionPersistenceFinder
+		<CommerceShippingFixedOptionRel, NoSuchShippingFixedOptionRelException>
+			_collectionPersistenceFinderByC_C;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping fixed option rels where commerceShippingFixedOptionId = &#63; and commerceShippingMethodId = &#63;.
@@ -331,21 +315,12 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 			OrderByComparator<CommerceShippingFixedOptionRel> orderByComparator)
 		throws NoSuchShippingFixedOptionRelException {
 
-		CommerceShippingFixedOptionRel commerceShippingFixedOptionRel =
-			fetchByC_C_First(
-				commerceShippingFixedOptionId, commerceShippingMethodId,
-				orderByComparator);
-
-		if (commerceShippingFixedOptionRel != null) {
-			return commerceShippingFixedOptionRel;
-		}
-
-		throw new NoSuchShippingFixedOptionRelException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {
-					commerceShippingFixedOptionId, commerceShippingMethodId
-				}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache,
+			new Object[] {
+				commerceShippingFixedOptionId, commerceShippingMethodId
+			},
+			orderByComparator);
 	}
 
 	/**
@@ -626,6 +601,11 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceShippingFixedOptionRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCESHIPPINGFIXEDOPTIONREL;
 	}
@@ -665,7 +645,7 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 				_SQL_SELECT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 				_SQL_COUNT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 				CommerceShippingFixedOptionRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceShippingFixedOptionRel.",
 					"commerceShippingFixedOptionId", FinderColumn.Type.LONG,
@@ -698,7 +678,7 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 				_SQL_SELECT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 				_SQL_COUNT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 				CommerceShippingFixedOptionRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceShippingFixedOptionRel.",
 					"commerceShippingMethodId", FinderColumn.Type.LONG, "=",
@@ -736,7 +716,7 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 			_SQL_SELECT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 			_SQL_COUNT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE,
 			CommerceShippingFixedOptionRelModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceShippingFixedOptionRel.",
 				"commerceShippingFixedOptionId", FinderColumn.Type.LONG, "=",
@@ -805,9 +785,6 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 		_SQL_COUNT_COMMERCESHIPPINGFIXEDOPTIONREL_WHERE =
 			"SELECT COUNT(commerceShippingFixedOptionRel) FROM CommerceShippingFixedOptionRel commerceShippingFixedOptionRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceShippingFixedOptionRel exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceShippingFixedOptionRelId"});
 
@@ -817,4 +794,4 @@ public class CommerceShippingFixedOptionRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:492467408
+// LIFERAY-SERVICE-BUILDER-HASH:-1617199020

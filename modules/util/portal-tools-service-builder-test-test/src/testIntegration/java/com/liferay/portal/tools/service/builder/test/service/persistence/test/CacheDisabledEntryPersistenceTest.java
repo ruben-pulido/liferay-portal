@@ -113,13 +113,13 @@ public class CacheDisabledEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CacheDisabledEntry newCacheDisabledEntry = _persistence.create(pk);
+		CacheDisabledEntry newCacheDisabledEntry = addCacheDisabledEntry();
 
 		newCacheDisabledEntry.setName(RandomTestUtil.randomString());
 
-		_cacheDisabledEntries.add(_persistence.update(newCacheDisabledEntry));
+		newCacheDisabledEntry = _persistence.update(newCacheDisabledEntry);
+
+		_cacheDisabledEntries.add(newCacheDisabledEntry);
 
 		CacheDisabledEntry existingCacheDisabledEntry =
 			_persistence.findByPrimaryKey(
@@ -472,4 +472,4 @@ public class CacheDisabledEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1478855935
+// LIFERAY-SERVICE-BUILDER-HASH:-1703943154

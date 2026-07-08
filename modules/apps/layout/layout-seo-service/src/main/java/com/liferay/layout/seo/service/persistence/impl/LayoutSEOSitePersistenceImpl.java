@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -86,7 +84,7 @@ public class LayoutSEOSitePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<LayoutSEOSite>
+	private CollectionPersistenceFinder<LayoutSEOSite, NoSuchSiteException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -127,16 +125,8 @@ public class LayoutSEOSitePersistenceImpl
 			String uuid, OrderByComparator<LayoutSEOSite> orderByComparator)
 		throws NoSuchSiteException {
 
-		LayoutSEOSite layoutSEOSite = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (layoutSEOSite != null) {
-			return layoutSEOSite;
-		}
-
-		throw new NoSuchSiteException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,7 +167,7 @@ public class LayoutSEOSitePersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<LayoutSEOSite>
+	private UniquePersistenceFinder<LayoutSEOSite, NoSuchSiteException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -192,21 +182,8 @@ public class LayoutSEOSitePersistenceImpl
 	public LayoutSEOSite findByUUID_G(String uuid, long groupId)
 		throws NoSuchSiteException {
 
-		LayoutSEOSite layoutSEOSite = fetchByUUID_G(uuid, groupId);
-
-		if (layoutSEOSite == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSiteException(message);
-		}
-
-		return layoutSEOSite;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -254,7 +231,7 @@ public class LayoutSEOSitePersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<LayoutSEOSite>
+	private CollectionPersistenceFinder<LayoutSEOSite, NoSuchSiteException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -298,16 +275,8 @@ public class LayoutSEOSitePersistenceImpl
 			OrderByComparator<LayoutSEOSite> orderByComparator)
 		throws NoSuchSiteException {
 
-		LayoutSEOSite layoutSEOSite = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (layoutSEOSite != null) {
-			return layoutSEOSite;
-		}
-
-		throw new NoSuchSiteException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,7 +321,7 @@ public class LayoutSEOSitePersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<LayoutSEOSite>
+	private UniquePersistenceFinder<LayoutSEOSite, NoSuchSiteException>
 		_uniquePersistenceFinderByGroupId;
 
 	/**
@@ -366,21 +335,8 @@ public class LayoutSEOSitePersistenceImpl
 	public LayoutSEOSite findByGroupId(long groupId)
 		throws NoSuchSiteException {
 
-		LayoutSEOSite layoutSEOSite = fetchByGroupId(groupId);
-
-		if (layoutSEOSite == null) {
-			String message =
-				_uniquePersistenceFinderByGroupId.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchSiteException(message);
-		}
-
-		return layoutSEOSite;
+		return _uniquePersistenceFinderByGroupId.find(
+			finderCache, new Object[] {groupId});
 	}
 
 	/**
@@ -740,10 +696,11 @@ public class LayoutSEOSitePersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_LAYOUTSEOSITE_WHERE, _SQL_COUNT_LAYOUTSEOSITE_WHERE,
-			LayoutSEOSiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			LayoutSEOSiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"layoutSEOSite.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, LayoutSEOSite::getUuid));
+				"layoutSEOSite.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, LayoutSEOSite::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -755,8 +712,8 @@ public class LayoutSEOSitePersistenceImpl
 				LayoutSEOSite::getGroupId),
 			_SQL_SELECT_LAYOUTSEOSITE_WHERE, "",
 			new FinderColumn<>(
-				"layoutSEOSite.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, LayoutSEOSite::getUuid),
+				"layoutSEOSite.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, LayoutSEOSite::getUuid),
 			new FinderColumn<>(
 				"layoutSEOSite.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, LayoutSEOSite::getGroupId));
@@ -782,9 +739,10 @@ public class LayoutSEOSitePersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_LAYOUTSEOSITE_WHERE, _SQL_COUNT_LAYOUTSEOSITE_WHERE,
 				LayoutSEOSiteModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"layoutSEOSite.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, LayoutSEOSite::getUuid),
+					"layoutSEOSite.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, LayoutSEOSite::getUuid),
 				new FinderColumn<>(
 					"layoutSEOSite.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, LayoutSEOSite::getCompanyId));
@@ -857,12 +815,6 @@ public class LayoutSEOSitePersistenceImpl
 	private static final String _SQL_COUNT_LAYOUTSEOSITE_WHERE =
 		"SELECT COUNT(layoutSEOSite) FROM LayoutSEOSite layoutSEOSite WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No LayoutSEOSite exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		LayoutSEOSitePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -872,4 +824,4 @@ public class LayoutSEOSitePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1231874603
+// LIFERAY-SERVICE-BUILDER-HASH:535024714

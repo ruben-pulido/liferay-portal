@@ -1,3 +1,12 @@
+create unique index IX_BB3F862 on LPTSREVAudienceEntryRel (groupId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
+create index IX_3530024E on LPTSREVAudienceEntryRel (lptsRelElementVariationERC[$COLUMN_LENGTH:75$]);
+create unique index IX_B988F085 on LPTSREVAudienceEntryRel (uuid_[$COLUMN_LENGTH:75$], groupId, ctCollectionId);
+
+create unique index IX_D4E7D564 on LPTSRelElementVariation (groupId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
+create index IX_FEF237FE on LPTSRelElementVariation (plid, segmentsExperienceERC[$COLUMN_LENGTH:75$]);
+create index IX_22DF7069 on LPTSRelElementVariation (segmentsExperienceERC[$COLUMN_LENGTH:75$]);
+create unique index IX_BFCB1187 on LPTSRelElementVariation (uuid_[$COLUMN_LENGTH:75$], groupId, ctCollectionId);
+
 create unique index IX_D22242C8 on LayoutPageTemplateCollection (groupId, externalReferenceCode[$COLUMN_LENGTH:75$], ctCollectionId);
 create index IX_5A1F4BFC on LayoutPageTemplateCollection (groupId, parentLPTCollectionId);
 create unique index IX_332638E5 on LayoutPageTemplateCollection (groupId, type_, lptCollectionKey[$COLUMN_LENGTH:75$], ctCollectionId);

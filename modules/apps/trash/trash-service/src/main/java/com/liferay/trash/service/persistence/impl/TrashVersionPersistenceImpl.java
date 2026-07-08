@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.change.tracking.helper.CTPersistenceHelper;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
@@ -79,7 +77,7 @@ public class TrashVersionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<TrashVersion>
+	private CollectionPersistenceFinder<TrashVersion, NoSuchVersionException>
 		_collectionPersistenceFinderByEntryId;
 
 	/**
@@ -120,16 +118,8 @@ public class TrashVersionPersistenceImpl
 			long entryId, OrderByComparator<TrashVersion> orderByComparator)
 		throws NoSuchVersionException {
 
-		TrashVersion trashVersion = fetchByEntryId_First(
-			entryId, orderByComparator);
-
-		if (trashVersion != null) {
-			return trashVersion;
-		}
-
-		throw new NoSuchVersionException(
-			_collectionPersistenceFinderByEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId}));
+		return _collectionPersistenceFinderByEntryId.findFirst(
+			finderCache, new Object[] {entryId}, orderByComparator);
 	}
 
 	/**
@@ -170,7 +160,7 @@ public class TrashVersionPersistenceImpl
 			finderCache, new Object[] {entryId});
 	}
 
-	private CollectionPersistenceFinder<TrashVersion>
+	private CollectionPersistenceFinder<TrashVersion, NoSuchVersionException>
 		_collectionPersistenceFinderByE_CN;
 
 	/**
@@ -214,16 +204,9 @@ public class TrashVersionPersistenceImpl
 			OrderByComparator<TrashVersion> orderByComparator)
 		throws NoSuchVersionException {
 
-		TrashVersion trashVersion = fetchByE_CN_First(
-			entryId, classNameId, orderByComparator);
-
-		if (trashVersion != null) {
-			return trashVersion;
-		}
-
-		throw new NoSuchVersionException(
-			_collectionPersistenceFinderByE_CN.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId, classNameId}));
+		return _collectionPersistenceFinderByE_CN.findFirst(
+			finderCache, new Object[] {entryId, classNameId},
+			orderByComparator);
 	}
 
 	/**
@@ -269,7 +252,7 @@ public class TrashVersionPersistenceImpl
 			finderCache, new Object[] {entryId, classNameId});
 	}
 
-	private UniquePersistenceFinder<TrashVersion>
+	private UniquePersistenceFinder<TrashVersion, NoSuchVersionException>
 		_uniquePersistenceFinderByCN_CPK;
 
 	/**
@@ -284,22 +267,8 @@ public class TrashVersionPersistenceImpl
 	public TrashVersion findByCN_CPK(long classNameId, long classPK)
 		throws NoSuchVersionException {
 
-		TrashVersion trashVersion = fetchByCN_CPK(classNameId, classPK);
-
-		if (trashVersion == null) {
-			String message =
-				_uniquePersistenceFinderByCN_CPK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchVersionException(message);
-		}
-
-		return trashVersion;
+		return _uniquePersistenceFinderByCN_CPK.find(
+			finderCache, new Object[] {classNameId, classPK});
 	}
 
 	/**
@@ -610,6 +579,7 @@ public class TrashVersionPersistenceImpl
 					new String[] {"entryId"}, false),
 				_SQL_SELECT_TRASHVERSION_WHERE, _SQL_COUNT_TRASHVERSION_WHERE,
 				TrashVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"trashVersion.", "entryId", FinderColumn.Type.LONG, "=",
 					true, true, TrashVersion::getEntryId));
@@ -633,7 +603,8 @@ public class TrashVersionPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"entryId", "classNameId"}, false),
 			_SQL_SELECT_TRASHVERSION_WHERE, _SQL_COUNT_TRASHVERSION_WHERE,
-			TrashVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			TrashVersionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"trashVersion.", "entryId", FinderColumn.Type.LONG, "=", true,
 				true, TrashVersion::getEntryId),
@@ -713,16 +684,10 @@ public class TrashVersionPersistenceImpl
 	private static final String _SQL_COUNT_TRASHVERSION_WHERE =
 		"SELECT COUNT(trashVersion) FROM TrashVersion trashVersion WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No TrashVersion exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		TrashVersionPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-670650780
+// LIFERAY-SERVICE-BUILDER-HASH:-708048102

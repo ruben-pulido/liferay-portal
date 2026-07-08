@@ -8,7 +8,7 @@ import {Form, Formik, FormikConfig, FormikHelpers, FormikValues} from 'formik';
 import React, {ReactElement, useState} from 'react';
 
 import Footer from './Footer';
-import {FormikDebug} from './forms/formik';
+import SectionHeader from './SectionHeader';
 
 interface WizardStepProps {
 	actionButton?: React.ReactElement;
@@ -28,11 +28,9 @@ export function WizardStep({children}: WizardStepProps) {
 export function Wizard({
 	backURL,
 	children,
-	debug = process.env.NODE_ENV === 'development',
 }: {
 	backURL: string;
 	children: React.ReactElement<WizardStepProps>[];
-	debug?: boolean;
 }) {
 	const [stepNumber, setStepNumber] = useState(0);
 	const [formState, setFormState] = useState({});
@@ -120,15 +118,7 @@ export function Wizard({
 						})}
 					</ClayMultiStepNav>
 
-					<header className="mb-1 sheet-header">
-						<div className="mb-1 sheet-title">{title}</div>
-
-						{description && (
-							<p className="sheet-text text-secondary">
-								{description}
-							</p>
-						)}
-					</header>
+					<SectionHeader subtitle={description} title={title} />
 
 					{step}
 
@@ -143,8 +133,6 @@ export function Wizard({
 						}
 						onPrevious={stepNumber > 0 ? previous : undefined}
 					/>
-
-					{debug && <FormikDebug />}
 				</Form>
 			)}
 		</Formik>

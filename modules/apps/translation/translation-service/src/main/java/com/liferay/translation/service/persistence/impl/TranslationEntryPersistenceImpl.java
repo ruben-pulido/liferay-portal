@@ -12,8 +12,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -86,7 +84,7 @@ public class TranslationEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<TranslationEntry>
+	private CollectionPersistenceFinder<TranslationEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -127,16 +125,8 @@ public class TranslationEntryPersistenceImpl
 			String uuid, OrderByComparator<TranslationEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TranslationEntry translationEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (translationEntry != null) {
-			return translationEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -177,7 +167,7 @@ public class TranslationEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<TranslationEntry>
+	private UniquePersistenceFinder<TranslationEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -192,21 +182,8 @@ public class TranslationEntryPersistenceImpl
 	public TranslationEntry findByUUID_G(String uuid, long groupId)
 		throws NoSuchEntryException {
 
-		TranslationEntry translationEntry = fetchByUUID_G(uuid, groupId);
-
-		if (translationEntry == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return translationEntry;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -254,7 +231,7 @@ public class TranslationEntryPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<TranslationEntry>
+	private CollectionPersistenceFinder<TranslationEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -298,16 +275,8 @@ public class TranslationEntryPersistenceImpl
 			OrderByComparator<TranslationEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TranslationEntry translationEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (translationEntry != null) {
-			return translationEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -352,7 +321,7 @@ public class TranslationEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<TranslationEntry>
+	private CollectionPersistenceFinder<TranslationEntry, NoSuchEntryException>
 		_collectionPersistenceFinderByC_C;
 
 	/**
@@ -396,16 +365,9 @@ public class TranslationEntryPersistenceImpl
 			OrderByComparator<TranslationEntry> orderByComparator)
 		throws NoSuchEntryException {
 
-		TranslationEntry translationEntry = fetchByC_C_First(
-			classNameId, classPK, orderByComparator);
-
-		if (translationEntry != null) {
-			return translationEntry;
-		}
-
-		throw new NoSuchEntryException(
-			_collectionPersistenceFinderByC_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classNameId, classPK}));
+		return _collectionPersistenceFinderByC_C.findFirst(
+			finderCache, new Object[] {classNameId, classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -451,7 +413,7 @@ public class TranslationEntryPersistenceImpl
 			finderCache, new Object[] {classNameId, classPK});
 	}
 
-	private UniquePersistenceFinder<TranslationEntry>
+	private UniquePersistenceFinder<TranslationEntry, NoSuchEntryException>
 		_uniquePersistenceFinderByC_C_L;
 
 	/**
@@ -468,23 +430,8 @@ public class TranslationEntryPersistenceImpl
 			long classNameId, long classPK, String languageId)
 		throws NoSuchEntryException {
 
-		TranslationEntry translationEntry = fetchByC_C_L(
-			classNameId, classPK, languageId);
-
-		if (translationEntry == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_L.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {classNameId, classPK, languageId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryException(message);
-		}
-
-		return translationEntry;
+		return _uniquePersistenceFinderByC_C_L.find(
+			finderCache, new Object[] {classNameId, classPK, languageId});
 	}
 
 	/**
@@ -868,9 +815,10 @@ public class TranslationEntryPersistenceImpl
 			_SQL_SELECT_TRANSLATIONENTRY_WHERE,
 			_SQL_COUNT_TRANSLATIONENTRY_WHERE,
 			TranslationEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"translationEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, TranslationEntry::getUuid));
+				"translationEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, TranslationEntry::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -882,8 +830,8 @@ public class TranslationEntryPersistenceImpl
 				TranslationEntry::getGroupId),
 			_SQL_SELECT_TRANSLATIONENTRY_WHERE, "",
 			new FinderColumn<>(
-				"translationEntry.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, TranslationEntry::getUuid),
+				"translationEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, TranslationEntry::getUuid),
 			new FinderColumn<>(
 				"translationEntry.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, TranslationEntry::getGroupId));
@@ -910,10 +858,11 @@ public class TranslationEntryPersistenceImpl
 				_SQL_SELECT_TRANSLATIONENTRY_WHERE,
 				_SQL_COUNT_TRANSLATIONENTRY_WHERE,
 				TranslationEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"translationEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, TranslationEntry::getUuid),
+					"translationEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					TranslationEntry::getUuid),
 				new FinderColumn<>(
 					"translationEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, TranslationEntry::getCompanyId));
@@ -939,6 +888,7 @@ public class TranslationEntryPersistenceImpl
 			_SQL_SELECT_TRANSLATIONENTRY_WHERE,
 			_SQL_COUNT_TRANSLATIONENTRY_WHERE,
 			TranslationEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
 				"translationEntry.", "classNameId", FinderColumn.Type.LONG, "=",
 				true, true, TranslationEntry::getClassNameId),
@@ -1026,12 +976,6 @@ public class TranslationEntryPersistenceImpl
 	private static final String _SQL_COUNT_TRANSLATIONENTRY_WHERE =
 		"SELECT COUNT(translationEntry) FROM TranslationEntry translationEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No TranslationEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		TranslationEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1041,4 +985,4 @@ public class TranslationEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-466144103
+// LIFERAY-SERVICE-BUILDER-HASH:1198598623

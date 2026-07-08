@@ -8,6 +8,8 @@ package com.liferay.headless.commerce.delivery.cart.internal.resource.v1_0;
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
+import com.liferay.account.validator.AccountEntryValidatorRegistry;
+import com.liferay.account.validator.AccountEntryValidatorResult;
 import com.liferay.commerce.configuration.CommerceOrderCheckoutConfiguration;
 import com.liferay.commerce.constants.CommerceAddressConstants;
 import com.liferay.commerce.constants.CommerceConstants;
@@ -51,6 +53,7 @@ import com.liferay.commerce.shipping.engine.fixed.model.CommerceShippingFixedOpt
 import com.liferay.commerce.shipping.engine.fixed.service.CommerceShippingFixedOptionLocalService;
 import com.liferay.commerce.term.model.CommerceTermEntry;
 import com.liferay.commerce.term.service.CommerceTermEntryLocalService;
+import com.liferay.commerce.util.CommerceChannelConfigurationUtil;
 import com.liferay.commerce.util.CommerceCheckoutStep;
 import com.liferay.commerce.util.CommerceCheckoutStepRegistry;
 import com.liferay.commerce.util.CommerceShippingEngineRegistry;
@@ -75,6 +78,9 @@ import com.liferay.portal.events.ServicePreAction;
 import com.liferay.portal.events.ThemeServicePreAction;
 import com.liferay.portal.kernel.encryptor.Encryptor;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Country;
 import com.liferay.portal.kernel.model.Region;
 import com.liferay.portal.kernel.portlet.PortletProvider;
@@ -173,7 +179,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 		CommerceOrder commerceOrder = _commerceOrderService.getCommerceOrder(
 			GetterUtil.getLong(cartId));
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -190,7 +196,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 					externalReferenceCode);
 		}
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -253,7 +259,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 			},
 			sorts,
 			document -> _toCart(
-				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK))));
+				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)), false));
 	}
 
 	@Override
@@ -315,7 +321,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 			},
 			sorts,
 			document -> _toCart(
-				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK))));
+				GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK)), false));
 	}
 
 	@Override
@@ -335,7 +341,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 		_updateOrder(commerceOrder, cart);
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -360,7 +366,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 		_updateOrder(commerceOrder, cart);
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -404,7 +410,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 				commerceOrder.getCommerceOrderId(),
 				contextCompany.getCompanyId()));
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -432,7 +438,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 				commerceOrder.getCommerceOrderId(),
 				contextCompany.getCompanyId()));
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -443,9 +449,12 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 		CommerceOrder commerceOrder = _addCommerceOrder(
 			cart, commerceChannel.getGroupId());
 
+		CommerceChannelConfigurationUtil.validateGuestCheckout(
+			commerceOrder.getCommerceOrderId());
+
 		_updateOrder(commerceOrder, cart);
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -473,7 +482,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 		_updateOrder(commerceOrder, cart);
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	@Override
@@ -498,7 +507,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 		_updateOrder(commerceOrder, cart);
 
-		return _toCart(commerceOrder.getCommerceOrderId());
+		return _toCart(commerceOrder.getCommerceOrderId(), true);
 	}
 
 	private CommerceAddress _addCommerceAddress(
@@ -694,6 +703,9 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 		CartItem[] orderItems = cart.getCartItems();
 
 		if (orderItems != null) {
+			CommerceChannelConfigurationUtil.validateGuestCheckout(
+				commerceOrder.getCommerceOrderId());
+
 			_commerceOrderItemService.deleteCommerceOrderItems(
 				commerceOrder.getCommerceOrderId());
 
@@ -799,7 +811,7 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 	}
 
 	private Cart _checkoutOrder(CommerceOrder commerceOrder) throws Exception {
-		Cart cart = _toCart(commerceOrder.getCommerceOrderId());
+		Cart cart = _toCart(commerceOrder.getCommerceOrderId(), false);
 
 		CommerceOrder finalCommerceOrder = commerceOrder;
 		Cart finalCart = cart;
@@ -810,11 +822,49 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 		cart.setValid(() -> true);
 
+		if (FeatureFlagManagerUtil.isEnabled(
+				commerceOrder.getCompanyId(), "LPD-89850")) {
+
+			for (AccountEntryValidatorResult accountEntryValidatorResult :
+					_accountEntryValidatorRegistry.validate(
+						_accountEntryLocalService.fetchAccountEntry(
+							commerceOrder.getCommerceAccountId()),
+						JSONUtil.put(
+							"billingAddressId",
+							commerceOrder.getBillingAddressId()
+						).put(
+							"commerceOrderId",
+							commerceOrder.getCommerceOrderId()
+						).put(
+							"shippingAddressId",
+							commerceOrder.getShippingAddressId()
+						))) {
+
+				if (accountEntryValidatorResult.isValid()) {
+					continue;
+				}
+
+				cart.setValid(() -> false);
+
+				if (Validator.isNotNull(
+						accountEntryValidatorResult.getResultMessage())) {
+
+					String errorMessage = _language.get(
+						contextAcceptLanguage.getPreferredLocale(),
+						accountEntryValidatorResult.getResultMessage());
+
+					cart.setErrorMessages(() -> new String[] {errorMessage});
+				}
+
+				return cart;
+			}
+		}
+
 		try {
 			commerceOrder = _commerceOrderEngine.checkoutCommerceOrder(
 				commerceOrder, contextUser.getUserId());
 
-			cart = _toCart(commerceOrder.getCommerceOrderId());
+			cart = _toCart(commerceOrder.getCommerceOrderId(), false);
 		}
 		catch (Exception exception) {
 			cart.setValid(() -> false);
@@ -970,8 +1020,10 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 			Key key = contextCompany.getKeyObj();
 
 			sb.append(
-				_encryptor.encrypt(
-					key, String.valueOf(commerceOrder.getCommerceOrderId())));
+				URLCodec.encodeURL(
+					_encryptor.encrypt(
+						key,
+						String.valueOf(commerceOrder.getCommerceOrderId()))));
 
 			sb.append(StringPool.AMPERSAND);
 		}
@@ -1173,10 +1225,17 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 		return false;
 	}
 
-	private Cart _toCart(long commerceOrderId) throws Exception {
-		return _cartDTOConverter.toDTO(
+	private Cart _toCart(long commerceOrderId, boolean checkOrderErrors)
+		throws Exception {
+
+		DefaultDTOConverterContext defaultDTOConverterContext =
 			new DefaultDTOConverterContext(
-				commerceOrderId, contextAcceptLanguage.getPreferredLocale()));
+				commerceOrderId, contextAcceptLanguage.getPreferredLocale());
+
+		defaultDTOConverterContext.setAttribute(
+			"checkOrderErrors", checkOrderErrors);
+
+		return _cartDTOConverter.toDTO(defaultDTOConverterContext);
 	}
 
 	private void _updateCommerceOrderAddress(
@@ -1352,6 +1411,9 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 	@Reference
 	private AccountEntryLocalService _accountEntryLocalService;
 
+	@Reference
+	private AccountEntryValidatorRegistry _accountEntryValidatorRegistry;
+
 	@Reference(
 		target = "(component.name=com.liferay.headless.commerce.delivery.cart.internal.dto.v1_0.converter.CartDTOConverter)"
 	)
@@ -1425,6 +1487,9 @@ public class CartResourceImpl extends BaseCartResourceImpl {
 
 	@Reference
 	private Encryptor _encryptor;
+
+	@Reference
+	private Language _language;
 
 	@Reference
 	private Portal _portal;

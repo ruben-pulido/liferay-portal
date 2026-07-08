@@ -41,6 +41,8 @@ export const test = mergeTests(
 	baseTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: false},
+		'LPD-57655': {enabled: false},
+		'LPD-76864': {enabled: true},
 	})
 );
 
@@ -187,7 +189,7 @@ test(
 
 		await uiElementsPage.clickNewButton();
 
-		await exportImportPage.expectPortletCounts(/^\s*Pages\s*/, {
+		await exportImportPage.expectPortletCounts(/^\s*Page Templates\s*/, {
 			registrations: [{counts: {items: 2}, label: 'Master Pages'}],
 		});
 	}
@@ -371,12 +373,16 @@ test(
 
 			await uiElementsPage.clickNewButton();
 
-			await exportImportPage.expectPortletDeletionsHidden('Pages');
+			await exportImportPage.expectPortletDeletionsHidden(
+				'Page Templates'
+			);
 
 			await exportImportPage.deletionsLabel.check();
 
-			await exportImportPage.expectPortletCounts('Pages', {
-				counts: {deletions: 6},
+			await exportImportPage.expectPortletCounts('Page Templates', {
+				counts: {deletions: 5},
+				portletId:
+					'com_liferay_layout_page_template_admin_web_portlet_LayoutPageTemplatesPortlet',
 				registrations: [
 					{
 						counts: {deletions: 1},
@@ -392,7 +398,6 @@ test(
 						label: /^\s*Page Templates\s*/,
 					},
 					{counts: {deletions: 1}, label: 'Page Template Sets'},
-					{counts: {deletions: 1}, label: 'Utility Pages'},
 				],
 			});
 		});

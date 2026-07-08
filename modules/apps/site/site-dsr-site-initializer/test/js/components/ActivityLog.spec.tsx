@@ -23,17 +23,7 @@ const mockLiferayLanguageGet = jest.fn((key: string) => {
 	return key;
 });
 
-(global as any).Liferay = {
-	Language: {
-		get: mockLiferayLanguageGet,
-	},
-	ThemeDisplay: {
-		...global.Liferay?.ThemeDisplay,
-		getBCP47LanguageId: () => 'en-US',
-	},
-};
-
-const {Liferay: originalLiferay} = global.window;
+let originalLiferay: any;
 
 jest.mock('frontend-js-web', () => ({
 	...(jest.requireActual('frontend-js-web') as any),
@@ -51,15 +41,13 @@ jest.mock(
 jest.mock(
 	'../../../src/main/resources/META-INF/resources/js/common/hooks/useAnalyticsQuery',
 	() => {
-		const {
-			activityLogDevEnvData,
-		} = require('../fixtures/analyticsDevEnvData');
+		const {activityLogFixture} = require('../fixtures/ActivityLogFixture');
 
 		return {
 			__esModule: true,
 			default: jest.fn(() => ({
 				isLoading: false,
-				response: activityLogDevEnvData,
+				response: activityLogFixture,
 				sendRequest: jest.fn(),
 			})),
 		};
@@ -68,8 +56,18 @@ jest.mock(
 
 describe('ActivityLog Component', () => {
 	beforeAll(() => {
-		window['Liferay'] = {
+		originalLiferay = window.Liferay;
+
+		window.Liferay = {
 			...originalLiferay,
+			Language: {
+				...originalLiferay?.Language,
+				get: mockLiferayLanguageGet,
+			},
+			ThemeDisplay: {
+				...originalLiferay?.ThemeDisplay,
+				getBCP47LanguageId: () => 'en-US',
+			},
 
 			detach: (name, fn): void => {
 				window.removeEventListener(name as string, fn as EventListener);
@@ -112,9 +110,9 @@ describe('ActivityLog Component', () => {
 	});
 
 	afterAll(() => {
-		cleanup();
-
 		window.Liferay = originalLiferay;
+
+		cleanup();
 
 		jest.resetAllMocks();
 	});
@@ -124,24 +122,38 @@ describe('ActivityLog Component', () => {
 	});
 
 	it('renders a date header per distinct event day', () => {
-		render(<ActivityLog />);
+		render(<ActivityLog isAnalyticsEnabled={true} />);
 
 		expect(screen.getByText('2026-03-06')).toBeInTheDocument();
 		expect(screen.getByText('2026-03-07')).toBeInTheDocument();
 	});
 
 	it('groups consecutive logs for the same user', () => {
-		render(<ActivityLog />);
+		render(<ActivityLog isAnalyticsEnabled={true} />);
 
 		expect(screen.getAllByText('John Doe').length).toBe(1);
 		expect(screen.getAllByText('Paul Gerome').length).toBe(1);
 	});
 
+	it('falls back to the anonymous label when a user session has no user name', () => {
+		render(<ActivityLog isAnalyticsEnabled={true} />);
+
+		expect(screen.getByText('anonymous')).toBeInTheDocument();
+	});
+
 	it('renders an asset title per event', () => {
-		render(<ActivityLog />);
+		render(<ActivityLog isAnalyticsEnabled={true} />);
 
 		expect(screen.getByText('document_a')).toBeInTheDocument();
 		expect(screen.getByText('document_b')).toBeInTheDocument();
 		expect(screen.getByText('document_c')).toBeInTheDocument();
+	});
+
+	it('renders the not-configured message when analytics cloud is not configured', () => {
+		render(<ActivityLog isAnalyticsEnabled={false} />);
+
+		expect(
+			screen.getByText('analytics-cloud-is-not-configured')
+		).toBeInTheDocument();
 	});
 });

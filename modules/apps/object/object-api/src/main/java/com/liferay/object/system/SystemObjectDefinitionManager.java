@@ -11,14 +11,18 @@ import com.liferay.object.model.ObjectField;
 import com.liferay.object.relationship.util.ObjectRelationshipUtil;
 import com.liferay.petra.sql.dsl.Column;
 import com.liferay.petra.sql.dsl.Table;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.BaseModel;
+import com.liferay.portal.kernel.model.PersistedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Sort;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
+import com.liferay.portal.kernel.service.PersistedModelLocalService;
 import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.service.PersistedModelLocalServiceRegistryUtil;
 import com.liferay.portal.vulcan.pagination.Page;
 import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.ObjectMapperUtil;
@@ -51,6 +55,10 @@ public interface SystemObjectDefinitionManager {
 
 	public BaseModel<?> fetchBaseModelByExternalReferenceCode(
 		String externalReferenceCode, long companyId);
+
+	public default String getAdditionalAPIURLParameters() {
+		return StringPool.BLANK;
+	}
 
 	public default Set<String> getAllowedObjectRelationshipTypes() {
 		return ObjectRelationshipUtil.getDefaultObjectRelationshipTypes();
@@ -107,6 +115,16 @@ public interface SystemObjectDefinitionManager {
 		throws Exception {
 
 		return null;
+	}
+
+	public default PersistedModel getPersistedModel(long primaryKey)
+		throws PortalException {
+
+		PersistedModelLocalService persistedModelLocalService =
+			PersistedModelLocalServiceRegistryUtil.
+				getPersistedModelLocalService(getModelClassName());
+
+		return persistedModelLocalService.getPersistedModel(primaryKey);
 	}
 
 	public Map<Locale, String> getPluralLabelMap();

@@ -4,6 +4,7 @@
  */
 
 import {
+	ObjectDefinition,
 	ObjectDefinitionAPI,
 	ObjectField,
 	ObjectFieldAPI,
@@ -16,6 +17,7 @@ import {dataApiHelpersTest} from '../../../fixtures/dataApiHelpersTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {ObjectRelationshipFormPage} from '../../../pages/object-web/object-relationship/ObjectRelationshipFormPage';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import {getRandomInt} from '../../../utils/getRandomInt';
 import getRandomString from '../../../utils/getRandomString';
 import {waitForAlert} from '../../../utils/waitForAlert';
@@ -1382,6 +1384,84 @@ test.describe('Manage object relationships through Model Builder', () => {
 
 test.describe('Manage object relationships through Objects Admin UI', () => {
 	test(
+		'account restriction is disabled when the linked account relationship is deleted',
+		{tag: '@LPS-156824'},
+		async ({apiHelpers, editObjectDetailsPage, page}) => {
+			let objectDefinition: ObjectDefinition;
+			let objectRelationship: ObjectRelationship;
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			await test.step('create object definition and link it to Account with a one-to-many relationship', async () => {
+				objectDefinition =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				({body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						'L_ACCOUNT',
+						{
+							label: {en_US: 'Relationship Account'},
+							name: 'relationshipAccount' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1: 'L_ACCOUNT',
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionId2: objectDefinition.id,
+							objectDefinitionName2: objectDefinition.name,
+							type: 'oneToMany',
+						}
+					));
+			});
+
+			await test.step('enable account restriction and assert it is active', async () => {
+				await editObjectDetailsPage.goto(
+					objectDefinition.label['en_US']
+				);
+
+				await editObjectDetailsPage.enableAccountRestriction(
+					'Relationship Account'
+				);
+
+				await editObjectDetailsPage.saveObjectDefinition();
+
+				await expect(
+					editObjectDetailsPage.accountRestrictionToggle
+				).toBeChecked();
+
+				await waitForAlert(
+					page,
+					'Success:The object was saved successfully.'
+				);
+			});
+
+			await test.step('delete the relationship and assert account restriction is disabled', async () => {
+				await objectRelationshipAPIClient.deleteObjectRelationship(
+					objectRelationship.id
+				);
+
+				await editObjectDetailsPage.goto(
+					objectDefinition.label['en_US']
+				);
+
+				await expect(
+					editObjectDetailsPage.accountRestrictionToggle
+				).not.toBeChecked();
+
+				await expect(
+					editObjectDetailsPage.accountRestrictionToggle
+				).toBeDisabled();
+			});
+		}
+	);
+
+	test(
 		'can cancel relationship creation',
 		{tag: '@LPS-135400'},
 		async ({apiHelpers, objectRelationshipsPage, page}) => {
@@ -2318,25 +2398,25 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 		'prevent deletion type blocks parent entry deletion',
 		{tag: '@LPS-135401'},
 		async ({apiHelpers, page, viewObjectEntriesPage}) => {
-			const objectDefinitionA =
+			const objectDefinition1 =
 				await apiHelpers.objectAdmin.postRandomObjectDefinition({
 					status: {code: 0},
 					titleObjectFieldName: 'textField',
 				});
 
-			const objectDefinitionB =
+			const objectDefinition2 =
 				await apiHelpers.objectAdmin.postRandomObjectDefinition({
 					status: {code: 0},
 					titleObjectFieldName: 'textField',
 				});
 
 			apiHelpers.data.push({
-				id: objectDefinitionA.id,
+				id: objectDefinition1.id,
 				type: 'objectDefinition',
 			});
 
 			apiHelpers.data.push({
-				id: objectDefinitionB.id,
+				id: objectDefinition2.id,
 				type: 'objectDefinition',
 			});
 
@@ -2345,14 +2425,14 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 
 			const {body: objectRelationship} =
 				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
-					objectDefinitionA.externalReferenceCode,
+					objectDefinition1.externalReferenceCode,
 					{
 						label: {en_US: `Relationship${getRandomInt()}`},
 						name: `relationship${getRandomInt()}`,
 						objectDefinitionExternalReferenceCode2:
-							objectDefinitionB.externalReferenceCode,
-						objectDefinitionId2: objectDefinitionB.id,
-						objectDefinitionName2: objectDefinitionB.name,
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
 						type: 'oneToMany',
 					}
 				);
@@ -2363,10 +2443,10 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 			});
 
 			const applicationNameA =
-				'c/' + objectDefinitionA.name.toLowerCase() + 's';
+				'c/' + objectDefinition1.name.toLowerCase() + 's';
 
 			const applicationNameB =
-				'c/' + objectDefinitionB.name.toLowerCase() + 's';
+				'c/' + objectDefinition2.name.toLowerCase() + 's';
 
 			const entryA = await apiHelpers.objectEntry.postObjectEntry(
 				{textField: 'Entry A'},
@@ -2378,7 +2458,7 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 				applicationNameB
 			);
 
-			await viewObjectEntriesPage.goto(objectDefinitionB.className);
+			await viewObjectEntriesPage.goto(objectDefinition2.className);
 
 			await page.getByRole('link', {name: entryB.id.toString()}).click();
 
@@ -2393,7 +2473,7 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 
 			await waitForAlert(page);
 
-			await viewObjectEntriesPage.goto(objectDefinitionA.className);
+			await viewObjectEntriesPage.goto(objectDefinition1.className);
 
 			await expect(
 				page.getByRole('link', {name: entryA.id.toString()})
@@ -2485,6 +2565,142 @@ test.describe('Manage object relationships through Objects Admin UI', () => {
 			await expect(
 				page.getByText(objectDefinition2.label['en_US'])
 			).toBeVisible();
+		}
+	);
+
+	test(
+		'can delete an object after deleting the relationship',
+		{tag: '@LPS-150886'},
+		async ({
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+			viewObjectDefinitionsPage,
+		}) => {
+			let objectDefinition1: ObjectDefinition;
+			let objectDefinition2: ObjectDefinition;
+			let relationshipName: string;
+
+			await test.step('Create object definitions', async () => {
+				const objectFields = generateObjectFields({
+					objectFieldBusinessTypes: ['Text'],
+				});
+
+				objectDefinition1 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						objectFields,
+						status: {code: 0},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition1.id,
+					type: 'objectDefinition',
+				});
+
+				objectDefinition2 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						objectFields: generateObjectFields({
+							objectFieldBusinessTypes: ['Text'],
+						}),
+						status: {code: 0},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition2.id,
+					type: 'objectDefinition',
+				});
+			});
+
+			await test.step('Create object relationship', async () => {
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				relationshipName = 'relationship' + getRandomInt();
+
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode!,
+					{
+						label: {en_US: 'Relationship'},
+						name: relationshipName,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+			});
+
+			await test.step('Verify that an object that has a relationship cannot be deleted', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.clickObjectDefinitionActionButton(
+					objectDefinition1.label['en_US']
+				);
+
+				await viewObjectDefinitionsPage.deleteObjectDefinitionOption.click();
+
+				await expect(
+					page.getByText('Deletion Not Allowed')
+				).toBeVisible();
+
+				await page.getByRole('button', {name: 'Done'}).click();
+			});
+
+			await test.step('Delete the relationship first', async () => {
+				await objectRelationshipsPage.goto(
+					objectDefinition1.label['en_US']
+				);
+
+				await objectRelationshipsPage.actionsButton.click();
+
+				await objectRelationshipsPage.deleteObjectRelationshipOption.click();
+
+				await page
+					.getByPlaceholder('Confirm relationship name', {
+						exact: false,
+					})
+					.fill(relationshipName);
+
+				await page.getByRole('button', {name: 'Delete'}).click();
+
+				await expect(page.getByText('No Results Found')).toBeVisible({
+					timeout: 15000,
+				});
+			});
+
+			await test.step('Now delete the object definition', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.clickObjectDefinitionActionButton(
+					objectDefinition1.label['en_US']
+				);
+
+				await viewObjectDefinitionsPage.deleteObjectDefinitionOption.click();
+
+				await page
+					.getByPlaceholder('Confirm Object Definition Name')
+					.fill(objectDefinition1.name);
+
+				await page
+					.getByRole('button', {exact: true, name: 'Delete'})
+					.click();
+
+				apiHelpers.data.splice(
+					apiHelpers.data.findIndex(
+						(object) =>
+							object.id === objectDefinition1.id &&
+							object.type === 'objectDefinition'
+					),
+					1
+				);
+
+				await expect(
+					viewObjectDefinitionsPage.frontendDataSetEntries.filter({
+						hasText: objectDefinition1.label['en_US'],
+					})
+				).toBeHidden();
+			});
 		}
 	);
 });
@@ -2686,6 +2902,102 @@ test.describe('Manage object relationships with system objects', () => {
 	);
 
 	test(
+		'can delete relationship on system object',
+		{tag: '@LPS-135406'},
+		async ({
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+			viewObjectDefinitionsPage,
+		}) => {
+			let userObjectRelationship: ObjectRelationship;
+			let relationshipLabel: string;
+			let relationshipName: string;
+
+			await test.step('Create object definition and relationship', async () => {
+				const objectDefinition =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				relationshipLabel = 'Relationship' + getRandomInt();
+				relationshipName = 'relationship' + getRandomInt();
+
+				const {body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						'L_USER',
+						{
+							label: {en_US: relationshipLabel},
+							name: relationshipName,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionId2: objectDefinition.id,
+							objectDefinitionName2: objectDefinition.name,
+							type: 'oneToMany',
+						}
+					);
+
+				userObjectRelationship = objectRelationship;
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+			});
+
+			await test.step("Navigate to the User system object's Relationships tab", async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.clickEditObjectDefinitionLink(
+					'User'
+				);
+
+				await objectRelationshipsPage.relationshipTabItem.click();
+			});
+
+			await test.step('Delete the relationship', async () => {
+				await page
+					.getByRole('row', {name: relationshipLabel})
+					.getByRole('button')
+					.click();
+
+				await objectRelationshipsPage.deleteObjectRelationshipOption.click();
+
+				await page
+					.getByPlaceholder('Confirm relationship name', {
+						exact: false,
+					})
+					.fill(relationshipName);
+
+				await page.getByRole('button', {name: 'Delete'}).click();
+
+				apiHelpers.data.splice(
+					apiHelpers.data.findIndex(
+						(object) =>
+							object.id === userObjectRelationship.id &&
+							object.type === 'objectRelationship'
+					),
+					1
+				);
+			});
+
+			await test.step('Check that the relationship is deleted', async () => {
+				await expect(
+					page.getByRole('link', {name: relationshipName})
+				).not.toBeVisible();
+			});
+		}
+	);
+
+	test(
 		'can relate Many-to-Many Custom Object entry with System Object entries',
 		{tag: '@LPS-146754'},
 		async ({
@@ -2849,9 +3161,271 @@ test.describe('Manage object relationships with system objects', () => {
 			}
 		}
 	);
+
+	test(
+		'can update relationship label on system object',
+		{tag: '@LPS-135406'},
+		async ({
+			apiHelpers,
+			objectRelationshipsPage,
+			page,
+			viewObjectDefinitionsPage,
+		}) => {
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const relationshipLabel = 'Relationship' + getRandomInt();
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					'L_USER',
+					{
+						label: {en_US: relationshipLabel},
+						name: 'relationship' + getRandomInt(),
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition.externalReferenceCode,
+						objectDefinitionId2: objectDefinition.id,
+						objectDefinitionName2: objectDefinition.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			await viewObjectDefinitionsPage.goto();
+
+			await viewObjectDefinitionsPage.clickEditObjectDefinitionLink(
+				'User'
+			);
+
+			await objectRelationshipsPage.relationshipTabItem.click();
+
+			await page.getByRole('link', {name: relationshipLabel}).click();
+
+			const newLabel = 'New Relationship' + getRandomInt();
+
+			await objectRelationshipsPage.labelInput.fill(newLabel);
+
+			await objectRelationshipsPage.saveObjectRelationship();
+
+			await expect(
+				page.getByRole('link', {name: newLabel})
+			).toBeVisible();
+		}
+	);
 });
 
 test.describe('Manage object relationship entries', () => {
+	test(
+		'already-related entry is kept on both objects when associated with another entry',
+		{tag: '@LPS-135401'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectEntriesPage,
+		}) => {
+			let objectDefinition1: ObjectDefinition;
+			let objectDefinition2: ObjectDefinition;
+
+			await test.step('add two custom objects with a M:M relationship', async () => {
+				objectDefinition1 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				objectDefinition2 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition1.id,
+					type: 'objectDefinition',
+				});
+
+				apiHelpers.data.push({
+					id: objectDefinition2.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				const {body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						objectDefinition1.externalReferenceCode,
+						{
+							label: {en_US: 'Relationship'},
+							name: 'relationship' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1:
+								objectDefinition1.externalReferenceCode,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition2.externalReferenceCode,
+							objectDefinitionId1: objectDefinition1.id,
+							objectDefinitionId2: objectDefinition2.id,
+							objectDefinitionName2: objectDefinition2.name,
+							type: 'manyToMany',
+						}
+					);
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+			});
+
+			await test.step('add a layout with a relationship tab', async () => {
+				const setupLayout = async (
+					objectDefinition: ObjectDefinition,
+					fieldLabel: string
+				) => {
+					const layoutName = 'Layout' + getRandomInt();
+
+					await objectLayoutsPage.goto(
+						objectDefinition.label['en_US']
+					);
+
+					await objectLayoutsPage.createObjectLayout(layoutName);
+
+					await objectLayoutsPage.createObjectLayoutContent({
+						objectFieldNames: [fieldLabel],
+						objectLayoutName: layoutName,
+						objectLayoutRegularBlockName: 'Block 1',
+						objectLayoutTabName: 'Field Tab',
+					});
+
+					await objectLayoutsPage.openObjectLayoutConfiguration(
+						layoutName
+					);
+
+					await objectLayoutsPage.setObjectLayoutAsDefault();
+
+					await objectLayoutsPage.layoutTab.click();
+
+					await objectLayoutsPage.addRelationshipTab(
+						'Relationship Tab',
+						'Relationship'
+					);
+
+					const saveButton = objectLayoutsPage.iframeLocator
+						.getByRole('button', {name: 'Save'})
+						.first();
+
+					await expect(saveButton).toBeVisible();
+
+					await saveButton.dispatchEvent('click');
+
+					await waitForAlert(
+						page,
+						'Success:The object layout was updated successfully'
+					);
+				};
+
+				await setupLayout(objectDefinition1, 'textField');
+
+				await setupLayout(objectDefinition2, 'textField');
+			});
+
+			await test.step('create entries A1 and A2 for Object A and entry B for Object B ', async () => {
+				const applicationName1 = `c/${objectDefinition1.name.toLowerCase()}s`;
+				const applicationName2 = `c/${objectDefinition2.name.toLowerCase()}s`;
+
+				for (const letter of ['A1', 'A2']) {
+					await apiHelpers.objectEntry.postObjectEntry(
+						{['textField']: `Entry ${letter}`},
+						applicationName1
+					);
+				}
+
+				await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry B'},
+					applicationName2
+				);
+			});
+
+			const openRelationshipTab = async (
+				className: string,
+				entryLabel: string
+			) => {
+				await viewObjectEntriesPage.goto(className);
+
+				const entryRow = page.getByRole('row', {
+					name: new RegExp(entryLabel),
+				});
+
+				await expect(entryRow).toBeVisible();
+
+				await entryRow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+
+				const relationshipTab = page.getByRole('link', {
+					exact: true,
+					name: 'Relationship Tab',
+				});
+
+				await expect(relationshipTab).toBeVisible();
+
+				await relationshipTab.click();
+			};
+
+			await test.step('relate Entry B to both Entry A1 and Entry A2 from Object A', async () => {
+				for (const letter of ['A1', 'A2']) {
+					await openRelationshipTab(
+						objectDefinition1.className,
+						`Entry ${letter}`
+					);
+
+					await page
+						.getByLabel('Select Existing One')
+						.first()
+						.click();
+
+					const selectFrame = page.frameLocator(
+						'iframe[title="Select"]'
+					);
+
+					const entryBItem = selectFrame
+						.getByText('Entry B', {exact: true})
+						.first();
+
+					await expect(entryBItem).toBeVisible();
+
+					await entryBItem.click();
+				}
+			});
+
+			await test.step('assert Entry A1 relationship tab still shows Entry B', async () => {
+				await openRelationshipTab(
+					objectDefinition1.className,
+					'Entry A1'
+				);
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry B'}).first()
+				).toBeVisible();
+			});
+		}
+	);
+
 	test(
 		'can edit Many-to-Many relationship of Custom Object entries',
 		{tag: '@LPS-157229'},
@@ -3334,6 +3908,241 @@ test.describe('Manage object relationship entries', () => {
 	);
 
 	test(
+		'can view object entry title on relationship field',
+		{tag: '@LPS-139803'},
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			let objectDefinition: ObjectDefinition;
+
+			await test.step('create object definition with a one-to-many self-relationship and an entry', async () => {
+				objectDefinition =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				const {body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						objectDefinition.externalReferenceCode,
+						{
+							label: {en_US: 'Relationship'},
+							name: 'relationship' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionId1: objectDefinition.id,
+							objectDefinitionId2: objectDefinition.id,
+							objectDefinitionName2: objectDefinition.name,
+							type: 'oneToMany',
+						}
+					);
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+
+				const restPath = `c/${objectDefinition.name.toLowerCase()}s`;
+
+				await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry Test'},
+					restPath
+				);
+			});
+
+			await test.step('assert entry title is visible in the relationship field', async () => {
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				await page
+					.getByRole('button', {name: 'Add ' + objectDefinition.name})
+					.click();
+
+				await clickAndExpectToBeVisible({
+					target: page.getByRole('menuitem', {name: 'Entry Test'}),
+					trigger: page.getByPlaceholder('Search'),
+				});
+			});
+		}
+	);
+
+	test(
+		'can view object entry title in the relationship tab for self relationship',
+		{tag: '@LPS-139803'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectEntriesPage,
+		}) => {
+			let objectDefinition: ObjectDefinition;
+			let objectRelationship: ObjectRelationship;
+			let restPath: string;
+
+			await test.step('create object definition with a one-to-many self-relationship and a layout with a relationship tab', async () => {
+				objectDefinition =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				({body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						objectDefinition.externalReferenceCode,
+						{
+							label: {en_US: 'Relationship'},
+							name: 'relationship' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition.externalReferenceCode,
+							objectDefinitionId1: objectDefinition.id,
+							objectDefinitionId2: objectDefinition.id,
+							objectDefinitionName2: objectDefinition.name,
+							type: 'oneToMany',
+						}
+					));
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+
+				const layoutName = 'Layout' + getRandomInt();
+
+				await objectLayoutsPage.goto(objectDefinition.label['en_US']);
+
+				await objectLayoutsPage.createObjectLayout(layoutName);
+
+				await objectLayoutsPage.createObjectLayoutContent({
+					objectFieldNames: ['textField', 'Relationship'],
+					objectLayoutName: layoutName,
+					objectLayoutRegularBlockName: 'Block 1',
+					objectLayoutTabName: 'Field Tab',
+				});
+
+				await objectLayoutsPage.openObjectLayoutConfiguration(
+					layoutName
+				);
+
+				await objectLayoutsPage.setObjectLayoutAsDefault();
+
+				await objectLayoutsPage.layoutTab.click();
+
+				await objectLayoutsPage.addRelationshipTab(
+					'Relationship Tab',
+					'Relationship'
+				);
+
+				const saveButton = objectLayoutsPage.iframeLocator
+					.getByRole('button', {name: 'Save'})
+					.first();
+
+				await expect(saveButton).toBeVisible();
+
+				await saveButton.dispatchEvent('click');
+
+				await waitForAlert(
+					page,
+					'Success:The object layout was updated successfully'
+				);
+
+				restPath = `c/${objectDefinition.name.toLowerCase()}s`;
+			});
+
+			await test.step('create entries A and B', async () => {
+				await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry A'},
+					restPath
+				);
+
+				await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry B'},
+					restPath
+				);
+			});
+
+			await test.step('relate Entry B to Entry A and assert it is visible in the relationship tab', async () => {
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				const entryARow = page.getByRole('row', {name: /Entry A/});
+
+				await expect(entryARow).toBeVisible();
+
+				await entryARow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+
+				const relationshipTab = page.getByRole('link', {
+					exact: true,
+					name: 'Relationship Tab',
+				});
+
+				await expect(relationshipTab).toBeVisible();
+
+				await relationshipTab.click();
+
+				await page.getByRole('button', {name: 'New'}).first().click();
+
+				await page
+					.getByRole('menuitem', {name: 'Select Existing One'})
+					.click();
+
+				const selectFrame = page.frameLocator('iframe[title="Select"]');
+
+				await expect(
+					selectFrame.getByText('Entry B', {exact: true}).first()
+				).toBeVisible();
+
+				await selectFrame
+					.getByText('Entry B', {exact: true})
+					.first()
+					.click();
+
+				await viewObjectEntriesPage.goto(objectDefinition.className);
+
+				const entryARowRefreshed = page.getByRole('row', {
+					name: /Entry A/,
+				});
+
+				await entryARowRefreshed
+					.getByRole('button', {name: 'Actions'})
+					.nth(0)
+					.click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+
+				await page
+					.getByRole('link', {exact: true, name: 'Relationship Tab'})
+					.click();
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry B'}).first()
+				).toBeVisible();
+			});
+		}
+	);
+
+	test(
 		'cannot relate an entry with itself',
 		{tag: '@LPS-163658'},
 		async ({
@@ -3509,6 +4318,850 @@ test.describe('Manage object relationship entries', () => {
 					.getByRole('option')
 					.filter({hasText: /^Relationship\b/})
 			).toHaveCount(0);
+		}
+	);
+
+	test(
+		'disassociate deletion allows child entry to be deleted in one-to-many',
+		{tag: '@LPS-135401'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectEntriesPage,
+		}) => {
+			let objectDefinition1: ObjectDefinition;
+			let objectDefinition2: ObjectDefinition;
+			let objectRelationship: ObjectRelationship;
+
+			await test.step('create objects A and B with a disassociate deletion one-to-many relationship and a layout with a relationship tab for Object A', async () => {
+				objectDefinition1 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				objectDefinition2 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition1.id,
+					type: 'objectDefinition',
+				});
+
+				apiHelpers.data.push({
+					id: objectDefinition2.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				({body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						objectDefinition1.externalReferenceCode,
+						{
+							deletionType: 'disassociate',
+							label: {en_US: 'Relationship'},
+							name: 'relationship' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1:
+								objectDefinition1.externalReferenceCode,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition2.externalReferenceCode,
+							objectDefinitionId1: objectDefinition1.id,
+							objectDefinitionId2: objectDefinition2.id,
+							objectDefinitionName2: objectDefinition2.name,
+							type: 'oneToMany',
+						}
+					));
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+
+				const layoutName = 'Layout' + getRandomInt();
+
+				await objectLayoutsPage.goto(objectDefinition1.label['en_US']);
+
+				await objectLayoutsPage.createObjectLayout(layoutName);
+
+				await objectLayoutsPage.createObjectLayoutContent({
+					objectFieldNames: ['textField'],
+					objectLayoutName: layoutName,
+					objectLayoutRegularBlockName: 'Block 1',
+					objectLayoutTabName: 'Field Tab',
+				});
+
+				await objectLayoutsPage.openObjectLayoutConfiguration(
+					layoutName
+				);
+
+				await objectLayoutsPage.setObjectLayoutAsDefault();
+
+				await objectLayoutsPage.layoutTab.click();
+
+				await objectLayoutsPage.addRelationshipTab(
+					'Relationship Tab',
+					'Relationship'
+				);
+
+				const saveButton = objectLayoutsPage.iframeLocator
+					.getByRole('button', {name: 'Save'})
+					.first();
+
+				await expect(saveButton).toBeVisible();
+
+				await saveButton.dispatchEvent('click');
+
+				await waitForAlert(
+					page,
+					'Success:The object layout was updated successfully'
+				);
+			});
+
+			await test.step('create entries A and B and associate entry B to entry A', async () => {
+				const applicationName1 = `c/${objectDefinition1.name.toLowerCase()}s`;
+				const applicationName2 = `c/${objectDefinition2.name.toLowerCase()}s`;
+
+				const entryA = await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry A'},
+					applicationName1
+				);
+
+				const entryB = await apiHelpers.objectEntry.postObjectEntry(
+					{['textField']: 'Entry B'},
+					applicationName2
+				);
+
+				await apiHelpers.objectEntry.putByExternalReferenceCodeCurrentExternalReferenceCodeObjectRelationshipNameRelatedExternalReferenceCode(
+					{
+						applicationName: applicationName1,
+						currentExternalReferenceCode:
+							entryA.externalReferenceCode,
+						objectRelationshipName: objectRelationship.name,
+						relatedExternalReferenceCode:
+							entryB.externalReferenceCode,
+					}
+				);
+			});
+
+			await test.step('delete Entry B and assert it is removed from both objects', async () => {
+				await viewObjectEntriesPage.goto(objectDefinition2.className);
+
+				const entryBRow = page.getByRole('row', {name: /Entry B/});
+
+				await expect(entryBRow).toBeVisible();
+
+				await entryBRow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'Delete'}).click();
+
+				await viewObjectEntriesPage.deletionConfirmationModal
+					.getByRole('button', {name: 'Delete'})
+					.click();
+
+				await expect(
+					page.getByRole('row', {name: /Entry B/})
+				).not.toBeVisible();
+
+				await viewObjectEntriesPage.goto(objectDefinition1.className);
+
+				const entryARow = page.getByRole('row', {name: /Entry A/});
+
+				await expect(entryARow).toBeVisible();
+
+				await entryARow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+
+				await page
+					.getByRole('link', {exact: true, name: 'Relationship Tab'})
+					.click();
+
+				await expect(
+					page.getByRole('row', {name: /Entry B/})
+				).not.toBeVisible();
+			});
+		}
+	);
+
+	test(
+		'relates many entries from both objects in a many-to-many relationship',
+		{tag: '@LPS-135401'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectEntriesPage,
+		}) => {
+			let objectDefinition1: ObjectDefinition;
+			let objectDefinition2: ObjectDefinition;
+
+			await test.step('add two custom objects with a M:M relationship', async () => {
+				objectDefinition1 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				objectDefinition2 =
+					await apiHelpers.objectAdmin.postRandomObjectDefinition({
+						status: {code: 0},
+						titleObjectFieldName: 'textField',
+					});
+
+				apiHelpers.data.push({
+					id: objectDefinition1.id,
+					type: 'objectDefinition',
+				});
+
+				apiHelpers.data.push({
+					id: objectDefinition2.id,
+					type: 'objectDefinition',
+				});
+
+				const objectRelationshipAPIClient =
+					await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+				const {body: objectRelationship} =
+					await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+						objectDefinition1.externalReferenceCode,
+						{
+							label: {en_US: 'Relationship' + getRandomInt()},
+							name: 'relationship' + getRandomInt(),
+							objectDefinitionExternalReferenceCode1:
+								objectDefinition1.externalReferenceCode,
+							objectDefinitionExternalReferenceCode2:
+								objectDefinition2.externalReferenceCode,
+							objectDefinitionId1: objectDefinition1.id,
+							objectDefinitionId2: objectDefinition2.id,
+							objectDefinitionName2: objectDefinition2.name,
+							type: 'manyToMany',
+						}
+					);
+
+				apiHelpers.data.push({
+					id: objectRelationship.id,
+					type: 'objectRelationship',
+				});
+			});
+
+			await test.step('multiple entries are created for both objects', async () => {
+				const applicationName1 = `c/${objectDefinition1.name.toLowerCase()}s`;
+				const applicationName2 = `c/${objectDefinition2.name.toLowerCase()}s`;
+
+				for (const letter of ['A', 'B', 'C']) {
+					await apiHelpers.objectEntry.postObjectEntry(
+						{['textField']: `Entry ${letter}`},
+						applicationName1
+					);
+				}
+
+				for (const letter of ['D', 'E', 'F']) {
+					await apiHelpers.objectEntry.postObjectEntry(
+						{['textField']: `Entry ${letter}`},
+						applicationName2
+					);
+				}
+			});
+
+			await test.step('add layouts with a relationship tab for each definition', async () => {
+				const setupLayout = async (
+					objectDefinition: ObjectDefinition,
+					fieldName: string
+				) => {
+					const layoutName = 'Layout' + getRandomInt();
+
+					await objectLayoutsPage.goto(
+						objectDefinition.label['en_US']
+					);
+
+					await objectLayoutsPage.createObjectLayout(layoutName);
+
+					await objectLayoutsPage.createObjectLayoutContent({
+						objectFieldNames: [fieldName],
+						objectLayoutName: layoutName,
+						objectLayoutRegularBlockName: 'Block 1',
+						objectLayoutTabName: 'Field Tab',
+					});
+
+					await objectLayoutsPage.openObjectLayoutConfiguration(
+						layoutName
+					);
+
+					await objectLayoutsPage.setObjectLayoutAsDefault();
+
+					await objectLayoutsPage.layoutTab.click();
+
+					await objectLayoutsPage.addRelationshipTab(
+						'Relationship Tab',
+						'Relationship'
+					);
+
+					const saveButton = objectLayoutsPage.iframeLocator
+						.getByRole('button', {name: 'Save'})
+						.first();
+
+					await expect(saveButton).toBeVisible();
+
+					await saveButton.dispatchEvent('click');
+
+					await waitForAlert(
+						page,
+						'Success:The object layout was updated successfully'
+					);
+				};
+
+				await setupLayout(objectDefinition1, 'textField');
+
+				await setupLayout(objectDefinition2, 'textField');
+			});
+
+			await test.step('many entries from Object A can be related to many entries from Object B', async () => {
+				const openRelationshipTab = async (
+					className: string,
+					entryLabel: string
+				) => {
+					await viewObjectEntriesPage.goto(className);
+
+					const entryRow = page.getByRole('row', {
+						name: new RegExp(entryLabel),
+					});
+
+					await expect(entryRow).toBeVisible();
+
+					await entryRow
+						.getByRole('button', {name: 'Actions'})
+						.click();
+
+					await page.getByRole('menuitem', {name: 'View'}).click();
+
+					await page.waitForLoadState('domcontentloaded');
+
+					const relationshipTab = page.getByRole('link', {
+						exact: true,
+						name: 'Relationship Tab',
+					});
+
+					await expect(relationshipTab).toBeVisible();
+
+					await relationshipTab.click();
+				};
+
+				const selectRelationshipEntry = async (entryLabel: string) => {
+					await page
+						.getByLabel('Select Existing One')
+						.first()
+						.click();
+
+					const selectFrame = page.frameLocator(
+						'iframe[title="Select"]'
+					);
+
+					const entry = selectFrame
+						.getByText(entryLabel, {exact: true})
+						.first();
+
+					await expect(entry).toBeVisible();
+
+					await entry.click();
+				};
+
+				await openRelationshipTab(
+					objectDefinition1.className,
+					'Entry A'
+				);
+
+				await selectRelationshipEntry('Entry D');
+
+				await openRelationshipTab(
+					objectDefinition1.className,
+					'Entry A'
+				);
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry D'}).first()
+				).toBeVisible();
+
+				await selectRelationshipEntry('Entry E');
+
+				await openRelationshipTab(
+					objectDefinition1.className,
+					'Entry A'
+				);
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry D'}).first()
+				).toBeVisible();
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry E'}).first()
+				).toBeVisible();
+
+				await openRelationshipTab(
+					objectDefinition2.className,
+					'Entry F'
+				);
+
+				await selectRelationshipEntry('Entry B');
+
+				await openRelationshipTab(
+					objectDefinition2.className,
+					'Entry F'
+				);
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry B'}).first()
+				).toBeVisible();
+
+				await selectRelationshipEntry('Entry C');
+
+				await openRelationshipTab(
+					objectDefinition2.className,
+					'Entry F'
+				);
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry B'}).first()
+				).toBeVisible();
+
+				await expect(
+					page.getByRole('row').filter({hasText: 'Entry C'}).first()
+				).toBeVisible();
+			});
+		}
+	);
+
+	test(
+		'relationship field visibility changes according to active state on parent definition in one-to-many',
+		{tag: '@LPS-139005'},
+		async ({
+			apiHelpers,
+			page,
+			viewObjectDefinitionsPage,
+			viewObjectEntriesPage,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: 'Relationship' + getRandomInt()},
+						name: 'relationship' + getRandomInt(),
+						objectDefinitionExternalReferenceCode1:
+							objectDefinition1.externalReferenceCode,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId1: objectDefinition1.id,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			const applicationName2 = `c/${objectDefinition2.name.toLowerCase()}s`;
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{['textField']: 'Entry 1'},
+				applicationName2
+			);
+
+			await test.step('inactivate Object A and assert relationship field is hidden for Object B entry form', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition1.label['en_US']
+				);
+
+				await viewObjectEntriesPage.goto(objectDefinition2.className);
+
+				await page
+					.getByRole('button', {
+						name: 'Add ' + objectDefinition2.name,
+					})
+					.click();
+
+				await expect(
+					page.getByLabel(objectRelationship.label.en_US, {
+						exact: true,
+					})
+				).not.toBeVisible();
+			});
+
+			await test.step('reactivate Object A and assert relationship field is visible for Object B entry form', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition1.label.en_US
+				);
+
+				await viewObjectEntriesPage.goto(objectDefinition2.className);
+
+				await page
+					.getByRole('button', {
+						name: 'Add ' + objectDefinition2.name,
+					})
+					.click();
+
+				await expect(
+					page.getByLabel(objectRelationship.label.en_US, {
+						exact: true,
+					})
+				).toBeVisible();
+			});
+		}
+	);
+
+	test(
+		'relationship tab visibility changes according to active state in many-to-many',
+		{tag: '@LPS-139005'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectDefinitionsPage,
+			viewObjectEntriesPage,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: 'Relationship'},
+						name: 'relationship' + getRandomInt(),
+						objectDefinitionExternalReferenceCode1:
+							objectDefinition1.externalReferenceCode,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId1: objectDefinition1.id,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'manyToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			const setupLayout = async (
+				objectDefinition: typeof objectDefinition1,
+				fieldLabel: string
+			) => {
+				const layoutName = 'Layout' + getRandomInt();
+
+				await objectLayoutsPage.goto(objectDefinition.label['en_US']);
+
+				await objectLayoutsPage.createObjectLayout(layoutName);
+
+				await objectLayoutsPage.createObjectLayoutContent({
+					objectFieldNames: [fieldLabel],
+					objectLayoutName: layoutName,
+					objectLayoutRegularBlockName: 'Block 1',
+					objectLayoutTabName: 'Field Tab',
+				});
+
+				await objectLayoutsPage.openObjectLayoutConfiguration(
+					layoutName
+				);
+
+				await objectLayoutsPage.setObjectLayoutAsDefault();
+
+				await objectLayoutsPage.layoutTab.click();
+
+				await objectLayoutsPage.addRelationshipTab(
+					'Relationship Tab',
+					'Relationship'
+				);
+
+				const saveButton = objectLayoutsPage.iframeLocator
+					.getByRole('button', {name: 'Save'})
+					.first();
+
+				await expect(saveButton).toBeVisible();
+
+				await saveButton.dispatchEvent('click');
+
+				await waitForAlert(
+					page,
+					'Success:The object layout was updated successfully'
+				);
+			};
+
+			await setupLayout(objectDefinition1, 'textField');
+
+			await setupLayout(objectDefinition2, 'textField');
+
+			const applicationName1 = `c/${objectDefinition1.name.toLowerCase()}s`;
+			const applicationName2 = `c/${objectDefinition2.name.toLowerCase()}s`;
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{['textField']: 'Entry A'},
+				applicationName1
+			);
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{['textField']: 'Entry B'},
+				applicationName2
+			);
+
+			const openEntryDetails = async (
+				className: string,
+				entryLabel: string
+			) => {
+				await viewObjectEntriesPage.goto(className);
+
+				const entryRow = page.getByRole('row', {
+					name: new RegExp(entryLabel),
+				});
+
+				await expect(entryRow).toBeVisible();
+
+				await entryRow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+			};
+
+			await test.step('inactivate Object B and assert relationship tab is hidden on Entry A', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition2.label['en_US']
+				);
+
+				await openEntryDetails(objectDefinition1.className, 'Entry A');
+
+				await expect(
+					page.getByRole('link', {
+						exact: true,
+						name: 'Relationship Tab',
+					})
+				).not.toBeVisible();
+			});
+
+			await test.step('reactivate Object B and assert relationship tab is visible on Entry A', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition2.label['en_US']
+				);
+
+				await openEntryDetails(objectDefinition1.className, 'Entry A');
+
+				await expect(
+					page.getByRole('link', {
+						exact: true,
+						name: 'Relationship Tab',
+					})
+				).toBeVisible();
+			});
+		}
+	);
+
+	test(
+		'relationship tab visibility changes according to active state in one-to-many',
+		{tag: '@LPS-139005'},
+		async ({
+			apiHelpers,
+			objectLayoutsPage,
+			page,
+			viewObjectDefinitionsPage,
+			viewObjectEntriesPage,
+		}) => {
+			const objectDefinition1 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			const objectDefinition2 =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition1.id,
+				type: 'objectDefinition',
+			});
+
+			apiHelpers.data.push({
+				id: objectDefinition2.id,
+				type: 'objectDefinition',
+			});
+
+			const objectRelationshipAPIClient =
+				await apiHelpers.buildRestClient(ObjectRelationshipAPI);
+
+			const {body: objectRelationship} =
+				await objectRelationshipAPIClient.postObjectDefinitionByExternalReferenceCodeObjectRelationship(
+					objectDefinition1.externalReferenceCode,
+					{
+						label: {en_US: 'Relationship'},
+						name: 'relationship' + getRandomInt(),
+						objectDefinitionExternalReferenceCode1:
+							objectDefinition1.externalReferenceCode,
+						objectDefinitionExternalReferenceCode2:
+							objectDefinition2.externalReferenceCode,
+						objectDefinitionId1: objectDefinition1.id,
+						objectDefinitionId2: objectDefinition2.id,
+						objectDefinitionName2: objectDefinition2.name,
+						type: 'oneToMany',
+					}
+				);
+
+			apiHelpers.data.push({
+				id: objectRelationship.id,
+				type: 'objectRelationship',
+			});
+
+			const layoutName = 'Layout' + getRandomInt();
+
+			await objectLayoutsPage.goto(objectDefinition1.label['en_US']);
+
+			await objectLayoutsPage.createObjectLayout(layoutName);
+
+			await objectLayoutsPage.createObjectLayoutContent({
+				objectFieldNames: ['textField'],
+				objectLayoutName: layoutName,
+				objectLayoutRegularBlockName: 'Block 1',
+				objectLayoutTabName: 'Field Tab',
+			});
+
+			await objectLayoutsPage.openObjectLayoutConfiguration(layoutName);
+
+			await objectLayoutsPage.setObjectLayoutAsDefault();
+
+			await objectLayoutsPage.layoutTab.click();
+
+			await objectLayoutsPage.addRelationshipTab(
+				'Relationship Tab',
+				'Relationship'
+			);
+
+			const saveButton = objectLayoutsPage.iframeLocator
+				.getByRole('button', {name: 'Save'})
+				.first();
+
+			await expect(saveButton).toBeVisible();
+
+			await saveButton.dispatchEvent('click');
+
+			await waitForAlert(
+				page,
+				'Success:The object layout was updated successfully'
+			);
+
+			const applicationName1 = `c/${objectDefinition1.name.toLowerCase()}s`;
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{['textField']: 'Entry 1'},
+				applicationName1
+			);
+
+			const openEntry1Details = async () => {
+				await viewObjectEntriesPage.goto(objectDefinition1.className);
+
+				const entryRow = page.getByRole('row', {name: /Entry 1/});
+
+				await expect(entryRow).toBeVisible();
+
+				await entryRow.getByRole('button', {name: 'Actions'}).click();
+
+				await page.getByRole('menuitem', {name: 'View'}).click();
+
+				await page.waitForLoadState('domcontentloaded');
+			};
+
+			await test.step('inactivate Object B and assert relationship tab is hidden on Entry 1', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition2.label['en_US']
+				);
+
+				await openEntry1Details();
+
+				await expect(
+					page.getByRole('link', {
+						exact: true,
+						name: 'Relationship Tab',
+					})
+				).not.toBeVisible();
+			});
+
+			await test.step('reactivate Object B and assert relationship tab is visible on Entry 1', async () => {
+				await viewObjectDefinitionsPage.goto();
+
+				await viewObjectDefinitionsPage.changeObjectActivateStatus(
+					objectDefinition2.label['en_US']
+				);
+
+				await openEntry1Details();
+
+				await expect(
+					page.getByRole('link', {
+						exact: true,
+						name: 'Relationship Tab',
+					})
+				).toBeVisible();
+			});
 		}
 	);
 });

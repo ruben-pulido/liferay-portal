@@ -115,8 +115,6 @@ public class LVEntryPersistenceTest {
 
 		LVEntry newLVEntry = _persistence.create(pk);
 
-		newLVEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		newLVEntry.setUuid(RandomTestUtil.randomString());
 
 		newLVEntry.setHeadId(RandomTestUtil.nextLong());
@@ -129,7 +127,9 @@ public class LVEntryPersistenceTest {
 
 		newLVEntry.setUniqueGroupKey(RandomTestUtil.randomString());
 
-		_lvEntries.add(_persistence.update(newLVEntry));
+		newLVEntry = _persistence.update(newLVEntry);
+
+		_lvEntries.add(newLVEntry);
 
 		LVEntry existingLVEntry = _persistence.findByPrimaryKey(
 			newLVEntry.getPrimaryKey());
@@ -585,8 +585,6 @@ public class LVEntryPersistenceTest {
 
 		LVEntry lvEntry = _persistence.create(pk);
 
-		lvEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		lvEntry.setUuid(RandomTestUtil.randomString());
 
 		lvEntry.setHeadId(-pk);
@@ -609,4 +607,4 @@ public class LVEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1705135023
+// LIFERAY-SERVICE-BUILDER-HASH:159555103

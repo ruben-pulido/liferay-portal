@@ -72,7 +72,7 @@ public class AuditEventPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AuditEvent>
+	private CollectionPersistenceFinder<AuditEvent, NoSuchEventException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -113,16 +113,8 @@ public class AuditEventPersistenceImpl
 			long companyId, OrderByComparator<AuditEvent> orderByComparator)
 		throws NoSuchEventException {
 
-		AuditEvent auditEvent = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (auditEvent != null) {
-			return auditEvent;
-		}
-
-		throw new NoSuchEventException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			dummyFinderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -369,7 +361,8 @@ public class AuditEventPersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_AUDITEVENT_WHERE, _SQL_COUNT_AUDITEVENT_WHERE,
-				AuditEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AuditEventModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"auditEvent.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, AuditEvent::getCompanyId));
@@ -422,13 +415,10 @@ public class AuditEventPersistenceImpl
 	private static final String _SQL_COUNT_AUDITEVENT_WHERE =
 		"SELECT COUNT(auditEvent) FROM AuditEvent auditEvent WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AuditEvent exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return dummyFinderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1550229463
+// LIFERAY-SERVICE-BUILDER-HASH:1911865743

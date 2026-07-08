@@ -240,6 +240,31 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	@Test
+	public void testPostAssetLibraryPortletImportPreview() throws Exception {
+		ImportPreview randomImportPreview = randomImportPreview();
+
+		Map<String, File> multipartFiles = getMultipartFiles();
+
+		ImportPreview postImportPreview =
+			testPostAssetLibraryPortletImportPreview_addImportPreview(
+				randomImportPreview, multipartFiles);
+
+		assertEquals(randomImportPreview, postImportPreview);
+		assertValid(postImportPreview);
+
+		assertValid(postImportPreview, multipartFiles);
+	}
+
+	protected ImportPreview
+			testPostAssetLibraryPortletImportPreview_addImportPreview(
+				ImportPreview importPreview, Map<String, File> multipartFiles)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostImportPreview() throws Exception {
 		ImportPreview randomImportPreview = randomImportPreview();
 
@@ -280,6 +305,30 @@ public abstract class BaseImportPreviewResourceTestCase {
 	}
 
 	protected ImportPreview testPostSiteImportPreview_addImportPreview(
+			ImportPreview importPreview, Map<String, File> multipartFiles)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPostSitePortletImportPreview() throws Exception {
+		ImportPreview randomImportPreview = randomImportPreview();
+
+		Map<String, File> multipartFiles = getMultipartFiles();
+
+		ImportPreview postImportPreview =
+			testPostSitePortletImportPreview_addImportPreview(
+				randomImportPreview, multipartFiles);
+
+		assertEquals(randomImportPreview, postImportPreview);
+		assertValid(postImportPreview);
+
+		assertValid(postImportPreview, multipartFiles);
+	}
+
+	protected ImportPreview testPostSitePortletImportPreview_addImportPreview(
 			ImportPreview importPreview, Map<String, File> multipartFiles)
 		throws Exception {
 
@@ -394,14 +443,6 @@ public abstract class BaseImportPreviewResourceTestCase {
 
 			if (Objects.equals("exportDate", additionalAssertFieldName)) {
 				if (importPreview.getExportDate() == null) {
-					valid = false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileEntryId", additionalAssertFieldName)) {
-				if (importPreview.getFileEntryId() == null) {
 					valid = false;
 				}
 
@@ -601,17 +642,6 @@ public abstract class BaseImportPreviewResourceTestCase {
 				if (!Objects.deepEquals(
 						importPreview1.getExportDate(),
 						importPreview2.getExportDate())) {
-
-					return false;
-				}
-
-				continue;
-			}
-
-			if (Objects.equals("fileEntryId", additionalAssertFieldName)) {
-				if (!Objects.deepEquals(
-						importPreview1.getFileEntryId(),
-						importPreview2.getFileEntryId())) {
 
 					return false;
 				}
@@ -848,11 +878,6 @@ public abstract class BaseImportPreviewResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("fileEntryId")) {
-			throw new IllegalArgumentException(
-				"Invalid entity field " + entityFieldName);
-		}
-
 		if (entityFieldName.equals("fileName")) {
 			Object object = importPreview.getFileName();
 
@@ -965,7 +990,6 @@ public abstract class BaseImportPreviewResourceTestCase {
 				author = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				deletionCount = RandomTestUtil.randomLong();
 				exportDate = RandomTestUtil.nextDate();
-				fileEntryId = RandomTestUtil.randomLong();
 				fileName = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				fileSize = RandomTestUtil.randomLong();
@@ -1197,4 +1221,4 @@ public abstract class BaseImportPreviewResourceTestCase {
 		_importPreviewResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-164208994
+// LIFERAY-REST-BUILDER-HASH:1602532009

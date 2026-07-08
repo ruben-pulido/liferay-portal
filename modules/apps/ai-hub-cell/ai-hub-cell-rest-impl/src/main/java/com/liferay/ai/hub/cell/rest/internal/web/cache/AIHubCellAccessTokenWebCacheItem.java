@@ -14,27 +14,32 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.Time;
-import com.liferay.portal.kernel.webcache.WebCacheItem;
 import com.liferay.portal.kernel.webcache.WebCachePoolUtil;
-
-import java.net.HttpURLConnection;
 
 /**
  * @author Manuele Castro
  */
-public class AIHubCellAccessTokenWebCacheItem implements WebCacheItem {
+public class AIHubCellAccessTokenWebCacheItem extends BaseWebCacheItem {
 
 	public static JSONObject get(
 		AIHubCellConfiguration aiHubCellConfiguration, long companyId) {
 
+		String key = StringBundler.concat(
+			AIHubCellAccessTokenWebCacheItem.class.getName(), StringPool.POUND,
+			companyId, StringPool.POUND, aiHubCellConfiguration.clientId(),
+			StringPool.POUND, aiHubCellConfiguration.serviceURL());
+
+		JSONObject jsonObject = (JSONObject)WebCachePoolUtil.get(
+			key, new AIHubCellAccessTokenWebCacheItem(aiHubCellConfiguration));
+
+		if (!isExpired(jsonObject.getString("access_token"))) {
+			return jsonObject;
+		}
+
+		WebCachePoolUtil.remove(key);
+
 		return (JSONObject)WebCachePoolUtil.get(
-			StringBundler.concat(
-				AIHubCellAccessTokenWebCacheItem.class.getName(),
-				StringPool.POUND, companyId, StringPool.POUND,
-				aiHubCellConfiguration.clientId(), StringPool.POUND,
-				aiHubCellConfiguration.serviceURL()),
-			new AIHubCellAccessTokenWebCacheItem(aiHubCellConfiguration));
+			key, new AIHubCellAccessTokenWebCacheItem(aiHubCellConfiguration));
 	}
 
 	public AIHubCellAccessTokenWebCacheItem(
@@ -56,33 +61,19 @@ public class AIHubCellAccessTokenWebCacheItem implements WebCacheItem {
 				_aiHubCellConfiguration.serviceURL() + "/o/oauth2/token");
 			options.setPost(true);
 
-			String responseJSON = HttpUtil.URLtoString(options);
-
-			Http.Response response = options.getResponse();
-
-			if (response.getResponseCode() != HttpURLConnection.HTTP_OK) {
-				if (_log.isDebugEnabled()) {
-					_log.debug(
-						StringBundler.concat(
-							"Response code ", response.getResponseCode(), ": ",
-							responseJSON));
-				}
-
-				return null;
-			}
-
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-				responseJSON);
+				HttpUtil.URLtoString(options));
+
+			long expirationTime = getExpirationTime(
+				jsonObject.getString("access_token"));
 
 			_refreshTime =
-				(long)(jsonObject.getLong("expires_in") * 0.8 * Time.SECOND);
+				(long)((expirationTime - System.currentTimeMillis()) * 0.8);
 
 			return jsonObject;
 		}
 		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception);
-			}
+			_log.error(exception);
 
 			return null;
 		}

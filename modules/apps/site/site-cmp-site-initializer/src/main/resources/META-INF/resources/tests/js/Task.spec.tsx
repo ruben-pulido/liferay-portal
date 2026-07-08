@@ -109,6 +109,7 @@ describe('Kanban Task', () => {
 					itemsActions,
 					loadData: mockLoadData,
 					projectId,
+					projectObjectDefinitionId: 123,
 				}}
 			>
 				<Task {...task} />
@@ -166,12 +167,13 @@ describe('Kanban Task', () => {
 
 	it('navigates when edit and view actions are clicked', async () => {
 		const itemsActions = [
-			{items: []},
+			{items: [], type: 'group'},
 			{
 				items: [
 					{data: {id: 'edit'}, href: '/edit/{embedded.id}'},
 					{data: {id: 'actionLink'}, href: '/view/{embedded.id}'},
 				],
+				type: 'group',
 			},
 		];
 
@@ -217,6 +219,7 @@ describe('Kanban Task', () => {
 					itemsActions: [],
 					loadData: mockLoadData,
 					projectId: '123',
+					projectObjectDefinitionId: 123,
 				}}
 			>
 				<Task {...taskWithDueDate} />
@@ -285,6 +288,7 @@ describe('Kanban Task', () => {
 						itemsActions: [],
 						loadData: mockLoadData,
 						projectId: '',
+						projectObjectDefinitionId: 123,
 					}}
 				>
 					<Task {...taskWithSubscription} />
@@ -318,6 +322,7 @@ describe('Kanban Task', () => {
 						itemsActions: [],
 						loadData: mockLoadData,
 						projectId: '',
+						projectObjectDefinitionId: 123,
 					}}
 				>
 					<Task {...taskWithSubscription} />

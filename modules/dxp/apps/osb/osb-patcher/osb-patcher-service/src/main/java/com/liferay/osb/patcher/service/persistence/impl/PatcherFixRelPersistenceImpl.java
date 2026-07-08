@@ -69,8 +69,9 @@ public class PatcherFixRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<PatcherFixRel>
-		_collectionPersistenceFinderByChildPatcherFixId;
+	private CollectionPersistenceFinder
+		<PatcherFixRel, NoSuchPatcherFixRelException>
+			_collectionPersistenceFinderByChildPatcherFixId;
 
 	/**
 	 * Returns an ordered range of all the patcher fix rels where childPatcherFixId = &#63;.
@@ -111,18 +112,8 @@ public class PatcherFixRelPersistenceImpl
 			OrderByComparator<PatcherFixRel> orderByComparator)
 		throws NoSuchPatcherFixRelException {
 
-		PatcherFixRel patcherFixRel = fetchByChildPatcherFixId_First(
-			childPatcherFixId, orderByComparator);
-
-		if (patcherFixRel != null) {
-			return patcherFixRel;
-		}
-
-		throw new NoSuchPatcherFixRelException(
-			_collectionPersistenceFinderByChildPatcherFixId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {childPatcherFixId}));
+		return _collectionPersistenceFinderByChildPatcherFixId.findFirst(
+			finderCache, new Object[] {childPatcherFixId}, orderByComparator);
 	}
 
 	/**
@@ -164,8 +155,9 @@ public class PatcherFixRelPersistenceImpl
 			finderCache, new Object[] {childPatcherFixId});
 	}
 
-	private CollectionPersistenceFinder<PatcherFixRel>
-		_collectionPersistenceFinderByParentPatcherFixId;
+	private CollectionPersistenceFinder
+		<PatcherFixRel, NoSuchPatcherFixRelException>
+			_collectionPersistenceFinderByParentPatcherFixId;
 
 	/**
 	 * Returns an ordered range of all the patcher fix rels where parentPatcherFixId = &#63;.
@@ -206,18 +198,8 @@ public class PatcherFixRelPersistenceImpl
 			OrderByComparator<PatcherFixRel> orderByComparator)
 		throws NoSuchPatcherFixRelException {
 
-		PatcherFixRel patcherFixRel = fetchByParentPatcherFixId_First(
-			parentPatcherFixId, orderByComparator);
-
-		if (patcherFixRel != null) {
-			return patcherFixRel;
-		}
-
-		throw new NoSuchPatcherFixRelException(
-			_collectionPersistenceFinderByParentPatcherFixId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {parentPatcherFixId}));
+		return _collectionPersistenceFinderByParentPatcherFixId.findFirst(
+			finderCache, new Object[] {parentPatcherFixId}, orderByComparator);
 	}
 
 	/**
@@ -458,6 +440,7 @@ public class PatcherFixRelPersistenceImpl
 					new String[] {"childPatcherFixId"}, false),
 				_SQL_SELECT_PATCHERFIXREL_WHERE, _SQL_COUNT_PATCHERFIXREL_WHERE,
 				PatcherFixRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"patcherFixRel.", "childPatcherFixId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -487,6 +470,7 @@ public class PatcherFixRelPersistenceImpl
 					new String[] {"parentPatcherFixId"}, false),
 				_SQL_SELECT_PATCHERFIXREL_WHERE, _SQL_COUNT_PATCHERFIXREL_WHERE,
 				PatcherFixRelModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"patcherFixRel.", "parentPatcherFixId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -546,13 +530,10 @@ public class PatcherFixRelPersistenceImpl
 	private static final String _SQL_COUNT_PATCHERFIXREL_WHERE =
 		"SELECT COUNT(patcherFixRel) FROM PatcherFixRel patcherFixRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No PatcherFixRel exists with the key {";
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1771446871
+// LIFERAY-SERVICE-BUILDER-HASH:-1976556813

@@ -4,13 +4,24 @@
  */
 
 import {IInternalRenderer, IItemsActions} from '@liferay/frontend-data-set-web';
-import {openModal} from 'frontend-js-components-web';
+import {openModal, openToast} from 'frontend-js-components-web';
+import {sessionStorage, sub} from 'frontend-js-web';
 
+import RoomService from '../../common/services/RoomService';
 import {openFDSDeleteConfirmationModal} from '../../common/utils/openModalUtil';
-import {IRoom} from '../../common/utils/types';
+import {ROOM_STATUS} from '../../common/utils/roomStatus';
+import {
+	displayErrorToast,
+	displaySuccessToast,
+} from '../../common/utils/toastUtil';
+import {IRoomObjectEntry} from '../../common/utils/types';
+import DuplicateRoom from '../DuplicateRoom';
 import RoomInitializer from '../RoomInitializer';
 import RoomShare from '../RoomShare';
 import RoomNameRenderer from './cell_renderers/RoomNameRenderer';
+import RoomStatusFieldRenderer from './cell_renderers/RoomStatusFieldRenderer';
+import RoomStatusRenderer from './cell_renderers/RoomStatusRenderer';
+import RoomTrendRenderer from './cell_renderers/RoomTrendRenderer';
 
 export default function RoomsFDSPropsTransformer({
 	additionalProps,
@@ -23,6 +34,19 @@ export default function RoomsFDSPropsTransformer({
 	itemsActions: IItemsActions[];
 	otherProps: any;
 }) {
+	const successMessage = sessionStorage.getItem(
+		'com.liferay.site.dsr.site.initializer.roomSettingsSuccessMessage',
+		sessionStorage.TYPES.NECESSARY
+	);
+
+	if (successMessage) {
+		sessionStorage.removeItem(
+			'com.liferay.site.dsr.site.initializer.roomSettingsSuccessMessage'
+		);
+
+		openToast({message: successMessage, type: 'success'});
+	}
+
 	return {
 		...otherProps,
 		creationMenu: {
@@ -69,13 +93,82 @@ export default function RoomsFDSPropsTransformer({
 					name: 'roomNameTableCellRenderer',
 					type: 'internal',
 				} as IInternalRenderer,
+				{
+					component: RoomStatusRenderer,
+					name: 'roomStatusTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
+				{
+					component: RoomStatusFieldRenderer,
+					name: 'roomStatusFieldTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
+				{
+					component: RoomTrendRenderer,
+					name: 'roomTrendTableCellRenderer',
+					type: 'internal',
+				} as IInternalRenderer,
 			],
 		},
+		filters: [
+			{
+				entityFieldType: 'integer',
+				id: 'roomStatus',
+				items: [
+					{
+						label: Liferay.Language.get('active'),
+						value: ROOM_STATUS.ACTIVE,
+					},
+					{
+						label: Liferay.Language.get('archived'),
+						value: ROOM_STATUS.INACTIVE,
+					},
+				],
+				label: Liferay.Language.get('status'),
+				multiple: false,
+				preloadedData: {
+					exclude: false,
+					selectedItems: [
+						{
+							label: Liferay.Language.get('active'),
+							value: ROOM_STATUS.ACTIVE,
+						},
+					],
+				},
+				type: 'selection',
+			},
+		],
 		itemsActions: itemsActions.map((action) => {
-			if (action?.data?.id === 'delete') {
+			const id = action?.data?.id;
+
+			if (
+				id === 'archive' ||
+				id === 'duplicate' ||
+				id === 'edit' ||
+				id === 'settings' ||
+				id === 'share'
+			) {
+				return {
+					...action,
+					isVisible: (item: IRoomObjectEntry) =>
+						item?.roomStatus === ROOM_STATUS.ACTIVE,
+				};
+			}
+
+			if (id === 'delete') {
 				return {
 					...action,
 					className: 'text-danger',
+					isVisible: (item: IRoomObjectEntry) =>
+						item?.roomStatus === ROOM_STATUS.INACTIVE,
+				};
+			}
+
+			if (id === 'restore') {
+				return {
+					...action,
+					isVisible: (item: IRoomObjectEntry) =>
+						item?.roomStatus === ROOM_STATUS.INACTIVE,
 				};
 			}
 
@@ -89,23 +182,104 @@ export default function RoomsFDSPropsTransformer({
 		}: {
 			action: {data: {id: string}};
 			event: Event;
-			itemData: IRoom;
+			itemData: IRoomObjectEntry;
 			loadData: any;
 		}) {
-			if (action.data.id === 'delete') {
+			if (action.data.id === 'archive') {
+				event?.preventDefault();
+
+				openModal({
+					bodyHTML: Liferay.Language.get(
+						'archive-digital-sales-room-confirmation-body'
+					),
+					buttons: [
+						{
+							autoFocus: true,
+							displayType: 'secondary',
+							label: Liferay.Language.get('cancel'),
+							type: 'cancel',
+						},
+						{
+							displayType: 'primary',
+							label: Liferay.Language.get('archive'),
+							onClick: ({
+								processClose,
+							}: {
+								processClose: () => void;
+							}) => {
+								RoomService.archiveRoom(itemData.id)
+									.then(() => {
+										processClose();
+
+										displaySuccessToast();
+
+										loadData();
+									})
+									.catch(() => {
+										displayErrorToast();
+									});
+							},
+						},
+					],
+					containerProps: {
+						className: '',
+					},
+					status: 'warning',
+					title: sub(
+						Liferay.Language.get('archive-x'),
+						'"' + itemData.name + '"'
+					),
+				});
+			}
+			else if (action.data.id === 'delete') {
 				event?.preventDefault();
 
 				openFDSDeleteConfirmationModal({
 					bodyHTML: Liferay.Language.get(
 						'delete-digital-sales-room-confirmation-body'
 					),
-					itemName: itemData.embedded.name,
+					itemName: itemData.name,
 					loadData,
 					title: Liferay.Language.get(
 						'delete-digital-sales-room-confirmation-title'
 					),
 					url: itemData.actions?.delete?.href,
 				});
+			}
+			else if (action.data.id === 'duplicate') {
+				event?.preventDefault();
+
+				openModal({
+					containerProps: {
+						className: '',
+					},
+					contentComponent: ({
+						closeModal,
+					}: {
+						closeModal: () => void;
+					}) =>
+						DuplicateRoom({
+							closeModal,
+							loadData,
+							name: itemData.name,
+							roomId: itemData.id,
+							siteId: itemData.siteId,
+						}),
+					size: 'lg',
+				});
+			}
+			else if (action.data.id === 'restore') {
+				event?.preventDefault();
+
+				RoomService.restoreRoom(itemData.id)
+					.then(() => {
+						displaySuccessToast();
+
+						loadData();
+					})
+					.catch(() => {
+						displayErrorToast();
+					});
 			}
 			else if (action.data.id === 'share') {
 				event?.preventDefault();
@@ -121,7 +295,7 @@ export default function RoomsFDSPropsTransformer({
 					}) =>
 						RoomShare({
 							closeModal,
-							roomId: itemData.embedded.id,
+							roomId: itemData.id,
 						}),
 					size: 'lg',
 				});

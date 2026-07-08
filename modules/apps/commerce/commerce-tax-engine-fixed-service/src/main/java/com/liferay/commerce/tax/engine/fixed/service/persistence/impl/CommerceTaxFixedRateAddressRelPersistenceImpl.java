@@ -76,8 +76,9 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceTaxFixedRateAddressRel>
-		_collectionPersistenceFinderByCommerceTaxMethodId;
+	private CollectionPersistenceFinder
+		<CommerceTaxFixedRateAddressRel, NoSuchTaxFixedRateAddressRelException>
+			_collectionPersistenceFinderByCommerceTaxMethodId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax fixed rate address rels where commerceTaxMethodId = &#63;.
@@ -118,19 +119,8 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 			OrderByComparator<CommerceTaxFixedRateAddressRel> orderByComparator)
 		throws NoSuchTaxFixedRateAddressRelException {
 
-		CommerceTaxFixedRateAddressRel commerceTaxFixedRateAddressRel =
-			fetchByCommerceTaxMethodId_First(
-				commerceTaxMethodId, orderByComparator);
-
-		if (commerceTaxFixedRateAddressRel != null) {
-			return commerceTaxFixedRateAddressRel;
-		}
-
-		throw new NoSuchTaxFixedRateAddressRelException(
-			_collectionPersistenceFinderByCommerceTaxMethodId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceTaxMethodId}));
+		return _collectionPersistenceFinderByCommerceTaxMethodId.findFirst(
+			finderCache, new Object[] {commerceTaxMethodId}, orderByComparator);
 	}
 
 	/**
@@ -172,8 +162,9 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 			finderCache, new Object[] {commerceTaxMethodId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxFixedRateAddressRel>
-		_collectionPersistenceFinderByCPTaxCategoryId;
+	private CollectionPersistenceFinder
+		<CommerceTaxFixedRateAddressRel, NoSuchTaxFixedRateAddressRelException>
+			_collectionPersistenceFinderByCPTaxCategoryId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax fixed rate address rels where CPTaxCategoryId = &#63;.
@@ -214,16 +205,8 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 			OrderByComparator<CommerceTaxFixedRateAddressRel> orderByComparator)
 		throws NoSuchTaxFixedRateAddressRelException {
 
-		CommerceTaxFixedRateAddressRel commerceTaxFixedRateAddressRel =
-			fetchByCPTaxCategoryId_First(CPTaxCategoryId, orderByComparator);
-
-		if (commerceTaxFixedRateAddressRel != null) {
-			return commerceTaxFixedRateAddressRel;
-		}
-
-		throw new NoSuchTaxFixedRateAddressRelException(
-			_collectionPersistenceFinderByCPTaxCategoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPTaxCategoryId}));
+		return _collectionPersistenceFinderByCPTaxCategoryId.findFirst(
+			finderCache, new Object[] {CPTaxCategoryId}, orderByComparator);
 	}
 
 	/**
@@ -265,8 +248,9 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 			finderCache, new Object[] {CPTaxCategoryId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxFixedRateAddressRel>
-		_collectionPersistenceFinderByCountryId;
+	private CollectionPersistenceFinder
+		<CommerceTaxFixedRateAddressRel, NoSuchTaxFixedRateAddressRelException>
+			_collectionPersistenceFinderByCountryId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax fixed rate address rels where countryId = &#63;.
@@ -307,16 +291,8 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 			OrderByComparator<CommerceTaxFixedRateAddressRel> orderByComparator)
 		throws NoSuchTaxFixedRateAddressRelException {
 
-		CommerceTaxFixedRateAddressRel commerceTaxFixedRateAddressRel =
-			fetchByCountryId_First(countryId, orderByComparator);
-
-		if (commerceTaxFixedRateAddressRel != null) {
-			return commerceTaxFixedRateAddressRel;
-		}
-
-		throw new NoSuchTaxFixedRateAddressRelException(
-			_collectionPersistenceFinderByCountryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {countryId}));
+		return _collectionPersistenceFinderByCountryId.findFirst(
+			finderCache, new Object[] {countryId}, orderByComparator);
 	}
 
 	/**
@@ -580,6 +556,11 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceTaxFixedRateAddressRelId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCETAXFIXEDRATEADDRESSREL;
 	}
@@ -619,7 +600,7 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 				_SQL_SELECT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				_SQL_COUNT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				CommerceTaxFixedRateAddressRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxFixedRateAddressRel.", "commerceTaxMethodId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -650,7 +631,7 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 				_SQL_SELECT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				_SQL_COUNT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				CommerceTaxFixedRateAddressRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxFixedRateAddressRel.", "CPTaxCategoryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -678,7 +659,7 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 				_SQL_SELECT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				_SQL_COUNT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE,
 				CommerceTaxFixedRateAddressRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxFixedRateAddressRel.", "countryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -741,9 +722,6 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 		_SQL_COUNT_COMMERCETAXFIXEDRATEADDRESSREL_WHERE =
 			"SELECT COUNT(commerceTaxFixedRateAddressRel) FROM CommerceTaxFixedRateAddressRel commerceTaxFixedRateAddressRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceTaxFixedRateAddressRel exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"commerceTaxFixedRateAddressRelId"});
 
@@ -753,4 +731,4 @@ public class CommerceTaxFixedRateAddressRelPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2114951797
+// LIFERAY-SERVICE-BUILDER-HASH:-1090809685

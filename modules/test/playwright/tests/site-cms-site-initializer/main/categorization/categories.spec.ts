@@ -301,7 +301,7 @@ test.describe("Category tests that don't focus on creation", () => {
 
 			await checkAccessibility({
 				page: editCategoryPage.page,
-				selectors: ['.categorization-section'],
+				selectors: ['.cms-section'],
 				selectorsToExclude: ['.control-menu-container'],
 			});
 
@@ -428,7 +428,8 @@ test.describe("Category tests that don't focus on creation", () => {
 
 			await clickAndExpectToBeVisible({
 				target: page.getByText(
-					'Please enter a unique name. This one is already in use.'
+					'Please enter a unique name. This one is already in use.',
+					{exact: true}
 				),
 				trigger: editCategoryPage.saveButton,
 			});
@@ -478,7 +479,7 @@ test.describe('Move category tests', () => {
 
 			await checkAccessibility({
 				page,
-				selectors: ['.category-selector-modal'],
+				selectors: ['.modal-content'],
 			});
 
 			await page.getByRole('button', {name: 'move'}).click();

@@ -35,6 +35,7 @@ SetUtilMethodsCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds case
 StringCastCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds cases where a redundant `toString()` is called on variable type `String`. |
 [StringMethodsCheck](check/string_methods_check.md#stringmethodscheck) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks if performance can be improved by using different String operation methods. |
 SubstringCheck | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Finds cases like `s.substring(1, s.length())` (use `s.substring(1)` instead). |
+TestClassStaticVariableCheck | .java | Finds unnecessary static modifiers in test classes. |
 ThreadLocalUtilCheck | .java | Finds new instances of `java.lang.Thread` (use `ThreadLocalUtil.create` instead). |
 TryWithResourcesCheck | .java | Ensures using Try-With-Resources statement to properly close the resource. |
 [UnnecessaryAssignCheck](check/unnecessary_assign_check.md#unnecessaryassigncheck) | .java | Finds unnecessary assign statements (when it is either reassigned or returned right after). |
@@ -47,4 +48,4 @@ UnusedVariableCheck | .java | Finds variables that are declared, but not used. |
 [UpgradeProcessCheck](check/upgrade_process_check.md#upgradeprocesscheck) | .java | Performs several checks on `*UpgradeProcess` classes. |
 [ValidatorEqualsCheck](check/validator_equals_check.md#validatorequalscheck) | .java, .jsp, .jspf, .jspx, .tag, .tpl, or .vm | Checks that there are no calls to `Validator.equals(Object, Object)`. |
 VariableDeclarationAsUsedCheck | .java | Finds cases where a variable declaration can be inlined or moved closer to where it is used. |
-XMLSpringExtenderServiceCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xml, or .xsd | Finds cases where Spring extender service is used as a dependency injection. |
+XMLSpringExtenderServiceCheck | .action, .function, .jelly, .jrxml, .macro, .pom, .project, .properties, .qti, .svg, .testcase, .toggle, .tpl, .wsdl, .xlf, .xml, or .xsd | Finds cases where Spring extender service is used as a dependency injection. |

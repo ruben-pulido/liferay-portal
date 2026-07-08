@@ -12,6 +12,7 @@ import {
 import {Page} from '@playwright/test';
 
 import {liferayConfig} from '../liferay.config';
+import {AnalyticsSettingsRestApiHelper} from './AnalyticsSettingsRestApiHelper';
 import {ApiBuilderHelper} from './ApiBuilderHelper';
 import {CookiesApiHelper} from './CookiesApiHelper';
 import {DataEngineApiHelper} from './DataEngineApiHelper';
@@ -49,6 +50,7 @@ import {ObjectAdminApiHelper} from './ObjectAdminApiHelper';
 import {ObjectEntryApiHelper} from './ObjectEntryApiHelper';
 import {ObjectEntryFolderApiHelper} from './ObjectEntryFolderApiHelper';
 import {SCIMApiHelper} from './SCIMApiHelper';
+import {SEOStudioApiHelper} from './SEOStudioApiHelper';
 import {SearchExperiencesApiHelper} from './SearchExperiencesApiHelper';
 import {JSONWebServicesAnnouncementsEntryApiHelper} from './json-web-services/JSONWebServicesAnnouncementsEntryApiHelper';
 import {JSONWebServicesAssetDisplayPageEntryApiHelper} from './json-web-services/JSONWebServicesAssetDisplayPageEntryApiHelper';
@@ -69,11 +71,13 @@ import {JSONWebServicesJournalApiHelper} from './json-web-services/JSONWebServic
 import {JSONWebServicesLayoutApiHelper} from './json-web-services/JSONWebServicesLayoutApiHelper';
 import {JSONWebServicesLayoutPageTemplateCollectionApiHelper} from './json-web-services/JSONWebServicesLayoutPageTemplateCollection';
 import {JSONWebServicesLayoutPageTemplateEntryApiHelper} from './json-web-services/JSONWebServicesLayoutPageTemplateEntry';
+import {JSONWebServicesLayoutSetApiHelper} from './json-web-services/JSONWebServicesLayoutSetApiHelper';
 import {JSONWebServicesLayoutSetPrototypeApiHelper} from './json-web-services/JSONWebServicesLayoutSetPrototypeApiHelper';
 import {JSONWebServicesMBApiHelper} from './json-web-services/JSONWebServicesMBApiHelper';
 import {JSONWebServicesOSBAsahApiHelper} from './json-web-services/JSONWebServicesOSBAsahApiHelper';
 import {JSONWebServicesOSBFaroApiHelper} from './json-web-services/JSONWebServicesOSBFaroApiHelper';
 import {JSONWebServicesResourcePermissionApiHelper} from './json-web-services/JSONWebServicesResourcePermissionApiHelper';
+import {JSONWebServicesRoleApiHelper} from './json-web-services/JSONWebServicesRoleApiHelper';
 import {JSONWebServicesSegmentsEntryApiHelper} from './json-web-services/JSONWebServicesSegmentsEntryApiHelper';
 import {JSONWebServicesSiteNavigationMenuApiHelper} from './json-web-services/JSONWebServicesSiteNavigationMenuApiHelper';
 import {JSONWebServicesStagingApiHelper} from './json-web-services/JSONWebServicesStagingApiHelper';
@@ -118,6 +122,7 @@ export async function getHeader(
 }
 
 export class ApiHelpers {
+	readonly analyticsSettingsRest: AnalyticsSettingsRestApiHelper;
 	readonly apiBuilder: ApiBuilderHelper;
 	readonly baseUrl: string;
 	readonly cookies: CookiesApiHelper;
@@ -167,11 +172,13 @@ export class ApiHelpers {
 	readonly jsonWebServicesLayout: JSONWebServicesLayoutApiHelper;
 	readonly jsonWebServicesLayoutPageTemplateEntry: JSONWebServicesLayoutPageTemplateEntryApiHelper;
 	readonly jsonWebServicesLayoutPageTemplateCollection: JSONWebServicesLayoutPageTemplateCollectionApiHelper;
+	readonly jsonWebServicesLayoutSet: JSONWebServicesLayoutSetApiHelper;
 	readonly jsonWebServicesLayoutSetPrototype: JSONWebServicesLayoutSetPrototypeApiHelper;
 	readonly jsonWebServicesMBApiHelper: JSONWebServicesMBApiHelper;
 	readonly jsonWebServicesOSBAsah: JSONWebServicesOSBAsahApiHelper;
 	readonly jsonWebServicesOSBFaro: JSONWebServicesOSBFaroApiHelper;
 	readonly jsonWebServicesResourcePermissionApiHelper: JSONWebServicesResourcePermissionApiHelper;
+	readonly jsonWebServicesRole: JSONWebServicesRoleApiHelper;
 	readonly jsonWebServicesSegmentsEntry: JSONWebServicesSegmentsEntryApiHelper;
 	readonly jsonWebServicesSiteNavigationMenu: JSONWebServicesSiteNavigationMenuApiHelper;
 	readonly jsonWebServicesStaging: JSONWebServicesStagingApiHelper;
@@ -188,12 +195,14 @@ export class ApiHelpers {
 	readonly page: Page;
 	readonly scim: SCIMApiHelper;
 	readonly searchExperiences: SearchExperiencesApiHelper;
+	readonly seoStudio: SEOStudioApiHelper;
 
 	private static readonly _authorization = `Basic ${btoa(
 		`test@liferay.com:test`
 	)}`;
 
 	constructor(page: Page, baseUrl?: string) {
+		this.analyticsSettingsRest = new AnalyticsSettingsRestApiHelper(this);
 		this.apiBuilder = new ApiBuilderHelper(this);
 		this.baseUrl = baseUrl
 			? baseUrl + '/o/'
@@ -273,6 +282,9 @@ export class ApiHelpers {
 			new JSONWebServicesLayoutPageTemplateEntryApiHelper(this);
 		this.jsonWebServicesLayoutPageTemplateCollection =
 			new JSONWebServicesLayoutPageTemplateCollectionApiHelper(this);
+		this.jsonWebServicesLayoutSet = new JSONWebServicesLayoutSetApiHelper(
+			this
+		);
 		this.jsonWebServicesLayoutSetPrototype =
 			new JSONWebServicesLayoutSetPrototypeApiHelper(this);
 		this.jsonWebServicesMBApiHelper = new JSONWebServicesMBApiHelper(this);
@@ -280,6 +292,7 @@ export class ApiHelpers {
 		this.jsonWebServicesOSBAsah = new JSONWebServicesOSBAsahApiHelper(this);
 		this.jsonWebServicesResourcePermissionApiHelper =
 			new JSONWebServicesResourcePermissionApiHelper(this);
+		this.jsonWebServicesRole = new JSONWebServicesRoleApiHelper(this);
 		this.jsonWebServicesSegmentsEntry =
 			new JSONWebServicesSegmentsEntryApiHelper(this);
 		this.jsonWebServicesSiteNavigationMenu =
@@ -300,6 +313,7 @@ export class ApiHelpers {
 		this.page = page;
 		this.scim = new SCIMApiHelper(this);
 		this.searchExperiences = new SearchExperiencesApiHelper(this);
+		this.seoStudio = new SEOStudioApiHelper(this);
 	}
 
 	async buildRestClient<

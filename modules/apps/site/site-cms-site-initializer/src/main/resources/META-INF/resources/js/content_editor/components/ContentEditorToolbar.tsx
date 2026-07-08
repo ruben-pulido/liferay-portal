@@ -23,8 +23,10 @@ import {toMomentDate} from './ScheduleField';
 import SchedulePublicationModal from './SchedulePublicationModal';
 import PreviewModal from './preview/PreviewModal';
 import {
+	PREVIEW_CACHED_EXTERNAL_URL_SESSION_KEY,
 	PREVIEW_CHANNEL_SESSION_KEY,
 	PREVIEW_DISPLAY_PAGE_SESSION_KEY,
+	PREVIEW_EXTERNAL_URL_SESSION_KEY,
 	PREVIEW_VISIBLE_SESSION_KEY,
 	PREVIEW_WIDTH_SESSION_KEY,
 } from './preview/sessionKeys';
@@ -48,6 +50,7 @@ export default function ContentEditorToolbar({
 	getPreviewDataURL,
 	hasWorkflow,
 	headerTitle,
+	isNew,
 	title,
 	type,
 }: {
@@ -57,6 +60,7 @@ export default function ContentEditorToolbar({
 	getPreviewDataURL: string;
 	hasWorkflow: boolean;
 	headerTitle: string;
+	isNew: boolean;
 	title: string;
 	type: string;
 }) {
@@ -139,9 +143,11 @@ export default function ContentEditorToolbar({
 		setSuccessMessage(
 			hasWorkflow
 				? Liferay.Language.get('x-was-submitted-for-workflow')
-				: Liferay.Language.get('x-was-published-successfully')
+				: isNew
+					? Liferay.Language.get('x-was-created-successfully')
+					: Liferay.Language.get('x-was-updated-successfully')
 		);
-	}, [backURL, hasWorkflow, setSuccessMessage]);
+	}, [backURL, hasWorkflow, isNew, setSuccessMessage]);
 
 	useEffect(() => {
 		const form = getForm();
@@ -186,12 +192,18 @@ export default function ContentEditorToolbar({
 			sessionStorage.TYPES.NECESSARY
 		);
 
-		if (message) {
-			openToast({message, type: 'success'});
-
-			sessionStorage.removeItem(SUCCESS_MESSAGE_SESSION_KEY);
+		if (!message) {
+			return;
 		}
-	}, []);
+
+		sessionStorage.removeItem(SUCCESS_MESSAGE_SESSION_KEY);
+
+		if (getForm()?.querySelector('.form-group.has-error')) {
+			return;
+		}
+
+		openToast({message, type: 'success'});
+	}, [getForm]);
 
 	return (
 		<Toolbar
@@ -221,52 +233,50 @@ export default function ContentEditorToolbar({
 				</>
 			)}
 
-			{Liferay.FeatureFlags['LPD-44507'] ? (
-				<Toolbar.Item className="nav-divider-end">
-					<ClayButton
-						aria-label={
-							showPreview
-								? Liferay.Language.get('close-preview')
-								: Liferay.Language.get('open-preview')
-						}
-						aria-pressed={showPreview}
-						borderless
-						className={classNames('d-lg-block d-none', {
-							active: showPreview,
-						})}
-						displayType="secondary"
-						onClick={() => {
-							const nextShowPreview = !showPreview;
+			<Toolbar.Item className="nav-divider-end">
+				<ClayButton
+					aria-label={
+						showPreview
+							? Liferay.Language.get('close-preview')
+							: Liferay.Language.get('open-preview')
+					}
+					aria-pressed={showPreview}
+					borderless
+					className={classNames('d-lg-block d-none', {
+						active: showPreview,
+					})}
+					displayType="secondary"
+					onClick={() => {
+						const nextShowPreview = !showPreview;
 
-							setShowPreview(nextShowPreview);
+						setShowPreview(nextShowPreview);
 
-							Liferay.fire(EVENT_HANDLE_PREVIEW, {
-								showPreview: nextShowPreview,
-							});
-						}}
-						ref={previewButtonRef}
-						size="sm"
-					>
-						<ClayIcon
-							className="inline-item inline-item-before"
-							symbol="view"
-						/>
-
-						{Liferay.Language.get('preview')}
-					</ClayButton>
-
-					<ClayButtonWithIcon
-						aria-label={Liferay.Language.get('preview')}
-						borderless
-						className="c-mr-1 d-lg-none"
-						displayType="secondary"
-						onClick={() => setShowPreviewModal(true)}
-						size="sm"
+						Liferay.fire(EVENT_HANDLE_PREVIEW, {
+							showPreview: nextShowPreview,
+						});
+					}}
+					ref={previewButtonRef}
+					size="sm"
+				>
+					<ClayIcon
+						className="inline-item inline-item-before"
 						symbol="view"
-						title={Liferay.Language.get('preview')}
 					/>
-				</Toolbar.Item>
-			) : null}
+
+					{Liferay.Language.get('preview')}
+				</ClayButton>
+
+				<ClayButtonWithIcon
+					aria-label={Liferay.Language.get('preview')}
+					borderless
+					className="c-mr-1 d-lg-none"
+					displayType="secondary"
+					onClick={() => setShowPreviewModal(true)}
+					size="sm"
+					symbol="view"
+					title={Liferay.Language.get('preview')}
+				/>
+			</Toolbar.Item>
 
 			<Toolbar.Item className="c-pl-0">
 				<ClayLink
@@ -425,6 +435,8 @@ function clearSessionStates() {
 		PREVIEW_VISIBLE_SESSION_KEY,
 		PREVIEW_CHANNEL_SESSION_KEY,
 		PREVIEW_DISPLAY_PAGE_SESSION_KEY,
+		PREVIEW_EXTERNAL_URL_SESSION_KEY,
+		PREVIEW_CACHED_EXTERNAL_URL_SESSION_KEY,
 		PREVIEW_WIDTH_SESSION_KEY,
 	].forEach((key) => sessionStorage.removeItem(key));
 }

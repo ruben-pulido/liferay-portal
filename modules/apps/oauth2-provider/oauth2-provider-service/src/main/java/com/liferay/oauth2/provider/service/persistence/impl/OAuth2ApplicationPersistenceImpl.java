@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class OAuth2ApplicationPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<OAuth2Application>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the o auth2 applications where uuid = &#63;.
@@ -131,16 +130,8 @@ public class OAuth2ApplicationPersistenceImpl
 			String uuid, OrderByComparator<OAuth2Application> orderByComparator)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (oAuth2Application != null) {
-			return oAuth2Application;
-		}
-
-		throw new NoSuchOAuth2ApplicationException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -215,8 +206,9 @@ public class OAuth2ApplicationPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<OAuth2Application>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the o auth2 applications where uuid = &#63; and companyId = &#63;.
@@ -259,16 +251,8 @@ public class OAuth2ApplicationPersistenceImpl
 			OrderByComparator<OAuth2Application> orderByComparator)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (oAuth2Application != null) {
-			return oAuth2Application;
-		}
-
-		throw new NoSuchOAuth2ApplicationException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -350,8 +334,9 @@ public class OAuth2ApplicationPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<OAuth2Application>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the o auth2 applications where companyId = &#63;.
@@ -392,16 +377,8 @@ public class OAuth2ApplicationPersistenceImpl
 			OrderByComparator<OAuth2Application> orderByComparator)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (oAuth2Application != null) {
-			return oAuth2Application;
-		}
-
-		throw new NoSuchOAuth2ApplicationException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -478,8 +455,9 @@ public class OAuth2ApplicationPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<OAuth2Application>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the o auth2 application where companyId = &#63; and clientId = &#63; or throws a <code>NoSuchOAuth2ApplicationException</code> if it could not be found.
@@ -493,22 +471,8 @@ public class OAuth2ApplicationPersistenceImpl
 	public OAuth2Application findByC_C(long companyId, String clientId)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByC_C(companyId, clientId);
-
-		if (oAuth2Application == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, clientId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOAuth2ApplicationException(message);
-		}
-
-		return oAuth2Application;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {companyId, clientId});
 	}
 
 	/**
@@ -556,8 +520,9 @@ public class OAuth2ApplicationPersistenceImpl
 			finderCache, new Object[] {companyId, clientId});
 	}
 
-	private FilterCollectionPersistenceFinder<OAuth2Application>
-		_collectionPersistenceFinderByC_CP;
+	private FilterCollectionPersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_collectionPersistenceFinderByC_CP;
 
 	/**
 	 * Returns an ordered range of all the o auth2 applications where companyId = &#63; and clientProfile = &#63;.
@@ -600,17 +565,9 @@ public class OAuth2ApplicationPersistenceImpl
 			OrderByComparator<OAuth2Application> orderByComparator)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByC_CP_First(
-			companyId, clientProfile, orderByComparator);
-
-		if (oAuth2Application != null) {
-			return oAuth2Application;
-		}
-
-		throw new NoSuchOAuth2ApplicationException(
-			_collectionPersistenceFinderByC_CP.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, clientProfile}));
+		return _collectionPersistenceFinderByC_CP.findFirst(
+			finderCache, new Object[] {companyId, clientProfile},
+			orderByComparator);
 	}
 
 	/**
@@ -693,8 +650,9 @@ public class OAuth2ApplicationPersistenceImpl
 			finderCache, new Object[] {companyId, clientProfile}, companyId, 0);
 	}
 
-	private UniquePersistenceFinder<OAuth2Application>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<OAuth2Application, NoSuchOAuth2ApplicationException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the o auth2 application where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchOAuth2ApplicationException</code> if it could not be found.
@@ -709,23 +667,8 @@ public class OAuth2ApplicationPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchOAuth2ApplicationException {
 
-		OAuth2Application oAuth2Application = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (oAuth2Application == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchOAuth2ApplicationException(message);
-		}
-
-		return oAuth2Application;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1091,20 +1034,11 @@ public class OAuth2ApplicationPersistenceImpl
 				_SQL_SELECT_OAUTH2APPLICATION_WHERE,
 				_SQL_COUNT_OAUTH2APPLICATION_WHERE,
 				OAuth2ApplicationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OAuth2ApplicationImpl.class, OAuth2Application.class,
-					"oAuth2Application", "OAuth2Application",
-					"oAuth2Application.oAuth2ApplicationId",
-					"SELECT DISTINCT {oAuth2Application.*} FROM OAuth2Application oAuth2Application WHERE ",
-					"SELECT {OAuth2Application.*} FROM (SELECT DISTINCT oAuth2Application.oAuth2ApplicationId FROM OAuth2Application oAuth2Application WHERE ",
-					") TEMP_TABLE INNER JOIN OAuth2Application ON TEMP_TABLE.oAuth2ApplicationId = OAuth2Application.oAuth2ApplicationId",
-					"SELECT COUNT(DISTINCT oAuth2Application.oAuth2ApplicationId) AS COUNT_VALUE FROM OAuth2Application oAuth2Application WHERE ",
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL,
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"oAuth2Application.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, OAuth2Application::getUuid));
+					"oAuth2Application.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					OAuth2Application::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1128,20 +1062,11 @@ public class OAuth2ApplicationPersistenceImpl
 				_SQL_SELECT_OAUTH2APPLICATION_WHERE,
 				_SQL_COUNT_OAUTH2APPLICATION_WHERE,
 				OAuth2ApplicationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OAuth2ApplicationImpl.class, OAuth2Application.class,
-					"oAuth2Application", "OAuth2Application",
-					"oAuth2Application.oAuth2ApplicationId",
-					"SELECT DISTINCT {oAuth2Application.*} FROM OAuth2Application oAuth2Application WHERE ",
-					"SELECT {OAuth2Application.*} FROM (SELECT DISTINCT oAuth2Application.oAuth2ApplicationId FROM OAuth2Application oAuth2Application WHERE ",
-					") TEMP_TABLE INNER JOIN OAuth2Application ON TEMP_TABLE.oAuth2ApplicationId = OAuth2Application.oAuth2ApplicationId",
-					"SELECT COUNT(DISTINCT oAuth2Application.oAuth2ApplicationId) AS COUNT_VALUE FROM OAuth2Application oAuth2Application WHERE ",
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL,
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
-					"oAuth2Application.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, OAuth2Application::getUuid),
+					"oAuth2Application.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					OAuth2Application::getUuid),
 				new FinderColumn<>(
 					"oAuth2Application.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, OAuth2Application::getCompanyId));
@@ -1168,17 +1093,7 @@ public class OAuth2ApplicationPersistenceImpl
 				_SQL_SELECT_OAUTH2APPLICATION_WHERE,
 				_SQL_COUNT_OAUTH2APPLICATION_WHERE,
 				OAuth2ApplicationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OAuth2ApplicationImpl.class, OAuth2Application.class,
-					"oAuth2Application", "OAuth2Application",
-					"oAuth2Application.oAuth2ApplicationId",
-					"SELECT DISTINCT {oAuth2Application.*} FROM OAuth2Application oAuth2Application WHERE ",
-					"SELECT {OAuth2Application.*} FROM (SELECT DISTINCT oAuth2Application.oAuth2ApplicationId FROM OAuth2Application oAuth2Application WHERE ",
-					") TEMP_TABLE INNER JOIN OAuth2Application ON TEMP_TABLE.oAuth2ApplicationId = OAuth2Application.oAuth2ApplicationId",
-					"SELECT COUNT(DISTINCT oAuth2Application.oAuth2ApplicationId) AS COUNT_VALUE FROM OAuth2Application oAuth2Application WHERE ",
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL,
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"oAuth2Application.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, OAuth2Application::getCompanyId));
@@ -1225,17 +1140,7 @@ public class OAuth2ApplicationPersistenceImpl
 				_SQL_SELECT_OAUTH2APPLICATION_WHERE,
 				_SQL_COUNT_OAUTH2APPLICATION_WHERE,
 				OAuth2ApplicationModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					OAuth2ApplicationImpl.class, OAuth2Application.class,
-					"oAuth2Application", "OAuth2Application",
-					"oAuth2Application.oAuth2ApplicationId",
-					"SELECT DISTINCT {oAuth2Application.*} FROM OAuth2Application oAuth2Application WHERE ",
-					"SELECT {OAuth2Application.*} FROM (SELECT DISTINCT oAuth2Application.oAuth2ApplicationId FROM OAuth2Application oAuth2Application WHERE ",
-					") TEMP_TABLE INNER JOIN OAuth2Application ON TEMP_TABLE.oAuth2ApplicationId = OAuth2Application.oAuth2ApplicationId",
-					"SELECT COUNT(DISTINCT oAuth2Application.oAuth2ApplicationId) AS COUNT_VALUE FROM OAuth2Application oAuth2Application WHERE ",
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL,
-					OAuth2ApplicationModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", "", null,
 				new FinderColumn<>(
 					"oAuth2Application.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, OAuth2Application::getCompanyId),
@@ -1317,12 +1222,6 @@ public class OAuth2ApplicationPersistenceImpl
 	private static final String _SQL_COUNT_OAUTH2APPLICATION_WHERE =
 		"SELECT COUNT(oAuth2Application) FROM OAuth2Application oAuth2Application WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No OAuth2Application exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		OAuth2ApplicationPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "oAuth2ApplicationScopeAliasesId"});
 
@@ -1332,4 +1231,4 @@ public class OAuth2ApplicationPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1008968131
+// LIFERAY-SERVICE-BUILDER-HASH:-1686398833

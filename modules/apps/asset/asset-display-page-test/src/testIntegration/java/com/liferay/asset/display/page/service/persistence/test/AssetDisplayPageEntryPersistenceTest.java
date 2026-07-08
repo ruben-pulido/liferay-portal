@@ -115,12 +115,8 @@ public class AssetDisplayPageEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		AssetDisplayPageEntry newAssetDisplayPageEntry = _persistence.create(
-			pk);
-
-		newAssetDisplayPageEntry.setMvccVersion(RandomTestUtil.nextLong());
+		AssetDisplayPageEntry newAssetDisplayPageEntry =
+			addAssetDisplayPageEntry();
 
 		newAssetDisplayPageEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -149,8 +145,10 @@ public class AssetDisplayPageEntryPersistenceTest {
 
 		newAssetDisplayPageEntry.setPlid(RandomTestUtil.nextLong());
 
-		_assetDisplayPageEntries.add(
-			_persistence.update(newAssetDisplayPageEntry));
+		newAssetDisplayPageEntry = _persistence.update(
+			newAssetDisplayPageEntry);
+
+		_assetDisplayPageEntries.add(newAssetDisplayPageEntry);
 
 		AssetDisplayPageEntry existingAssetDisplayPageEntry =
 			_persistence.findByPrimaryKey(
@@ -628,8 +626,6 @@ public class AssetDisplayPageEntryPersistenceTest {
 
 		AssetDisplayPageEntry assetDisplayPageEntry = _persistence.create(pk);
 
-		assetDisplayPageEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		assetDisplayPageEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		assetDisplayPageEntry.setUuid(RandomTestUtil.randomString());
@@ -669,4 +665,4 @@ public class AssetDisplayPageEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-2106530656
+// LIFERAY-SERVICE-BUILDER-HASH:1934513584

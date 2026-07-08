@@ -5,7 +5,6 @@
 
 package com.liferay.portal.service.persistence.impl;
 
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.bean.BeanReference;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -18,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.DuplicateRoleExternalReferenceCodeException;
 import com.liferay.portal.kernel.exception.NoSuchRoleException;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleTable;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
@@ -97,7 +94,7 @@ public class RolePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -137,15 +134,9 @@ public class RolePersistenceImpl
 			String uuid, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByUuid_First(uuid, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid},
+			orderByComparator);
 	}
 
 	/**
@@ -222,7 +213,7 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -265,15 +256,9 @@ public class RolePersistenceImpl
 			OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {uuid, companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -357,7 +342,7 @@ public class RolePersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -397,15 +382,9 @@ public class RolePersistenceImpl
 			long companyId, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId},
+			orderByComparator);
 	}
 
 	/**
@@ -483,7 +462,7 @@ public class RolePersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByName;
 
 	/**
@@ -523,15 +502,9 @@ public class RolePersistenceImpl
 			String name, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByName_First(name, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByName.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {name}));
+		return _collectionPersistenceFinderByName.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {name},
+			orderByComparator);
 	}
 
 	/**
@@ -608,7 +581,7 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {name});
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByType;
 
 	/**
@@ -648,15 +621,9 @@ public class RolePersistenceImpl
 			int type, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByType_First(type, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByType.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type}));
+		return _collectionPersistenceFinderByType.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {type},
+			orderByComparator);
 	}
 
 	/**
@@ -733,7 +700,7 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {type});
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderBySubtype;
 
 	/**
@@ -773,15 +740,9 @@ public class RolePersistenceImpl
 			String subtype, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchBySubtype_First(subtype, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderBySubtype.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {subtype}));
+		return _collectionPersistenceFinderBySubtype.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {subtype},
+			orderByComparator);
 	}
 
 	/**
@@ -858,7 +819,8 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {subtype});
 	}
 
-	private UniquePersistenceFinder<Role> _uniquePersistenceFinderByC_N;
+	private UniquePersistenceFinder<Role, NoSuchRoleException>
+		_uniquePersistenceFinderByC_N;
 
 	/**
 	 * Returns the role where companyId = &#63; and name = &#63; or throws a <code>NoSuchRoleException</code> if it could not be found.
@@ -872,21 +834,8 @@ public class RolePersistenceImpl
 	public Role findByC_N(long companyId, String name)
 		throws NoSuchRoleException {
 
-		Role role = fetchByC_N(companyId, name);
-
-		if (role == null) {
-			String message =
-				_uniquePersistenceFinderByC_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRoleException(message);
-		}
-
-		return role;
+		return _uniquePersistenceFinderByC_N.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
 	/**
@@ -935,7 +884,7 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {companyId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByC_T;
 
 	/**
@@ -978,25 +927,9 @@ public class RolePersistenceImpl
 			long companyId, int type, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByC_T_First(companyId, type, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", type=");
-		sb.append(type);
-
-		sb.append("}");
-
-		throw new NoSuchRoleException(sb.toString());
+		return _collectionPersistenceFinderByC_T.findFirst(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, new int[] {type}}, orderByComparator);
 	}
 
 	/**
@@ -1162,7 +1095,7 @@ public class RolePersistenceImpl
 			0);
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByT_S;
 
 	/**
@@ -1204,15 +1137,9 @@ public class RolePersistenceImpl
 			int type, String subtype, OrderByComparator<Role> orderByComparator)
 		throws NoSuchRoleException {
 
-		Role role = fetchByT_S_First(type, subtype, orderByComparator);
-
-		if (role != null) {
-			return role;
-		}
-
-		throw new NoSuchRoleException(
-			_collectionPersistenceFinderByT_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {type, subtype}));
+		return _collectionPersistenceFinderByT_S.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {type, subtype},
+			orderByComparator);
 	}
 
 	/**
@@ -1294,9 +1221,10 @@ public class RolePersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {type, subtype});
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByC_C_C;
-	private UniquePersistenceFinder<Role> _uniquePersistenceFinderByC_C_C;
+	private UniquePersistenceFinder<Role, NoSuchRoleException>
+		_uniquePersistenceFinderByC_C_C;
 
 	/**
 	 * Returns an ordered range of all the roles where companyId = &#63; and classNameId = &#63; and classPK = &#63;, optionally using the finder cache.
@@ -1319,28 +1247,12 @@ public class RolePersistenceImpl
 		long companyId, long classNameId, long[] classPKs, int start, int end,
 		OrderByComparator<Role> orderByComparator, boolean useFinderCache) {
 
-		classPKs = ArrayUtil.sortedUnique(classPKs);
-
-		if (classPKs.length == 1) {
-			Role role = fetchByC_C_C(
-				companyId, classNameId, classPKs[0], useFinderCache);
-
-			if (role == null) {
-				return Collections.emptyList();
-			}
-			else {
-				List<Role> list = new ArrayList<Role>(1);
-
-				list.add(role);
-
-				return list;
-			}
-		}
-
 		return _collectionPersistenceFinderByC_C_C.find(
 			FinderCacheUtil.getFinderCache(),
-			new Object[] {companyId, classNameId, classPKs}, start, end,
-			orderByComparator, useFinderCache);
+			new Object[] {
+				companyId, classNameId, ArrayUtil.sortedUnique(classPKs)
+			},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1356,22 +1268,9 @@ public class RolePersistenceImpl
 	public Role findByC_C_C(long companyId, long classNameId, long classPK)
 		throws NoSuchRoleException {
 
-		Role role = fetchByC_C_C(companyId, classNameId, classPK);
-
-		if (role == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, classNameId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRoleException(message);
-		}
-
-		return role;
+		return _uniquePersistenceFinderByC_C_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK});
 	}
 
 	/**
@@ -1480,9 +1379,10 @@ public class RolePersistenceImpl
 			companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<Role>
+	private FilterCollectionPersistenceFinder<Role, NoSuchRoleException>
 		_collectionPersistenceFinderByC_C_C_T;
-	private UniquePersistenceFinder<Role> _uniquePersistenceFinderByC_C_C_T;
+	private UniquePersistenceFinder<Role, NoSuchRoleException>
+		_uniquePersistenceFinderByC_C_C_T;
 
 	/**
 	 * Returns an ordered range of all the roles where companyId = &#63; and classNameId = &#63; and classPK = &#63; and type = &#63;, optionally using the finder cache.
@@ -1507,28 +1407,12 @@ public class RolePersistenceImpl
 		int end, OrderByComparator<Role> orderByComparator,
 		boolean useFinderCache) {
 
-		classPKs = ArrayUtil.sortedUnique(classPKs);
-
-		if (classPKs.length == 1) {
-			Role role = fetchByC_C_C_T(
-				companyId, classNameId, classPKs[0], type, useFinderCache);
-
-			if (role == null) {
-				return Collections.emptyList();
-			}
-			else {
-				List<Role> list = new ArrayList<Role>(1);
-
-				list.add(role);
-
-				return list;
-			}
-		}
-
 		return _collectionPersistenceFinderByC_C_C_T.find(
 			FinderCacheUtil.getFinderCache(),
-			new Object[] {companyId, classNameId, classPKs, type}, start, end,
-			orderByComparator, useFinderCache);
+			new Object[] {
+				companyId, classNameId, ArrayUtil.sortedUnique(classPKs), type
+			},
+			start, end, orderByComparator, useFinderCache);
 	}
 
 	/**
@@ -1546,22 +1430,9 @@ public class RolePersistenceImpl
 			long companyId, long classNameId, long classPK, int type)
 		throws NoSuchRoleException {
 
-		Role role = fetchByC_C_C_T(companyId, classNameId, classPK, type);
-
-		if (role == null) {
-			String message =
-				_uniquePersistenceFinderByC_C_C_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {companyId, classNameId, classPK, type});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRoleException(message);
-		}
-
-		return role;
+		return _uniquePersistenceFinderByC_C_C_T.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {companyId, classNameId, classPK, type});
 	}
 
 	/**
@@ -1682,7 +1553,8 @@ public class RolePersistenceImpl
 			companyId, 0);
 	}
 
-	private UniquePersistenceFinder<Role> _uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder<Role, NoSuchRoleException>
+		_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the role where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchRoleException</code> if it could not be found.
@@ -1696,22 +1568,9 @@ public class RolePersistenceImpl
 	public Role findByERC_C(String externalReferenceCode, long companyId)
 		throws NoSuchRoleException {
 
-		Role role = fetchByERC_C(externalReferenceCode, companyId);
-
-		if (role == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRoleException(message);
-		}
-
-		return role;
+		return _uniquePersistenceFinderByERC_C.find(
+			FinderCacheUtil.getFinderCache(),
+			new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -2800,19 +2659,10 @@ public class RolePersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"role_.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-					Role::getUuid));
+					"role_.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Role::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -2834,19 +2684,10 @@ public class RolePersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"role_.", "uuid", FinderColumn.Type.STRING, "=", true, true,
-					Role::getUuid),
+					"role_.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+					true, true, Role::getUuid),
 				new FinderColumn<>(
 					"role_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Role::getCompanyId));
@@ -2871,16 +2712,7 @@ public class RolePersistenceImpl
 					"countByCompanyId", new String[] {Long.class.getName()},
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"role_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Role::getCompanyId));
@@ -2905,16 +2737,7 @@ public class RolePersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"name"}, 0, 1, false, null),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"role_.", "name", FinderColumn.Type.STRING, "=", true, true,
 					Role::getName));
@@ -2939,19 +2762,10 @@ public class RolePersistenceImpl
 					new String[] {Integer.class.getName()},
 					new String[] {"type_"}, false),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"role_.", "type", FinderColumn.Type.INTEGER, "=", true,
-					true, Role::getType));
+					"role_.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+					true, true, Role::getType));
 
 		_collectionPersistenceFinderBySubtype =
 			new FilterCollectionPersistenceFinder<>(
@@ -2973,16 +2787,7 @@ public class RolePersistenceImpl
 					new String[] {String.class.getName()},
 					new String[] {"subtype"}, 0, 1, false, null),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"role_.", "subtype", FinderColumn.Type.STRING, "=", true,
 					true, Role::getSubtype));
@@ -3026,22 +2831,13 @@ public class RolePersistenceImpl
 					},
 					new String[] {"companyId", "type_"}, false),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"role_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Role::getCompanyId),
 				new ArrayableFinderColumn<>(
-					"role_.", "type", FinderColumn.Type.INTEGER, "=", false,
-					true, true, Role::getType));
+					"role_.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+					false, true, true, Role::getType));
 
 		_collectionPersistenceFinderByT_S =
 			new FilterCollectionPersistenceFinder<>(
@@ -3067,22 +2863,35 @@ public class RolePersistenceImpl
 					},
 					new String[] {"type_", "subtype"}, 0, 2, false, null),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"role_.", "type", FinderColumn.Type.INTEGER, "=", true,
-					true, Role::getType),
+					"role_.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+					true, true, Role::getType),
 				new FinderColumn<>(
 					"role_.", "subtype", FinderColumn.Type.STRING, "=", true,
 					true, Role::getSubtype));
+
+		_uniquePersistenceFinderByC_C_C = new UniquePersistenceFinder<>(
+			this,
+			createUniqueFinderPath(
+				FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C",
+				new String[] {
+					Long.class.getName(), Long.class.getName(),
+					Long.class.getName()
+				},
+				new String[] {"companyId", "classNameId", "classPK"}, 0, 0,
+				false, Role::getCompanyId, Role::getClassNameId,
+				Role::getClassPK),
+			_SQL_SELECT_ROLE__WHERE, "",
+			new FinderColumn<>(
+				"role_.", "companyId", FinderColumn.Type.LONG, "=", true, true,
+				Role::getCompanyId),
+			new FinderColumn<>(
+				"role_.", "classNameId", FinderColumn.Type.LONG, "=", true,
+				true, Role::getClassNameId),
+			new FinderColumn<>(
+				"role_.", "classPK", FinderColumn.Type.LONG, "=", true, true,
+				Role::getClassPK));
 
 		_collectionPersistenceFinderByC_C_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -3112,16 +2921,8 @@ public class RolePersistenceImpl
 					new String[] {"companyId", "classNameId", "classPK"},
 					false),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				_uniquePersistenceFinderByC_C_C,
 				new FinderColumn<>(
 					"role_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Role::getCompanyId),
@@ -3132,17 +2933,17 @@ public class RolePersistenceImpl
 					"role_.", "classPK", FinderColumn.Type.LONG, "=", false,
 					true, true, Role::getClassPK));
 
-		_uniquePersistenceFinderByC_C_C = new UniquePersistenceFinder<>(
+		_uniquePersistenceFinderByC_C_C_T = new UniquePersistenceFinder<>(
 			this,
 			createUniqueFinderPath(
-				FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C",
+				FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C_T",
 				new String[] {
 					Long.class.getName(), Long.class.getName(),
-					Long.class.getName()
+					Long.class.getName(), Integer.class.getName()
 				},
-				new String[] {"companyId", "classNameId", "classPK"}, 0, 0,
-				false, Role::getCompanyId, Role::getClassNameId,
-				Role::getClassPK),
+				new String[] {"companyId", "classNameId", "classPK", "type_"},
+				0, 0, false, Role::getCompanyId, Role::getClassNameId,
+				Role::getClassPK, Role::getType),
 			_SQL_SELECT_ROLE__WHERE, "",
 			new FinderColumn<>(
 				"role_.", "companyId", FinderColumn.Type.LONG, "=", true, true,
@@ -3152,7 +2953,10 @@ public class RolePersistenceImpl
 				true, Role::getClassNameId),
 			new FinderColumn<>(
 				"role_.", "classPK", FinderColumn.Type.LONG, "=", true, true,
-				Role::getClassPK));
+				Role::getClassPK),
+			new FinderColumn<>(
+				"role_.", "type", "type_", FinderColumn.Type.INTEGER, "=", true,
+				true, Role::getType));
 
 		_collectionPersistenceFinderByC_C_C_T =
 			new FilterCollectionPersistenceFinder<>(
@@ -3190,16 +2994,8 @@ public class RolePersistenceImpl
 					},
 					false),
 				_SQL_SELECT_ROLE__WHERE, _SQL_COUNT_ROLE__WHERE,
-				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					RoleImpl.class, Role.class, "role_", "Role_",
-					"role_.roleId",
-					"SELECT DISTINCT {role_.*} FROM Role_ role_ WHERE ",
-					"SELECT {Role_.*} FROM (SELECT DISTINCT role_.roleId FROM Role_ role_ WHERE ",
-					") TEMP_TABLE INNER JOIN Role_ ON TEMP_TABLE.roleId = Role_.roleId",
-					"SELECT COUNT(DISTINCT role_.roleId) AS COUNT_VALUE FROM Role_ role_ WHERE ",
-					RoleModelImpl.ORDER_BY_SQL,
-					RoleModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				RoleModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				_uniquePersistenceFinderByC_C_C_T,
 				new FinderColumn<>(
 					"role_.", "companyId", FinderColumn.Type.LONG, "=", true,
 					true, Role::getCompanyId),
@@ -3210,33 +3006,8 @@ public class RolePersistenceImpl
 					"role_.", "classPK", FinderColumn.Type.LONG, "=", false,
 					true, true, Role::getClassPK),
 				new FinderColumn<>(
-					"role_.", "type", FinderColumn.Type.INTEGER, "=", true,
-					true, Role::getType));
-
-		_uniquePersistenceFinderByC_C_C_T = new UniquePersistenceFinder<>(
-			this,
-			createUniqueFinderPath(
-				FINDER_CLASS_NAME_ENTITY, "fetchByC_C_C_T",
-				new String[] {
-					Long.class.getName(), Long.class.getName(),
-					Long.class.getName(), Integer.class.getName()
-				},
-				new String[] {"companyId", "classNameId", "classPK", "type_"},
-				0, 0, false, Role::getCompanyId, Role::getClassNameId,
-				Role::getClassPK, Role::getType),
-			_SQL_SELECT_ROLE__WHERE, "",
-			new FinderColumn<>(
-				"role_.", "companyId", FinderColumn.Type.LONG, "=", true, true,
-				Role::getCompanyId),
-			new FinderColumn<>(
-				"role_.", "classNameId", FinderColumn.Type.LONG, "=", true,
-				true, Role::getClassNameId),
-			new FinderColumn<>(
-				"role_.", "classPK", FinderColumn.Type.LONG, "=", true, true,
-				Role::getClassPK),
-			new FinderColumn<>(
-				"role_.", "type", FinderColumn.Type.INTEGER, "=", true, true,
-				Role::getType));
+					"role_.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+					true, true, Role::getType));
 
 		_uniquePersistenceFinderByERC_C = new UniquePersistenceFinder<>(
 			this,
@@ -3290,12 +3061,6 @@ public class RolePersistenceImpl
 	private static final String _SQL_COUNT_ROLE__WHERE =
 		"SELECT COUNT(role_) FROM Role role_ WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No Role exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		RolePersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "type", "groups"});
 
@@ -3305,4 +3070,4 @@ public class RolePersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:450760394
+// LIFERAY-SERVICE-BUILDER-HASH:1076464501

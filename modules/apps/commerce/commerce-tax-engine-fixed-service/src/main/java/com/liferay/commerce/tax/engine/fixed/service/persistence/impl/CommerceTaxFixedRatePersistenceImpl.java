@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,8 +74,9 @@ public class CommerceTaxFixedRatePersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceTaxFixedRate>
-		_collectionPersistenceFinderByCPTaxCategoryId;
+	private CollectionPersistenceFinder
+		<CommerceTaxFixedRate, NoSuchTaxFixedRateException>
+			_collectionPersistenceFinderByCPTaxCategoryId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax fixed rates where CPTaxCategoryId = &#63;.
@@ -118,16 +117,8 @@ public class CommerceTaxFixedRatePersistenceImpl
 			OrderByComparator<CommerceTaxFixedRate> orderByComparator)
 		throws NoSuchTaxFixedRateException {
 
-		CommerceTaxFixedRate commerceTaxFixedRate =
-			fetchByCPTaxCategoryId_First(CPTaxCategoryId, orderByComparator);
-
-		if (commerceTaxFixedRate != null) {
-			return commerceTaxFixedRate;
-		}
-
-		throw new NoSuchTaxFixedRateException(
-			_collectionPersistenceFinderByCPTaxCategoryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {CPTaxCategoryId}));
+		return _collectionPersistenceFinderByCPTaxCategoryId.findFirst(
+			finderCache, new Object[] {CPTaxCategoryId}, orderByComparator);
 	}
 
 	/**
@@ -169,8 +160,9 @@ public class CommerceTaxFixedRatePersistenceImpl
 			finderCache, new Object[] {CPTaxCategoryId});
 	}
 
-	private CollectionPersistenceFinder<CommerceTaxFixedRate>
-		_collectionPersistenceFinderByCommerceTaxMethodId;
+	private CollectionPersistenceFinder
+		<CommerceTaxFixedRate, NoSuchTaxFixedRateException>
+			_collectionPersistenceFinderByCommerceTaxMethodId;
 
 	/**
 	 * Returns an ordered range of all the commerce tax fixed rates where commerceTaxMethodId = &#63;.
@@ -211,19 +203,8 @@ public class CommerceTaxFixedRatePersistenceImpl
 			OrderByComparator<CommerceTaxFixedRate> orderByComparator)
 		throws NoSuchTaxFixedRateException {
 
-		CommerceTaxFixedRate commerceTaxFixedRate =
-			fetchByCommerceTaxMethodId_First(
-				commerceTaxMethodId, orderByComparator);
-
-		if (commerceTaxFixedRate != null) {
-			return commerceTaxFixedRate;
-		}
-
-		throw new NoSuchTaxFixedRateException(
-			_collectionPersistenceFinderByCommerceTaxMethodId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceTaxMethodId}));
+		return _collectionPersistenceFinderByCommerceTaxMethodId.findFirst(
+			finderCache, new Object[] {commerceTaxMethodId}, orderByComparator);
 	}
 
 	/**
@@ -265,8 +246,9 @@ public class CommerceTaxFixedRatePersistenceImpl
 			finderCache, new Object[] {commerceTaxMethodId});
 	}
 
-	private UniquePersistenceFinder<CommerceTaxFixedRate>
-		_uniquePersistenceFinderByC_C;
+	private UniquePersistenceFinder
+		<CommerceTaxFixedRate, NoSuchTaxFixedRateException>
+			_uniquePersistenceFinderByC_C;
 
 	/**
 	 * Returns the commerce tax fixed rate where CPTaxCategoryId = &#63; and commerceTaxMethodId = &#63; or throws a <code>NoSuchTaxFixedRateException</code> if it could not be found.
@@ -281,23 +263,8 @@ public class CommerceTaxFixedRatePersistenceImpl
 			long CPTaxCategoryId, long commerceTaxMethodId)
 		throws NoSuchTaxFixedRateException {
 
-		CommerceTaxFixedRate commerceTaxFixedRate = fetchByC_C(
-			CPTaxCategoryId, commerceTaxMethodId);
-
-		if (commerceTaxFixedRate == null) {
-			String message =
-				_uniquePersistenceFinderByC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {CPTaxCategoryId, commerceTaxMethodId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchTaxFixedRateException(message);
-		}
-
-		return commerceTaxFixedRate;
+		return _uniquePersistenceFinderByC_C.find(
+			finderCache, new Object[] {CPTaxCategoryId, commerceTaxMethodId});
 	}
 
 	/**
@@ -581,7 +548,7 @@ public class CommerceTaxFixedRatePersistenceImpl
 				_SQL_SELECT_COMMERCETAXFIXEDRATE_WHERE,
 				_SQL_COUNT_COMMERCETAXFIXEDRATE_WHERE,
 				CommerceTaxFixedRateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxFixedRate.", "CPTaxCategoryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -612,7 +579,7 @@ public class CommerceTaxFixedRatePersistenceImpl
 				_SQL_SELECT_COMMERCETAXFIXEDRATE_WHERE,
 				_SQL_COUNT_COMMERCETAXFIXEDRATE_WHERE,
 				CommerceTaxFixedRateModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceTaxFixedRate.", "commerceTaxMethodId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -690,16 +657,10 @@ public class CommerceTaxFixedRatePersistenceImpl
 	private static final String _SQL_COUNT_COMMERCETAXFIXEDRATE_WHERE =
 		"SELECT COUNT(commerceTaxFixedRate) FROM CommerceTaxFixedRate commerceTaxFixedRate WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceTaxFixedRate exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceTaxFixedRatePersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-507868391
+// LIFERAY-SERVICE-BUILDER-HASH:-1926520219

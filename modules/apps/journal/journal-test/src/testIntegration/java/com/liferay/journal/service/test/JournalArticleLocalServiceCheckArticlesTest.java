@@ -11,11 +11,13 @@ import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMTemplateTestUtil;
+import com.liferay.journal.configuration.JournalServiceConfiguration;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
 import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
@@ -27,6 +29,7 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Time;
@@ -130,6 +133,26 @@ public class JournalArticleLocalServiceCheckArticlesTest {
 	}
 
 	@Test
+	public void testExpireMultipleArticlesWhenOneFails() throws Exception {
+		JournalArticle article1 = _addExpiringArticle();
+		JournalArticle article2 = _addExpiringArticle();
+		JournalArticle article3 = _addExpiringArticle();
+
+		_assetEntryLocalService.deleteEntry(
+			JournalArticle.class.getName(), article2.getResourcePrimKey());
+
+		_journalArticleLocalService.checkArticles(_group.getCompanyId());
+
+		article1 = _journalArticleLocalService.getArticle(article1.getId());
+		article2 = _journalArticleLocalService.getArticle(article2.getId());
+		article3 = _journalArticleLocalService.getArticle(article3.getId());
+
+		Assert.assertTrue(article1.isExpired());
+		Assert.assertTrue(article2.isExpired());
+		Assert.assertTrue(article3.isExpired());
+	}
+
+	@Test
 	public void testExpireScheduledJournalArticleDisplayDateAndExpirationDateWithinTheSameInterval()
 		throws Exception {
 
@@ -151,6 +174,33 @@ public class JournalArticleLocalServiceCheckArticlesTest {
 		Date date = new Date(now - Time.HOUR);
 
 		_assertCheckArticles(date, date, WorkflowConstants.STATUS_EXPIRED);
+	}
+
+	@Test
+	public void testPublishMultipleArticlesWithJournalArticleCheckLimit()
+		throws Exception {
+
+		try (AutoCloseable autoCloseable = _setJournalArticleCheckLimit(1)) {
+			JournalArticle article1 = _addScheduledArticle();
+			JournalArticle article2 = _addScheduledArticle();
+
+			_journalArticleLocalService.checkArticles(_group.getCompanyId());
+
+			article1 = _journalArticleLocalService.getArticle(article1.getId());
+			article2 = _journalArticleLocalService.getArticle(article2.getId());
+
+			Assert.assertTrue(
+				"Only one article must be published per run",
+				article1.isApproved() != article2.isApproved());
+
+			_journalArticleLocalService.checkArticles(_group.getCompanyId());
+
+			article1 = _journalArticleLocalService.getArticle(article1.getId());
+			article2 = _journalArticleLocalService.getArticle(article2.getId());
+
+			Assert.assertTrue(article1.isApproved());
+			Assert.assertTrue(article2.isApproved());
+		}
 	}
 
 	@Test
@@ -368,6 +418,27 @@ public class JournalArticleLocalServiceCheckArticlesTest {
 		return article;
 	}
 
+	private JournalArticle _addExpiringArticle() throws Exception {
+		JournalArticle article = addArticle(
+			_group.getGroupId(), false, true, false);
+
+		Calendar calendar = getExpirationCalendar(Time.HOUR, -2);
+
+		article.setExpirationDate(calendar.getTime());
+
+		return _journalArticleLocalService.updateJournalArticle(article);
+	}
+
+	private JournalArticle _addScheduledArticle() throws Exception {
+		JournalArticle article = addArticle(
+			_group.getGroupId(), true, true, true);
+
+		article.setDisplayDate(
+			new Date(System.currentTimeMillis() - Time.HOUR));
+
+		return _journalArticleLocalService.updateJournalArticle(article);
+	}
+
 	private void _assertCheckArticles(
 			Date displayDate, Date expirationDate, int status)
 		throws Exception {
@@ -395,6 +466,23 @@ public class JournalArticleLocalServiceCheckArticlesTest {
 		Assert.assertEquals(displayDate, journalArticle.getDisplayDate());
 		Assert.assertEquals(expirationDate, journalArticle.getExpirationDate());
 		Assert.assertEquals(status, journalArticle.getStatus());
+	}
+
+	private AutoCloseable _setJournalArticleCheckLimit(
+			int journalArticleCheckLimit)
+		throws Exception {
+
+		String pid = ConfigurationTestUtil.createFactoryConfiguration(
+			JournalServiceConfiguration.class.getName() + ".scoped",
+			HashMapDictionaryBuilder.<String, Object>put(
+				"checkInterval", 15
+			).put(
+				"companyId", _group.getCompanyId()
+			).put(
+				"journalArticleCheckLimit", journalArticleCheckLimit
+			).build());
+
+		return () -> ConfigurationTestUtil.deleteConfiguration(pid);
 	}
 
 	private static final int _MODE_DEFAULT = 0;

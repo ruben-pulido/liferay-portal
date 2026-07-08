@@ -11,17 +11,18 @@ import {PORTLET_URLS} from '../../../../utils/portletUrls';
 export class EditVocabularyPage {
 	readonly page: Page;
 
-	private readonly descriptionInput: Locator;
-	private readonly externalReferenceCodeInput: Locator;
-	private readonly nameInput: Locator;
-
 	readonly assetTypeCheckbox: Locator;
 	readonly assetTypeSelector: Locator;
 	readonly assetTypeToggle: Locator;
 	readonly assetTypesButton: Locator;
+	readonly descriptionInput: Locator;
+	readonly externalReferenceCodeInput: Locator;
 	readonly generalButton: Locator;
 	readonly multiSelectToggle: Locator;
+	readonly nameInput: Locator;
 	readonly newButton: Locator;
+	readonly projectCheckbox: Locator;
+	readonly projectSelector: Locator;
 	readonly saveButton: Locator;
 	readonly spaceCheckbox: Locator;
 	readonly spaceSelector: Locator;
@@ -48,6 +49,10 @@ export class EditVocabularyPage {
 		this.newButton = this.page.getByRole('button', {
 			name: 'New Vocabulary',
 		});
+		this.projectCheckbox = this.page.getByRole('checkbox', {
+			name: 'Make this vocabulary available in all projects',
+		});
+		this.projectSelector = this.page.getByLabel('Project Selector');
 		this.saveButton = this.page.getByRole('button', {name: 'Save'});
 		this.spaceCheckbox = this.page.getByRole('checkbox', {
 			name: 'Make this vocabulary available in all spaces',
@@ -124,6 +129,23 @@ export class EditVocabularyPage {
 		await this.page.getByText(assetType).click();
 	}
 
+	async selectProjects(projectName: string) {
+		if (await this.projectCheckbox.isChecked()) {
+			await this.projectCheckbox.click();
+
+			await expect(this.projectCheckbox).not.toBeChecked();
+		}
+
+		await this.projectSelector.click();
+
+		const option = this.page
+			.getByRole('option')
+			.filter({hasText: projectName});
+
+		await option.scrollIntoViewIfNeeded();
+		await option.click();
+	}
+
 	async selectSpaces(spaceName: string) {
 		if (await this.spaceCheckbox.isChecked()) {
 			await this.spaceCheckbox.click();
@@ -133,6 +155,11 @@ export class EditVocabularyPage {
 
 		await this.spaceSelector.click();
 
-		await this.page.getByText(spaceName).click();
+		const option = this.page
+			.getByRole('option')
+			.filter({hasText: spaceName});
+
+		await option.scrollIntoViewIfNeeded();
+		await option.click();
 	}
 }

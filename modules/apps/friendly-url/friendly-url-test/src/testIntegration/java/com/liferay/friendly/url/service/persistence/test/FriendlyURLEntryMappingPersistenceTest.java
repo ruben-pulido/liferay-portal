@@ -111,12 +111,8 @@ public class FriendlyURLEntryMappingPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		FriendlyURLEntryMapping newFriendlyURLEntryMapping =
-			_persistence.create(pk);
-
-		newFriendlyURLEntryMapping.setMvccVersion(RandomTestUtil.nextLong());
+			addFriendlyURLEntryMapping();
 
 		newFriendlyURLEntryMapping.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -129,8 +125,10 @@ public class FriendlyURLEntryMappingPersistenceTest {
 		newFriendlyURLEntryMapping.setFriendlyURLEntryId(
 			RandomTestUtil.nextLong());
 
-		_friendlyURLEntryMappings.add(
-			_persistence.update(newFriendlyURLEntryMapping));
+		newFriendlyURLEntryMapping = _persistence.update(
+			newFriendlyURLEntryMapping);
+
+		_friendlyURLEntryMappings.add(newFriendlyURLEntryMapping);
 
 		FriendlyURLEntryMapping existingFriendlyURLEntryMapping =
 			_persistence.findByPrimaryKey(
@@ -488,8 +486,6 @@ public class FriendlyURLEntryMappingPersistenceTest {
 		FriendlyURLEntryMapping friendlyURLEntryMapping = _persistence.create(
 			pk);
 
-		friendlyURLEntryMapping.setMvccVersion(RandomTestUtil.nextLong());
-
 		friendlyURLEntryMapping.setCtCollectionId(RandomTestUtil.nextLong());
 
 		friendlyURLEntryMapping.setCompanyId(RandomTestUtil.nextLong());
@@ -513,4 +509,4 @@ public class FriendlyURLEntryMappingPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-377336234
+// LIFERAY-SERVICE-BUILDER-HASH:-725149441

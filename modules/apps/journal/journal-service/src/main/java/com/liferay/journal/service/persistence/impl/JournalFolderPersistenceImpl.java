@@ -23,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -97,7 +95,7 @@ public class JournalFolderPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<JournalFolder>
+	private CollectionPersistenceFinder<JournalFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -138,16 +136,8 @@ public class JournalFolderPersistenceImpl
 			String uuid, OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -188,7 +178,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<JournalFolder>
+	private UniquePersistenceFinder<JournalFolder, NoSuchFolderException>
 		_uniquePersistenceFinderByUUID_G;
 
 	/**
@@ -203,21 +193,8 @@ public class JournalFolderPersistenceImpl
 	public JournalFolder findByUUID_G(String uuid, long groupId)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByUUID_G(uuid, groupId);
-
-		if (journalFolder == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return journalFolder;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -265,7 +242,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<JournalFolder>
+	private CollectionPersistenceFinder<JournalFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -309,16 +286,8 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -363,8 +332,9 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<JournalFolder>
-		_collectionPersistenceFinderByGroupId;
+	private FilterCollectionPersistenceFinder
+		<JournalFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the journal folders where groupId = &#63;.
@@ -404,16 +374,8 @@ public class JournalFolderPersistenceImpl
 			long groupId, OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByGroupId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId}));
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {groupId}, orderByComparator);
 	}
 
 	/**
@@ -489,7 +451,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {groupId}, groupId);
 	}
 
-	private CollectionPersistenceFinder<JournalFolder>
+	private CollectionPersistenceFinder<JournalFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByCompanyId;
 
 	/**
@@ -530,16 +492,8 @@ public class JournalFolderPersistenceImpl
 			long companyId, OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -580,8 +534,9 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private FilterCollectionPersistenceFinder<JournalFolder>
-		_collectionPersistenceFinderByG_P;
+	private FilterCollectionPersistenceFinder
+		<JournalFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P;
 
 	/**
 	 * Returns an ordered range of all the journal folders where groupId = &#63; and parentFolderId = &#63;.
@@ -624,17 +579,9 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByG_P_First(
-			groupId, parentFolderId, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId}));
+		return _collectionPersistenceFinderByG_P.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId},
+			orderByComparator);
 	}
 
 	/**
@@ -717,7 +664,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentFolderId}, groupId);
 	}
 
-	private UniquePersistenceFinder<JournalFolder>
+	private UniquePersistenceFinder<JournalFolder, NoSuchFolderException>
 		_uniquePersistenceFinderByG_N;
 
 	/**
@@ -732,21 +679,8 @@ public class JournalFolderPersistenceImpl
 	public JournalFolder findByG_N(long groupId, String name)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByG_N(groupId, name);
-
-		if (journalFolder == null) {
-			String message =
-				_uniquePersistenceFinderByG_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {groupId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return journalFolder;
+		return _uniquePersistenceFinderByG_N.find(
+			finderCache, new Object[] {groupId, name});
 	}
 
 	/**
@@ -794,7 +728,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {groupId, name});
 	}
 
-	private CollectionPersistenceFinder<JournalFolder>
+	private CollectionPersistenceFinder<JournalFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByC_NotS;
 
 	/**
@@ -894,16 +828,8 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByC_NotS_First(
-			companyId, status, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByC_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, status}));
+		return _collectionPersistenceFinderByC_NotS.findFirst(
+			finderCache, new Object[] {companyId, status}, orderByComparator);
 	}
 
 	/**
@@ -948,7 +874,7 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {companyId, status});
 	}
 
-	private UniquePersistenceFinder<JournalFolder>
+	private UniquePersistenceFinder<JournalFolder, NoSuchFolderException>
 		_uniquePersistenceFinderByG_P_N;
 
 	/**
@@ -965,23 +891,8 @@ public class JournalFolderPersistenceImpl
 			long groupId, long parentFolderId, String name)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByG_P_N(
-			groupId, parentFolderId, name);
-
-		if (journalFolder == null) {
-			String message =
-				_uniquePersistenceFinderByG_P_N.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, parentFolderId, name});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return journalFolder;
+		return _uniquePersistenceFinderByG_P_N.find(
+			finderCache, new Object[] {groupId, parentFolderId, name});
 	}
 
 	/**
@@ -1036,8 +947,9 @@ public class JournalFolderPersistenceImpl
 			finderCache, new Object[] {groupId, parentFolderId, name});
 	}
 
-	private FilterCollectionPersistenceFinder<JournalFolder>
-		_collectionPersistenceFinderByG_P_S;
+	private FilterCollectionPersistenceFinder
+		<JournalFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P_S;
 
 	/**
 	 * Returns an ordered range of all the journal folders where groupId = &#63; and parentFolderId = &#63; and status = &#63;.
@@ -1082,17 +994,9 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByG_P_S_First(
-			groupId, parentFolderId, status, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P_S.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId, status}));
+		return _collectionPersistenceFinderByG_P_S.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1183,8 +1087,9 @@ public class JournalFolderPersistenceImpl
 			groupId);
 	}
 
-	private FilterCollectionPersistenceFinder<JournalFolder>
-		_collectionPersistenceFinderByG_P_NotS;
+	private FilterCollectionPersistenceFinder
+		<JournalFolder, NoSuchFolderException>
+			_collectionPersistenceFinderByG_P_NotS;
 
 	/**
 	 * Returns all the journal folders where groupId = &#63; and parentFolderId = &#63; and status &ne; &#63;.
@@ -1293,17 +1198,9 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByG_P_NotS_First(
-			groupId, parentFolderId, status, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByG_P_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {groupId, parentFolderId, status}));
+		return _collectionPersistenceFinderByG_P_NotS.findFirst(
+			finderCache, new Object[] {groupId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1435,7 +1332,7 @@ public class JournalFolderPersistenceImpl
 			groupId);
 	}
 
-	private CollectionPersistenceFinder<JournalFolder>
+	private CollectionPersistenceFinder<JournalFolder, NoSuchFolderException>
 		_collectionPersistenceFinderByGtF_C_P_NotS;
 
 	/**
@@ -1553,17 +1450,10 @@ public class JournalFolderPersistenceImpl
 			OrderByComparator<JournalFolder> orderByComparator)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByGtF_C_P_NotS_First(
-			folderId, companyId, parentFolderId, status, orderByComparator);
-
-		if (journalFolder != null) {
-			return journalFolder;
-		}
-
-		throw new NoSuchFolderException(
-			_collectionPersistenceFinderByGtF_C_P_NotS.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {folderId, companyId, parentFolderId, status}));
+		return _collectionPersistenceFinderByGtF_C_P_NotS.findFirst(
+			finderCache,
+			new Object[] {folderId, companyId, parentFolderId, status},
+			orderByComparator);
 	}
 
 	/**
@@ -1622,7 +1512,7 @@ public class JournalFolderPersistenceImpl
 			new Object[] {folderId, companyId, parentFolderId, status});
 	}
 
-	private UniquePersistenceFinder<JournalFolder>
+	private UniquePersistenceFinder<JournalFolder, NoSuchFolderException>
 		_uniquePersistenceFinderByERC_G;
 
 	/**
@@ -1637,23 +1527,8 @@ public class JournalFolderPersistenceImpl
 	public JournalFolder findByERC_G(String externalReferenceCode, long groupId)
 		throws NoSuchFolderException {
 
-		JournalFolder journalFolder = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (journalFolder == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchFolderException(message);
-		}
-
-		return journalFolder;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -2093,10 +1968,11 @@ public class JournalFolderPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
-			JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"journalFolder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, JournalFolder::getUuid));
+				"journalFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, JournalFolder::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -2108,8 +1984,8 @@ public class JournalFolderPersistenceImpl
 				JournalFolder::getGroupId),
 			_SQL_SELECT_JOURNALFOLDER_WHERE, "",
 			new FinderColumn<>(
-				"journalFolder.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, JournalFolder::getUuid),
+				"journalFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, JournalFolder::getUuid),
 			new FinderColumn<>(
 				"journalFolder.", "groupId", FinderColumn.Type.LONG, "=", true,
 				true, JournalFolder::getGroupId));
@@ -2135,9 +2011,10 @@ public class JournalFolderPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
-					"journalFolder.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, JournalFolder::getUuid),
+					"journalFolder.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, JournalFolder::getUuid),
 				new FinderColumn<>(
 					"journalFolder.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getCompanyId));
@@ -2163,15 +2040,7 @@ public class JournalFolderPersistenceImpl
 					new String[] {"groupId"}, false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					JournalFolderImpl.class, JournalFolder.class,
-					"journalFolder", "JournalFolder", "journalFolder.folderId",
-					"SELECT DISTINCT {journalFolder.*} FROM JournalFolder journalFolder WHERE ",
-					"SELECT {JournalFolder.*} FROM (SELECT DISTINCT journalFolder.folderId FROM JournalFolder journalFolder WHERE ",
-					") TEMP_TABLE INNER JOIN JournalFolder ON TEMP_TABLE.folderId = JournalFolder.folderId",
-					"SELECT COUNT(DISTINCT journalFolder.folderId) AS COUNT_VALUE FROM JournalFolder journalFolder WHERE ",
-					JournalFolderModelImpl.ORDER_BY_SQL,
-					JournalFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getGroupId));
@@ -2197,6 +2066,7 @@ public class JournalFolderPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getCompanyId));
@@ -2222,15 +2092,7 @@ public class JournalFolderPersistenceImpl
 					new String[] {"groupId", "parentFolderId"}, false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					JournalFolderImpl.class, JournalFolder.class,
-					"journalFolder", "JournalFolder", "journalFolder.folderId",
-					"SELECT DISTINCT {journalFolder.*} FROM JournalFolder journalFolder WHERE ",
-					"SELECT {JournalFolder.*} FROM (SELECT DISTINCT journalFolder.folderId FROM JournalFolder journalFolder WHERE ",
-					") TEMP_TABLE INNER JOIN JournalFolder ON TEMP_TABLE.folderId = JournalFolder.folderId",
-					"SELECT COUNT(DISTINCT journalFolder.folderId) AS COUNT_VALUE FROM JournalFolder journalFolder WHERE ",
-					JournalFolderModelImpl.ORDER_BY_SQL,
-					JournalFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getGroupId),
@@ -2274,6 +2136,7 @@ public class JournalFolderPersistenceImpl
 					new String[] {"companyId", "status"}, false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getCompanyId),
@@ -2332,15 +2195,7 @@ public class JournalFolderPersistenceImpl
 					false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					JournalFolderImpl.class, JournalFolder.class,
-					"journalFolder", "JournalFolder", "journalFolder.folderId",
-					"SELECT DISTINCT {journalFolder.*} FROM JournalFolder journalFolder WHERE ",
-					"SELECT {JournalFolder.*} FROM (SELECT DISTINCT journalFolder.folderId FROM JournalFolder journalFolder WHERE ",
-					") TEMP_TABLE INNER JOIN JournalFolder ON TEMP_TABLE.folderId = JournalFolder.folderId",
-					"SELECT COUNT(DISTINCT journalFolder.folderId) AS COUNT_VALUE FROM JournalFolder journalFolder WHERE ",
-					JournalFolderModelImpl.ORDER_BY_SQL,
-					JournalFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getGroupId),
@@ -2374,15 +2229,7 @@ public class JournalFolderPersistenceImpl
 					false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					JournalFolderImpl.class, JournalFolder.class,
-					"journalFolder", "JournalFolder", "journalFolder.folderId",
-					"SELECT DISTINCT {journalFolder.*} FROM JournalFolder journalFolder WHERE ",
-					"SELECT {JournalFolder.*} FROM (SELECT DISTINCT journalFolder.folderId FROM JournalFolder journalFolder WHERE ",
-					") TEMP_TABLE INNER JOIN JournalFolder ON TEMP_TABLE.folderId = JournalFolder.folderId",
-					"SELECT COUNT(DISTINCT journalFolder.folderId) AS COUNT_VALUE FROM JournalFolder journalFolder WHERE ",
-					JournalFolderModelImpl.ORDER_BY_SQL,
-					JournalFolderModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "groupId", FinderColumn.Type.LONG, "=",
 					true, true, JournalFolder::getGroupId),
@@ -2423,6 +2270,7 @@ public class JournalFolderPersistenceImpl
 					false),
 				_SQL_SELECT_JOURNALFOLDER_WHERE, _SQL_COUNT_JOURNALFOLDER_WHERE,
 				JournalFolderModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				"", null,
 				new FinderColumn<>(
 					"journalFolder.", "folderId", FinderColumn.Type.LONG, ">",
 					true, true, JournalFolder::getFolderId),
@@ -2510,12 +2358,6 @@ public class JournalFolderPersistenceImpl
 	private static final String _SQL_COUNT_JOURNALFOLDER_WHERE =
 		"SELECT COUNT(journalFolder) FROM JournalFolder journalFolder WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No JournalFolder exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		JournalFolderPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2525,4 +2367,4 @@ public class JournalFolderPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1887520591
+// LIFERAY-SERVICE-BUILDER-HASH:-741900605

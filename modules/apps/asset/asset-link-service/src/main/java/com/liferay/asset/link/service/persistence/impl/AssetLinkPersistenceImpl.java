@@ -20,8 +20,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -84,7 +82,7 @@ public class AssetLinkPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AssetLink>
+	private CollectionPersistenceFinder<AssetLink, NoSuchLinkException>
 		_collectionPersistenceFinderByEntryId1;
 
 	/**
@@ -125,16 +123,8 @@ public class AssetLinkPersistenceImpl
 			long entryId1, OrderByComparator<AssetLink> orderByComparator)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByEntryId1_First(
-			entryId1, orderByComparator);
-
-		if (assetLink != null) {
-			return assetLink;
-		}
-
-		throw new NoSuchLinkException(
-			_collectionPersistenceFinderByEntryId1.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId1}));
+		return _collectionPersistenceFinderByEntryId1.findFirst(
+			finderCache, new Object[] {entryId1}, orderByComparator);
 	}
 
 	/**
@@ -175,7 +165,7 @@ public class AssetLinkPersistenceImpl
 			finderCache, new Object[] {entryId1});
 	}
 
-	private CollectionPersistenceFinder<AssetLink>
+	private CollectionPersistenceFinder<AssetLink, NoSuchLinkException>
 		_collectionPersistenceFinderByEntryId2;
 
 	/**
@@ -216,16 +206,8 @@ public class AssetLinkPersistenceImpl
 			long entryId2, OrderByComparator<AssetLink> orderByComparator)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByEntryId2_First(
-			entryId2, orderByComparator);
-
-		if (assetLink != null) {
-			return assetLink;
-		}
-
-		throw new NoSuchLinkException(
-			_collectionPersistenceFinderByEntryId2.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId2}));
+		return _collectionPersistenceFinderByEntryId2.findFirst(
+			finderCache, new Object[] {entryId2}, orderByComparator);
 	}
 
 	/**
@@ -266,7 +248,7 @@ public class AssetLinkPersistenceImpl
 			finderCache, new Object[] {entryId2});
 	}
 
-	private CollectionPersistenceFinder<AssetLink>
+	private CollectionPersistenceFinder<AssetLink, NoSuchLinkException>
 		_collectionPersistenceFinderByE_E;
 
 	/**
@@ -310,16 +292,8 @@ public class AssetLinkPersistenceImpl
 			OrderByComparator<AssetLink> orderByComparator)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByE_E_First(
-			entryId1, entryId2, orderByComparator);
-
-		if (assetLink != null) {
-			return assetLink;
-		}
-
-		throw new NoSuchLinkException(
-			_collectionPersistenceFinderByE_E.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId1, entryId2}));
+		return _collectionPersistenceFinderByE_E.findFirst(
+			finderCache, new Object[] {entryId1, entryId2}, orderByComparator);
 	}
 
 	/**
@@ -364,7 +338,7 @@ public class AssetLinkPersistenceImpl
 			finderCache, new Object[] {entryId1, entryId2});
 	}
 
-	private CollectionPersistenceFinder<AssetLink>
+	private CollectionPersistenceFinder<AssetLink, NoSuchLinkException>
 		_collectionPersistenceFinderByE1_T;
 
 	/**
@@ -408,16 +382,8 @@ public class AssetLinkPersistenceImpl
 			OrderByComparator<AssetLink> orderByComparator)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByE1_T_First(
-			entryId1, type, orderByComparator);
-
-		if (assetLink != null) {
-			return assetLink;
-		}
-
-		throw new NoSuchLinkException(
-			_collectionPersistenceFinderByE1_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId1, type}));
+		return _collectionPersistenceFinderByE1_T.findFirst(
+			finderCache, new Object[] {entryId1, type}, orderByComparator);
 	}
 
 	/**
@@ -462,7 +428,7 @@ public class AssetLinkPersistenceImpl
 			finderCache, new Object[] {entryId1, type});
 	}
 
-	private CollectionPersistenceFinder<AssetLink>
+	private CollectionPersistenceFinder<AssetLink, NoSuchLinkException>
 		_collectionPersistenceFinderByE2_T;
 
 	/**
@@ -506,16 +472,8 @@ public class AssetLinkPersistenceImpl
 			OrderByComparator<AssetLink> orderByComparator)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByE2_T_First(
-			entryId2, type, orderByComparator);
-
-		if (assetLink != null) {
-			return assetLink;
-		}
-
-		throw new NoSuchLinkException(
-			_collectionPersistenceFinderByE2_T.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {entryId2, type}));
+		return _collectionPersistenceFinderByE2_T.findFirst(
+			finderCache, new Object[] {entryId2, type}, orderByComparator);
 	}
 
 	/**
@@ -560,7 +518,8 @@ public class AssetLinkPersistenceImpl
 			finderCache, new Object[] {entryId2, type});
 	}
 
-	private UniquePersistenceFinder<AssetLink> _uniquePersistenceFinderByE_E_T;
+	private UniquePersistenceFinder<AssetLink, NoSuchLinkException>
+		_uniquePersistenceFinderByE_E_T;
 
 	/**
 	 * Returns the asset link where entryId1 = &#63; and entryId2 = &#63; and type = &#63; or throws a <code>NoSuchLinkException</code> if it could not be found.
@@ -575,22 +534,8 @@ public class AssetLinkPersistenceImpl
 	public AssetLink findByE_E_T(long entryId1, long entryId2, int type)
 		throws NoSuchLinkException {
 
-		AssetLink assetLink = fetchByE_E_T(entryId1, entryId2, type);
-
-		if (assetLink == null) {
-			String message =
-				_uniquePersistenceFinderByE_E_T.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {entryId1, entryId2, type});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchLinkException(message);
-		}
-
-		return assetLink;
+		return _uniquePersistenceFinderByE_E_T.find(
+			finderCache, new Object[] {entryId1, entryId2, type});
 	}
 
 	/**
@@ -927,7 +872,8 @@ public class AssetLinkPersistenceImpl
 					"countByEntryId1", new String[] {Long.class.getName()},
 					new String[] {"entryId1"}, false),
 				_SQL_SELECT_ASSETLINK_WHERE, _SQL_COUNT_ASSETLINK_WHERE,
-				AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetLink.", "entryId1", FinderColumn.Type.LONG, "=", true,
 					true, AssetLink::getEntryId1));
@@ -952,7 +898,8 @@ public class AssetLinkPersistenceImpl
 					"countByEntryId2", new String[] {Long.class.getName()},
 					new String[] {"entryId2"}, false),
 				_SQL_SELECT_ASSETLINK_WHERE, _SQL_COUNT_ASSETLINK_WHERE,
-				AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"assetLink.", "entryId2", FinderColumn.Type.LONG, "=", true,
 					true, AssetLink::getEntryId2));
@@ -976,7 +923,8 @@ public class AssetLinkPersistenceImpl
 				new String[] {Long.class.getName(), Long.class.getName()},
 				new String[] {"entryId1", "entryId2"}, false),
 			_SQL_SELECT_ASSETLINK_WHERE, _SQL_COUNT_ASSETLINK_WHERE,
-			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"assetLink.", "entryId1", FinderColumn.Type.LONG, "=", true,
 				true, AssetLink::getEntryId1),
@@ -1003,13 +951,14 @@ public class AssetLinkPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"entryId1", "type_"}, false),
 			_SQL_SELECT_ASSETLINK_WHERE, _SQL_COUNT_ASSETLINK_WHERE,
-			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"assetLink.", "entryId1", FinderColumn.Type.LONG, "=", true,
 				true, AssetLink::getEntryId1),
 			new FinderColumn<>(
-				"assetLink.", "type", FinderColumn.Type.INTEGER, "=", true,
-				true, AssetLink::getType));
+				"assetLink.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+				true, true, AssetLink::getType));
 
 		_collectionPersistenceFinderByE2_T = new CollectionPersistenceFinder<>(
 			this,
@@ -1030,13 +979,14 @@ public class AssetLinkPersistenceImpl
 				new String[] {Long.class.getName(), Integer.class.getName()},
 				new String[] {"entryId2", "type_"}, false),
 			_SQL_SELECT_ASSETLINK_WHERE, _SQL_COUNT_ASSETLINK_WHERE,
-			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			AssetLinkModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
 				"assetLink.", "entryId2", FinderColumn.Type.LONG, "=", true,
 				true, AssetLink::getEntryId2),
 			new FinderColumn<>(
-				"assetLink.", "type", FinderColumn.Type.INTEGER, "=", true,
-				true, AssetLink::getType));
+				"assetLink.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+				true, true, AssetLink::getType));
 
 		_uniquePersistenceFinderByE_E_T = new UniquePersistenceFinder<>(
 			this,
@@ -1057,8 +1007,8 @@ public class AssetLinkPersistenceImpl
 				"assetLink.", "entryId2", FinderColumn.Type.LONG, "=", true,
 				true, AssetLink::getEntryId2),
 			new FinderColumn<>(
-				"assetLink.", "type", FinderColumn.Type.INTEGER, "=", true,
-				true, AssetLink::getType));
+				"assetLink.", "type", "type_", FinderColumn.Type.INTEGER, "=",
+				true, true, AssetLink::getType));
 
 		AssetLinkUtil.setPersistence(this);
 	}
@@ -1117,12 +1067,6 @@ public class AssetLinkPersistenceImpl
 	private static final String _SQL_COUNT_ASSETLINK_WHERE =
 		"SELECT COUNT(assetLink) FROM AssetLink assetLink WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AssetLink exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AssetLinkPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"type"});
 
@@ -1132,4 +1076,4 @@ public class AssetLinkPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:478585291
+// LIFERAY-SERVICE-BUILDER-HASH:260104277

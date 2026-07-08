@@ -21,6 +21,7 @@ import com.liferay.asset.kernel.service.AssetTagGroupRelLocalService;
 import com.liferay.asset.kernel.service.AssetVocabularyGroupRelLocalService;
 import com.liferay.asset.link.constants.AssetLinkConstants;
 import com.liferay.asset.link.service.AssetLinkLocalService;
+import com.liferay.depot.util.DepotRoleUtil;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
@@ -33,6 +34,7 @@ import com.liferay.dynamic.data.mapping.util.NumberUtil;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManager;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManagerUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.friendly.url.constants.FriendlyURLEntryConstants;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
 import com.liferay.list.type.exception.NoSuchListTypeEntryException;
@@ -549,7 +551,8 @@ public class ObjectEntryLocalServiceImpl
 			_deleteTempFileEntries(dlFileEntriesMap);
 		}
 
-		objectEntry = _addObjectEntryVersion(objectDefinition, objectEntry);
+		objectEntry = _addObjectEntryVersion(
+			userId, objectDefinition, objectEntry);
 
 		boolean clearObjectEntryIdsMap =
 			ObjectActionThreadLocal.isClearObjectEntryIdsMap();
@@ -718,18 +721,26 @@ public class ObjectEntryLocalServiceImpl
 
 		Date date = new Date();
 
-		_companyIdPreviousCheckDate.computeIfAbsent(
-			companyId,
-			key -> new Date(
-				date.getTime() - _getObjectEntryCheckInterval(companyId)));
+		ObjectEntryScheduleConfiguration objectEntryScheduleConfiguration =
+			configurationProvider.getCompanyConfiguration(
+				ObjectEntryScheduleConfiguration.class, companyId);
 
-		_checkObjectEntriesByDisplayDate(companyId, date);
+		int checkBatchSize = objectEntryScheduleConfiguration.checkBatchSize();
 
-		_checkObjectEntriesByExpirationDate(companyId, date);
+		_checkObjectEntriesByDisplayDate(companyId, date, checkBatchSize);
+		_checkObjectEntriesByExpirationDate(companyId, date, checkBatchSize);
 
-		_checkObjectEntriesByReviewDate(companyId, date);
+		long checkInterval =
+			objectEntryScheduleConfiguration.checkInterval() * Time.MINUTE;
 
-		_companyIdPreviousCheckDate.put(companyId, date);
+		ReviewCheckpoint reviewCheckpoint =
+			_companyIdReviewCheckpoint.computeIfAbsent(
+				companyId,
+				key -> new ReviewCheckpoint(
+					new Date(date.getTime() - checkInterval), 0));
+
+		_checkObjectEntriesByReviewDate(
+			companyId, date, checkBatchSize, reviewCheckpoint);
 	}
 
 	@Override
@@ -1051,6 +1062,8 @@ public class ObjectEntryLocalServiceImpl
 				groupId,
 				_classNameLocalService.getClassNameId(
 					objectDefinition.getClassName()),
+				FriendlyURLEntryConstants.
+					FRIENDLY_URL_ENTRY_PARENT_CLASS_PK_DEFAULT,
 				urlTitle);
 
 		if (friendlyURLEntry == null) {
@@ -1401,7 +1414,7 @@ public class ObjectEntryLocalServiceImpl
 
 		predicate = predicate.and(_getHeadObjectEntryPredicate(false));
 
-		if (!objectScopeProvider.isGroupAware()) {
+		if ((groupId == 0) || !objectScopeProvider.isGroupAware()) {
 			return dslQueryCount(joinStep.where(predicate));
 		}
 
@@ -2324,8 +2337,9 @@ public class ObjectEntryLocalServiceImpl
 				_objectDefinitionPersistence.findByPrimaryKey(
 					node.getPrimaryKey());
 
-			Indexer<ObjectEntry> indexer = IndexerRegistryUtil.getIndexer(
-				objectDefinition.getClassName());
+			Indexer<ObjectEntry> indexer =
+				IndexerRegistryUtil.nullSafeGetIndexer(
+					objectDefinition.getClassName());
 
 			_performActions(
 				objectDefinition.getObjectDefinitionId(),
@@ -2430,7 +2444,8 @@ public class ObjectEntryLocalServiceImpl
 		else {
 			_assetEntryLocalService.updateEntry(
 				objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
-				null, null, true, objectEntry.isApproved());
+				objectEntry.getPublishDate(), objectEntry.getExpirationDate(),
+				true, objectEntry.isApproved());
 		}
 
 		_reindex(objectEntry);
@@ -2443,14 +2458,19 @@ public class ObjectEntryLocalServiceImpl
 					objectEntry.getObjectEntryId());
 
 			if (count > 0) {
-				_updateLatestObjectEntryVersion(objectDefinition, objectEntry);
+				_updateLatestObjectEntryVersion(
+					userId, objectDefinition, objectEntry);
 			}
 		}
 		else if (!objectEntry.isInTrash() && !originalObjectEntry.isInTrash()) {
-			objectEntry = _addObjectEntryVersion(objectDefinition, objectEntry);
+			objectEntry = _addObjectEntryVersion(
+				userId, objectDefinition, objectEntry);
 		}
 
-		if (objectDefinition.isRootNode()) {
+		if (objectDefinition.isRootNode() &&
+			(status != WorkflowConstants.STATUS_IN_TRASH) &&
+			!originalObjectEntry.isInTrash()) {
+
 			_updateRootDescendantNodeObjectEntryStatus(
 				userId, objectEntry, serviceContext);
 		}
@@ -2902,7 +2922,8 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private ObjectEntry _addObjectEntryVersion(
-			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
+			long userId, ObjectDefinition objectDefinition,
+			ObjectEntry objectEntry)
 		throws PortalException {
 
 		if (!objectDefinition.isEnableObjectEntryVersioning()) {
@@ -2910,7 +2931,8 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		ObjectEntryVersion objectEntryVersion =
-			_objectEntryVersionLocalService.addObjectEntryVersion(objectEntry);
+			_objectEntryVersionLocalService.addObjectEntryVersion(
+				userId, objectEntry);
 
 		objectEntry.setVersion(objectEntryVersion.getVersion());
 
@@ -3188,8 +3210,8 @@ public class ObjectEntryLocalServiceImpl
 		}
 	}
 
-	private void _checkObjectEntriesByDisplayDate(long companyId, Date date)
-		throws PortalException {
+	private void _checkObjectEntriesByDisplayDate(
+		long companyId, Date date, int checkBatchSize) {
 
 		List<ObjectEntry> objectEntries = objectEntryPersistence.dslQuery(
 			DSLQueryFactoryUtil.select(
@@ -3200,25 +3222,41 @@ public class ObjectEntryLocalServiceImpl
 				ObjectEntryTable.INSTANCE.companyId.eq(
 					companyId
 				).and(
-					ObjectEntryTable.INSTANCE.displayDate.gte(
-						_companyIdPreviousCheckDate.get(companyId))
-				).and(
 					ObjectEntryTable.INSTANCE.displayDate.lte(date)
+				).and(
+					Predicate.withParentheses(
+						ObjectEntryTable.INSTANCE.expirationDate.isNull(
+						).or(
+							ObjectEntryTable.INSTANCE.expirationDate.gt(date)
+						))
 				).and(
 					ObjectEntryTable.INSTANCE.status.eq(
 						WorkflowConstants.STATUS_SCHEDULED)
 				)
-			));
+			).limit(
+				0, checkBatchSize
+			),
+			false);
 
 		for (ObjectEntry objectEntry : objectEntries) {
-			updateStatus(
-				objectEntry.getUserId(), objectEntry,
-				WorkflowConstants.STATUS_APPROVED, new ServiceContext());
+			try {
+				updateStatus(
+					objectEntry.getUserId(), objectEntry,
+					WorkflowConstants.STATUS_APPROVED, new ServiceContext());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to publish object entry " +
+							objectEntry.getObjectEntryId(),
+						exception);
+				}
+			}
 		}
 	}
 
-	private void _checkObjectEntriesByExpirationDate(long companyId, Date date)
-		throws PortalException {
+	private void _checkObjectEntriesByExpirationDate(
+		long companyId, Date date, int checkBatchSize) {
 
 		List<ObjectEntry> objectEntries = objectEntryPersistence.dslQuery(
 			DSLQueryFactoryUtil.select(
@@ -3228,29 +3266,42 @@ public class ObjectEntryLocalServiceImpl
 			).where(
 				ObjectEntryTable.INSTANCE.companyId.eq(
 					companyId
-				).and(
-					ObjectEntryTable.INSTANCE.expirationDate.gte(
-						_companyIdPreviousCheckDate.get(companyId))
 				).and(
 					ObjectEntryTable.INSTANCE.expirationDate.lte(date)
 				).and(
 					ObjectEntryTable.INSTANCE.status.notIn(
 						new Integer[] {
 							WorkflowConstants.STATUS_DRAFT,
+							WorkflowConstants.STATUS_EXPIRED,
+							WorkflowConstants.STATUS_IN_TRASH,
 							WorkflowConstants.STATUS_PENDING
 						})
 				)
-			));
+			).limit(
+				0, checkBatchSize
+			),
+			false);
 
 		for (ObjectEntry objectEntry : objectEntries) {
-			expireObjectEntry(
-				objectEntry.getUserId(), objectEntry.getObjectEntryId(),
-				new ServiceContext());
+			try {
+				expireObjectEntry(
+					objectEntry.getUserId(), objectEntry.getObjectEntryId(),
+					new ServiceContext());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to expire object entry " +
+							objectEntry.getObjectEntryId(),
+						exception);
+				}
+			}
 		}
 	}
 
-	private void _checkObjectEntriesByReviewDate(long companyId, Date date)
-		throws PortalException {
+	private void _checkObjectEntriesByReviewDate(
+		long companyId, Date date, int checkBatchSize,
+		ReviewCheckpoint reviewCheckpoint) {
 
 		List<ObjectEntry> objectEntries = objectEntryPersistence.dslQuery(
 			DSLQueryFactoryUtil.select(
@@ -3261,39 +3312,87 @@ public class ObjectEntryLocalServiceImpl
 				ObjectEntryTable.INSTANCE.companyId.eq(
 					companyId
 				).and(
-					ObjectEntryTable.INSTANCE.reviewDate.gte(
-						_companyIdPreviousCheckDate.get(companyId))
-				).and(
 					ObjectEntryTable.INSTANCE.reviewDate.lte(date)
+				).and(
+					Predicate.withParentheses(
+						ObjectEntryTable.INSTANCE.reviewDate.gt(
+							reviewCheckpoint._reviewDate
+						).or(
+							Predicate.withParentheses(
+								ObjectEntryTable.INSTANCE.reviewDate.eq(
+									reviewCheckpoint._reviewDate
+								).and(
+									ObjectEntryTable.INSTANCE.objectEntryId.gt(
+										reviewCheckpoint._objectEntryId)
+								))
+						))
 				)
-			));
+			).orderBy(
+				ObjectEntryTable.INSTANCE.reviewDate.ascending(),
+				ObjectEntryTable.INSTANCE.objectEntryId.ascending()
+			).limit(
+				0, checkBatchSize
+			),
+			false);
+
+		if (objectEntries.isEmpty()) {
+			return;
+		}
 
 		for (ObjectEntry objectEntry : objectEntries) {
-			JSONObject payloadJSONObject = JSONUtil.put(
-				"classPK", objectEntry.getObjectEntryId()
-			).put(
-				"notificationMessageArg", objectEntry.getTitleValue()
-			).put(
-				"notificationMessageKey", "x-has-reached-its-review-date"
-			);
+			try {
+				JSONObject payloadJSONObject = JSONUtil.put(
+					"classPK", objectEntry.getObjectEntryId()
+				).put(
+					"notificationMessageArg", objectEntry.getTitleValue()
+				).put(
+					"notificationMessageKey", "x-has-reached-its-review-date"
+				);
 
-			for (ObjectEntryReviewNotificationContributor contributor :
-					_objectEntryReviewNotificationContributors) {
+				for (ObjectEntryReviewNotificationContributor
+						objectEntryReviewNotificationContributor :
+							_objectEntryReviewNotificationContributors) {
 
-				if (contributor.isApplicable(objectEntry)) {
-					contributor.contribute(objectEntry, payloadJSONObject);
+					if (objectEntryReviewNotificationContributor.isApplicable(
+							objectEntry)) {
+
+						objectEntryReviewNotificationContributor.contribute(
+							objectEntry, payloadJSONObject);
+					}
+				}
+
+				ObjectDefinition objectDefinition =
+					_objectDefinitionPersistence.fetchByPrimaryKey(
+						objectEntry.getObjectDefinitionId());
+
+				_userNotificationEventLocalService.sendUserNotificationEvents(
+					objectEntry.getUserId(), objectDefinition.getPortletId(),
+					UserNotificationDeliveryConstants.TYPE_WEBSITE, false,
+					payloadJSONObject);
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						"Unable to send user notification events for object " +
+							"entry " + objectEntry.getObjectEntryId(),
+						exception);
 				}
 			}
-
-			ObjectDefinition objectDefinition =
-				_objectDefinitionPersistence.fetchByPrimaryKey(
-					objectEntry.getObjectDefinitionId());
-
-			_userNotificationEventLocalService.sendUserNotificationEvents(
-				objectEntry.getUserId(), objectDefinition.getPortletId(),
-				UserNotificationDeliveryConstants.TYPE_WEBSITE, false,
-				payloadJSONObject);
 		}
+
+		ObjectEntry lastObjectEntry = objectEntries.get(
+			objectEntries.size() - 1);
+
+		ReviewCheckpoint nextReviewCheckpoint = new ReviewCheckpoint(
+			lastObjectEntry.getReviewDate(),
+			lastObjectEntry.getObjectEntryId());
+
+		TransactionCommitCallbackUtil.registerCallback(
+			() -> {
+				_companyIdReviewCheckpoint.put(companyId, nextReviewCheckpoint);
+
+				return null;
+			});
 	}
 
 	private void _contributeValues(
@@ -3871,6 +3970,45 @@ public class ObjectEntryLocalServiceImpl
 		).and(
 			searchPredicate.withParentheses()
 		);
+	}
+
+	private long[] _filterAssetCategoryIds(
+		long[] assetCategoryIds, ObjectEntry objectEntry) {
+
+		return ArrayUtil.filter(
+			assetCategoryIds,
+			assetCategoryId -> {
+				AssetCategory assetCategory =
+					_assetCategoryLocalService.fetchAssetCategory(
+						assetCategoryId);
+
+				if (assetCategory == null) {
+					return false;
+				}
+
+				List<AssetVocabularyGroupRel> assetVocabularyGroupRels =
+					_assetVocabularyGroupRelLocalService.
+						getAssetVocabularyGroupRelsByVocabularyId(
+							assetCategory.getVocabularyId());
+
+				if (ListUtil.isEmpty(assetVocabularyGroupRels)) {
+					return true;
+				}
+
+				for (AssetVocabularyGroupRel assetVocabularyGroupRel :
+						assetVocabularyGroupRels) {
+
+					if ((assetVocabularyGroupRel.getGroupId() ==
+							GroupConstants.ANY_PARENT_GROUP_ID) ||
+						(assetVocabularyGroupRel.getGroupId() ==
+							objectEntry.getGroupId())) {
+
+						return true;
+					}
+				}
+
+				return false;
+			});
 	}
 
 	private DSLQuery _getAccountEntriesDSLQuery(long companyId, long userId)
@@ -4741,8 +4879,12 @@ public class ObjectEntryLocalServiceImpl
 				dynamicObjectDefinitionLocalizationTable,
 				dynamicObjectDefinitionTable, null)
 		).where(
-			ObjectEntryTable.INSTANCE.objectDefinitionId.eq(
-				objectDefinition.getObjectDefinitionId()
+			ObjectEntrySearchUtil.getObjectEntryIndexPredicate(
+				groupIds, objectDefinition,
+				Predicate.withParentheses(
+					_fillPredicate(
+						objectDefinition.getObjectDefinitionId(), predicate,
+						search))
 			).and(
 				ObjectEntryTable.INSTANCE.rootObjectEntryId.eq(
 					ObjectEntryTable.INSTANCE.objectEntryId
@@ -4753,39 +4895,12 @@ public class ObjectEntryLocalServiceImpl
 				ObjectEntryTable.INSTANCE.status.neq(
 					WorkflowConstants.STATUS_IN_TRASH)
 			).and(
-				() -> {
-					if (ArrayUtil.isEmpty(groupIds)) {
-						return null;
-					}
-
-					return ObjectEntryTable.INSTANCE.groupId.in(groupIds);
-				}
-			).and(
-				Predicate.withParentheses(
-					_fillPredicate(
-						objectDefinition.getObjectDefinitionId(), predicate,
-						search))
-			).and(
 				_getHeadObjectEntryPredicate(preferApproved)
 			).and(
 				_getPermissionWherePredicate(
 					dynamicObjectDefinitionTable, groupIds)
 			)
 		);
-	}
-
-	private long _getObjectEntryCheckInterval(long companyId) {
-		try {
-			ObjectEntryScheduleConfiguration objectEntryScheduleConfiguration =
-				configurationProvider.getCompanyConfiguration(
-					ObjectEntryScheduleConfiguration.class, companyId);
-
-			return objectEntryScheduleConfiguration.checkInterval() *
-				Time.MINUTE;
-		}
-		catch (PortalException portalException) {
-			throw new RuntimeException(portalException);
-		}
 	}
 
 	private Predicate _getObjectFieldPredicate(
@@ -6919,10 +7034,12 @@ public class ObjectEntryLocalServiceImpl
 				userId, objectEntry.getNonzeroGroupId(),
 				objectEntry.getCreateDate(), objectEntry.getModifiedDate(),
 				objectDefinition.getClassName(), objectEntry.getObjectEntryId(),
-				objectEntry.getUuid(), 0, assetCategoryIds, assetTagNames, true,
-				objectEntry.isApproved(), null, null, null, null, mimeType,
-				title, String.valueOf(objectEntry.getObjectEntryId()), null,
-				null, null, 0, 0, priority, serviceContext);
+				objectEntry.getUuid(), 0,
+				_filterAssetCategoryIds(assetCategoryIds, objectEntry),
+				assetTagNames, true, objectEntry.isApproved(), null, null,
+				objectEntry.getPublishDate(), objectEntry.getExpirationDate(),
+				mimeType, title, String.valueOf(objectEntry.getObjectEntryId()),
+				null, null, null, 0, 0, priority, serviceContext);
 
 			if (assetLinkEntryIds != null) {
 				_assetLinkLocalService.updateLinks(
@@ -6952,7 +7069,8 @@ public class ObjectEntryLocalServiceImpl
 	}
 
 	private void _updateLatestObjectEntryVersion(
-			ObjectDefinition objectDefinition, ObjectEntry objectEntry)
+			long userId, ObjectDefinition objectDefinition,
+			ObjectEntry objectEntry)
 		throws PortalException {
 
 		if (!objectDefinition.isEnableObjectEntryVersioning()) {
@@ -6960,7 +7078,7 @@ public class ObjectEntryLocalServiceImpl
 		}
 
 		_objectEntryVersionLocalService.updateLatestObjectEntryVersion(
-			objectEntry);
+			userId, objectEntry);
 	}
 
 	private ObjectEntry _updateObjectEntry(
@@ -7080,6 +7198,9 @@ public class ObjectEntryLocalServiceImpl
 			serviceContext.getAssetPriority(), serviceContext);
 
 		if (move) {
+			_updateLatestObjectEntryVersion(
+				userId, objectDefinition, objectEntry);
+
 			return objectEntry;
 		}
 
@@ -7111,11 +7232,12 @@ public class ObjectEntryLocalServiceImpl
 			if (objectEntry.isPending() || originalObjectEntry.isDraft() ||
 				originalObjectEntry.isExpired()) {
 
-				_updateLatestObjectEntryVersion(objectDefinition, objectEntry);
+				_updateLatestObjectEntryVersion(
+					userId, objectDefinition, objectEntry);
 			}
 			else {
 				objectEntry = _addObjectEntryVersion(
-					objectDefinition, objectEntry);
+					userId, objectDefinition, objectEntry);
 			}
 		}
 
@@ -7472,6 +7594,19 @@ public class ObjectEntryLocalServiceImpl
 		if (!objectScopeProvider.isValidGroupId(groupId)) {
 			throw new ObjectEntryGroupIdException.InvalidGroupIdForScope(
 				groupId, scope);
+		}
+
+		if (StringUtil.equals(scope, ObjectDefinitionConstants.SCOPE_DEPOT)) {
+			String domain = ObjectDefinitionSettingUtil.getValue(
+				ObjectDefinitionSettingConstants.NAME_DOMAIN,
+				objectDefinition.getObjectDefinitionSettings());
+
+			if (Validator.isNotNull(domain) &&
+				!StringUtil.equals(domain, DepotRoleUtil.getSubtype(groupId))) {
+
+				throw new ObjectEntryGroupIdException.InvalidGroupIdForDomain(
+					groupId, domain);
+			}
 		}
 
 		if (!StringUtil.equals(scope, ObjectDefinitionConstants.SCOPE_DEPOT) ||
@@ -8477,7 +8612,7 @@ public class ObjectEntryLocalServiceImpl
 	@Reference
 	private CommentManager _commentManager;
 
-	private final Map<Long, Date> _companyIdPreviousCheckDate =
+	private final Map<Long, ReviewCheckpoint> _companyIdReviewCheckpoint =
 		new ConcurrentHashMap<>();
 
 	@Reference
@@ -8646,5 +8781,17 @@ public class ObjectEntryLocalServiceImpl
 
 	@Reference
 	private WorkflowInstanceLinkLocalService _workflowInstanceLinkLocalService;
+
+	private static class ReviewCheckpoint {
+
+		private ReviewCheckpoint(Date reviewDate, long objectEntryId) {
+			_reviewDate = reviewDate;
+			_objectEntryId = objectEntryId;
+		}
+
+		private final long _objectEntryId;
+		private final Date _reviewDate;
+
+	}
 
 }

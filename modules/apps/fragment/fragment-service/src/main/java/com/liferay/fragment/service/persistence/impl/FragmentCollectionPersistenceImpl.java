@@ -14,7 +14,6 @@ import com.liferay.fragment.model.impl.FragmentCollectionModelImpl;
 import com.liferay.fragment.service.persistence.FragmentCollectionPersistence;
 import com.liferay.fragment.service.persistence.FragmentCollectionUtil;
 import com.liferay.fragment.service.persistence.impl.constants.FragmentPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.change.tracking.CTColumnResolutionType;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
@@ -24,8 +23,6 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -99,8 +96,9 @@ public class FragmentCollectionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the fragment collections where uuid = &#63;.
@@ -141,16 +139,8 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -191,8 +181,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<FragmentCollection>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the fragment collection where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchCollectionException</code> if it could not be found.
@@ -206,21 +197,8 @@ public class FragmentCollectionPersistenceImpl
 	public FragmentCollection findByUUID_G(String uuid, long groupId)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByUUID_G(uuid, groupId);
-
-		if (fragmentCollection == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCollectionException(message);
-		}
-
-		return fragmentCollection;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -268,8 +246,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the fragment collections where uuid = &#63; and companyId = &#63;.
@@ -312,16 +291,8 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -366,8 +337,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByGroupId;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByGroupId;
 
 	/**
 	 * Returns an ordered range of all the fragment collections where groupId = &#63;.
@@ -408,23 +380,9 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByGroupId_First(
-			groupId, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		StringBundler sb = new StringBundler(4);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append("}");
-
-		throw new NoSuchCollectionException(sb.toString());
+		return _collectionPersistenceFinderByGroupId.findFirst(
+			finderCache, new Object[] {new long[] {groupId}},
+			orderByComparator);
 	}
 
 	/**
@@ -503,8 +461,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {ArrayUtil.sortedUnique(groupIds)});
 	}
 
-	private UniquePersistenceFinder<FragmentCollection>
-		_uniquePersistenceFinderByG_FCK;
+	private UniquePersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_uniquePersistenceFinderByG_FCK;
 
 	/**
 	 * Returns the fragment collection where groupId = &#63; and fragmentCollectionKey = &#63; or throws a <code>NoSuchCollectionException</code> if it could not be found.
@@ -519,23 +478,8 @@ public class FragmentCollectionPersistenceImpl
 			long groupId, String fragmentCollectionKey)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByG_FCK(
-			groupId, fragmentCollectionKey);
-
-		if (fragmentCollection == null) {
-			String message =
-				_uniquePersistenceFinderByG_FCK.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {groupId, fragmentCollectionKey});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCollectionException(message);
-		}
-
-		return fragmentCollection;
+		return _uniquePersistenceFinderByG_FCK.find(
+			finderCache, new Object[] {groupId, fragmentCollectionKey});
 	}
 
 	/**
@@ -586,8 +530,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {groupId, fragmentCollectionKey});
 	}
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByG_LikeN;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByG_LikeN;
 
 	/**
 	 * Returns all the fragment collections where groupId = &#63; and name LIKE &#63;.
@@ -686,26 +631,9 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByG_LikeN_First(
-			groupId, name, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", nameLIKE");
-		sb.append(name);
-
-		sb.append("}");
-
-		throw new NoSuchCollectionException(sb.toString());
+		return _collectionPersistenceFinderByG_LikeN.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, name},
+			orderByComparator);
 	}
 
 	/**
@@ -852,8 +780,9 @@ public class FragmentCollectionPersistenceImpl
 			finderCache, new Object[] {ArrayUtil.sortedUnique(groupIds), name});
 	}
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByG_M;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByG_M;
 
 	/**
 	 * Returns an ordered range of all the fragment collections where groupId = &#63; and marketplace = &#63;.
@@ -896,26 +825,9 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByG_M_First(
-			groupId, marketplace, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", marketplace=");
-		sb.append(marketplace);
-
-		sb.append("}");
-
-		throw new NoSuchCollectionException(sb.toString());
+		return _collectionPersistenceFinderByG_M.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, marketplace},
+			orderByComparator);
 	}
 
 	/**
@@ -1002,8 +914,9 @@ public class FragmentCollectionPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(groupIds), marketplace});
 	}
 
-	private CollectionPersistenceFinder<FragmentCollection>
-		_collectionPersistenceFinderByG_LikeN_M;
+	private CollectionPersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByG_LikeN_M;
 
 	/**
 	 * Returns all the fragment collections where groupId = &#63; and name LIKE &#63; and marketplace = &#63;.
@@ -1110,29 +1023,9 @@ public class FragmentCollectionPersistenceImpl
 			OrderByComparator<FragmentCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByG_LikeN_M_First(
-			groupId, name, marketplace, orderByComparator);
-
-		if (fragmentCollection != null) {
-			return fragmentCollection;
-		}
-
-		StringBundler sb = new StringBundler(8);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("groupId=");
-		sb.append(groupId);
-
-		sb.append(", nameLIKE");
-		sb.append(name);
-
-		sb.append(", marketplace=");
-		sb.append(marketplace);
-
-		sb.append("}");
-
-		throw new NoSuchCollectionException(sb.toString());
+		return _collectionPersistenceFinderByG_LikeN_M.findFirst(
+			finderCache, new Object[] {new long[] {groupId}, name, marketplace},
+			orderByComparator);
 	}
 
 	/**
@@ -1298,8 +1191,9 @@ public class FragmentCollectionPersistenceImpl
 			new Object[] {ArrayUtil.sortedUnique(groupIds), name, marketplace});
 	}
 
-	private UniquePersistenceFinder<FragmentCollection>
-		_uniquePersistenceFinderByERC_G;
+	private UniquePersistenceFinder
+		<FragmentCollection, NoSuchCollectionException>
+			_uniquePersistenceFinderByERC_G;
 
 	/**
 	 * Returns the fragment collection where externalReferenceCode = &#63; and groupId = &#63; or throws a <code>NoSuchCollectionException</code> if it could not be found.
@@ -1314,23 +1208,8 @@ public class FragmentCollectionPersistenceImpl
 			String externalReferenceCode, long groupId)
 		throws NoSuchCollectionException {
 
-		FragmentCollection fragmentCollection = fetchByERC_G(
-			externalReferenceCode, groupId);
-
-		if (fragmentCollection == null) {
-			String message =
-				_uniquePersistenceFinderByERC_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCollectionException(message);
-		}
-
-		return fragmentCollection;
+		return _uniquePersistenceFinderByERC_G.find(
+			finderCache, new Object[] {externalReferenceCode, groupId});
 	}
 
 	/**
@@ -1780,9 +1659,11 @@ public class FragmentCollectionPersistenceImpl
 			_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 			_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 			FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"fragmentCollection.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, FragmentCollection::getUuid));
+				"fragmentCollection.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				FragmentCollection::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -1794,8 +1675,9 @@ public class FragmentCollectionPersistenceImpl
 				FragmentCollection::getGroupId),
 			_SQL_SELECT_FRAGMENTCOLLECTION_WHERE, "",
 			new FinderColumn<>(
-				"fragmentCollection.", "uuid", FinderColumn.Type.STRING, "=",
-				true, true, FragmentCollection::getUuid),
+				"fragmentCollection.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				FragmentCollection::getUuid),
 			new FinderColumn<>(
 				"fragmentCollection.", "groupId", FinderColumn.Type.LONG, "=",
 				true, true, FragmentCollection::getGroupId));
@@ -1822,10 +1704,11 @@ public class FragmentCollectionPersistenceImpl
 				_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 				_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 				FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"fragmentCollection.", "uuid", FinderColumn.Type.STRING,
-					"=", true, true, FragmentCollection::getUuid),
+					"fragmentCollection.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					FragmentCollection::getUuid),
 				new FinderColumn<>(
 					"fragmentCollection.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, FragmentCollection::getCompanyId));
@@ -1852,7 +1735,7 @@ public class FragmentCollectionPersistenceImpl
 				_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 				_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 				FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"fragmentCollection.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, FragmentCollection::getGroupId));
@@ -1894,7 +1777,7 @@ public class FragmentCollectionPersistenceImpl
 				_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 				_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 				FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"fragmentCollection.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, FragmentCollection::getGroupId),
@@ -1923,6 +1806,7 @@ public class FragmentCollectionPersistenceImpl
 			_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 			_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 			FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new ArrayableFinderColumn<>(
 				"fragmentCollection.", "groupId", FinderColumn.Type.LONG, "=",
 				false, true, true, FragmentCollection::getGroupId),
@@ -1953,7 +1837,7 @@ public class FragmentCollectionPersistenceImpl
 				_SQL_SELECT_FRAGMENTCOLLECTION_WHERE,
 				_SQL_COUNT_FRAGMENTCOLLECTION_WHERE,
 				FragmentCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new ArrayableFinderColumn<>(
 					"fragmentCollection.", "groupId", FinderColumn.Type.LONG,
 					"=", false, true, true, FragmentCollection::getGroupId),
@@ -2040,12 +1924,6 @@ public class FragmentCollectionPersistenceImpl
 	private static final String _SQL_COUNT_FRAGMENTCOLLECTION_WHERE =
 		"SELECT COUNT(fragmentCollection) FROM FragmentCollection fragmentCollection WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No FragmentCollection exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		FragmentCollectionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -2055,4 +1933,4 @@ public class FragmentCollectionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1298388072
+// LIFERAY-SERVICE-BUILDER-HASH:337855566

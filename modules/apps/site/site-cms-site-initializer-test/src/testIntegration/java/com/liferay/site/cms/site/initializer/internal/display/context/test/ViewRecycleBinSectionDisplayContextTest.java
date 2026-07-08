@@ -101,6 +101,8 @@ public class ViewRecycleBinSectionDisplayContextTest
 					))
 			).put(
 				"hideSpace", true
+			).put(
+				"showEmptyRecycleBinAction", false
 			).build(),
 			_getBreadcrumbProps(displayContext));
 	}
@@ -246,7 +248,7 @@ public class ViewRecycleBinSectionDisplayContextTest
 	@Override
 	protected String getFilterString() {
 		return "cmsRoot eq true and (cmsSection eq 'contents' or cmsSection " +
-			"eq 'files')";
+			"eq 'files') and rootDescendantNode eq false";
 	}
 
 	@Override

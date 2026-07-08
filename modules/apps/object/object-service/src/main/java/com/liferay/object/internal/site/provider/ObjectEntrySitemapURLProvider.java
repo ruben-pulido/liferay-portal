@@ -13,6 +13,7 @@ import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectEntryTable;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.petra.sql.dsl.DSLQueryFactoryUtil;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
@@ -61,10 +62,10 @@ public class ObjectEntrySitemapURLProvider implements SitemapURLProvider {
 	}
 
 	@Override
-	public Date getLastModifiedDate(long companyId, long groupId)
+	public Date getModifiedDate(long companyId, long groupId)
 		throws PortalException {
 
-		Date lastModifiedDate = null;
+		Date modifiedDate = null;
 
 		List<Long> companyObjectDefinitionIds = new ArrayList<>();
 		List<Long> siteObjectDefinitionIds = new ArrayList<>();
@@ -96,7 +97,7 @@ public class ObjectEntrySitemapURLProvider implements SitemapURLProvider {
 		}
 
 		if (!siteObjectDefinitionIds.isEmpty()) {
-			lastModifiedDate = _getLatestModifiedDate(
+			modifiedDate = _getLatestModifiedDate(
 				groupId, siteObjectDefinitionIds.toArray(new Long[0]));
 		}
 
@@ -106,14 +107,13 @@ public class ObjectEntrySitemapURLProvider implements SitemapURLProvider {
 				companyObjectDefinitionIds.toArray(new Long[0]));
 
 			if ((companyDate != null) &&
-				((lastModifiedDate == null) ||
-				 companyDate.after(lastModifiedDate))) {
+				((modifiedDate == null) || companyDate.after(modifiedDate))) {
 
-				lastModifiedDate = companyDate;
+				modifiedDate = companyDate;
 			}
 		}
 
-		return lastModifiedDate;
+		return modifiedDate;
 	}
 
 	@Override
@@ -212,20 +212,21 @@ public class ObjectEntrySitemapURLProvider implements SitemapURLProvider {
 	}
 
 	private List<ObjectEntry> _getApprovedObjectEntries(
-		long groupId, ObjectDefinition objectDefinition) {
+			long groupId, ObjectDefinition objectDefinition)
+		throws PortalException {
 
 		if (Objects.equals(
 				objectDefinition.getScope(),
 				ObjectDefinitionConstants.SCOPE_COMPANY)) {
 
-			return _objectEntryLocalService.getObjectEntries(
+			return _objectEntryService.getObjectEntries(
 				GroupConstants.DEFAULT_PARENT_GROUP_ID,
 				objectDefinition.getObjectDefinitionId(),
 				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS);
 		}
 
-		return _objectEntryLocalService.getObjectEntries(
+		return _objectEntryService.getObjectEntries(
 			groupId, objectDefinition.getObjectDefinitionId(),
 			WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS);
@@ -382,6 +383,9 @@ public class ObjectEntrySitemapURLProvider implements SitemapURLProvider {
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference
+	private ObjectEntryService _objectEntryService;
 
 	@Reference
 	private Portal _portal;

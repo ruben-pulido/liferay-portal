@@ -26,6 +26,8 @@ const test = mergeTests(
 	dataApiHelpersTest,
 	featureFlagsTest({
 		'LPD-35443': {enabled: true},
+		'LPD-57655': {enabled: false},
+		'LPD-76864': {enabled: true},
 		'LPS-178052': {enabled: true},
 	}),
 	isolatedSiteTest,
@@ -324,6 +326,8 @@ test(
 			};
 
 			let clicked = 0;
+
+			await expect(treeNodes.first()).toBeVisible();
 
 			while (true) {
 				const count = await treeNodes.count();

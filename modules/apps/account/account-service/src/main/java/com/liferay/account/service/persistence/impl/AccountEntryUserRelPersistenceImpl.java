@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -73,8 +71,9 @@ public class AccountEntryUserRelPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<AccountEntryUserRel>
-		_collectionPersistenceFinderByAccountEntryId;
+	private CollectionPersistenceFinder
+		<AccountEntryUserRel, NoSuchEntryUserRelException>
+			_collectionPersistenceFinderByAccountEntryId;
 
 	/**
 	 * Returns an ordered range of all the account entry user rels where accountEntryId = &#63;.
@@ -115,16 +114,8 @@ public class AccountEntryUserRelPersistenceImpl
 			OrderByComparator<AccountEntryUserRel> orderByComparator)
 		throws NoSuchEntryUserRelException {
 
-		AccountEntryUserRel accountEntryUserRel = fetchByAccountEntryId_First(
-			accountEntryId, orderByComparator);
-
-		if (accountEntryUserRel != null) {
-			return accountEntryUserRel;
-		}
-
-		throw new NoSuchEntryUserRelException(
-			_collectionPersistenceFinderByAccountEntryId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountEntryId}));
+		return _collectionPersistenceFinderByAccountEntryId.findFirst(
+			finderCache, new Object[] {accountEntryId}, orderByComparator);
 	}
 
 	/**
@@ -166,8 +157,9 @@ public class AccountEntryUserRelPersistenceImpl
 			finderCache, new Object[] {accountEntryId});
 	}
 
-	private CollectionPersistenceFinder<AccountEntryUserRel>
-		_collectionPersistenceFinderByAccountUserId;
+	private CollectionPersistenceFinder
+		<AccountEntryUserRel, NoSuchEntryUserRelException>
+			_collectionPersistenceFinderByAccountUserId;
 
 	/**
 	 * Returns an ordered range of all the account entry user rels where accountUserId = &#63;.
@@ -208,16 +200,8 @@ public class AccountEntryUserRelPersistenceImpl
 			OrderByComparator<AccountEntryUserRel> orderByComparator)
 		throws NoSuchEntryUserRelException {
 
-		AccountEntryUserRel accountEntryUserRel = fetchByAccountUserId_First(
-			accountUserId, orderByComparator);
-
-		if (accountEntryUserRel != null) {
-			return accountEntryUserRel;
-		}
-
-		throw new NoSuchEntryUserRelException(
-			_collectionPersistenceFinderByAccountUserId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {accountUserId}));
+		return _collectionPersistenceFinderByAccountUserId.findFirst(
+			finderCache, new Object[] {accountUserId}, orderByComparator);
 	}
 
 	/**
@@ -259,8 +243,9 @@ public class AccountEntryUserRelPersistenceImpl
 			finderCache, new Object[] {accountUserId});
 	}
 
-	private UniquePersistenceFinder<AccountEntryUserRel>
-		_uniquePersistenceFinderByAEI_AUI;
+	private UniquePersistenceFinder
+		<AccountEntryUserRel, NoSuchEntryUserRelException>
+			_uniquePersistenceFinderByAEI_AUI;
 
 	/**
 	 * Returns the account entry user rel where accountEntryId = &#63; and accountUserId = &#63; or throws a <code>NoSuchEntryUserRelException</code> if it could not be found.
@@ -275,23 +260,8 @@ public class AccountEntryUserRelPersistenceImpl
 			long accountEntryId, long accountUserId)
 		throws NoSuchEntryUserRelException {
 
-		AccountEntryUserRel accountEntryUserRel = fetchByAEI_AUI(
-			accountEntryId, accountUserId);
-
-		if (accountEntryUserRel == null) {
-			String message =
-				_uniquePersistenceFinderByAEI_AUI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {accountEntryId, accountUserId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchEntryUserRelException(message);
-		}
-
-		return accountEntryUserRel;
+		return _uniquePersistenceFinderByAEI_AUI.find(
+			finderCache, new Object[] {accountEntryId, accountUserId});
 	}
 
 	/**
@@ -547,7 +517,7 @@ public class AccountEntryUserRelPersistenceImpl
 				_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE,
 				_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE,
 				AccountEntryUserRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"accountEntryUserRel.", "accountEntryId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -576,7 +546,7 @@ public class AccountEntryUserRelPersistenceImpl
 				_SQL_SELECT_ACCOUNTENTRYUSERREL_WHERE,
 				_SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE,
 				AccountEntryUserRelModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"accountEntryUserRel.", "accountUserId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -653,16 +623,10 @@ public class AccountEntryUserRelPersistenceImpl
 	private static final String _SQL_COUNT_ACCOUNTENTRYUSERREL_WHERE =
 		"SELECT COUNT(accountEntryUserRel) FROM AccountEntryUserRel accountEntryUserRel WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No AccountEntryUserRel exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		AccountEntryUserRelPersistenceImpl.class);
-
 	@Override
 	protected FinderCache getFinderCache() {
 		return finderCache;
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:393935873
+// LIFERAY-SERVICE-BUILDER-HASH:1370579077

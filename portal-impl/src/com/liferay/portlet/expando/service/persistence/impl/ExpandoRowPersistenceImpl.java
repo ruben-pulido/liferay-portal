@@ -17,8 +17,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderCacheUtil;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -76,7 +74,7 @@ public class ExpandoRowPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ExpandoRow>
+	private CollectionPersistenceFinder<ExpandoRow, NoSuchRowException>
 		_collectionPersistenceFinderByTableId;
 
 	/**
@@ -117,16 +115,9 @@ public class ExpandoRowPersistenceImpl
 			long tableId, OrderByComparator<ExpandoRow> orderByComparator)
 		throws NoSuchRowException {
 
-		ExpandoRow expandoRow = fetchByTableId_First(
-			tableId, orderByComparator);
-
-		if (expandoRow != null) {
-			return expandoRow;
-		}
-
-		throw new NoSuchRowException(
-			_collectionPersistenceFinderByTableId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {tableId}));
+		return _collectionPersistenceFinderByTableId.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {tableId},
+			orderByComparator);
 	}
 
 	/**
@@ -168,7 +159,7 @@ public class ExpandoRowPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {tableId});
 	}
 
-	private CollectionPersistenceFinder<ExpandoRow>
+	private CollectionPersistenceFinder<ExpandoRow, NoSuchRowException>
 		_collectionPersistenceFinderByClassPK;
 
 	/**
@@ -209,16 +200,9 @@ public class ExpandoRowPersistenceImpl
 			long classPK, OrderByComparator<ExpandoRow> orderByComparator)
 		throws NoSuchRowException {
 
-		ExpandoRow expandoRow = fetchByClassPK_First(
-			classPK, orderByComparator);
-
-		if (expandoRow != null) {
-			return expandoRow;
-		}
-
-		throw new NoSuchRowException(
-			_collectionPersistenceFinderByClassPK.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {classPK}));
+		return _collectionPersistenceFinderByClassPK.findFirst(
+			FinderCacheUtil.getFinderCache(), new Object[] {classPK},
+			orderByComparator);
 	}
 
 	/**
@@ -260,7 +244,8 @@ public class ExpandoRowPersistenceImpl
 			FinderCacheUtil.getFinderCache(), new Object[] {classPK});
 	}
 
-	private UniquePersistenceFinder<ExpandoRow> _uniquePersistenceFinderByT_C;
+	private UniquePersistenceFinder<ExpandoRow, NoSuchRowException>
+		_uniquePersistenceFinderByT_C;
 
 	/**
 	 * Returns the expando row where tableId = &#63; and classPK = &#63; or throws a <code>NoSuchRowException</code> if it could not be found.
@@ -274,21 +259,8 @@ public class ExpandoRowPersistenceImpl
 	public ExpandoRow findByT_C(long tableId, long classPK)
 		throws NoSuchRowException {
 
-		ExpandoRow expandoRow = fetchByT_C(tableId, classPK);
-
-		if (expandoRow == null) {
-			String message =
-				_uniquePersistenceFinderByT_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {tableId, classPK});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchRowException(message);
-		}
-
-		return expandoRow;
+		return _uniquePersistenceFinderByT_C.find(
+			FinderCacheUtil.getFinderCache(), new Object[] {tableId, classPK});
 	}
 
 	/**
@@ -531,6 +503,11 @@ public class ExpandoRowPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "rowId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_EXPANDOROW;
 	}
@@ -619,7 +596,8 @@ public class ExpandoRowPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"tableId"}, false),
 				_SQL_SELECT_EXPANDOROW_WHERE, _SQL_COUNT_EXPANDOROW_WHERE,
-				ExpandoRowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ExpandoRowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"expandoRow.", "tableId", FinderColumn.Type.LONG, "=", true,
 					true, ExpandoRow::getTableId));
@@ -644,7 +622,8 @@ public class ExpandoRowPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"classPK"}, false),
 				_SQL_SELECT_EXPANDOROW_WHERE, _SQL_COUNT_EXPANDOROW_WHERE,
-				ExpandoRowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ExpandoRowModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"expandoRow.", "classPK", FinderColumn.Type.LONG, "=", true,
 					true, ExpandoRow::getClassPK));
@@ -685,12 +664,6 @@ public class ExpandoRowPersistenceImpl
 	private static final String _SQL_COUNT_EXPANDOROW_WHERE =
 		"SELECT COUNT(expandoRow) FROM ExpandoRow expandoRow WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ExpandoRow exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ExpandoRowPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"rowId"});
 
@@ -700,4 +673,4 @@ public class ExpandoRowPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1325655061
+// LIFERAY-SERVICE-BUILDER-HASH:-1773015827

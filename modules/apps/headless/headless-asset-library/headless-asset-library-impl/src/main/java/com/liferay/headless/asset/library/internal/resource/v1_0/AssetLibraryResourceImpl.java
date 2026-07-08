@@ -23,7 +23,7 @@ import com.liferay.headless.asset.library.internal.odata.entity.v1_0.AssetLibrar
 import com.liferay.headless.asset.library.internal.util.AssetLibraryUtil;
 import com.liferay.headless.asset.library.resource.v1_0.AssetLibraryResource;
 import com.liferay.petra.function.UnsafeSupplier;
-import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.DuplicateGroupExternalReferenceCodeException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
@@ -70,6 +70,8 @@ import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
+import org.osgi.service.component.annotations.ReferencePolicy;
+import org.osgi.service.component.annotations.ReferencePolicyOption;
 import org.osgi.service.component.annotations.ServiceScope;
 
 /**
@@ -304,13 +306,25 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			throw new UnsupportedOperationException();
 		}
 
+		String externalReferenceCode = assetLibrary.getExternalReferenceCode();
+
+		if (Validator.isNotNull(externalReferenceCode)) {
+			Group group = _groupLocalService.fetchGroupByExternalReferenceCode(
+				externalReferenceCode, contextCompany.getCompanyId());
+
+			if (group != null) {
+				throw new DuplicateGroupExternalReferenceCodeException(
+					externalReferenceCode);
+			}
+		}
+
 		return _toAssetLibrary(
 			_addOrUpdateDepotEntry(
 				assetLibrary,
 				_getLocalizedMap(
 					assetLibrary.getDescription(),
 					assetLibrary.getDescription_i18n()),
-				StringPool.BLANK,
+				externalReferenceCode,
 				_getLocalizedMap(
 					assetLibrary.getName(), assetLibrary.getName_i18n()),
 				_getServiceContext(),
@@ -424,6 +438,11 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 			return updatedDepotEntry;
 		}
 
+		if (Validator.isNotNull(externalReferenceCode)) {
+			serviceContext.setAttribute(
+				"groupExternalReferenceCode", externalReferenceCode);
+		}
+
 		DepotEntry depotEntry = _depotEntryService.addDepotEntry(
 			nameMap, descriptionMap,
 			AssetLibraryUtil.getDepotEntryType(
@@ -434,21 +453,13 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 
 		group = depotEntry.getGroup();
 
-		if (Validator.isNotNull(externalReferenceCode) ||
-			((unicodeProperties != null) && !unicodeProperties.isEmpty())) {
-
-			if (Validator.isNotNull(externalReferenceCode)) {
-				group.setExternalReferenceCode(externalReferenceCode);
-			}
-
-			if ((unicodeProperties != null) && !unicodeProperties.isEmpty()) {
-				group.setTypeSettingsProperties(
-					UnicodePropertiesBuilder.create(
-						group.getTypeSettingsProperties(), true
-					).putAll(
-						unicodeProperties
-					).build());
-			}
+		if ((unicodeProperties != null) && !unicodeProperties.isEmpty()) {
+			group.setTypeSettingsProperties(
+				UnicodePropertiesBuilder.create(
+					group.getTypeSettingsProperties(), true
+				).putAll(
+					unicodeProperties
+				).build());
 
 			group = _groupLocalService.updateGroup(group);
 		}
@@ -821,9 +832,12 @@ public class AssetLibraryResourceImpl extends BaseAssetLibraryResourceImpl {
 		new AssetLibraryEntityModel();
 
 	@Reference(
-		target = "(component.name=com.liferay.headless.asset.library.internal.dto.v1_0.converter.AssetLibraryDTOConverter)"
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY,
+		target = "(dto.class.name=com.liferay.depot.model.DepotEntry)"
 	)
-	private DTOConverter<DepotEntry, AssetLibrary> _assetLibraryDTOConverter;
+	private volatile DTOConverter<DepotEntry, AssetLibrary>
+		_assetLibraryDTOConverter;
 
 	@Reference
 	private CompanyLocalService _companyLocalService;

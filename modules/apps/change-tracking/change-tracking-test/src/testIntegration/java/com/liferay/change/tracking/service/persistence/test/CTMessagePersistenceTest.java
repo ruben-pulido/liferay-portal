@@ -108,11 +108,7 @@ public class CTMessagePersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		CTMessage newCTMessage = _persistence.create(pk);
-
-		newCTMessage.setMvccVersion(RandomTestUtil.nextLong());
+		CTMessage newCTMessage = addCTMessage();
 
 		newCTMessage.setCompanyId(RandomTestUtil.nextLong());
 
@@ -120,7 +116,9 @@ public class CTMessagePersistenceTest {
 
 		newCTMessage.setMessageContent(RandomTestUtil.randomString());
 
-		_ctMessages.add(_persistence.update(newCTMessage));
+		newCTMessage = _persistence.update(newCTMessage);
+
+		_ctMessages.add(newCTMessage);
 
 		CTMessage existingCTMessage = _persistence.findByPrimaryKey(
 			newCTMessage.getPrimaryKey());
@@ -389,8 +387,6 @@ public class CTMessagePersistenceTest {
 
 		CTMessage ctMessage = _persistence.create(pk);
 
-		ctMessage.setMvccVersion(RandomTestUtil.nextLong());
-
 		ctMessage.setCompanyId(RandomTestUtil.nextLong());
 
 		ctMessage.setCtCollectionId(RandomTestUtil.nextLong());
@@ -407,4 +403,4 @@ public class CTMessagePersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:336080262
+// LIFERAY-SERVICE-BUILDER-HASH:-1850277895

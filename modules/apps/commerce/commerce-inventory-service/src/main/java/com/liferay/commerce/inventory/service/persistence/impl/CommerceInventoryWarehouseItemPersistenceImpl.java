@@ -21,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -90,8 +88,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseItem>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse items where uuid = &#63;.
@@ -132,16 +131,8 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			OrderByComparator<CommerceInventoryWarehouseItem> orderByComparator)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByUuid_First(uuid, orderByComparator);
-
-		if (commerceInventoryWarehouseItem != null) {
-			return commerceInventoryWarehouseItem;
-		}
-
-		throw new NoSuchInventoryWarehouseItemException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -183,8 +174,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseItem>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse items where uuid = &#63; and companyId = &#63;.
@@ -227,16 +219,8 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			OrderByComparator<CommerceInventoryWarehouseItem> orderByComparator)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByUuid_C_First(uuid, companyId, orderByComparator);
-
-		if (commerceInventoryWarehouseItem != null) {
-			return commerceInventoryWarehouseItem;
-		}
-
-		throw new NoSuchInventoryWarehouseItemException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -281,8 +265,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseItem>
-		_collectionPersistenceFinderByCompanyId;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse items where companyId = &#63;.
@@ -323,16 +308,8 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			OrderByComparator<CommerceInventoryWarehouseItem> orderByComparator)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByCompanyId_First(companyId, orderByComparator);
-
-		if (commerceInventoryWarehouseItem != null) {
-			return commerceInventoryWarehouseItem;
-		}
-
-		throw new NoSuchInventoryWarehouseItemException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -374,8 +351,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			finderCache, new Object[] {companyId});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseItem>
-		_collectionPersistenceFinderByCommerceInventoryWarehouseId;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_collectionPersistenceFinderByCommerceInventoryWarehouseId;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse items where commerceInventoryWarehouseId = &#63;.
@@ -419,19 +397,10 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 					orderByComparator)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByCommerceInventoryWarehouseId_First(
-				commerceInventoryWarehouseId, orderByComparator);
-
-		if (commerceInventoryWarehouseItem != null) {
-			return commerceInventoryWarehouseItem;
-		}
-
-		throw new NoSuchInventoryWarehouseItemException(
-			_collectionPersistenceFinderByCommerceInventoryWarehouseId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceInventoryWarehouseId}));
+		return _collectionPersistenceFinderByCommerceInventoryWarehouseId.
+			findFirst(
+				finderCache, new Object[] {commerceInventoryWarehouseId},
+				orderByComparator);
 	}
 
 	/**
@@ -481,8 +450,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			finderCache, new Object[] {commerceInventoryWarehouseId});
 	}
 
-	private CollectionPersistenceFinder<CommerceInventoryWarehouseItem>
-		_collectionPersistenceFinderByC_S_U;
+	private CollectionPersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_collectionPersistenceFinderByC_S_U;
 
 	/**
 	 * Returns an ordered range of all the commerce inventory warehouse items where companyId = &#63; and sku = &#63; and unitOfMeasureKey = &#63;.
@@ -527,18 +497,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			OrderByComparator<CommerceInventoryWarehouseItem> orderByComparator)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByC_S_U_First(
-				companyId, sku, unitOfMeasureKey, orderByComparator);
-
-		if (commerceInventoryWarehouseItem != null) {
-			return commerceInventoryWarehouseItem;
-		}
-
-		throw new NoSuchInventoryWarehouseItemException(
-			_collectionPersistenceFinderByC_S_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, sku, unitOfMeasureKey}));
+		return _collectionPersistenceFinderByC_S_U.findFirst(
+			finderCache, new Object[] {companyId, sku, unitOfMeasureKey},
+			orderByComparator);
 	}
 
 	/**
@@ -591,8 +552,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			finderCache, new Object[] {companyId, sku, unitOfMeasureKey});
 	}
 
-	private UniquePersistenceFinder<CommerceInventoryWarehouseItem>
-		_uniquePersistenceFinderByCIWI_S_U;
+	private UniquePersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_uniquePersistenceFinderByCIWI_S_U;
 
 	/**
 	 * Returns the commerce inventory warehouse item where commerceInventoryWarehouseId = &#63; and sku = &#63; and unitOfMeasureKey = &#63; or throws a <code>NoSuchInventoryWarehouseItemException</code> if it could not be found.
@@ -609,26 +571,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			String unitOfMeasureKey)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByCIWI_S_U(
-				commerceInventoryWarehouseId, sku, unitOfMeasureKey);
-
-		if (commerceInventoryWarehouseItem == null) {
-			String message =
-				_uniquePersistenceFinderByCIWI_S_U.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {
-						commerceInventoryWarehouseId, sku, unitOfMeasureKey
-					});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchInventoryWarehouseItemException(message);
-		}
-
-		return commerceInventoryWarehouseItem;
+		return _uniquePersistenceFinderByCIWI_S_U.find(
+			finderCache,
+			new Object[] {commerceInventoryWarehouseId, sku, unitOfMeasureKey});
 	}
 
 	/**
@@ -689,8 +634,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			new Object[] {commerceInventoryWarehouseId, sku, unitOfMeasureKey});
 	}
 
-	private UniquePersistenceFinder<CommerceInventoryWarehouseItem>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<CommerceInventoryWarehouseItem, NoSuchInventoryWarehouseItemException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the commerce inventory warehouse item where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchInventoryWarehouseItemException</code> if it could not be found.
@@ -705,23 +651,8 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchInventoryWarehouseItemException {
 
-		CommerceInventoryWarehouseItem commerceInventoryWarehouseItem =
-			fetchByERC_C(externalReferenceCode, companyId);
-
-		if (commerceInventoryWarehouseItem == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchInventoryWarehouseItemException(message);
-		}
-
-		return commerceInventoryWarehouseItem;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1083,6 +1014,11 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "commerceInventoryWarehouseItemId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM;
 	}
@@ -1117,9 +1053,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 			CommerceInventoryWarehouseItemModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commerceInventoryWarehouseItem.", "uuid",
+				"commerceInventoryWarehouseItem.", "uuid", "uuid_",
 				FinderColumn.Type.STRING, "=", true, true,
 				CommerceInventoryWarehouseItem::getUuid));
 
@@ -1145,9 +1081,9 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				CommerceInventoryWarehouseItemModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commerceInventoryWarehouseItem.", "uuid",
+					"commerceInventoryWarehouseItem.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceInventoryWarehouseItem::getUuid),
 				new FinderColumn<>(
@@ -1177,7 +1113,7 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				CommerceInventoryWarehouseItemModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceInventoryWarehouseItem.", "companyId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -1208,7 +1144,7 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 				_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 				CommerceInventoryWarehouseItemModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceInventoryWarehouseItem.",
 					"commerceInventoryWarehouseId", FinderColumn.Type.LONG, "=",
@@ -1245,7 +1181,7 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 			_SQL_SELECT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 			_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE,
 			CommerceInventoryWarehouseItemModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
 				"commerceInventoryWarehouseItem.", "companyId",
 				FinderColumn.Type.LONG, "=", true, true,
@@ -1368,12 +1304,6 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 		_SQL_COUNT_COMMERCEINVENTORYWAREHOUSEITEM_WHERE =
 			"SELECT COUNT(commerceInventoryWarehouseItem) FROM CommerceInventoryWarehouseItem commerceInventoryWarehouseItem WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceInventoryWarehouseItem exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceInventoryWarehouseItemPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "commerceInventoryWarehouseItemId"});
 
@@ -1383,4 +1313,4 @@ public class CommerceInventoryWarehouseItemPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1150686047
+// LIFERAY-SERVICE-BUILDER-HASH:-1423547638

@@ -1,3 +1,8 @@
+.custom-control-label.term-name + .term-count {
+	position: relative;
+	top: -0.25rem;
+}
+
 .product-card {
 	$product-card-gutter: 1rem;
 	$product-card-min-width: 15rem;
@@ -40,6 +45,10 @@
 				margin: 0 $product-card-gutter $product-card-gutter 0;
 			}
 		}
+	}
+
+	.card-item-first {
+		overflow: hidden;
 	}
 
 	.product-card-picture {
@@ -212,6 +221,11 @@
 	height: 40px;
 	margin-bottom: 1.5rem;
 	width: inherit;
+}
+
+.price-range-btn-wrapper {
+	align-items: flex-end;
+	display: flex;
 }
 
 input.price-range-input {

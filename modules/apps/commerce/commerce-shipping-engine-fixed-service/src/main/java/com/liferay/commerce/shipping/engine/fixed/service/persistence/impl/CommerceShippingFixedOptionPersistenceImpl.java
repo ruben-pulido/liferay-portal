@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -79,8 +77,9 @@ public class CommerceShippingFixedOptionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceShippingFixedOption>
-		_collectionPersistenceFinderByCommerceShippingMethodId;
+	private CollectionPersistenceFinder
+		<CommerceShippingFixedOption, NoSuchShippingFixedOptionException>
+			_collectionPersistenceFinderByCommerceShippingMethodId;
 
 	/**
 	 * Returns an ordered range of all the commerce shipping fixed options where commerceShippingMethodId = &#63;.
@@ -121,19 +120,9 @@ public class CommerceShippingFixedOptionPersistenceImpl
 			OrderByComparator<CommerceShippingFixedOption> orderByComparator)
 		throws NoSuchShippingFixedOptionException {
 
-		CommerceShippingFixedOption commerceShippingFixedOption =
-			fetchByCommerceShippingMethodId_First(
-				commerceShippingMethodId, orderByComparator);
-
-		if (commerceShippingFixedOption != null) {
-			return commerceShippingFixedOption;
-		}
-
-		throw new NoSuchShippingFixedOptionException(
-			_collectionPersistenceFinderByCommerceShippingMethodId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {commerceShippingMethodId}));
+		return _collectionPersistenceFinderByCommerceShippingMethodId.findFirst(
+			finderCache, new Object[] {commerceShippingMethodId},
+			orderByComparator);
 	}
 
 	/**
@@ -179,8 +168,9 @@ public class CommerceShippingFixedOptionPersistenceImpl
 			finderCache, new Object[] {commerceShippingMethodId});
 	}
 
-	private UniquePersistenceFinder<CommerceShippingFixedOption>
-		_uniquePersistenceFinderByC_K;
+	private UniquePersistenceFinder
+		<CommerceShippingFixedOption, NoSuchShippingFixedOptionException>
+			_uniquePersistenceFinderByC_K;
 
 	/**
 	 * Returns the commerce shipping fixed option where companyId = &#63; and key = &#63; or throws a <code>NoSuchShippingFixedOptionException</code> if it could not be found.
@@ -194,22 +184,8 @@ public class CommerceShippingFixedOptionPersistenceImpl
 	public CommerceShippingFixedOption findByC_K(long companyId, String key)
 		throws NoSuchShippingFixedOptionException {
 
-		CommerceShippingFixedOption commerceShippingFixedOption = fetchByC_K(
-			companyId, key);
-
-		if (commerceShippingFixedOption == null) {
-			String message =
-				_uniquePersistenceFinderByC_K.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, key});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchShippingFixedOptionException(message);
-		}
-
-		return commerceShippingFixedOption;
+		return _uniquePersistenceFinderByC_K.find(
+			finderCache, new Object[] {companyId, key});
 	}
 
 	/**
@@ -517,7 +493,7 @@ public class CommerceShippingFixedOptionPersistenceImpl
 				_SQL_SELECT_COMMERCESHIPPINGFIXEDOPTION_WHERE,
 				_SQL_COUNT_COMMERCESHIPPINGFIXEDOPTION_WHERE,
 				CommerceShippingFixedOptionModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"commerceShippingFixedOption.", "commerceShippingMethodId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -537,8 +513,9 @@ public class CommerceShippingFixedOptionPersistenceImpl
 				FinderColumn.Type.LONG, "=", true, true,
 				CommerceShippingFixedOption::getCompanyId),
 			new FinderColumn<>(
-				"commerceShippingFixedOption.", "key", FinderColumn.Type.STRING,
-				"=", true, true, CommerceShippingFixedOption::getKey));
+				"commerceShippingFixedOption.", "key", "key_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceShippingFixedOption::getKey));
 
 		CommerceShippingFixedOptionUtil.setPersistence(this);
 	}
@@ -595,12 +572,6 @@ public class CommerceShippingFixedOptionPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCESHIPPINGFIXEDOPTION_WHERE =
 		"SELECT COUNT(commerceShippingFixedOption) FROM CommerceShippingFixedOption commerceShippingFixedOption WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceShippingFixedOption exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceShippingFixedOptionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"key"});
 
@@ -610,4 +581,4 @@ public class CommerceShippingFixedOptionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-844820374
+// LIFERAY-SERVICE-BUILDER-HASH:1286990889

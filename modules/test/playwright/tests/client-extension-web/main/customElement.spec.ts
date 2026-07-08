@@ -11,6 +11,7 @@ import {loginTest} from '../../../fixtures/loginTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
 import {liferayConfig} from '../../../liferay.config';
 import getRandomString from '../../../utils/getRandomString';
+import {performLoginViaApi, performLogout} from '../../../utils/performLogin';
 import {clientExtensionsPageTest} from './fixtures/clientExtensionsPageTest';
 import {editCustomElementPageTest} from './fixtures/editCustomElementPageTest';
 import {Column} from './pages/ClientExtensionsPage';
@@ -282,9 +283,9 @@ test('Check that Name field can be translated', async ({
 	const defaultTranslationName = getRandomString();
 	const ptTranslationName = getRandomString();
 
-	await editCustomElementPage.nameInput.fill(defaultTranslationName);
+	await editCustomElementPage.fillName('en_US', defaultTranslationName);
 	await editCustomElementPage.changeNameLanguage('pt_BR');
-	await editCustomElementPage.nameInput.fill(ptTranslationName);
+	await editCustomElementPage.fillName('pt_BR', ptTranslationName);
 
 	await test.step('Check expectations', async () => {
 		await editCustomElementPage.changeNameLanguage('en_US');
@@ -836,6 +837,98 @@ test(
 		});
 
 		await test.step('Clean up', async () => {
+			await clientExtensionsPage.deleteClientExtension(
+				clientExtensionName
+			);
+		});
+	}
+);
+
+testSample(
+	'Custom Element resources are not loaded for a guest without VIEW permission',
+	{tag: '@LPD-95613'},
+	async ({
+		clientExtensionsPage,
+		editCustomElementPage,
+		layout,
+		page,
+		pageEditorPage,
+	}) => {
+		const clientExtensionName = getRandomString();
+		const cssResourceName = `res-${getRandomString()}.css`;
+		const htmlElementName = `html-${getRandomString()}`;
+		const jsResourceName = `res-${getRandomString()}.js`;
+
+		await test.step('Create a Custom Element with CSS and JavaScript resources', async () => {
+			await editCustomElementPage.goto();
+
+			await editCustomElementPage.cssURLInput.fill(
+				`https://www.example.com/${cssResourceName}`
+			);
+			await editCustomElementPage.htmlElementNameInput.fill(
+				htmlElementName
+			);
+			await editCustomElementPage.javaScriptURLInput.fill(
+				`https://www.example.com/${jsResourceName}`
+			);
+			await editCustomElementPage.nameInput.fill(clientExtensionName);
+
+			await editCustomElementPage.publish(WaitAction.SUCCESS);
+		});
+
+		await test.step('Add the widget and remove VIEW permission for the Guest role', async () => {
+			await page.goto(`/web/guest${layout.friendlyURL}?p_l_mode=edit`);
+
+			await pageEditorPage.addWidget(
+				'Client Extensions',
+				clientExtensionName
+			);
+
+			const widgetId =
+				await pageEditorPage.getFragmentId(clientExtensionName);
+
+			await pageEditorPage.changeWidgetPermission(
+				widgetId,
+				'#guest_ACTION_VIEW',
+				false
+			);
+
+			await pageEditorPage.publishPage();
+		});
+
+		await test.step('Resources load for a user with VIEW permission', async () => {
+			await page.goto(`/web/guest${layout.friendlyURL}`);
+
+			await expect(page.locator(htmlElementName)).toBeAttached();
+			await expect(
+				page.locator(`script[src*="${jsResourceName}"]`)
+			).toBeAttached();
+			await expect(
+				page.locator(`link[href*="${cssResourceName}"]`)
+			).toBeAttached();
+		});
+
+		await test.step('Resources do not load for a guest without VIEW permission', async () => {
+			await performLogout(page);
+
+			await expect(async () => {
+				await page.goto(`/web/guest${layout.friendlyURL}`);
+
+				await expect(page.locator(htmlElementName)).toHaveCount(0);
+				await expect(
+					page.locator(`script[src*="${jsResourceName}"]`)
+				).toHaveCount(0);
+				await expect(
+					page.locator(`link[href*="${cssResourceName}"]`)
+				).toHaveCount(0);
+			}).toPass();
+		});
+
+		await test.step('Clean up', async () => {
+			await performLoginViaApi({page, screenName: 'test'});
+
+			await clientExtensionsPage.goto();
+
 			await clientExtensionsPage.deleteClientExtension(
 				clientExtensionName
 			);

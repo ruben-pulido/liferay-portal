@@ -116,11 +116,7 @@ public class SavedContentEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SavedContentEntry newSavedContentEntry = _persistence.create(pk);
-
-		newSavedContentEntry.setMvccVersion(RandomTestUtil.nextLong());
+		SavedContentEntry newSavedContentEntry = addSavedContentEntry();
 
 		newSavedContentEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -142,7 +138,9 @@ public class SavedContentEntryPersistenceTest {
 
 		newSavedContentEntry.setClassPK(RandomTestUtil.nextLong());
 
-		_savedContentEntries.add(_persistence.update(newSavedContentEntry));
+		newSavedContentEntry = _persistence.update(newSavedContentEntry);
+
+		_savedContentEntries.add(newSavedContentEntry);
 
 		SavedContentEntry existingSavedContentEntry =
 			_persistence.findByPrimaryKey(newSavedContentEntry.getPrimaryKey());
@@ -681,8 +679,6 @@ public class SavedContentEntryPersistenceTest {
 
 		SavedContentEntry savedContentEntry = _persistence.create(pk);
 
-		savedContentEntry.setMvccVersion(RandomTestUtil.nextLong());
-
 		savedContentEntry.setCtCollectionId(RandomTestUtil.nextLong());
 
 		savedContentEntry.setUuid(RandomTestUtil.randomString());
@@ -714,4 +710,4 @@ public class SavedContentEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1493528388
+// LIFERAY-SERVICE-BUILDER-HASH:474436523

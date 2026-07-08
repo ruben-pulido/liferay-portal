@@ -16,8 +16,9 @@ import {CSVType} from 'shared/components/download-report/utils';
 import {DownloadStaticCSVReport} from 'shared/components/download-report/DownloadStaticCSVReport';
 import {INTERVAL_KEY_MAP} from 'shared/util/time';
 import {isNil} from 'lodash';
-import {RangeKeyTimeRanges, Sizes} from 'shared/util/constants';
 import {Routes, toRoute} from 'shared/util/router';
+import {SectionHeader} from 'shared/components/SectionHeader';
+import {Sizes} from 'shared/util/constants';
 import {sub} from 'shared/util/lang';
 import {toThousands} from 'shared/util/numbers';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
@@ -45,7 +46,7 @@ const renderIndividualsValue = (value?: number) => {
 };
 
 const renderTrendLabel = (percentageNode: React.ReactNode) =>
-	sub(Liferay.Language.get('x-vs-previous-30-days'), [percentageNode], false);
+	sub(Liferay.Language.get('x-vs-last-30-days'), [percentageNode], false);
 
 const IndividualsOverviewEmptyState: React.FC<
 	IIndividualsOverviewEmptyStateProps
@@ -143,7 +144,7 @@ const IndividualsOverviewCDP = () => {
 		variables: {
 			channelId,
 			interval: INTERVAL_KEY_MAP.week,
-			rangeKey: Number(RangeKeyTimeRanges.Last30Days)
+			rangeKey: 30
 		}
 	});
 
@@ -236,6 +237,11 @@ const IndividualsOverviewCDP = () => {
 								/>
 							</ClayLayout.Col>
 						</ClayLayout.Row>
+
+						<SectionHeader
+							icon='box-container'
+							title={Liferay.Language.get('individuals')}
+						/>
 
 						<IndividualsList />
 					</>

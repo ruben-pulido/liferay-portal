@@ -31,6 +31,9 @@ export const test = mergeTests(
 	companyExportImportPageTest,
 	dataApiHelpersTest,
 	exportImportPagesTest,
+	featureFlagsTest({
+		'LPD-57655': {enabled: false},
+	}),
 	globalMenuPagesTest,
 	loginTest(),
 	productMenuPageTest,
@@ -41,6 +44,7 @@ const rootModelTest = mergeTests(
 	test,
 	featureFlagsTest({
 		'LPD-34594': {enabled: true},
+		'LPD-57655': {enabled: false},
 	}),
 	globalMenuPagesTest
 );
@@ -584,71 +588,6 @@ test('Can/not view Export menu item in Application menu depending on permissions
 
 	await expect(exportImportPage.newExportButton).toBeHidden();
 });
-
-test(
-	'Reset date filters when exporting',
-	{tag: '@LPD-78925'},
-	async ({exportImportPage}) => {
-		await exportImportPage.goToExport();
-
-		await exportImportPage.newExportButton.click();
-
-		await exportImportPage.rangeDateRangeRadioButton.click();
-
-		const endDate = new Date('2026-01-02 08:00');
-
-		await exportImportPage.rangeDateRangeEndDate.fill(
-			toDateRangeDate(endDate)
-		);
-		await exportImportPage.rangeDateRangeEndTime.fill(
-			toDateRangeTime(endDate)
-		);
-
-		const startDate = new Date('2026-01-01 08:00');
-
-		await exportImportPage.rangeDateRangeStartDate.fill(
-			toDateRangeDate(startDate)
-		);
-		await exportImportPage.rangeDateRangeStartTime.fill(
-			toDateRangeTime(startDate)
-		);
-
-		await exportImportPage.refreshCountsLink.click();
-
-		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeEndDate).toHaveValue(
-			toDateRangeDate(endDate)
-		);
-		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeStartDate).toHaveValue(
-			toDateRangeDate(startDate)
-		);
-
-		await exportImportPage.allRadioButton.click();
-
-		await exportImportPage.refreshCountsLink.click();
-
-		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeEndDate).not.toHaveValue(
-			toDateRangeDate(endDate)
-		);
-		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeStartDate).not.toHaveValue(
-			toDateRangeDate(endDate)
-		);
-
-		await exportImportPage.rangeDateRangeRadioButton.click();
-
-		await expect(exportImportPage.rangeDateRangeEndDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeEndDate).not.toHaveValue(
-			toDateRangeDate(endDate)
-		);
-		await expect(exportImportPage.rangeDateRangeStartDate).toBeEnabled();
-		await expect(exportImportPage.rangeDateRangeStartDate).not.toHaveValue(
-			toDateRangeDate(endDate)
-		);
-	}
-);
 
 test('Can see deletion counts at instance level', async ({
 	apiHelpers,

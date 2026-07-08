@@ -10,8 +10,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -76,8 +74,9 @@ public class ERCCompanyEntryPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ERCCompanyEntry>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<ERCCompanyEntry, NoSuchERCCompanyEntryException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the erc company entries where uuid = &#63;.
@@ -117,16 +116,8 @@ public class ERCCompanyEntryPersistenceImpl
 			String uuid, OrderByComparator<ERCCompanyEntry> orderByComparator)
 		throws NoSuchERCCompanyEntryException {
 
-		ERCCompanyEntry ercCompanyEntry = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (ercCompanyEntry != null) {
-			return ercCompanyEntry;
-		}
-
-		throw new NoSuchERCCompanyEntryException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -167,8 +158,9 @@ public class ERCCompanyEntryPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ERCCompanyEntry>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<ERCCompanyEntry, NoSuchERCCompanyEntryException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the erc company entries where uuid = &#63; and companyId = &#63;.
@@ -211,16 +203,8 @@ public class ERCCompanyEntryPersistenceImpl
 			OrderByComparator<ERCCompanyEntry> orderByComparator)
 		throws NoSuchERCCompanyEntryException {
 
-		ERCCompanyEntry ercCompanyEntry = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ercCompanyEntry != null) {
-			return ercCompanyEntry;
-		}
-
-		throw new NoSuchERCCompanyEntryException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -265,8 +249,9 @@ public class ERCCompanyEntryPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<ERCCompanyEntry>
-		_uniquePersistenceFinderByERC_C;
+	private UniquePersistenceFinder
+		<ERCCompanyEntry, NoSuchERCCompanyEntryException>
+			_uniquePersistenceFinderByERC_C;
 
 	/**
 	 * Returns the erc company entry where externalReferenceCode = &#63; and companyId = &#63; or throws a <code>NoSuchERCCompanyEntryException</code> if it could not be found.
@@ -281,23 +266,8 @@ public class ERCCompanyEntryPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchERCCompanyEntryException {
 
-		ERCCompanyEntry ercCompanyEntry = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (ercCompanyEntry == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchERCCompanyEntryException(message);
-		}
-
-		return ercCompanyEntry;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -629,9 +599,10 @@ public class ERCCompanyEntryPersistenceImpl
 				0, 1, false, null),
 			_SQL_SELECT_ERCCOMPANYENTRY_WHERE, _SQL_COUNT_ERCCOMPANYENTRY_WHERE,
 			ERCCompanyEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			"", null,
 			new FinderColumn<>(
-				"ercCompanyEntry.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ERCCompanyEntry::getUuid));
+				"ercCompanyEntry.", "uuid", "uuid_", FinderColumn.Type.STRING,
+				"=", true, true, ERCCompanyEntry::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -655,10 +626,11 @@ public class ERCCompanyEntryPersistenceImpl
 				_SQL_SELECT_ERCCOMPANYENTRY_WHERE,
 				_SQL_COUNT_ERCCOMPANYENTRY_WHERE,
 				ERCCompanyEntryModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX,
-				"",
+				"", "", null,
 				new FinderColumn<>(
-					"ercCompanyEntry.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, ERCCompanyEntry::getUuid),
+					"ercCompanyEntry.", "uuid", "uuid_",
+					FinderColumn.Type.STRING, "=", true, true,
+					ERCCompanyEntry::getUuid),
 				new FinderColumn<>(
 					"ercCompanyEntry.", "companyId", FinderColumn.Type.LONG,
 					"=", true, true, ERCCompanyEntry::getCompanyId));
@@ -708,12 +680,6 @@ public class ERCCompanyEntryPersistenceImpl
 	private static final String _SQL_COUNT_ERCCOMPANYENTRY_WHERE =
 		"SELECT COUNT(ercCompanyEntry) FROM ERCCompanyEntry ercCompanyEntry WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ERCCompanyEntry exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		ERCCompanyEntryPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -723,4 +689,4 @@ public class ERCCompanyEntryPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:2057598756
+// LIFERAY-SERVICE-BUILDER-HASH:-1708649752

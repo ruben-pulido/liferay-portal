@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.persistence.impl.BasePersistenceImpl;
 import com.liferay.portal.kernel.service.persistence.impl.CollectionPersistenceFinder;
@@ -77,8 +75,10 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<NotificationTemplateAttachment>
-		_collectionPersistenceFinderByNotificationTemplateId;
+	private CollectionPersistenceFinder
+		<NotificationTemplateAttachment,
+		 NoSuchNotificationTemplateAttachmentException>
+			_collectionPersistenceFinderByNotificationTemplateId;
 
 	/**
 	 * Returns an ordered range of all the notification template attachments where notificationTemplateId = &#63;.
@@ -119,19 +119,9 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			OrderByComparator<NotificationTemplateAttachment> orderByComparator)
 		throws NoSuchNotificationTemplateAttachmentException {
 
-		NotificationTemplateAttachment notificationTemplateAttachment =
-			fetchByNotificationTemplateId_First(
-				notificationTemplateId, orderByComparator);
-
-		if (notificationTemplateAttachment != null) {
-			return notificationTemplateAttachment;
-		}
-
-		throw new NoSuchNotificationTemplateAttachmentException(
-			_collectionPersistenceFinderByNotificationTemplateId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationTemplateId}));
+		return _collectionPersistenceFinderByNotificationTemplateId.findFirst(
+			finderCache, new Object[] {notificationTemplateId},
+			orderByComparator);
 	}
 
 	/**
@@ -174,8 +164,10 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			finderCache, new Object[] {notificationTemplateId});
 	}
 
-	private UniquePersistenceFinder<NotificationTemplateAttachment>
-		_uniquePersistenceFinderByNTI_OFI;
+	private UniquePersistenceFinder
+		<NotificationTemplateAttachment,
+		 NoSuchNotificationTemplateAttachmentException>
+			_uniquePersistenceFinderByNTI_OFI;
 
 	/**
 	 * Returns the notification template attachment where notificationTemplateId = &#63; and objectFieldId = &#63; or throws a <code>NoSuchNotificationTemplateAttachmentException</code> if it could not be found.
@@ -190,23 +182,8 @@ public class NotificationTemplateAttachmentPersistenceImpl
 			long notificationTemplateId, long objectFieldId)
 		throws NoSuchNotificationTemplateAttachmentException {
 
-		NotificationTemplateAttachment notificationTemplateAttachment =
-			fetchByNTI_OFI(notificationTemplateId, objectFieldId);
-
-		if (notificationTemplateAttachment == null) {
-			String message =
-				_uniquePersistenceFinderByNTI_OFI.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {notificationTemplateId, objectFieldId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchNotificationTemplateAttachmentException(message);
-		}
-
-		return notificationTemplateAttachment;
+		return _uniquePersistenceFinderByNTI_OFI.find(
+			finderCache, new Object[] {notificationTemplateId, objectFieldId});
 	}
 
 	/**
@@ -455,6 +432,11 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	}
 
 	@Override
+	protected String getPKFieldName() {
+		return "notificationTemplateAttachmentId";
+	}
+
+	@Override
 	protected String getSelectSQL() {
 		return _SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT;
 	}
@@ -494,7 +476,7 @@ public class NotificationTemplateAttachmentPersistenceImpl
 				_SQL_SELECT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE,
 				_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE,
 				NotificationTemplateAttachmentModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
 					"notificationTemplateAttachment.", "notificationTemplateId",
 					FinderColumn.Type.LONG, "=", true, true,
@@ -576,12 +558,6 @@ public class NotificationTemplateAttachmentPersistenceImpl
 		_SQL_COUNT_NOTIFICATIONTEMPLATEATTACHMENT_WHERE =
 			"SELECT COUNT(notificationTemplateAttachment) FROM NotificationTemplateAttachment notificationTemplateAttachment WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No NotificationTemplateAttachment exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		NotificationTemplateAttachmentPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"notificationTemplateAttachmentId"});
 
@@ -591,4 +567,4 @@ public class NotificationTemplateAttachmentPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1748903532
+// LIFERAY-SERVICE-BUILDER-HASH:1520704601

@@ -90,6 +90,7 @@ resource "helm_release" "argocd" {
 					networkPolicy={
 						create=true
 					}
+					podAnnotations=local.karpenter_pod_annotations
 				}
 				installCRDs=true
 				notifications={
@@ -115,12 +116,21 @@ resource "helm_release" "argocd" {
 					}
 				}
 				repoServer={
+					livenessProbe={
+						failureThreshold=6
+						periodSeconds=15
+						timeoutSeconds=10
+					}
+					readinessProbe={
+						periodSeconds=15
+						timeoutSeconds=10
+					}
 					resources={
 						limits={
 							memory="1.5Gi"
 						}
 						requests={
-							cpu="15m"
+							cpu="250m"
 							memory="128Mi"
 						}
 					}

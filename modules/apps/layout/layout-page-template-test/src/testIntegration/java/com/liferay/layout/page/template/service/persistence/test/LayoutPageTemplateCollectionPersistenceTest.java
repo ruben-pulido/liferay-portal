@@ -121,13 +121,8 @@ public class LayoutPageTemplateCollectionPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
 		LayoutPageTemplateCollection newLayoutPageTemplateCollection =
-			_persistence.create(pk);
-
-		newLayoutPageTemplateCollection.setMvccVersion(
-			RandomTestUtil.nextLong());
+			addLayoutPageTemplateCollection();
 
 		newLayoutPageTemplateCollection.setCtCollectionId(
 			RandomTestUtil.nextLong());
@@ -168,8 +163,10 @@ public class LayoutPageTemplateCollectionPersistenceTest {
 		newLayoutPageTemplateCollection.setLastPublishDate(
 			RandomTestUtil.nextDate());
 
-		_layoutPageTemplateCollections.add(
-			_persistence.update(newLayoutPageTemplateCollection));
+		newLayoutPageTemplateCollection = _persistence.update(
+			newLayoutPageTemplateCollection);
+
+		_layoutPageTemplateCollections.add(newLayoutPageTemplateCollection);
 
 		LayoutPageTemplateCollection existingLayoutPageTemplateCollection =
 			_persistence.findByPrimaryKey(
@@ -814,8 +811,6 @@ public class LayoutPageTemplateCollectionPersistenceTest {
 		LayoutPageTemplateCollection layoutPageTemplateCollection =
 			_persistence.create(pk);
 
-		layoutPageTemplateCollection.setMvccVersion(RandomTestUtil.nextLong());
-
 		layoutPageTemplateCollection.setCtCollectionId(
 			RandomTestUtil.nextLong());
 
@@ -864,4 +859,4 @@ public class LayoutPageTemplateCollectionPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1886899675
+// LIFERAY-SERVICE-BUILDER-HASH:-1220507243

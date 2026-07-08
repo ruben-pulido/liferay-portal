@@ -114,14 +114,14 @@ public class NullConvertibleEntryPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		NullConvertibleEntry newNullConvertibleEntry = _persistence.create(pk);
+		NullConvertibleEntry newNullConvertibleEntry =
+			addNullConvertibleEntry();
 
 		newNullConvertibleEntry.setName(RandomTestUtil.randomString());
 
-		_nullConvertibleEntries.add(
-			_persistence.update(newNullConvertibleEntry));
+		newNullConvertibleEntry = _persistence.update(newNullConvertibleEntry);
+
+		_nullConvertibleEntries.add(newNullConvertibleEntry);
 
 		NullConvertibleEntry existingNullConvertibleEntry =
 			_persistence.findByPrimaryKey(
@@ -494,4 +494,4 @@ public class NullConvertibleEntryPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-671830849
+// LIFERAY-SERVICE-BUILDER-HASH:-2035544722

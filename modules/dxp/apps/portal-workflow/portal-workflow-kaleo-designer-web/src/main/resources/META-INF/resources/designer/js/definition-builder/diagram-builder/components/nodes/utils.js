@@ -10,9 +10,11 @@ import {insertNodeAt} from '../../util/insertNodeAt';
 import AIDecisionNode from './AIDecisionNode';
 import ConditionNode from './ConditionNode';
 import ForkNode from './ForkNode';
+import HTTPRequestNode from './HTTPRequestNode';
 import JoinNode from './JoinNode';
 import JoinXorNode from './JoinXorNode';
 import LLMNode from './LLMNode';
+import ServiceNode from './ServiceNode';
 import TaskNode from './TaskNode';
 import EndNode from './state/EndNode';
 import StartNode from './state/StartNode';
@@ -44,10 +46,16 @@ const nodeDescription = {
 	'condition': Liferay.Language.get('execute-conditional-logic'),
 	'end': Liferay.Language.get('conclude-the-workflow'),
 	'fork': Liferay.Language.get('split-the-workflow-into-multiple-paths'),
+	'http-request': Liferay.Language.get(
+		'make-outbound-calls-to-rest-apis-or-client-extensions'
+	),
 	'join': Liferay.Language.get('all-interactions-need-to-be-closed'),
 	'join-xor': Liferay.Language.get('only-one-interaction-needs-to-be-closed'),
 	'llm': Liferay.Language.get(
 		'generate-content-summarize-and-classify-data-using-llm-models'
+	),
+	'service': Liferay.Language.get(
+		'execute-custom-business-logic-using-a-java-delegate'
 	),
 	'start': Liferay.Language.get('begin-a-workflow'),
 	'state': Liferay.Language.get('execute-actions-in-the-workflow'),
@@ -68,6 +76,8 @@ let nodeTypes = {
 if (Liferay.FeatureFlags['LPD-62272']) {
 	nodeTypes = insertNodeAt(nodeTypes, 'ai-decision', AIDecisionNode, 1);
 	nodeTypes = insertNodeAt(nodeTypes, 'llm', LLMNode, 6);
+	nodeTypes = insertNodeAt(nodeTypes, 'http-request', HTTPRequestNode, 7);
+	nodeTypes = insertNodeAt(nodeTypes, 'service', ServiceNode, 8);
 }
 
 export {defaultNodes, nodeDescription, nodeTypes};

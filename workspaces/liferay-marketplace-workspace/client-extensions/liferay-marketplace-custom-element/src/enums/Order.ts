@@ -29,6 +29,7 @@ export enum OrderStatus {
 export enum OrderTypes {
 	ADDONS = 'ADDONS',
 	AI_HUB = 'AI_HUB',
+	AI_HUB_TOKEN = 'AI_HUB_TOKEN',
 	CLIENT_EXTENSION = 'CLIENT_EXTENSION',
 	CLOUD_APP = 'CLOUD_APP',
 	CMP = 'CMP_BETA',
@@ -87,6 +88,7 @@ export const orderTypeDocumentationURL: Partial<Record<OrderTypes, string>> = {
 export const orderTypeLabel = {
 	[OrderTypes.ADDONS]: 'Add-Ons',
 	[OrderTypes.AI_HUB]: 'AI Hub',
+	[OrderTypes.AI_HUB_TOKEN]: 'AI Hub Token',
 	[OrderTypes.CLIENT_EXTENSION]: 'Client Extension',
 	[OrderTypes.CLOUD_APP]: 'Cloud',
 	[OrderTypes.CMP]: 'Content Marketing Platform',
@@ -149,8 +151,10 @@ export function getOrderStatusLabel(order: PlacedOrder) {
 
 	if (order.orderTypeExternalReferenceCode === OrderTypes.AI_HUB) {
 		if (order.orderStatusInfo.code !== OrderWorkflowStatusCode.COMPLETED) {
-			return 'Requested';
+			return 'Pending';
 		}
+
+		return 'Active';
 	}
 
 	return order.orderStatusInfo.label;

@@ -207,6 +207,7 @@ public abstract class BaseSiteResourceTestCase {
 		site.setExternalReferenceCode(regex);
 		site.setFriendlyUrlPath(regex);
 		site.setKey(regex);
+		site.setLogo(regex);
 		site.setName(regex);
 		site.setParentSiteExternalReferenceCode(regex);
 		site.setTemplateKey(regex);
@@ -223,6 +224,7 @@ public abstract class BaseSiteResourceTestCase {
 		Assert.assertEquals(regex, site.getExternalReferenceCode());
 		Assert.assertEquals(regex, site.getFriendlyUrlPath());
 		Assert.assertEquals(regex, site.getKey());
+		Assert.assertEquals(regex, site.getLogo());
 		Assert.assertEquals(regex, site.getName());
 		Assert.assertEquals(regex, site.getParentSiteExternalReferenceCode());
 		Assert.assertEquals(regex, site.getTemplateKey());
@@ -334,7 +336,7 @@ public abstract class BaseSiteResourceTestCase {
 	@Test
 	public void testGetSitesPage() throws Exception {
 		Page<Site> page = siteResource.getSitesPage(
-			null, null, Pagination.of(1, 10));
+			null, null, null, Pagination.of(1, 10));
 
 		long totalCount = page.getTotalCount();
 
@@ -342,7 +344,8 @@ public abstract class BaseSiteResourceTestCase {
 
 		Site site2 = testGetSitesPage_addSite(randomSite());
 
-		page = siteResource.getSitesPage(null, null, Pagination.of(1, 10));
+		page = siteResource.getSitesPage(
+			null, null, null, Pagination.of(1, 10));
 
 		Assert.assertEquals(totalCount + 2, page.getTotalCount());
 
@@ -355,7 +358,7 @@ public abstract class BaseSiteResourceTestCase {
 		}
 
 		page = permissionsSiteResource.getSitesPage(
-			null, null, Pagination.of(1, 10));
+			null, null, null, Pagination.of(1, 10));
 
 		for (Site site : page.getItems()) {
 			Assert.assertNotNull(site.getPermissions());
@@ -377,7 +380,8 @@ public abstract class BaseSiteResourceTestCase {
 
 	@Test
 	public void testGetSitesPageWithPagination() throws Exception {
-		Page<Site> sitesPage = siteResource.getSitesPage(null, null, null);
+		Page<Site> sitesPage = siteResource.getSitesPage(
+			null, null, null, null);
 
 		int totalCount = GetterUtil.getInteger(sitesPage.getTotalCount());
 
@@ -393,7 +397,7 @@ public abstract class BaseSiteResourceTestCase {
 
 		if (totalCount >= (pageSizeLimit - 2)) {
 			Page<Site> page1 = siteResource.getSitesPage(
-				null, null,
+				null, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -403,7 +407,7 @@ public abstract class BaseSiteResourceTestCase {
 			assertContains(site1, (List<Site>)page1.getItems());
 
 			Page<Site> page2 = siteResource.getSitesPage(
-				null, null,
+				null, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -411,7 +415,7 @@ public abstract class BaseSiteResourceTestCase {
 			assertContains(site2, (List<Site>)page2.getItems());
 
 			Page<Site> page3 = siteResource.getSitesPage(
-				null, null,
+				null, null, null,
 				Pagination.of(
 					(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
 					pageSizeLimit));
@@ -420,7 +424,7 @@ public abstract class BaseSiteResourceTestCase {
 		}
 		else {
 			Page<Site> page1 = siteResource.getSitesPage(
-				null, null, Pagination.of(1, totalCount + 2));
+				null, null, null, Pagination.of(1, totalCount + 2));
 
 			List<Site> sites1 = (List<Site>)page1.getItems();
 
@@ -428,7 +432,7 @@ public abstract class BaseSiteResourceTestCase {
 				sites1.toString(), totalCount + 2, sites1.size());
 
 			Page<Site> page2 = siteResource.getSitesPage(
-				null, null, Pagination.of(2, totalCount + 2));
+				null, null, null, Pagination.of(2, totalCount + 2));
 
 			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
 
@@ -437,7 +441,7 @@ public abstract class BaseSiteResourceTestCase {
 			Assert.assertEquals(sites2.toString(), 1, sites2.size());
 
 			Page<Site> page3 = siteResource.getSitesPage(
-				null, null, Pagination.of(1, (int)totalCount + 3));
+				null, null, null, Pagination.of(1, (int)totalCount + 3));
 
 			assertContains(site1, (List<Site>)page3.getItems());
 			assertContains(site2, (List<Site>)page3.getItems());
@@ -913,6 +917,14 @@ public abstract class BaseSiteResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("logo", additionalAssertFieldName)) {
+				if (site.getLogo() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("manualMembership", additionalAssertFieldName)) {
 				if (site.getManualMembership() == null) {
 					valid = false;
@@ -1339,6 +1351,14 @@ public abstract class BaseSiteResourceTestCase {
 				if (!Objects.deepEquals(
 						site1.getLocales(), site2.getLocales())) {
 
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("logo", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(site1.getLogo(), site2.getLogo())) {
 					return false;
 				}
 
@@ -1938,6 +1958,52 @@ public abstract class BaseSiteResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("logo")) {
+			Object object = site.getLogo();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		if (entityFieldName.equals("manualMembership")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
@@ -2208,6 +2274,7 @@ public abstract class BaseSiteResourceTestCase {
 				id = RandomTestUtil.randomLong();
 				inheritLocales = RandomTestUtil.randomBoolean();
 				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				logo = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				manualMembership = RandomTestUtil.randomBoolean();
 				membershipRestriction = RandomTestUtil.randomInt();
 				mentionsEnabled = RandomTestUtil.randomBoolean();
@@ -2486,4 +2553,4 @@ public abstract class BaseSiteResourceTestCase {
 		_siteResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:385866049
+// LIFERAY-REST-BUILDER-HASH:2076733421

@@ -14,7 +14,6 @@ import com.liferay.change.tracking.model.impl.CTCollectionModelImpl;
 import com.liferay.change.tracking.service.persistence.CTCollectionPersistence;
 import com.liferay.change.tracking.service.persistence.CTCollectionUtil;
 import com.liferay.change.tracking.service.persistence.impl.constants.CTPersistenceConstants;
-import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.configuration.Configuration;
 import com.liferay.portal.kernel.dao.orm.EntityCache;
 import com.liferay.portal.kernel.dao.orm.FinderCache;
@@ -22,8 +21,6 @@ import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
 import com.liferay.portal.kernel.exception.SystemException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.sanitizer.Sanitizer;
 import com.liferay.portal.kernel.sanitizer.SanitizerException;
 import com.liferay.portal.kernel.sanitizer.SanitizerUtil;
@@ -92,8 +89,9 @@ public class CTCollectionPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByUuid;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the ct collections where uuid = &#63;.
@@ -133,15 +131,8 @@ public class CTCollectionPersistenceImpl
 			String uuid, OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByUuid_First(uuid, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -216,8 +207,9 @@ public class CTCollectionPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByUuid_C;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the ct collections where uuid = &#63; and companyId = &#63;.
@@ -260,16 +252,8 @@ public class CTCollectionPersistenceImpl
 			OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,8 +335,9 @@ public class CTCollectionPersistenceImpl
 			finderCache, new Object[] {uuid, companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByCompanyId;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByCompanyId;
 
 	/**
 	 * Returns an ordered range of all the ct collections where companyId = &#63;.
@@ -392,16 +377,8 @@ public class CTCollectionPersistenceImpl
 			long companyId, OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByCompanyId_First(
-			companyId, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByCompanyId.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId}));
+		return _collectionPersistenceFinderByCompanyId.findFirst(
+			finderCache, new Object[] {companyId}, orderByComparator);
 	}
 
 	/**
@@ -477,8 +454,9 @@ public class CTCollectionPersistenceImpl
 			finderCache, new Object[] {companyId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByC_U;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByC_U;
 
 	/**
 	 * Returns an ordered range of all the ct collections where companyId = &#63; and userId = &#63;.
@@ -521,16 +499,8 @@ public class CTCollectionPersistenceImpl
 			OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByC_U_First(
-			companyId, userId, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByC_U.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {companyId, userId}));
+		return _collectionPersistenceFinderByC_U.findFirst(
+			finderCache, new Object[] {companyId, userId}, orderByComparator);
 	}
 
 	/**
@@ -612,8 +582,9 @@ public class CTCollectionPersistenceImpl
 			finderCache, new Object[] {companyId, userId}, companyId, 0);
 	}
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByC_SVI;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByC_SVI;
 
 	/**
 	 * Returns an ordered range of all the ct collections where companyId = &#63; and schemaVersionId = &#63;.
@@ -656,17 +627,9 @@ public class CTCollectionPersistenceImpl
 			OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByC_SVI_First(
-			companyId, schemaVersionId, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		throw new NoSuchCollectionException(
-			_collectionPersistenceFinderByC_SVI.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {companyId, schemaVersionId}));
+		return _collectionPersistenceFinderByC_SVI.findFirst(
+			finderCache, new Object[] {companyId, schemaVersionId},
+			orderByComparator);
 	}
 
 	/**
@@ -750,8 +713,9 @@ public class CTCollectionPersistenceImpl
 			0);
 	}
 
-	private FilterCollectionPersistenceFinder<CTCollection>
-		_collectionPersistenceFinderByC_S;
+	private FilterCollectionPersistenceFinder
+		<CTCollection, NoSuchCollectionException>
+			_collectionPersistenceFinderByC_S;
 
 	/**
 	 * Returns an ordered range of all the ct collections where companyId = &#63; and status = &#63;.
@@ -794,26 +758,9 @@ public class CTCollectionPersistenceImpl
 			OrderByComparator<CTCollection> orderByComparator)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByC_S_First(
-			companyId, status, orderByComparator);
-
-		if (ctCollection != null) {
-			return ctCollection;
-		}
-
-		StringBundler sb = new StringBundler(6);
-
-		sb.append(_NO_SUCH_ENTITY_WITH_KEY);
-
-		sb.append("companyId=");
-		sb.append(companyId);
-
-		sb.append(", status=");
-		sb.append(status);
-
-		sb.append("}");
-
-		throw new NoSuchCollectionException(sb.toString());
+		return _collectionPersistenceFinderByC_S.findFirst(
+			finderCache, new Object[] {companyId, new int[] {status}},
+			orderByComparator);
 	}
 
 	/**
@@ -978,7 +925,7 @@ public class CTCollectionPersistenceImpl
 			companyId, 0);
 	}
 
-	private UniquePersistenceFinder<CTCollection>
+	private UniquePersistenceFinder<CTCollection, NoSuchCollectionException>
 		_uniquePersistenceFinderByERC_C;
 
 	/**
@@ -994,23 +941,8 @@ public class CTCollectionPersistenceImpl
 			String externalReferenceCode, long companyId)
 		throws NoSuchCollectionException {
 
-		CTCollection ctCollection = fetchByERC_C(
-			externalReferenceCode, companyId);
-
-		if (ctCollection == null) {
-			String message =
-				_uniquePersistenceFinderByERC_C.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {externalReferenceCode, companyId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchCollectionException(message);
-		}
-
-		return ctCollection;
+		return _uniquePersistenceFinderByERC_C.find(
+			finderCache, new Object[] {externalReferenceCode, companyId});
 	}
 
 	/**
@@ -1364,18 +1296,10 @@ public class CTCollectionPersistenceImpl
 					new String[] {"uuid_"}, 0, 1, false, null),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"ctCollection.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CTCollection::getUuid));
+					"ctCollection.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CTCollection::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new FilterCollectionPersistenceFinder<>(
@@ -1398,18 +1322,10 @@ public class CTCollectionPersistenceImpl
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
-					"ctCollection.", "uuid", FinderColumn.Type.STRING, "=",
-					true, true, CTCollection::getUuid),
+					"ctCollection.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, CTCollection::getUuid),
 				new FinderColumn<>(
 					"ctCollection.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTCollection::getCompanyId));
@@ -1435,15 +1351,7 @@ public class CTCollectionPersistenceImpl
 					new String[] {"companyId"}, false),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ctCollection.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTCollection::getCompanyId));
@@ -1469,15 +1377,7 @@ public class CTCollectionPersistenceImpl
 					new String[] {"companyId", "userId"}, false),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ctCollection.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTCollection::getCompanyId),
@@ -1506,15 +1406,7 @@ public class CTCollectionPersistenceImpl
 					new String[] {"companyId", "schemaVersionId"}, false),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ctCollection.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTCollection::getCompanyId),
@@ -1547,15 +1439,7 @@ public class CTCollectionPersistenceImpl
 					new String[] {"companyId", "status"}, false),
 				_SQL_SELECT_CTCOLLECTION_WHERE, _SQL_COUNT_CTCOLLECTION_WHERE,
 				CTCollectionModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
-				new FilterCollectionPersistenceFinder.FilterMetadata<>(
-					CTCollectionImpl.class, CTCollection.class, "ctCollection",
-					"CTCollection", "ctCollection.ctCollectionId",
-					"SELECT DISTINCT {ctCollection.*} FROM CTCollection ctCollection WHERE ",
-					"SELECT {CTCollection.*} FROM (SELECT DISTINCT ctCollection.ctCollectionId FROM CTCollection ctCollection WHERE ",
-					") TEMP_TABLE INNER JOIN CTCollection ON TEMP_TABLE.ctCollectionId = CTCollection.ctCollectionId",
-					"SELECT COUNT(DISTINCT ctCollection.ctCollectionId) AS COUNT_VALUE FROM CTCollection ctCollection WHERE ",
-					CTCollectionModelImpl.ORDER_BY_SQL,
-					CTCollectionModelImpl.ORDER_BY_SQL_INLINE_DISTINCT),
+				"", null,
 				new FinderColumn<>(
 					"ctCollection.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, CTCollection::getCompanyId),
@@ -1635,12 +1519,6 @@ public class CTCollectionPersistenceImpl
 	private static final String _SQL_COUNT_CTCOLLECTION_WHERE =
 		"SELECT COUNT(ctCollection) FROM CTCollection ctCollection WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CTCollection exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CTCollectionPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -1650,4 +1528,4 @@ public class CTCollectionPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1267372747
+// LIFERAY-SERVICE-BUILDER-HASH:757331529

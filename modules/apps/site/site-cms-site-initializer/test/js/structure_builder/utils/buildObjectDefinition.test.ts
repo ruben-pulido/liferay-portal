@@ -4,7 +4,9 @@
  */
 
 import {
+	ReferencedStructure,
 	RelatedContent,
+	RepeatableGroup,
 	StructureChild,
 } from '../../../../src/main/resources/META-INF/resources/js/structure_builder/types/Structure';
 import {Uuid} from '../../../../src/main/resources/META-INF/resources/js/structure_builder/types/Uuid';
@@ -35,6 +37,25 @@ const DATE_TIME_FIELD: Field = {
 		timeStorage: 'convertToUTC',
 	},
 	type: 'datetime',
+	uuid: getUuid(),
+};
+
+const EMAIL_FIELD: Field = {
+	erc: 'email-field',
+	indexableConfig: {indexed: false},
+	label: {en_US: 'Email Field'},
+	localized: false,
+	locked: false,
+	name: 'emailField',
+	parent: getUuid(),
+	required: false,
+	settings: {
+		autocompleteDomains: '@liferay.com,@gmail.com',
+		autocompleteEnabled: true,
+		blockedDomains: '@example.com',
+		uniqueValues: true,
+	},
+	type: 'email',
 	uuid: getUuid(),
 };
 
@@ -209,6 +230,60 @@ describe('buildObjectDefinition', () => {
 		});
 	});
 
+	it('builds an email field as an EmailAddress business type with its connected settings', () => {
+		const result = buildObjectDefinition({
+			children: getChildren([EMAIL_FIELD]),
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			spaces: [],
+			status: 'draft',
+		});
+
+		expect(result.objectFields).toEqual([
+			{
+				DBType: 'String',
+				businessType: 'EmailAddress',
+				externalReferenceCode: 'email-field',
+				indexed: false,
+				label: {en_US: 'Email Field'},
+				localized: false,
+				name: 'emailField',
+				objectFieldSettings: [
+					{
+						name: 'autocompleteDomains',
+						value: '@liferay.com,@gmail.com',
+					},
+					{name: 'autocompleteEnabled', value: true},
+					{name: 'blockedDomains', value: '@example.com'},
+					{name: 'uniqueValues', value: true},
+				],
+				required: false,
+				system: false,
+			},
+		]);
+	});
+
+	it('omits autocomplete settings when the email field has no autocomplete domains', () => {
+		const result = buildObjectDefinition({
+			children: getChildren([
+				{
+					...EMAIL_FIELD,
+					settings: {blockedDomains: '@example.com'},
+				},
+			]),
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			spaces: [],
+			status: 'draft',
+		});
+
+		expect(result.objectFields?.[0].objectFieldSettings).toEqual([
+			{name: 'blockedDomains', value: '@example.com'},
+		]);
+	});
+
 	it('builds objectDefinition with spaces and workflows selected', () => {
 		const result = buildObjectDefinition({
 			children: getChildren([TEXT_FIELD]),
@@ -274,6 +349,39 @@ describe('buildObjectDefinition', () => {
 		});
 	});
 
+	it('re-emits the allowStandaloneObjectEntry setting carried by the structure', () => {
+		const result = buildObjectDefinition({
+			children: getChildren([TEXT_FIELD]),
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			settings: {allowStandaloneObjectEntry: 'true'},
+			spaces: 'all',
+			status: 'published',
+		});
+
+		expect(result.objectDefinitionSettings).toEqual([
+			{name: 'acceptAllGroups', value: 'true'},
+			{name: 'allowStandaloneObjectEntry', value: 'true'},
+		]);
+	});
+
+	it('does not emit the allowStandaloneObjectEntry setting when the structure does not carry it', () => {
+		const result = buildObjectDefinition({
+			children: getChildren([TEXT_FIELD]),
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			settings: {},
+			spaces: 'all',
+			status: 'published',
+		});
+
+		expect(result.objectDefinitionSettings).toEqual([
+			{name: 'acceptAllGroups', value: 'true'},
+		]);
+	});
+
 	it('builds objectDefinition with related content relationships', () => {
 		const children: Map<Uuid, StructureChild> = new Map<
 			Uuid,
@@ -302,6 +410,99 @@ describe('buildObjectDefinition', () => {
 				objectDefinitionExternalReferenceCode1: 'structureERC',
 				objectDefinitionExternalReferenceCode2: 'related-structure-erc',
 				type: 'manyToMany',
+			},
+		]);
+	});
+
+	it('builds objectDefinition with edge relationships for referenced structures', () => {
+		const referencedStructure: ReferencedStructure = {
+			children: new Map(),
+			editURL: '',
+			erc: 'ref-structure-erc',
+			label: {en_US: 'Referenced Structure'},
+			name: 'refStructure',
+			parent: getUuid(),
+			relationshipERC: 'ref-rel-erc',
+			relationshipName: 'refRelationship',
+			spaces: [],
+			type: 'referenced-structure',
+			uuid: getUuid(),
+			workflows: {},
+		};
+
+		const children: Map<Uuid, StructureChild> = new Map<
+			Uuid,
+			StructureChild
+		>([
+			[referencedStructure.uuid, referencedStructure],
+			[TEXT_FIELD.uuid, TEXT_FIELD],
+		]);
+
+		const result = buildObjectDefinition({
+			children,
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			spaces: [],
+			status: 'draft',
+		});
+
+		expect(result.objectRelationships).toEqual([
+			{
+				deletionType: 'cascade',
+				edge: true,
+				externalReferenceCode: 'ref-rel-erc',
+				label: {en_US: 'refStructure'},
+				name: 'refRelationship',
+				objectDefinitionExternalReferenceCode1: 'structureERC',
+				objectDefinitionExternalReferenceCode2: 'ref-structure-erc',
+				type: 'oneToMany',
+			},
+		]);
+	});
+
+	it('builds objectDefinition with edge relationships for repeatable groups', () => {
+		const groupUuid = getUuid();
+
+		const repeatableGroup: RepeatableGroup = {
+			children: new Map(),
+			erc: 'group-erc',
+			label: {en_US: 'Repeatable Group'},
+			name: 'repeatableGroup',
+			parent: getUuid(),
+			relationshipERC: 'group-rel-erc',
+			relationshipName: 'groupRelationship',
+			type: 'repeatable-group',
+			uuid: groupUuid,
+		};
+
+		const children: Map<Uuid, StructureChild> = new Map<
+			Uuid,
+			StructureChild
+		>([
+			[repeatableGroup.uuid, repeatableGroup],
+			[TEXT_FIELD.uuid, TEXT_FIELD],
+		]);
+
+		const result = buildObjectDefinition({
+			children,
+			erc: 'structureERC',
+			label: {en_US: 'Structure'},
+			name: 'myStructure',
+			spaces: [],
+			status: 'draft',
+		});
+
+		expect(result.objectRelationships).toEqual([
+			{
+				deletionType: 'cascade',
+				edge: true,
+				externalReferenceCode: 'group-rel-erc',
+				label: {en_US: 'Repeatable Group'},
+				name: 'groupRelationship',
+				objectDefinitionExternalReferenceCode1: 'structureERC',
+				objectDefinitionExternalReferenceCode2: 'group-erc',
+				type: 'oneToMany',
 			},
 		]);
 	});

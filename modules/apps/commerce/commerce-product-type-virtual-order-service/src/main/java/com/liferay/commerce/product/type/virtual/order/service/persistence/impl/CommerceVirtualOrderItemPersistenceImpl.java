@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.dao.orm.FinderCache;
 import com.liferay.portal.kernel.dao.orm.FinderPath;
 import com.liferay.portal.kernel.dao.orm.Session;
 import com.liferay.portal.kernel.dao.orm.SessionFactory;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
@@ -81,8 +79,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItem>
-		_collectionPersistenceFinderByUuid;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItem, NoSuchVirtualOrderItemException>
+			_collectionPersistenceFinderByUuid;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order items where uuid = &#63;.
@@ -123,16 +122,8 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			OrderByComparator<CommerceVirtualOrderItem> orderByComparator)
 		throws NoSuchVirtualOrderItemException {
 
-		CommerceVirtualOrderItem commerceVirtualOrderItem = fetchByUuid_First(
-			uuid, orderByComparator);
-
-		if (commerceVirtualOrderItem != null) {
-			return commerceVirtualOrderItem;
-		}
-
-		throw new NoSuchVirtualOrderItemException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -174,8 +165,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private UniquePersistenceFinder<CommerceVirtualOrderItem>
-		_uniquePersistenceFinderByUUID_G;
+	private UniquePersistenceFinder
+		<CommerceVirtualOrderItem, NoSuchVirtualOrderItemException>
+			_uniquePersistenceFinderByUUID_G;
 
 	/**
 	 * Returns the commerce virtual order item where uuid = &#63; and groupId = &#63; or throws a <code>NoSuchVirtualOrderItemException</code> if it could not be found.
@@ -189,22 +181,8 @@ public class CommerceVirtualOrderItemPersistenceImpl
 	public CommerceVirtualOrderItem findByUUID_G(String uuid, long groupId)
 		throws NoSuchVirtualOrderItemException {
 
-		CommerceVirtualOrderItem commerceVirtualOrderItem = fetchByUUID_G(
-			uuid, groupId);
-
-		if (commerceVirtualOrderItem == null) {
-			String message =
-				_uniquePersistenceFinderByUUID_G.buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, groupId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchVirtualOrderItemException(message);
-		}
-
-		return commerceVirtualOrderItem;
+		return _uniquePersistenceFinderByUUID_G.find(
+			finderCache, new Object[] {uuid, groupId});
 	}
 
 	/**
@@ -253,8 +231,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			finderCache, new Object[] {uuid, groupId});
 	}
 
-	private CollectionPersistenceFinder<CommerceVirtualOrderItem>
-		_collectionPersistenceFinderByUuid_C;
+	private CollectionPersistenceFinder
+		<CommerceVirtualOrderItem, NoSuchVirtualOrderItemException>
+			_collectionPersistenceFinderByUuid_C;
 
 	/**
 	 * Returns an ordered range of all the commerce virtual order items where uuid = &#63; and companyId = &#63;.
@@ -297,16 +276,8 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			OrderByComparator<CommerceVirtualOrderItem> orderByComparator)
 		throws NoSuchVirtualOrderItemException {
 
-		CommerceVirtualOrderItem commerceVirtualOrderItem = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (commerceVirtualOrderItem != null) {
-			return commerceVirtualOrderItem;
-		}
-
-		throw new NoSuchVirtualOrderItemException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -351,8 +322,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private UniquePersistenceFinder<CommerceVirtualOrderItem>
-		_uniquePersistenceFinderByCommerceOrderItemId;
+	private UniquePersistenceFinder
+		<CommerceVirtualOrderItem, NoSuchVirtualOrderItemException>
+			_uniquePersistenceFinderByCommerceOrderItemId;
 
 	/**
 	 * Returns the commerce virtual order item where commerceOrderItemId = &#63; or throws a <code>NoSuchVirtualOrderItemException</code> if it could not be found.
@@ -366,24 +338,8 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			long commerceOrderItemId)
 		throws NoSuchVirtualOrderItemException {
 
-		CommerceVirtualOrderItem commerceVirtualOrderItem =
-			fetchByCommerceOrderItemId(commerceOrderItemId);
-
-		if (commerceVirtualOrderItem == null) {
-			String message =
-				_uniquePersistenceFinderByCommerceOrderItemId.
-					buildNoSuchKeyMessage(
-						_NO_SUCH_ENTITY_WITH_KEY,
-						new Object[] {commerceOrderItemId});
-
-			if (_log.isDebugEnabled()) {
-				_log.debug(message);
-			}
-
-			throw new NoSuchVirtualOrderItemException(message);
-		}
-
-		return commerceVirtualOrderItem;
+		return _uniquePersistenceFinderByCommerceOrderItemId.find(
+			finderCache, new Object[] {commerceOrderItemId});
 	}
 
 	/**
@@ -687,10 +643,11 @@ public class CommerceVirtualOrderItemPersistenceImpl
 			_SQL_SELECT_COMMERCEVIRTUALORDERITEM_WHERE,
 			_SQL_COUNT_COMMERCEVIRTUALORDERITEM_WHERE,
 			CommerceVirtualOrderItemModelImpl.ORDER_BY_JPQL,
-			_ENTITY_ALIAS_PREFIX, "",
+			_ENTITY_ALIAS_PREFIX, "", "", null,
 			new FinderColumn<>(
-				"commerceVirtualOrderItem.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CommerceVirtualOrderItem::getUuid));
+				"commerceVirtualOrderItem.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceVirtualOrderItem::getUuid));
 
 		_uniquePersistenceFinderByUUID_G = new UniquePersistenceFinder<>(
 			this,
@@ -702,8 +659,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 				CommerceVirtualOrderItem::getGroupId),
 			_SQL_SELECT_COMMERCEVIRTUALORDERITEM_WHERE, "",
 			new FinderColumn<>(
-				"commerceVirtualOrderItem.", "uuid", FinderColumn.Type.STRING,
-				"=", true, true, CommerceVirtualOrderItem::getUuid),
+				"commerceVirtualOrderItem.", "uuid", "uuid_",
+				FinderColumn.Type.STRING, "=", true, true,
+				CommerceVirtualOrderItem::getUuid),
 			new FinderColumn<>(
 				"commerceVirtualOrderItem.", "groupId", FinderColumn.Type.LONG,
 				"=", true, true, CommerceVirtualOrderItem::getGroupId));
@@ -730,9 +688,9 @@ public class CommerceVirtualOrderItemPersistenceImpl
 				_SQL_SELECT_COMMERCEVIRTUALORDERITEM_WHERE,
 				_SQL_COUNT_COMMERCEVIRTUALORDERITEM_WHERE,
 				CommerceVirtualOrderItemModelImpl.ORDER_BY_JPQL,
-				_ENTITY_ALIAS_PREFIX, "",
+				_ENTITY_ALIAS_PREFIX, "", "", null,
 				new FinderColumn<>(
-					"commerceVirtualOrderItem.", "uuid",
+					"commerceVirtualOrderItem.", "uuid", "uuid_",
 					FinderColumn.Type.STRING, "=", true, true,
 					CommerceVirtualOrderItem::getUuid),
 				new FinderColumn<>(
@@ -808,12 +766,6 @@ public class CommerceVirtualOrderItemPersistenceImpl
 	private static final String _SQL_COUNT_COMMERCEVIRTUALORDERITEM_WHERE =
 		"SELECT COUNT(commerceVirtualOrderItem) FROM CommerceVirtualOrderItem commerceVirtualOrderItem WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No CommerceVirtualOrderItem exists with the key {";
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		CommerceVirtualOrderItemPersistenceImpl.class);
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid", "active"});
 
@@ -823,4 +775,4 @@ public class CommerceVirtualOrderItemPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-504697145
+// LIFERAY-SERVICE-BUILDER-HASH:-1160787992

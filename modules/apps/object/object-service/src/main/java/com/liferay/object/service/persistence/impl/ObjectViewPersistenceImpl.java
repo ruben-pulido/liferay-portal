@@ -77,7 +77,7 @@ public class ObjectViewPersistenceImpl
 	public static final String FINDER_CLASS_NAME_LIST_WITHOUT_PAGINATION =
 		FINDER_CLASS_NAME_ENTITY + ".List2";
 
-	private CollectionPersistenceFinder<ObjectView>
+	private CollectionPersistenceFinder<ObjectView, NoSuchObjectViewException>
 		_collectionPersistenceFinderByUuid;
 
 	/**
@@ -118,15 +118,8 @@ public class ObjectViewPersistenceImpl
 			String uuid, OrderByComparator<ObjectView> orderByComparator)
 		throws NoSuchObjectViewException {
 
-		ObjectView objectView = fetchByUuid_First(uuid, orderByComparator);
-
-		if (objectView != null) {
-			return objectView;
-		}
-
-		throw new NoSuchObjectViewException(
-			_collectionPersistenceFinderByUuid.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid}));
+		return _collectionPersistenceFinderByUuid.findFirst(
+			finderCache, new Object[] {uuid}, orderByComparator);
 	}
 
 	/**
@@ -167,7 +160,7 @@ public class ObjectViewPersistenceImpl
 			finderCache, new Object[] {uuid});
 	}
 
-	private CollectionPersistenceFinder<ObjectView>
+	private CollectionPersistenceFinder<ObjectView, NoSuchObjectViewException>
 		_collectionPersistenceFinderByUuid_C;
 
 	/**
@@ -211,16 +204,8 @@ public class ObjectViewPersistenceImpl
 			OrderByComparator<ObjectView> orderByComparator)
 		throws NoSuchObjectViewException {
 
-		ObjectView objectView = fetchByUuid_C_First(
-			uuid, companyId, orderByComparator);
-
-		if (objectView != null) {
-			return objectView;
-		}
-
-		throw new NoSuchObjectViewException(
-			_collectionPersistenceFinderByUuid_C.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY, new Object[] {uuid, companyId}));
+		return _collectionPersistenceFinderByUuid_C.findFirst(
+			finderCache, new Object[] {uuid, companyId}, orderByComparator);
 	}
 
 	/**
@@ -265,7 +250,7 @@ public class ObjectViewPersistenceImpl
 			finderCache, new Object[] {uuid, companyId});
 	}
 
-	private CollectionPersistenceFinder<ObjectView>
+	private CollectionPersistenceFinder<ObjectView, NoSuchObjectViewException>
 		_collectionPersistenceFinderByObjectDefinitionId;
 
 	/**
@@ -307,18 +292,8 @@ public class ObjectViewPersistenceImpl
 			OrderByComparator<ObjectView> orderByComparator)
 		throws NoSuchObjectViewException {
 
-		ObjectView objectView = fetchByObjectDefinitionId_First(
-			objectDefinitionId, orderByComparator);
-
-		if (objectView != null) {
-			return objectView;
-		}
-
-		throw new NoSuchObjectViewException(
-			_collectionPersistenceFinderByObjectDefinitionId.
-				buildNoSuchKeyMessage(
-					_NO_SUCH_ENTITY_WITH_KEY,
-					new Object[] {objectDefinitionId}));
+		return _collectionPersistenceFinderByObjectDefinitionId.findFirst(
+			finderCache, new Object[] {objectDefinitionId}, orderByComparator);
 	}
 
 	/**
@@ -360,7 +335,7 @@ public class ObjectViewPersistenceImpl
 			finderCache, new Object[] {objectDefinitionId});
 	}
 
-	private CollectionPersistenceFinder<ObjectView>
+	private CollectionPersistenceFinder<ObjectView, NoSuchObjectViewException>
 		_collectionPersistenceFinderByODI_DOV;
 
 	/**
@@ -404,17 +379,9 @@ public class ObjectViewPersistenceImpl
 			OrderByComparator<ObjectView> orderByComparator)
 		throws NoSuchObjectViewException {
 
-		ObjectView objectView = fetchByODI_DOV_First(
-			objectDefinitionId, defaultObjectView, orderByComparator);
-
-		if (objectView != null) {
-			return objectView;
-		}
-
-		throw new NoSuchObjectViewException(
-			_collectionPersistenceFinderByODI_DOV.buildNoSuchKeyMessage(
-				_NO_SUCH_ENTITY_WITH_KEY,
-				new Object[] {objectDefinitionId, defaultObjectView}));
+		return _collectionPersistenceFinderByODI_DOV.findFirst(
+			finderCache, new Object[] {objectDefinitionId, defaultObjectView},
+			orderByComparator);
 	}
 
 	/**
@@ -701,10 +668,11 @@ public class ObjectViewPersistenceImpl
 				new String[] {String.class.getName()}, new String[] {"uuid_"},
 				0, 1, false, null),
 			_SQL_SELECT_OBJECTVIEW_WHERE, _SQL_COUNT_OBJECTVIEW_WHERE,
-			ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+			ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+			null,
 			new FinderColumn<>(
-				"objectView.", "uuid", FinderColumn.Type.STRING, "=", true,
-				true, ObjectView::getUuid));
+				"objectView.", "uuid", "uuid_", FinderColumn.Type.STRING, "=",
+				true, true, ObjectView::getUuid));
 
 		_collectionPersistenceFinderByUuid_C =
 			new CollectionPersistenceFinder<>(
@@ -726,10 +694,11 @@ public class ObjectViewPersistenceImpl
 					new String[] {String.class.getName(), Long.class.getName()},
 					new String[] {"uuid_", "companyId"}, 0, 1, false, null),
 				_SQL_SELECT_OBJECTVIEW_WHERE, _SQL_COUNT_OBJECTVIEW_WHERE,
-				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
-					"objectView.", "uuid", FinderColumn.Type.STRING, "=", true,
-					true, ObjectView::getUuid),
+					"objectView.", "uuid", "uuid_", FinderColumn.Type.STRING,
+					"=", true, true, ObjectView::getUuid),
 				new FinderColumn<>(
 					"objectView.", "companyId", FinderColumn.Type.LONG, "=",
 					true, true, ObjectView::getCompanyId));
@@ -757,7 +726,8 @@ public class ObjectViewPersistenceImpl
 					new String[] {Long.class.getName()},
 					new String[] {"objectDefinitionId"}, false),
 				_SQL_SELECT_OBJECTVIEW_WHERE, _SQL_COUNT_OBJECTVIEW_WHERE,
-				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"objectView.", "objectDefinitionId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectView::getObjectDefinitionId));
@@ -789,7 +759,8 @@ public class ObjectViewPersistenceImpl
 					new String[] {"objectDefinitionId", "defaultObjectView"},
 					false),
 				_SQL_SELECT_OBJECTVIEW_WHERE, _SQL_COUNT_OBJECTVIEW_WHERE,
-				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "",
+				ObjectViewModelImpl.ORDER_BY_JPQL, _ENTITY_ALIAS_PREFIX, "", "",
+				null,
 				new FinderColumn<>(
 					"objectView.", "objectDefinitionId", FinderColumn.Type.LONG,
 					"=", true, true, ObjectView::getObjectDefinitionId),
@@ -852,9 +823,6 @@ public class ObjectViewPersistenceImpl
 	private static final String _SQL_COUNT_OBJECTVIEW_WHERE =
 		"SELECT COUNT(objectView) FROM ObjectView objectView WHERE ";
 
-	private static final String _NO_SUCH_ENTITY_WITH_KEY =
-		"No ObjectView exists with the key {";
-
 	private static final Set<String> _badColumnNames = SetUtil.fromArray(
 		new String[] {"uuid"});
 
@@ -864,4 +832,4 @@ public class ObjectViewPersistenceImpl
 	}
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1435846022
+// LIFERAY-SERVICE-BUILDER-HASH:2038710955

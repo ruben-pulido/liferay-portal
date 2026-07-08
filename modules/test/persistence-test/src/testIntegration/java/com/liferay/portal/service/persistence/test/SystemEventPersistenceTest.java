@@ -108,11 +108,7 @@ public class SystemEventPersistenceTest {
 
 	@Test
 	public void testUpdateExisting() throws Exception {
-		long pk = RandomTestUtil.nextLong();
-
-		SystemEvent newSystemEvent = _persistence.create(pk);
-
-		newSystemEvent.setMvccVersion(RandomTestUtil.nextLong());
+		SystemEvent newSystemEvent = addSystemEvent();
 
 		newSystemEvent.setCtCollectionId(RandomTestUtil.nextLong());
 
@@ -145,7 +141,9 @@ public class SystemEventPersistenceTest {
 
 		newSystemEvent.setExtraData(RandomTestUtil.randomString());
 
-		_systemEvents.add(_persistence.update(newSystemEvent));
+		newSystemEvent = _persistence.update(newSystemEvent);
+
+		_systemEvents.add(newSystemEvent);
 
 		SystemEvent existingSystemEvent = _persistence.findByPrimaryKey(
 			newSystemEvent.getPrimaryKey());
@@ -476,8 +474,6 @@ public class SystemEventPersistenceTest {
 
 		SystemEvent systemEvent = _persistence.create(pk);
 
-		systemEvent.setMvccVersion(RandomTestUtil.nextLong());
-
 		systemEvent.setCtCollectionId(RandomTestUtil.nextLong());
 
 		systemEvent.setGroupId(RandomTestUtil.nextLong());
@@ -519,4 +515,4 @@ public class SystemEventPersistenceTest {
 	private ClassLoader _dynamicQueryClassLoader;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-646431674
+// LIFERAY-SERVICE-BUILDER-HASH:1568244586
