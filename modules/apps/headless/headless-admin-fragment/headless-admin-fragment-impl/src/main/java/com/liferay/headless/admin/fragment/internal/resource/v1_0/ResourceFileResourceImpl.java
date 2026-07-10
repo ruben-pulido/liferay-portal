@@ -258,12 +258,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 		_checkResourceFile(fileEntry);
 
-		byte[] bytes = _toByteArray(
-			resourceFile.getFileURLReference(), groupId);
-
-		if (bytes.length == 0) {
-			bytes = FileUtil.getBytes(fileEntry.getContentStream());
-		}
+		byte[] bytes = FileUtil.getBytes(fileEntry.getContentStream());
 
 		String fileName = resourceFile.getName();
 
