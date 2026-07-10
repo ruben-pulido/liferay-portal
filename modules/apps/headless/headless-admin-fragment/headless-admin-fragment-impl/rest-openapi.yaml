@@ -13,12 +13,13 @@ components:
             type: string
         FileURLReference:
             description:
-                A reference to a file's binary content. On read, `externalReferenceCode` and `url` are populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file copies its content; otherwise the content is decoded from `fileBase64` (or downloaded from `url` when `fileBase64` is absent).
+                A reference to a file's binary content. On read, `url` is populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file copies its content; otherwise the content is decoded from `fileBase64` (or downloaded from `url` when `fileBase64` is absent).
             properties:
                 externalReferenceCode:
                     description:
-                        The file's external reference code. On write, the external reference code of an existing file whose content is copied.
+                        The external reference code of an existing file whose content is copied.
                     type: string
+                    writeOnly: true
                 fileBase64:
                     description:
                         The Base64-encoded file content. On write, used to create a new file when `externalReferenceCode` does not resolve in the destination. On read, returned only when requested via `nestedFields=fileBase64`.
@@ -990,7 +991,7 @@ paths:
             tags: ["ResourceFile"]
         put:
             description:
-                Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `dateModified`, `fileURLReference`, and `name` are honored; any values sent for `dateCreated`, `externalReferenceCode`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `parentResourceFolder`, and `parentResourceFolderExternalReferenceCode` are ignored.
+                Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `dateModified` and `name` are honored; any values sent for `dateCreated`, `externalReferenceCode`, `fileURLReference`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `parentResourceFolder`, and `parentResourceFolderExternalReferenceCode` are ignored.
             operationId: putSiteResourceFile
             parameters:
                 -   in: path
