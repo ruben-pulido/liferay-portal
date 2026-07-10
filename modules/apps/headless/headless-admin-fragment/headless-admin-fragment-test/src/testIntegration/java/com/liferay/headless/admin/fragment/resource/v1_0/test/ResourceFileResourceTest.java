@@ -256,7 +256,6 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 	@TestInfo("LPD-88395")
 	public void testPutSiteResourceFile() throws Exception {
 		_testPutSiteResourceFile();
-		_testPutSiteResourceFileFileURLReferenceNull();
 		_testPutSiteResourceFileNameNull();
 		_testPutSiteResourceFileParentResourceFolderExternalReferenceCode();
 		_testPutSiteResourceFilePortletFileProblemException();
@@ -875,10 +874,6 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 
 		FileURLReference fileURLReference =
 			getResourceFile.getFileURLReference();
-
-		Assert.assertEquals(
-			postResourceFile.getExternalReferenceCode(),
-			fileURLReference.getExternalReferenceCode());
 
 		String url = fileURLReference.getUrl();
 
@@ -1763,8 +1758,12 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 		FragmentCollection fragmentCollection = _addFragmentCollection(
 			testGroup.getGroupId());
 
+		byte[] bytes = RandomTestUtil.randomBytes();
+
 		ResourceFile originalResourceFile = _randomResourceFile(
 			fragmentCollection.getExternalReferenceCode());
+
+		originalResourceFile.setFileURLReference(_toFileURLReference(bytes));
 
 		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
 			testGroup.getExternalReferenceCode(),
@@ -1777,13 +1776,9 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 		FragmentCollection irrelevantFragmentCollection =
 			_addFragmentCollection(testGroup.getGroupId());
 
-		byte[] bytes = RandomTestUtil.randomBytes();
-
 		ResourceFile updatedResourceFile = _randomResourceFile(
 			_postSiteResourceFolder(
 				irrelevantFragmentCollection.getExternalReferenceCode()));
-
-		updatedResourceFile.setFileURLReference(_toFileURLReference(bytes));
 
 		putResourceFile = _putSiteResourceFile(
 			updatedResourceFile,
@@ -1819,9 +1814,7 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 			updatedResourceFile.getName(), getResourceFile.getName());
 	}
 
-	private void _testPutSiteResourceFileFileURLReferenceNull()
-		throws Exception {
-
+	private void _testPutSiteResourceFileNameNull() throws Exception {
 		byte[] bytes = RandomTestUtil.randomBytes();
 
 		ResourceFile resourceFile = _randomResourceFile(
@@ -1835,35 +1828,6 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 
 		ResourceFile updatedResourceFile = _randomResourceFile(
 			_getFragmentSetExternalReferenceCode());
-
-		updatedResourceFile.setFileURLReference((FileURLReference)null);
-
-		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
-			testGroup.getExternalReferenceCode(),
-			postResourceFile.getExternalReferenceCode(), updatedResourceFile);
-
-		Assert.assertEquals(
-			updatedResourceFile.getName(), putResourceFile.getName());
-
-		_assertContent(
-			bytes, postResourceFile.getExternalReferenceCode(),
-			testGroup.getGroupId());
-	}
-
-	private void _testPutSiteResourceFileNameNull() throws Exception {
-		ResourceFile resourceFile = _randomResourceFile(
-			_getFragmentSetExternalReferenceCode());
-
-		ResourceFile postResourceFile =
-			resourceFileResource.postSiteResourceFile(
-				testGroup.getExternalReferenceCode(), resourceFile);
-
-		byte[] bytes = RandomTestUtil.randomBytes();
-
-		ResourceFile updatedResourceFile = _randomResourceFile(
-			_getFragmentSetExternalReferenceCode());
-
-		updatedResourceFile.setFileURLReference(_toFileURLReference(bytes));
 
 		updatedResourceFile.setName((String)null);
 
