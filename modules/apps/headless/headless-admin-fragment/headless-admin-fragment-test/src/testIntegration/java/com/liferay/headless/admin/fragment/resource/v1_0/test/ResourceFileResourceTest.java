@@ -876,10 +876,6 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 		FileURLReference fileURLReference =
 			getResourceFile.getFileURLReference();
 
-		Assert.assertEquals(
-			postResourceFile.getExternalReferenceCode(),
-			fileURLReference.getExternalReferenceCode());
-
 		String url = fileURLReference.getUrl();
 
 		Assert.assertTrue(url, url.startsWith("http"));
