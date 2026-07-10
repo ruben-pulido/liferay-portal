@@ -5,8 +5,12 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
+import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppService;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionService;
 import com.liferay.headless.admin.fragment.dto.v1_0.FileURLReference;
@@ -77,6 +81,65 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			resourceFile);
 	}
 
+	@Override
+	public ResourceFile putSiteResourceFile(
+			String siteExternalReferenceCode,
+			String resourceFileExternalReferenceCode, ResourceFile resourceFile)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		DLFileEntry dlFileEntry =
+			_dlFileEntryLocalService.fetchFileEntryByExternalReferenceCode(
+				groupId, resourceFileExternalReferenceCode);
+
+		if (dlFileEntry == null) {
+			resourceFile.setExternalReferenceCode(
+				() -> resourceFileExternalReferenceCode);
+
+			return _addResourceFile(
+				_getOrAddFragmentCollection(groupId, resourceFile), groupId,
+				resourceFile);
+		}
+
+		FileEntry fileEntry = _dlAppService.getFileEntry(
+			dlFileEntry.getFileEntryId());
+
+		_checkResourceFile(fileEntry);
+
+		byte[] bytes = _toByteArray(
+			resourceFile.getFileURLReference(), groupId);
+
+		if (bytes.length == 0) {
+			bytes = FileUtil.getBytes(fileEntry.getContentStream());
+		}
+
+		String fileName = resourceFile.getName();
+
+		if (Validator.isNull(fileName)) {
+			fileName = dlFileEntry.getFileName();
+		}
+
+		long folderId = dlFileEntry.getFolderId();
+		long repositoryId = dlFileEntry.getRepositoryId();
+
+		_dlAppService.deleteFileEntry(dlFileEntry.getFileEntryId());
+
+		return _toResourceFile(
+			_dlAppService.addFileEntry(
+				resourceFileExternalReferenceCode, repositoryId, folderId,
+				fileName, MimeTypesUtil.getContentType(fileName), fileName,
+				null, null, null, bytes, null, null, null,
+				ServiceContextUtil.getServiceContext(
+					contextCompany.getCompanyId(),
+					resourceFile.getDateCreated(), groupId,
+					contextHttpServletRequest, resourceFile.getDateModified(),
+					contextUser.getUserId())));
+	}
+
 	private ResourceFile _addResourceFile(
 			FragmentCollection fragmentCollection, long groupId,
 			ResourceFile resourceFile)
@@ -113,6 +176,19 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 					resourceFile.getDateCreated(), groupId,
 					contextHttpServletRequest, resourceFile.getDateModified(),
 					contextUser.getUserId())));
+	}
+
+	private void _checkResourceFile(FileEntry fileEntry) throws Exception {
+		DLFolder dlFolder = _dlFolderLocalService.fetchDLFolder(
+			fileEntry.getFolderId());
+
+		if ((dlFolder == null) ||
+			(FragmentSetUtil.getFragmentCollection(dlFolder) == null)) {
+
+			throw new NoSuchFileEntryException(
+				"No resource file exists with external reference code " +
+					fileEntry.getExternalReferenceCode());
+		}
 	}
 
 	private FragmentCollection _getOrAddFragmentCollection(
@@ -183,6 +259,12 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 	@Reference
 	private DLAppService _dlAppService;
+
+	@Reference
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+
+	@Reference
+	private DLFolderLocalService _dlFolderLocalService;
 
 	@Reference
 	private DTOConverterRegistry _dtoConverterRegistry;
