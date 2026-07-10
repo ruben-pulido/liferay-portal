@@ -34,11 +34,11 @@ import java.util.function.Supplier;
  */
 @Generated("")
 @GraphQLName(
-	description = "A reference to a file's binary content. On read, `externalReferenceCode` and `url` are populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file binds it; otherwise a new file is materialized from `fileBase64` (or downloaded from `url` when `fileBase64` is absent).",
+	description = "A reference to a file's binary content. On read, `url` is populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file copies its content; otherwise the content is decoded from `fileBase64` (or downloaded from `url` when `fileBase64` is absent).",
 	value = "FileURLReference"
 )
 @io.swagger.v3.oas.annotations.media.Schema(
-	description = "A reference to a file's binary content. On read, `externalReferenceCode` and `url` are populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file binds it; otherwise a new file is materialized from `fileBase64` (or downloaded from `url` when `fileBase64` is absent)."
+	description = "A reference to a file's binary content. On read, `url` is populated from the underlying file entry, while `fileBase64` is populated only when requested via `nestedFields=fileBase64`; during a staging export, `url` is a `lar://` URL pointing at bytes embedded in the LAR archive. On write, the binary source is resolved by the precedence `externalReferenceCode` → `fileBase64` → `url`. An `externalReferenceCode` that resolves to an existing file copies its content; otherwise the content is decoded from `fileBase64` (or downloaded from `url` when `fileBase64` is absent)."
 )
 @JsonFilter("Liferay.Vulcan")
 @XmlRootElement(name = "FileURLReference")
@@ -53,7 +53,7 @@ public class FileURLReference implements Serializable {
 	}
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The file's external reference code. On write, the canonical identifier of the file to bind."
+		description = "The external reference code of an existing file whose content is copied."
 	)
 	public String getExternalReferenceCode() {
 		if (_externalReferenceCodeSupplier != null) {
@@ -89,9 +89,9 @@ public class FileURLReference implements Serializable {
 	}
 
 	@GraphQLField(
-		description = "The file's external reference code. On write, the canonical identifier of the file to bind."
+		description = "The external reference code of an existing file whose content is copied."
 	)
-	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	protected String externalReferenceCode;
 
 	@JsonIgnore
@@ -361,4 +361,4 @@ public class FileURLReference implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1483498723
+// LIFERAY-REST-BUILDER-HASH:254299413
