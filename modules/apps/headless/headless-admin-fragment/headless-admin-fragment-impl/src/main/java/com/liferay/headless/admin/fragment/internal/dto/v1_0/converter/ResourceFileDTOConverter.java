@@ -169,7 +169,6 @@ public class ResourceFileDTOConverter
 
 		return new FileURLReference() {
 			{
-				setExternalReferenceCode(dlFileEntry::getExternalReferenceCode);
 				setFileBase64(
 					() -> NestedFieldsSupplier.supply(
 						"fileBase64",
