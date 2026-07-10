@@ -182,6 +182,18 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 	}
 
 	@Override
+	@Test
+	@TestInfo("LPD-88395")
+	public void testPutSiteResourceFile() throws Exception {
+		_testPutSiteResourceFile();
+		_testPutSiteResourceFileFileURLReferenceNull();
+		_testPutSiteResourceFileNameNull();
+		_testPutSiteResourceFileParentResourceFolderExternalReferenceCode();
+		_testPutSiteResourceFilePortletFileProblemException();
+		_testPutSiteResourceFileWithoutPermissionsProblemException();
+	}
+
+	@Override
 	protected String[] getAdditionalAssertFieldNames() {
 		return new String[] {
 			"externalReferenceCode", "fragmentSetExternalReferenceCode", "name"
@@ -423,6 +435,18 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 		return resourceFolderResource.postSiteResourceFolder(
 			testGroup.getExternalReferenceCode(),
 			_randomResourceFolder(fragmentSetExternalReferenceCode));
+	}
+
+	private ResourceFile _putSiteResourceFile(
+			ResourceFile resourceFile, String resourceFileExternalReferenceCode)
+		throws Exception {
+
+		ResourceFileResource resourceFileResource = _getResourceFileResource(
+			"fragmentSet,parentResourceFolder");
+
+		return resourceFileResource.putSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			resourceFileExternalReferenceCode, resourceFile);
 	}
 
 	private ResourceFile _randomResourceFile(
@@ -1030,6 +1054,205 @@ public class ResourceFileResourceTest extends BaseResourceFileResourceTestCase {
 		try {
 			_resourceFileResource.postSiteResourceFile(
 				testGroup.getExternalReferenceCode(), randomResourceFile());
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("FORBIDDEN", problem.getStatus());
+		}
+	}
+
+	private void _testPutSiteResourceFile() throws Exception {
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFile originalResourceFile = _randomResourceFile(
+			fragmentCollection.getExternalReferenceCode());
+
+		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			originalResourceFile.getExternalReferenceCode(),
+			originalResourceFile);
+
+		assertEquals(originalResourceFile, putResourceFile);
+		assertValid(putResourceFile);
+
+		FragmentCollection irrelevantFragmentCollection =
+			_addFragmentCollection(testGroup.getGroupId());
+
+		byte[] bytes = RandomTestUtil.randomBytes();
+
+		ResourceFile updatedResourceFile = _randomResourceFile(
+			_postSiteResourceFolder(
+				irrelevantFragmentCollection.getExternalReferenceCode()));
+
+		updatedResourceFile.setFileURLReference(_toFileURLReference(bytes));
+
+		putResourceFile = _putSiteResourceFile(
+			updatedResourceFile,
+			originalResourceFile.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			originalResourceFile.getExternalReferenceCode(),
+			putResourceFile.getExternalReferenceCode());
+		Assert.assertEquals(
+			updatedResourceFile.getName(), putResourceFile.getName());
+		Assert.assertNull(putResourceFile.getParentResourceFolder());
+		Assert.assertNull(
+			putResourceFile.getParentResourceFolderExternalReferenceCode());
+
+		FragmentSet fragmentSet = putResourceFile.getFragmentSet();
+
+		Assert.assertEquals(
+			fragmentCollection.getExternalReferenceCode(),
+			fragmentSet.getExternalReferenceCode());
+
+		_assertContent(
+			bytes, originalResourceFile.getExternalReferenceCode(),
+			testGroup.getGroupId());
+
+		ResourceFile getResourceFile = resourceFileResource.getSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			originalResourceFile.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			originalResourceFile.getExternalReferenceCode(),
+			getResourceFile.getExternalReferenceCode());
+		Assert.assertEquals(
+			updatedResourceFile.getName(), getResourceFile.getName());
+	}
+
+	private void _testPutSiteResourceFileFileURLReferenceNull()
+		throws Exception {
+
+		byte[] bytes = RandomTestUtil.randomBytes();
+
+		ResourceFile resourceFile = _randomResourceFile(
+			_getFragmentSetExternalReferenceCode());
+
+		resourceFile.setFileURLReference(_toFileURLReference(bytes));
+
+		ResourceFile postResourceFile =
+			resourceFileResource.postSiteResourceFile(
+				testGroup.getExternalReferenceCode(), resourceFile);
+
+		ResourceFile updatedResourceFile = _randomResourceFile(
+			_getFragmentSetExternalReferenceCode());
+
+		updatedResourceFile.setFileURLReference((FileURLReference)null);
+
+		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			postResourceFile.getExternalReferenceCode(), updatedResourceFile);
+
+		Assert.assertEquals(
+			updatedResourceFile.getName(), putResourceFile.getName());
+
+		_assertContent(
+			bytes, postResourceFile.getExternalReferenceCode(),
+			testGroup.getGroupId());
+	}
+
+	private void _testPutSiteResourceFileNameNull() throws Exception {
+		ResourceFile resourceFile = _randomResourceFile(
+			_getFragmentSetExternalReferenceCode());
+
+		ResourceFile postResourceFile =
+			resourceFileResource.postSiteResourceFile(
+				testGroup.getExternalReferenceCode(), resourceFile);
+
+		byte[] bytes = RandomTestUtil.randomBytes();
+
+		ResourceFile updatedResourceFile = _randomResourceFile(
+			_getFragmentSetExternalReferenceCode());
+
+		updatedResourceFile.setFileURLReference(_toFileURLReference(bytes));
+
+		updatedResourceFile.setName((String)null);
+
+		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			postResourceFile.getExternalReferenceCode(), updatedResourceFile);
+
+		Assert.assertEquals(resourceFile.getName(), putResourceFile.getName());
+
+		_assertContent(
+			bytes, postResourceFile.getExternalReferenceCode(),
+			testGroup.getGroupId());
+	}
+
+	private void _testPutSiteResourceFileParentResourceFolderExternalReferenceCode()
+		throws Exception {
+
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder postParentResourceFolder = _postSiteResourceFolder(
+			fragmentCollection.getExternalReferenceCode());
+
+		ResourceFile resourceFile = _randomResourceFile(
+			fragmentCollection.getExternalReferenceCode());
+
+		resourceFile.setParentResourceFolderExternalReferenceCode(
+			postParentResourceFolder.getExternalReferenceCode());
+
+		ResourceFile putResourceFile = resourceFileResource.putSiteResourceFile(
+			testGroup.getExternalReferenceCode(),
+			resourceFile.getExternalReferenceCode(), resourceFile);
+
+		ResourceFile getResourceFile = _getSiteResourceFile(
+			putResourceFile.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			postParentResourceFolder.getExternalReferenceCode(),
+			getResourceFile.getParentResourceFolderExternalReferenceCode());
+
+		ResourceFolder getParentResourceFolder =
+			getResourceFile.getParentResourceFolder();
+
+		Assert.assertEquals(
+			postParentResourceFolder.getExternalReferenceCode(),
+			getParentResourceFolder.getExternalReferenceCode());
+	}
+
+	private void _testPutSiteResourceFilePortletFileProblemException()
+		throws Exception {
+
+		ResourceFile resourceFile = randomResourceFile();
+
+		FileEntry fileEntry = _addPortletFileEntry();
+
+		resourceFile.setExternalReferenceCode(
+			fileEntry.getExternalReferenceCode());
+
+		try {
+			resourceFileResource.putSiteResourceFile(
+				testGroup.getExternalReferenceCode(),
+				fileEntry.getExternalReferenceCode(), resourceFile);
+
+			Assert.fail();
+		}
+		catch (Problem.ProblemException problemException) {
+			Problem problem = problemException.getProblem();
+
+			Assert.assertEquals("NOT_FOUND", problem.getStatus());
+		}
+	}
+
+	private void _testPutSiteResourceFileWithoutPermissionsProblemException()
+		throws Exception {
+
+		ResourceFile resourceFile = resourceFileResource.postSiteResourceFile(
+			testGroup.getExternalReferenceCode(), randomResourceFile());
+
+		resourceFile.setName(RandomTestUtil.randomString());
+
+		try {
+			_resourceFileResource.putSiteResourceFile(
+				testGroup.getExternalReferenceCode(),
+				resourceFile.getExternalReferenceCode(), resourceFile);
 
 			Assert.fail();
 		}
