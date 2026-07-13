@@ -20,6 +20,7 @@ import com.liferay.headless.admin.fragment.internal.util.EnabledUtil;
 import com.liferay.headless.admin.fragment.resource.v1_0.ResourceFolderResource;
 import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.petra.function.UnsafeConsumer;
+import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
@@ -30,6 +31,7 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -249,13 +251,30 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 
 		_checkResourceFolder(dlFolder);
 
+		FragmentCollection fragmentCollection =
+			FragmentSetUtil.getFragmentCollection(dlFolder);
+
+		DLFolder parentDLFolder = _getParentDLFolder(
+			fragmentCollection, groupId, resourceFolder);
+
+		if (dlFolder.getParentFolderId() != parentDLFolder.getFolderId()) {
+			_checkParentDLFolder(dlFolder, fragmentCollection, parentDLFolder);
+		}
+
+		ServiceContext serviceContext = ServiceContextUtil.getServiceContext(
+			contextCompany.getCompanyId(), resourceFolder.getDateCreated(),
+			groupId, contextHttpServletRequest,
+			resourceFolder.getDateModified(), contextUser.getUserId());
+
 		Folder folder = _dlAppService.updateFolder(
 			dlFolder.getFolderId(), resourceFolder.getName(),
-			dlFolder.getDescription(),
-			ServiceContextUtil.getServiceContext(
-				contextCompany.getCompanyId(), resourceFolder.getDateCreated(),
-				groupId, contextHttpServletRequest,
-				resourceFolder.getDateModified(), contextUser.getUserId()));
+			dlFolder.getDescription(), serviceContext);
+
+		if (dlFolder.getParentFolderId() != parentDLFolder.getFolderId()) {
+			_dlAppService.moveFolder(
+				dlFolder.getFolderId(), parentDLFolder.getFolderId(),
+				serviceContext);
+		}
 
 		return _toResourceFolder(
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
@@ -279,6 +298,47 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 				resourceFolder.getDateModified(), contextUser.getUserId()));
 
 		return _dlFolderLocalService.getDLFolder(folder.getFolderId());
+	}
+
+	private void _checkParentDLFolder(
+		DLFolder dlFolder, FragmentCollection fragmentCollection,
+		DLFolder parentDLFolder) {
+
+		if (dlFolder.getFolderId() == parentDLFolder.getFolderId()) {
+			throw new IllegalArgumentException(
+				_language.format(
+					contextAcceptLanguage.getPreferredLocale(),
+					"unable-to-move-resource-folder-x-into-itself",
+					dlFolder.getExternalReferenceCode()));
+		}
+
+		FragmentCollection parentFragmentCollection =
+			FragmentSetUtil.getFragmentCollection(parentDLFolder);
+
+		if (fragmentCollection.getFragmentCollectionId() !=
+				parentFragmentCollection.getFragmentCollectionId()) {
+
+			throw new IllegalArgumentException(
+				_language.format(
+					contextAcceptLanguage.getPreferredLocale(),
+					"no-resource-folder-was-found-with-external-reference-" +
+						"code-x",
+					parentDLFolder.getExternalReferenceCode()));
+		}
+
+		String treePath = parentDLFolder.getTreePath();
+
+		if (treePath.contains(
+				StringBundler.concat(
+					StringPool.SLASH, dlFolder.getFolderId(),
+					StringPool.SLASH))) {
+
+			throw new IllegalArgumentException(
+				_language.format(
+					contextAcceptLanguage.getPreferredLocale(),
+					"unable-to-move-resource-folder-x-into-one-of-its-children",
+					dlFolder.getExternalReferenceCode()));
+		}
 	}
 
 	private void _checkResourceFolder(DLFolder dlFolder) throws Exception {
