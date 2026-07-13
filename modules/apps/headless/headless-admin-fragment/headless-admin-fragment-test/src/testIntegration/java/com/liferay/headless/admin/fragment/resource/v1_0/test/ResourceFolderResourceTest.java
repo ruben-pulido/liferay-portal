@@ -198,7 +198,12 @@ public class ResourceFolderResourceTest
 	@TestInfo("LPD-88489")
 	public void testPutSiteResourceFolder() throws Exception {
 		_testPutSiteResourceFolder();
+		_testPutSiteResourceFolderParentResourceFolderChildProblemException();
+		_testPutSiteResourceFolderParentResourceFolderDifferentFragmentSetProblemException();
 		_testPutSiteResourceFolderParentResourceFolderExternalReferenceCode();
+		_testPutSiteResourceFolderParentResourceFolderExternalReferenceCodeNull();
+		_testPutSiteResourceFolderParentResourceFolderItselfProblemException();
+		_testPutSiteResourceFolderParentResourceFolderNonexistentProblemException();
 		_testPutSiteResourceFolderPortletFolderProblemException();
 		_testPutSiteResourceFolderWithoutPermissionsProblemException();
 	}
@@ -1524,12 +1529,7 @@ public class ResourceFolderResourceTest
 			_addFragmentCollection(testGroup.getGroupId());
 
 		ResourceFolder updatedResourceFolder = _randomResourceFolder(
-			_postSiteResourceFolder(
-				irrelevantFragmentCollection.getExternalReferenceCode()));
-
-		Assert.assertNotNull(
-			updatedResourceFolder.
-				getParentResourceFolderExternalReferenceCode());
+			irrelevantFragmentCollection.getExternalReferenceCode());
 
 		putResourceFolder = _putSiteResourceFolder(
 			updatedResourceFolder,
@@ -1561,29 +1561,55 @@ public class ResourceFolderResourceTest
 		Assert.assertNull(getResourceFolder.getParentResourceFolder());
 		Assert.assertNull(
 			getResourceFolder.getParentResourceFolderExternalReferenceCode());
+	}
 
-		ResourceFolder parentResourceFolder = _postSiteResourceFolder(
+	private void _testPutSiteResourceFolderParentResourceFolderChildProblemException()
+		throws Exception {
+
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder resourceFolder = _postSiteResourceFolder(
 			fragmentCollection.getExternalReferenceCode());
 
 		ResourceFolder childResourceFolder = _postSiteResourceFolder(
-			parentResourceFolder);
+			resourceFolder);
 
-		putResourceFolder = _putSiteResourceFolder(
-			_randomResourceFolder(
-				_postSiteResourceFolder(
-					irrelevantFragmentCollection.getExternalReferenceCode())),
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
 			childResourceFolder.getExternalReferenceCode());
 
-		ResourceFolder putParentResourceFolder =
-			putResourceFolder.getParentResourceFolder();
+		_assertProblemException(
+			"unable-to-move-resource-folder-x-into-one-of-its-children",
+			() -> resourceFolderResource.putSiteResourceFolder(
+				testGroup.getExternalReferenceCode(),
+				resourceFolder.getExternalReferenceCode(), resourceFolder),
+			resourceFolder.getExternalReferenceCode());
+	}
 
-		Assert.assertEquals(
-			parentResourceFolder.getExternalReferenceCode(),
-			putParentResourceFolder.getExternalReferenceCode());
+	private void _testPutSiteResourceFolderParentResourceFolderDifferentFragmentSetProblemException()
+		throws Exception {
 
-		Assert.assertEquals(
-			parentResourceFolder.getExternalReferenceCode(),
-			putResourceFolder.getParentResourceFolderExternalReferenceCode());
+		FragmentCollection fragmentCollection1 = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder resourceFolder = _postSiteResourceFolder(
+			fragmentCollection1.getExternalReferenceCode());
+
+		FragmentCollection fragmentCollection2 = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder parentResourceFolder = _postSiteResourceFolder(
+			fragmentCollection2.getExternalReferenceCode());
+
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
+			parentResourceFolder.getExternalReferenceCode());
+
+		_assertProblemException(
+			"no-resource-folder-was-found-with-external-reference-code-x",
+			() -> resourceFolderResource.putSiteResourceFolder(
+				testGroup.getExternalReferenceCode(),
+				resourceFolder.getExternalReferenceCode(), resourceFolder),
+			parentResourceFolder.getExternalReferenceCode());
 	}
 
 	private void _testPutSiteResourceFolderParentResourceFolderExternalReferenceCode()
@@ -1595,11 +1621,11 @@ public class ResourceFolderResourceTest
 		ResourceFolder resourceFolder = _randomResourceFolder(
 			fragmentCollection.getExternalReferenceCode());
 
-		ResourceFolder postParentResourceFolder = _postSiteResourceFolder(
+		ResourceFolder postParentResourceFolder1 = _postSiteResourceFolder(
 			fragmentCollection.getExternalReferenceCode());
 
 		resourceFolder.setParentResourceFolderExternalReferenceCode(
-			postParentResourceFolder.getExternalReferenceCode());
+			postParentResourceFolder1.getExternalReferenceCode());
 
 		ResourceFolder putResourceFolder =
 			resourceFolderResource.putSiteResourceFolder(
@@ -1610,15 +1636,120 @@ public class ResourceFolderResourceTest
 			putResourceFolder.getExternalReferenceCode());
 
 		Assert.assertEquals(
-			postParentResourceFolder.getExternalReferenceCode(),
+			postParentResourceFolder1.getExternalReferenceCode(),
 			getResourceFolder.getParentResourceFolderExternalReferenceCode());
 
 		ResourceFolder getParentResourceFolder =
 			getResourceFolder.getParentResourceFolder();
 
 		Assert.assertEquals(
-			postParentResourceFolder.getExternalReferenceCode(),
+			postParentResourceFolder1.getExternalReferenceCode(),
 			getParentResourceFolder.getExternalReferenceCode());
+
+		ResourceFolder childResourceFolder = _postSiteResourceFolder(
+			putResourceFolder);
+
+		ResourceFolder postParentResourceFolder2 = _postSiteResourceFolder(
+			fragmentCollection.getExternalReferenceCode());
+
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
+			postParentResourceFolder2.getExternalReferenceCode());
+
+		putResourceFolder = resourceFolderResource.putSiteResourceFolder(
+			testGroup.getExternalReferenceCode(),
+			resourceFolder.getExternalReferenceCode(), resourceFolder);
+
+		getResourceFolder = _getSiteResourceFolder(
+			putResourceFolder.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			postParentResourceFolder2.getExternalReferenceCode(),
+			getResourceFolder.getParentResourceFolderExternalReferenceCode());
+
+		ResourceFolder getChildResourceFolder = _getSiteResourceFolder(
+			childResourceFolder.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			resourceFolder.getExternalReferenceCode(),
+			getChildResourceFolder.
+				getParentResourceFolderExternalReferenceCode());
+	}
+
+	private void _testPutSiteResourceFolderParentResourceFolderExternalReferenceCodeNull()
+		throws Exception {
+
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder parentResourceFolder = _postSiteResourceFolder(
+			fragmentCollection.getExternalReferenceCode());
+
+		ResourceFolder resourceFolder = _postSiteResourceFolder(
+			parentResourceFolder);
+
+		Assert.assertNotNull(
+			resourceFolder.getParentResourceFolderExternalReferenceCode());
+
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
+			(String)null);
+
+		ResourceFolder putResourceFolder =
+			resourceFolderResource.putSiteResourceFolder(
+				testGroup.getExternalReferenceCode(),
+				resourceFolder.getExternalReferenceCode(), resourceFolder);
+
+		Assert.assertNull(
+			putResourceFolder.getParentResourceFolderExternalReferenceCode());
+
+		ResourceFolder getResourceFolder = _getSiteResourceFolder(
+			resourceFolder.getExternalReferenceCode());
+
+		Assert.assertNull(getResourceFolder.getParentResourceFolder());
+		Assert.assertNull(
+			getResourceFolder.getParentResourceFolderExternalReferenceCode());
+	}
+
+	private void _testPutSiteResourceFolderParentResourceFolderItselfProblemException()
+		throws Exception {
+
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder resourceFolder = _postSiteResourceFolder(
+			fragmentCollection.getExternalReferenceCode());
+
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
+			resourceFolder.getExternalReferenceCode());
+
+		_assertProblemException(
+			"unable-to-move-resource-folder-x-into-itself",
+			() -> resourceFolderResource.putSiteResourceFolder(
+				testGroup.getExternalReferenceCode(),
+				resourceFolder.getExternalReferenceCode(), resourceFolder),
+			resourceFolder.getExternalReferenceCode());
+	}
+
+	private void _testPutSiteResourceFolderParentResourceFolderNonexistentProblemException()
+		throws Exception {
+
+		FragmentCollection fragmentCollection = _addFragmentCollection(
+			testGroup.getGroupId());
+
+		ResourceFolder resourceFolder = _postSiteResourceFolder(
+			fragmentCollection.getExternalReferenceCode());
+
+		String parentResourceFolderExternalReferenceCode =
+			RandomTestUtil.randomString();
+
+		resourceFolder.setParentResourceFolderExternalReferenceCode(
+			parentResourceFolderExternalReferenceCode);
+
+		_assertProblemException(
+			"no-resource-folder-was-found-with-external-reference-code-x",
+			() -> resourceFolderResource.putSiteResourceFolder(
+				testGroup.getExternalReferenceCode(),
+				resourceFolder.getExternalReferenceCode(), resourceFolder),
+			parentResourceFolderExternalReferenceCode);
 	}
 
 	private void _testPutSiteResourceFolderPortletFolderProblemException()
