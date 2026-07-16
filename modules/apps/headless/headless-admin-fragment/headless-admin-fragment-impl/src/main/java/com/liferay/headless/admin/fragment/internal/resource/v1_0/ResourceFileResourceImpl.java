@@ -109,6 +109,13 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			true, true, contextCompany.getCompanyId(),
 			siteExternalReferenceCode);
 
+		if (!_portletResourcePermission.contains(
+				PermissionThreadLocal.getPermissionChecker(), groupId,
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
+
+			return Page.of(Collections.emptyList());
+		}
+
 		FragmentCollection fragmentCollection =
 			_fragmentCollectionService.
 				getFragmentCollectionByExternalReferenceCode(
@@ -153,6 +160,13 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 		long groupId = GroupUtil.getGroupId(
 			true, true, contextCompany.getCompanyId(),
 			siteExternalReferenceCode);
+
+		if (!_portletResourcePermission.contains(
+				PermissionThreadLocal.getPermissionChecker(), groupId,
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
+
+			return Page.of(Collections.emptyList());
+		}
 
 		long[] resourcesFolderIds = transformToLongArray(
 			_fragmentCollectionLocalService.getFragmentCollections(groupId),
@@ -395,6 +409,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 				searchContext.setCompanyId(contextCompany.getCompanyId());
 				searchContext.setFolderIds(folderIds);
 				searchContext.setGroupIds(new long[] {groupId});
+				searchContext.setVulcanCheckPermissions(false);
 			},
 			null,
 			document -> _toResourceFile(
