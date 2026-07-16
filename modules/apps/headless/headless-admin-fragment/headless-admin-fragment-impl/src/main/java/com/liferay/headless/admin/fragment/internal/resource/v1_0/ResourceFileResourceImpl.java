@@ -9,9 +9,12 @@ import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.fragment.constants.FragmentActionKeys;
+import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
@@ -35,6 +38,8 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
@@ -84,7 +89,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 		_checkResourceFile(fileEntry);
 
-		_dlAppService.deleteFileEntry(fileEntry.getFileEntryId());
+		_dlAppLocalService.deleteFileEntry(fileEntry.getFileEntryId());
 	}
 
 	@Override
@@ -204,6 +209,10 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
+		_portletResourcePermission.check(
+			PermissionThreadLocal.getPermissionChecker(), groupId,
+			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+
 		return _addResourceFile(
 			_fragmentCollectionService.
 				getFragmentCollectionByExternalReferenceCode(
@@ -220,6 +229,10 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		_portletResourcePermission.check(
+			PermissionThreadLocal.getPermissionChecker(), groupId,
+			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
 
 		return _addResourceFile(
 			_getOrAddFragmentCollection(groupId, resourceFile), groupId,
@@ -242,6 +255,10 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 				groupId, resourceFileExternalReferenceCode);
 
 		if (dlFileEntry == null) {
+			_portletResourcePermission.check(
+				PermissionThreadLocal.getPermissionChecker(), groupId,
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+
 			resourceFile.setExternalReferenceCode(
 				() -> resourceFileExternalReferenceCode);
 
@@ -260,8 +277,9 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 		_checkBytes(bytes);
 
 		return _toResourceFile(
-			_dlAppService.updateFileEntry(
-				dlFileEntry.getFileEntryId(), resourceFile.getName(),
+			_dlAppLocalService.updateFileEntry(
+				contextUser.getUserId(), dlFileEntry.getFileEntryId(),
+				resourceFile.getName(),
 				MimeTypesUtil.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null,
 				DLVersionNumberIncrease.NONE, bytes, null, null, null,
@@ -288,10 +306,10 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			contextUser.getUserId());
 
 		return _toResourceFile(
-			_dlAppService.addFileEntry(
+			_dlAppLocalService.addFileEntry(
 				resourceFile.getExternalReferenceCode(),
-				dlFolder.getRepositoryId(), dlFolder.getFolderId(),
-				resourceFile.getName(),
+				contextUser.getUserId(), dlFolder.getRepositoryId(),
+				dlFolder.getFolderId(), resourceFile.getName(),
 				MimeTypesUtil.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null, bytes, null, null,
 				null, _getServiceContext(groupId, resourceFile)));
@@ -440,6 +458,9 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 		new ResourceFileEntityModel();
 
 	@Reference
+	private DLAppLocalService _dlAppLocalService;
+
+	@Reference
 	private DLAppService _dlAppService;
 
 	@Reference
@@ -459,6 +480,11 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 	@Reference
 	private Language _language;
+
+	@Reference(
+		target = "(resource.name=" + FragmentConstants.RESOURCE_NAME + ")"
+	)
+	private PortletResourcePermission _portletResourcePermission;
 
 	@Reference(
 		target = "(component.name=com.liferay.headless.admin.fragment.internal.dto.v1_0.converter.ResourceFileDTOConverter)"
