@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.uuid.PortalUUIDUtil;
 
 import jakarta.portlet.PortletURL;
 import jakarta.portlet.RenderResponse;
@@ -151,6 +152,8 @@ public class EditAudiencesEntryDisplayContext {
 		).put(
 			"backURLTitle", getBackURLTitle()
 		).put(
+			"externalReferenceCode", _getExternalReferenceCode()
+		).put(
 			"name", _getName()
 		).put(
 			"namespace", _renderResponse.getNamespace()
@@ -207,6 +210,23 @@ public class EditAudiencesEntryDisplayContext {
 		}
 
 		return null;
+	}
+
+	private String _getExternalReferenceCode() {
+		try {
+			AudiencesEntry audiencesEntry = _getAudiencesEntry();
+
+			if (audiencesEntry != null) {
+				return audiencesEntry.getExternalReferenceCode();
+			}
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+		}
+
+		return PortalUUIDUtil.generate();
 	}
 
 	private String _getName() {

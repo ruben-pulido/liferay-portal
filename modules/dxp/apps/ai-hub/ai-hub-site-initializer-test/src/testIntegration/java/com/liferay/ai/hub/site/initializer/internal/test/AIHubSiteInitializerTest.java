@@ -291,8 +291,27 @@ public class AIHubSiteInitializerTest {
 		_assertWorkflowDefinitionExists(
 			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
 			WorkflowDefinitionConstants.
+				EXTERNAL_REFERENCE_CODE_CONTENT_GAP_ANALYSIS,
+			WorkflowDefinitionConstants.NAME_CONTENT_GAP_ANALYSIS);
+		_assertWorkflowDefinitionExists(
+			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
+			WorkflowDefinitionConstants.
+				EXTERNAL_REFERENCE_CODE_FIND_MATCHING_ASSETS,
+			WorkflowDefinitionConstants.NAME_FIND_MATCHING_ASSETS);
+		_assertWorkflowDefinitionExists(
+			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
+			WorkflowDefinitionConstants.
 				EXTERNAL_REFERENCE_CODE_FIX_SPELLING_AND_GRAMMAR,
 			WorkflowDefinitionConstants.NAME_FIX_SPELLING_AND_GRAMMAR);
+		_assertWorkflowDefinitionExists(
+			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
+			WorkflowDefinitionConstants.
+				EXTERNAL_REFERENCE_CODE_GENERATE_CONTENT,
+			WorkflowDefinitionConstants.NAME_GENERATE_CONTENT);
+		_assertWorkflowDefinitionExists(
+			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
+			WorkflowDefinitionConstants.EXTERNAL_REFERENCE_CODE_GENERATE_IMAGE,
+			WorkflowDefinitionConstants.NAME_GENERATE_IMAGE);
 		_assertWorkflowDefinitionExists(
 			_ACCOUNT_EXTERNAL_REFERENCE_CODE_AI_HUB,
 			WorkflowDefinitionConstants.EXTERNAL_REFERENCE_CODE_IMPROVE_WRITING,

@@ -647,7 +647,7 @@ public class AgentDefinitionResourceTest
 	private void _testGetAgentDefinitionsPage() throws Exception {
 		Page<AgentDefinition> page =
 			agentDefinitionResource.getAgentDefinitionsPage(
-				null, null, Pagination.of(1, 10), null);
+				null, null, Pagination.of(1, 20), null);
 
 		assertEquals(
 			_systemAgentDefinitions, (List<AgentDefinition>)page.getItems());
@@ -659,7 +659,7 @@ public class AgentDefinitionResourceTest
 
 		Page<AgentDefinition> page =
 			agentDefinitionResource.getAgentDefinitionsPage(
-				null, "(active eq false)", Pagination.of(1, 10), null);
+				null, "(active eq false)", Pagination.of(1, 20), null);
 
 		assertEquals(
 			ListUtil.filter(
@@ -670,7 +670,7 @@ public class AgentDefinitionResourceTest
 		// Active as true
 
 		page = agentDefinitionResource.getAgentDefinitionsPage(
-			null, "(active eq true)", Pagination.of(1, 10), null);
+			null, "(active eq true)", Pagination.of(1, 20), null);
 
 		assertEquals(
 			ListUtil.filter(
@@ -680,7 +680,7 @@ public class AgentDefinitionResourceTest
 		// Date created
 
 		page = agentDefinitionResource.getAgentDefinitionsPage(
-			null, "dateCreated gt 2000-01-01T00:00:00Z", Pagination.of(1, 10),
+			null, "dateCreated gt 2000-01-01T00:00:00Z", Pagination.of(1, 20),
 			null);
 
 		assertEquals(
@@ -689,7 +689,7 @@ public class AgentDefinitionResourceTest
 		// Date modified
 
 		page = agentDefinitionResource.getAgentDefinitionsPage(
-			null, "dateModified gt 2000-01-01T00:00:00Z", Pagination.of(1, 10),
+			null, "dateModified gt 2000-01-01T00:00:00Z", Pagination.of(1, 20),
 			null);
 
 		assertEquals(
@@ -794,7 +794,7 @@ public class AgentDefinitionResourceTest
 
 		Page<AgentDefinition> page =
 			agentDefinitionResource.getAgentDefinitionsPage(
-				null, null, Pagination.of(1, 10), null);
+				null, null, Pagination.of(1, 20), null);
 
 		for (AgentDefinition agentDefinition : page.getItems()) {
 			Map<String, Map<String, String>> actions =
@@ -810,7 +810,7 @@ public class AgentDefinitionResourceTest
 			new String[] {ActionKeys.PERMISSIONS, ActionKeys.VIEW});
 
 		page = agentDefinitionResource.getAgentDefinitionsPage(
-			null, null, Pagination.of(1, 10), null);
+			null, null, Pagination.of(1, 20), null);
 
 		for (AgentDefinition agentDefinition : page.getItems()) {
 			Map<String, Map<String, String>> actions =
@@ -836,11 +836,11 @@ public class AgentDefinitionResourceTest
 
 		Page<AgentDefinition> ascPage =
 			agentDefinitionResource.getAgentDefinitionsPage(
-				null, null, Pagination.of(1, 10), sortField + ":asc");
+				null, null, Pagination.of(1, 20), sortField + ":asc");
 
 		Page<AgentDefinition> descPage =
 			agentDefinitionResource.getAgentDefinitionsPage(
-				null, null, Pagination.of(1, 10), sortField + ":desc");
+				null, null, Pagination.of(1, 20), sortField + ":desc");
 
 		List<AgentDefinition> agentDefinitions = ListUtil.fromCollection(
 			descPage.getItems());
@@ -945,6 +945,98 @@ public class AgentDefinitionResourceTest
 					active = true;
 					externalReferenceCode =
 						WorkflowDefinitionConstants.
+							EXTERNAL_REFERENCE_CODE_CONTENT_GAP_ANALYSIS;
+					inputVariables = new Variable[] {
+						new Variable() {
+							{
+								name = "contentCoverage";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "focusScope";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "projectContext";
+								type = "string";
+							}
+						}
+					};
+					outputVariable = new Variable() {
+						{
+							name = "gapAnalysis";
+							type = "string";
+						}
+					};
+					version = 1;
+					workflowDefinitionName =
+						WorkflowDefinitionConstants.NAME_CONTENT_GAP_ANALYSIS;
+				}
+			},
+			new AgentDefinition() {
+				{
+					active = true;
+					externalReferenceCode =
+						WorkflowDefinitionConstants.
+							EXTERNAL_REFERENCE_CODE_FIND_MATCHING_ASSETS;
+					inputVariables = new Variable[] {
+						new Variable() {
+							{
+								name = "cmsGroupId";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "funnelStageId";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "keywords";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "personaId";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "portalURL";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "tasks";
+								type = "string";
+							}
+						}
+					};
+					outputVariable = new Variable() {
+						{
+							name = "matchingAssets";
+							type = "string";
+						}
+					};
+					version = 1;
+					workflowDefinitionName =
+						WorkflowDefinitionConstants.NAME_FIND_MATCHING_ASSETS;
+				}
+			},
+			new AgentDefinition() {
+				{
+					active = true;
+					externalReferenceCode =
+						WorkflowDefinitionConstants.
 							EXTERNAL_REFERENCE_CODE_FIX_SPELLING_AND_GRAMMAR;
 					inputVariables = new Variable[] {
 						new Variable() {
@@ -964,6 +1056,68 @@ public class AgentDefinitionResourceTest
 					workflowDefinitionName =
 						WorkflowDefinitionConstants.
 							NAME_FIX_SPELLING_AND_GRAMMAR;
+				}
+			},
+			new AgentDefinition() {
+				{
+					active = false;
+					externalReferenceCode =
+						WorkflowDefinitionConstants.
+							EXTERNAL_REFERENCE_CODE_GENERATE_IMAGE;
+					inputVariables = new Variable[] {
+						new Variable() {
+							{
+								name = "description";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "style";
+								type = "string";
+							}
+						}
+					};
+					outputVariable = new Variable() {
+						{
+							name = "imageBase64";
+							type = "string";
+						}
+					};
+					version = 1;
+					workflowDefinitionName =
+						WorkflowDefinitionConstants.NAME_GENERATE_IMAGE;
+				}
+			},
+			new AgentDefinition() {
+				{
+					active = true;
+					externalReferenceCode =
+						WorkflowDefinitionConstants.
+							EXTERNAL_REFERENCE_CODE_GENERATE_CONTENT;
+					inputVariables = new Variable[] {
+						new Variable() {
+							{
+								name = "brief";
+								type = "string";
+							}
+						},
+						new Variable() {
+							{
+								name = "count";
+								type = "string";
+							}
+						}
+					};
+					outputVariable = new Variable() {
+						{
+							name = "output";
+							type = "string";
+						}
+					};
+					version = 1;
+					workflowDefinitionName =
+						WorkflowDefinitionConstants.NAME_GENERATE_CONTENT;
 				}
 			},
 			new AgentDefinition() {

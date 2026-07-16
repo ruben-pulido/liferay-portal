@@ -10,6 +10,12 @@ import React from 'react';
 import {ElementVariation} from './elementVariationsReducer';
 import {EditableElementOption} from './getEditableElementOptions';
 
+function hasValueInAnyLanguage(
+	localizedValue: Record<string, string>
+): boolean {
+	return Object.values(localizedValue).some(Boolean);
+}
+
 interface Props {
 	audiences: Array<{label: string; value: string}>;
 	editableElementOptions: EditableElementOption[];
@@ -58,6 +64,7 @@ export default function ElementVariationsList({
 									<ClayList.Item
 										flex
 										key={elementVariation.key}
+										tabIndex={0}
 									>
 										<ClayList.ItemField expand>
 											<ClayList.ItemTitle>
@@ -80,7 +87,9 @@ export default function ElementVariationsList({
 
 											<ClayList.ItemText>
 												<div>
-													{elementVariation.html ? (
+													{hasValueInAnyLanguage(
+														elementVariation.html
+													) ? (
 														<ClayLabel
 															className="label-inverse-content-1"
 															displayType="unstyled"
@@ -92,7 +101,9 @@ export default function ElementVariationsList({
 														</ClayLabel>
 													) : null}
 
-													{elementVariation.js ? (
+													{hasValueInAnyLanguage(
+														elementVariation.js
+													) ? (
 														<ClayLabel
 															className="label-inverse-content-8"
 															displayType="unstyled"
