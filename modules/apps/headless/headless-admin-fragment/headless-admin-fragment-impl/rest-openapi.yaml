@@ -231,13 +231,13 @@ components:
                     description:
                         The resource file's name.
                     type: string
-                parentResourceFolder:
+                resourceFolder:
                     $ref: "#/components/schemas/ResourceFolder"
                     description:
-                        The resource file's parent resource folder. On read, returned only when `nestedFields=parentResourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist.
-                parentResourceFolderExternalReferenceCode:
+                        The resource file's resource folder. On read, returned only when `nestedFields=resourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist.
+                resourceFolderExternalReferenceCode:
                     description:
-                        The external reference code of the resource file's parent resource folder, used to reference an existing parent. Takes precedence over `parentResourceFolder` when both are set.
+                        The external reference code of the resource file's resource folder, used to reference an existing resource folder. Takes precedence over `resourceFolder` when both are set.
                     type: string
             type: object
         ResourceFolder:
@@ -1021,7 +1021,7 @@ paths:
             tags: ["ResourceFile"]
         put:
             description:
-                Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `fileURLReference` and `name` are required, `dateModified` is honored, and any values sent for `dateCreated`, `externalReferenceCode`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `parentResourceFolder`, and `parentResourceFolderExternalReferenceCode` are ignored.
+                Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `fileURLReference` and `name` are required, `dateModified` is honored, and any values sent for `dateCreated`, `externalReferenceCode`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `resourceFolder`, and `resourceFolderExternalReferenceCode` are ignored.
             operationId: putSiteResourceFile
             parameters:
                 -   in: path
