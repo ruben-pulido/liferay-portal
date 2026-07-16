@@ -25,7 +25,7 @@ import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.util.Base64;
-import com.liferay.portal.kernel.util.FileUtil;
+import com.liferay.portal.kernel.util.File;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PropsKeys;
@@ -168,7 +168,7 @@ public class ResourceFileDTOConverter
 					() -> NestedFieldsSupplier.supply(
 						"fileURLReference.fileBase64",
 						fieldName -> Base64.encode(
-							FileUtil.getBytes(fileEntry.getContentStream()))));
+							_file.getBytes(fileEntry.getContentStream()))));
 				setUrl(
 					() -> {
 						if (ExportImportThreadLocal.isExportInProcess()) {
@@ -200,6 +200,9 @@ public class ResourceFileDTOConverter
 
 	@Reference
 	private ExportImportAttachmentManager _exportImportAttachmentManager;
+
+	@Reference
+	private File _file;
 
 	@Reference(
 		target = "(component.name=com.liferay.headless.admin.fragment.internal.dto.v1_0.converter.FragmentSetDTOConverter)"

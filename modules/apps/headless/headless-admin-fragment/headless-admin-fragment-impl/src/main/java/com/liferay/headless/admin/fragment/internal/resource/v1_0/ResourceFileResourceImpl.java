@@ -44,7 +44,7 @@ import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.Base64;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.MimeTypesUtil;
+import com.liferay.portal.kernel.util.MimeTypes;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -294,7 +294,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			_dlAppLocalService.updateFileEntry(
 				contextUser.getUserId(), dlFileEntry.getFileEntryId(),
 				resourceFile.getName(),
-				MimeTypesUtil.getContentType(resourceFile.getName()),
+				_mimeTypes.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null,
 				DLVersionNumberIncrease.NONE, bytes, null, null, null,
 				_getServiceContext(groupId, resourceFile)));
@@ -324,7 +324,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 				resourceFile.getExternalReferenceCode(),
 				contextUser.getUserId(), dlFolder.getRepositoryId(),
 				dlFolder.getFolderId(), resourceFile.getName(),
-				MimeTypesUtil.getContentType(resourceFile.getName()),
+				_mimeTypes.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null, bytes, null, null,
 				null, _getServiceContext(groupId, resourceFile)));
 	}
@@ -495,6 +495,9 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private MimeTypes _mimeTypes;
 
 	@Reference(
 		target = "(resource.name=" + FragmentConstants.RESOURCE_NAME + ")"
