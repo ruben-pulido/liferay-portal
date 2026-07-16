@@ -115,7 +115,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			return Page.of(Collections.emptyList());
 		}
 
-		return _getResourceFilesPage(groupId, pagination, resourcesFolderId);
+		return _getResourceFilesPage(resourcesFolderId, groupId, pagination);
 	}
 
 	@Override
@@ -190,7 +190,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 		ResourceFolderUtil.checkResourceFolder(
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
 
-		return _getResourceFilesPage(groupId, pagination, folder.getFolderId());
+		return _getResourceFilesPage(folder.getFolderId(), groupId, pagination);
 	}
 
 	@Override
@@ -279,18 +279,18 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 		_checkBytes(bytes);
 
-		DLFolder parentDLFolder = ResourceFolderUtil.getOrAddParentDLFolder(
+		DLFolder dlFolder = ResourceFolderUtil.getOrAddParentDLFolder(
 			contextCompany.getCompanyId(), fragmentCollection, groupId,
 			contextHttpServletRequest,
 			contextAcceptLanguage.getPreferredLocale(),
-			resourceFile.getParentResourceFolder(),
-			resourceFile.getParentResourceFolderExternalReferenceCode(),
+			resourceFile.getResourceFolder(),
+			resourceFile.getResourceFolderExternalReferenceCode(),
 			contextUser.getUserId());
 
 		return _toResourceFile(
 			_dlAppService.addFileEntry(
 				resourceFile.getExternalReferenceCode(),
-				parentDLFolder.getRepositoryId(), parentDLFolder.getFolderId(),
+				dlFolder.getRepositoryId(), dlFolder.getFolderId(),
 				resourceFile.getName(),
 				MimeTypesUtil.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null, bytes, null, null,
@@ -347,7 +347,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 	}
 
 	private Page<ResourceFile> _getResourceFilesPage(
-			long groupId, Pagination pagination, long parentFolderId)
+			long folderId, long groupId, Pagination pagination)
 		throws Exception {
 
 		return _getResourceFilesPage(
@@ -356,11 +356,10 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 					booleanQuery.getPreBooleanFilter();
 
 				booleanFilter.add(
-					new TermFilter(
-						Field.FOLDER_ID, String.valueOf(parentFolderId)),
+					new TermFilter(Field.FOLDER_ID, String.valueOf(folderId)),
 					BooleanClauseOccur.MUST);
 			},
-			null, new long[] {parentFolderId}, groupId, pagination);
+			null, new long[] {folderId}, groupId, pagination);
 	}
 
 	private Page<ResourceFile> _getResourceFilesPage(

@@ -66,7 +66,7 @@ public class ResourceFileDTOConverter
 				() -> FragmentSetUtil.getFragmentCollection(
 					dlFolderUnsafeSupplierValue.getValue()));
 		UnsafeSupplierValue<DLFolder, Exception>
-			parentDLFolderUnsafeSupplierValue = new UnsafeSupplierValue<>(
+			resourceDLFolderUnsafeSupplierValue = new UnsafeSupplierValue<>(
 				() -> ResourceFolderUtil.getResourceDLFolder(
 					dlFolderUnsafeSupplierValue.getValue()));
 
@@ -94,30 +94,30 @@ public class ResourceFileDTOConverter
 						return fragmentCollection.getExternalReferenceCode();
 					});
 				setName(fileEntry::getFileName);
-				setParentResourceFolder(
+				setResourceFolder(
 					() -> NestedFieldsSupplier.supply(
-						"parentResourceFolder",
+						"resourceFolder",
 						fieldName -> {
-							DLFolder parentDLFolder =
-								parentDLFolderUnsafeSupplierValue.getValue();
+							DLFolder resourceDLFolder =
+								resourceDLFolderUnsafeSupplierValue.getValue();
 
-							if (parentDLFolder == null) {
+							if (resourceDLFolder == null) {
 								return null;
 							}
 
 							return _resourceFolderDTOConverter.toDTO(
-								dtoConverterContext, parentDLFolder);
+								dtoConverterContext, resourceDLFolder);
 						}));
-				setParentResourceFolderExternalReferenceCode(
+				setResourceFolderExternalReferenceCode(
 					() -> {
-						DLFolder parentDLFolder =
-							parentDLFolderUnsafeSupplierValue.getValue();
+						DLFolder resourceDLFolder =
+							resourceDLFolderUnsafeSupplierValue.getValue();
 
-						if (parentDLFolder == null) {
+						if (resourceDLFolder == null) {
 							return null;
 						}
 
-						return parentDLFolder.getExternalReferenceCode();
+						return resourceDLFolder.getExternalReferenceCode();
 					});
 			}
 		};
