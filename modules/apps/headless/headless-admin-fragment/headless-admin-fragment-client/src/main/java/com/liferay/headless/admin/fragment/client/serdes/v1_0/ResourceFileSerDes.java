@@ -155,31 +155,27 @@ public class ResourceFileSerDes {
 			sb.append("\"");
 		}
 
-		if (resourceFile.getParentResourceFolder() != null) {
+		if (resourceFile.getResourceFolder() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"parentResourceFolder\": ");
+			sb.append("\"resourceFolder\": ");
 
-			sb.append(String.valueOf(resourceFile.getParentResourceFolder()));
+			sb.append(String.valueOf(resourceFile.getResourceFolder()));
 		}
 
-		if (resourceFile.getParentResourceFolderExternalReferenceCode() !=
-				null) {
-
+		if (resourceFile.getResourceFolderExternalReferenceCode() != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"parentResourceFolderExternalReferenceCode\": ");
+			sb.append("\"resourceFolderExternalReferenceCode\": ");
 
 			sb.append("\"");
 
 			sb.append(
-				_escape(
-					resourceFile.
-						getParentResourceFolderExternalReferenceCode()));
+				_escape(resourceFile.getResourceFolderExternalReferenceCode()));
 
 			sb.append("\"");
 		}
@@ -274,26 +270,23 @@ public class ResourceFileSerDes {
 			map.put("name", String.valueOf(resourceFile.getName()));
 		}
 
-		if (resourceFile.getParentResourceFolder() == null) {
-			map.put("parentResourceFolder", null);
+		if (resourceFile.getResourceFolder() == null) {
+			map.put("resourceFolder", null);
 		}
 		else {
 			map.put(
-				"parentResourceFolder",
-				String.valueOf(resourceFile.getParentResourceFolder()));
+				"resourceFolder",
+				String.valueOf(resourceFile.getResourceFolder()));
 		}
 
-		if (resourceFile.getParentResourceFolderExternalReferenceCode() ==
-				null) {
-
-			map.put("parentResourceFolderExternalReferenceCode", null);
+		if (resourceFile.getResourceFolderExternalReferenceCode() == null) {
+			map.put("resourceFolderExternalReferenceCode", null);
 		}
 		else {
 			map.put(
-				"parentResourceFolderExternalReferenceCode",
+				"resourceFolderExternalReferenceCode",
 				String.valueOf(
-					resourceFile.
-						getParentResourceFolderExternalReferenceCode()));
+					resourceFile.getResourceFolderExternalReferenceCode()));
 		}
 
 		return map;
@@ -343,14 +336,12 @@ public class ResourceFileSerDes {
 			else if (Objects.equals(jsonParserFieldName, "name")) {
 				return false;
 			}
-			else if (Objects.equals(
-						jsonParserFieldName, "parentResourceFolder")) {
-
+			else if (Objects.equals(jsonParserFieldName, "resourceFolder")) {
 				return false;
 			}
 			else if (Objects.equals(
 						jsonParserFieldName,
-						"parentResourceFolderExternalReferenceCode")) {
+						"resourceFolderExternalReferenceCode")) {
 
 				return false;
 			}
@@ -416,21 +407,19 @@ public class ResourceFileSerDes {
 					resourceFile.setName((String)jsonParserFieldValue);
 				}
 			}
-			else if (Objects.equals(
-						jsonParserFieldName, "parentResourceFolder")) {
-
+			else if (Objects.equals(jsonParserFieldName, "resourceFolder")) {
 				if (jsonParserFieldValue != null) {
-					resourceFile.setParentResourceFolder(
+					resourceFile.setResourceFolder(
 						ResourceFolderSerDes.toDTO(
 							(String)jsonParserFieldValue));
 				}
 			}
 			else if (Objects.equals(
 						jsonParserFieldName,
-						"parentResourceFolderExternalReferenceCode")) {
+						"resourceFolderExternalReferenceCode")) {
 
 				if (jsonParserFieldValue != null) {
-					resourceFile.setParentResourceFolderExternalReferenceCode(
+					resourceFile.setResourceFolderExternalReferenceCode(
 						(String)jsonParserFieldValue);
 				}
 			}
@@ -515,4 +504,4 @@ public class ResourceFileSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1053824381
+// LIFERAY-REST-BUILDER-HASH:-1985227709

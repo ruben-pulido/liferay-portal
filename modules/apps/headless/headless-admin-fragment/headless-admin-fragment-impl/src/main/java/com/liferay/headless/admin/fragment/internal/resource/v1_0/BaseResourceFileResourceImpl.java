@@ -340,7 +340,7 @@ public abstract class BaseResourceFileResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "parentResourceFolder": ___, "parentResourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "resourceFolder": ___, "resourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Adds a new resource file to a fragment set."
@@ -385,7 +385,7 @@ public abstract class BaseResourceFileResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "parentResourceFolder": ___, "parentResourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "resourceFolder": ___, "resourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Adds a new resource file to the site."
@@ -551,10 +551,10 @@ public abstract class BaseResourceFileResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/resource-files/{resourceFileExternalReferenceCode}' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "parentResourceFolder": ___, "parentResourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/resource-files/{resourceFileExternalReferenceCode}' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "resourceFolder": ___, "resourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
-		description = "Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `fileURLReference` and `name` are required, `dateModified` is honored, and any values sent for `dateCreated`, `externalReferenceCode`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `parentResourceFolder`, and `parentResourceFolderExternalReferenceCode` are ignored."
+		description = "Updates the resource file with the given external reference code, or creates it if it does not exist. On update, `fileURLReference` and `name` are required, `dateModified` is honored, and any values sent for `dateCreated`, `externalReferenceCode`, `fragmentSet`, `fragmentSetExternalReferenceCode`, `resourceFolder`, and `resourceFolderExternalReferenceCode` are ignored."
 	)
 	@io.swagger.v3.oas.annotations.Parameters(
 		value = {
@@ -1352,4 +1352,4 @@ public abstract class BaseResourceFileResourceImpl
 		LogFactoryUtil.getLog(BaseResourceFileResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1645845944
+// LIFERAY-REST-BUILDER-HASH:-49228516

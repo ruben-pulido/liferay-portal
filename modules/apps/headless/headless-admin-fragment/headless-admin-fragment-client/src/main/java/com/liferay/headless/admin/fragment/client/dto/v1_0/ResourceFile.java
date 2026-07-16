@@ -198,53 +198,53 @@ public class ResourceFile implements Cloneable, Serializable {
 
 	protected String name;
 
-	public ResourceFolder getParentResourceFolder() {
-		return parentResourceFolder;
+	public ResourceFolder getResourceFolder() {
+		return resourceFolder;
 	}
 
-	public void setParentResourceFolder(ResourceFolder parentResourceFolder) {
-		this.parentResourceFolder = parentResourceFolder;
+	public void setResourceFolder(ResourceFolder resourceFolder) {
+		this.resourceFolder = resourceFolder;
 	}
 
-	public void setParentResourceFolder(
+	public void setResourceFolder(
 		UnsafeSupplier<ResourceFolder, Exception>
-			parentResourceFolderUnsafeSupplier) {
+			resourceFolderUnsafeSupplier) {
 
 		try {
-			parentResourceFolder = parentResourceFolderUnsafeSupplier.get();
+			resourceFolder = resourceFolderUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected ResourceFolder parentResourceFolder;
+	protected ResourceFolder resourceFolder;
 
-	public String getParentResourceFolderExternalReferenceCode() {
-		return parentResourceFolderExternalReferenceCode;
+	public String getResourceFolderExternalReferenceCode() {
+		return resourceFolderExternalReferenceCode;
 	}
 
-	public void setParentResourceFolderExternalReferenceCode(
-		String parentResourceFolderExternalReferenceCode) {
+	public void setResourceFolderExternalReferenceCode(
+		String resourceFolderExternalReferenceCode) {
 
-		this.parentResourceFolderExternalReferenceCode =
-			parentResourceFolderExternalReferenceCode;
+		this.resourceFolderExternalReferenceCode =
+			resourceFolderExternalReferenceCode;
 	}
 
-	public void setParentResourceFolderExternalReferenceCode(
+	public void setResourceFolderExternalReferenceCode(
 		UnsafeSupplier<String, Exception>
-			parentResourceFolderExternalReferenceCodeUnsafeSupplier) {
+			resourceFolderExternalReferenceCodeUnsafeSupplier) {
 
 		try {
-			parentResourceFolderExternalReferenceCode =
-				parentResourceFolderExternalReferenceCodeUnsafeSupplier.get();
+			resourceFolderExternalReferenceCode =
+				resourceFolderExternalReferenceCodeUnsafeSupplier.get();
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	protected String parentResourceFolderExternalReferenceCode;
+	protected String resourceFolderExternalReferenceCode;
 
 	@Override
 	public ResourceFile clone() throws CloneNotSupportedException {
@@ -278,4 +278,4 @@ public class ResourceFile implements Cloneable, Serializable {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1561319041
+// LIFERAY-REST-BUILDER-HASH:-861302169

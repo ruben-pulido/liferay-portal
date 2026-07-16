@@ -414,33 +414,33 @@ public class ResourceFile implements Serializable {
 	private Supplier<String> _nameSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The resource file's parent resource folder. On read, returned only when `nestedFields=parentResourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist."
+		description = "The resource file's resource folder. On read, returned only when `nestedFields=resourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist."
 	)
 	@Valid
-	public ResourceFolder getParentResourceFolder() {
-		if (_parentResourceFolderSupplier != null) {
-			parentResourceFolder = _parentResourceFolderSupplier.get();
+	public ResourceFolder getResourceFolder() {
+		if (_resourceFolderSupplier != null) {
+			resourceFolder = _resourceFolderSupplier.get();
 
-			_parentResourceFolderSupplier = null;
+			_resourceFolderSupplier = null;
 		}
 
-		return parentResourceFolder;
+		return resourceFolder;
 	}
 
-	public void setParentResourceFolder(ResourceFolder parentResourceFolder) {
-		this.parentResourceFolder = parentResourceFolder;
+	public void setResourceFolder(ResourceFolder resourceFolder) {
+		this.resourceFolder = resourceFolder;
 
-		_parentResourceFolderSupplier = null;
+		_resourceFolderSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setParentResourceFolder(
+	public void setResourceFolder(
 		UnsafeSupplier<ResourceFolder, Exception>
-			parentResourceFolderUnsafeSupplier) {
+			resourceFolderUnsafeSupplier) {
 
-		_parentResourceFolderSupplier = () -> {
+		_resourceFolderSupplier = () -> {
 			try {
-				return parentResourceFolderUnsafeSupplier.get();
+				return resourceFolderUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -452,46 +452,45 @@ public class ResourceFile implements Serializable {
 	}
 
 	@GraphQLField(
-		description = "The resource file's parent resource folder. On read, returned only when `nestedFields=parentResourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist."
+		description = "The resource file's resource folder. On read, returned only when `nestedFields=resourceFolder` is requested. On write, used only during LAR import, where it is created if it does not exist."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected ResourceFolder parentResourceFolder;
+	protected ResourceFolder resourceFolder;
 
 	@JsonIgnore
-	private Supplier<ResourceFolder> _parentResourceFolderSupplier;
+	private Supplier<ResourceFolder> _resourceFolderSupplier;
 
 	@io.swagger.v3.oas.annotations.media.Schema(
-		description = "The external reference code of the resource file's parent resource folder, used to reference an existing parent. Takes precedence over `parentResourceFolder` when both are set."
+		description = "The external reference code of the resource file's resource folder, used to reference an existing resource folder. Takes precedence over `resourceFolder` when both are set."
 	)
-	public String getParentResourceFolderExternalReferenceCode() {
-		if (_parentResourceFolderExternalReferenceCodeSupplier != null) {
-			parentResourceFolderExternalReferenceCode =
-				_parentResourceFolderExternalReferenceCodeSupplier.get();
+	public String getResourceFolderExternalReferenceCode() {
+		if (_resourceFolderExternalReferenceCodeSupplier != null) {
+			resourceFolderExternalReferenceCode =
+				_resourceFolderExternalReferenceCodeSupplier.get();
 
-			_parentResourceFolderExternalReferenceCodeSupplier = null;
+			_resourceFolderExternalReferenceCodeSupplier = null;
 		}
 
-		return parentResourceFolderExternalReferenceCode;
+		return resourceFolderExternalReferenceCode;
 	}
 
-	public void setParentResourceFolderExternalReferenceCode(
-		String parentResourceFolderExternalReferenceCode) {
+	public void setResourceFolderExternalReferenceCode(
+		String resourceFolderExternalReferenceCode) {
 
-		this.parentResourceFolderExternalReferenceCode =
-			parentResourceFolderExternalReferenceCode;
+		this.resourceFolderExternalReferenceCode =
+			resourceFolderExternalReferenceCode;
 
-		_parentResourceFolderExternalReferenceCodeSupplier = null;
+		_resourceFolderExternalReferenceCodeSupplier = null;
 	}
 
 	@JsonIgnore
-	public void setParentResourceFolderExternalReferenceCode(
+	public void setResourceFolderExternalReferenceCode(
 		UnsafeSupplier<String, Exception>
-			parentResourceFolderExternalReferenceCodeUnsafeSupplier) {
+			resourceFolderExternalReferenceCodeUnsafeSupplier) {
 
-		_parentResourceFolderExternalReferenceCodeSupplier = () -> {
+		_resourceFolderExternalReferenceCodeSupplier = () -> {
 			try {
-				return parentResourceFolderExternalReferenceCodeUnsafeSupplier.
-					get();
+				return resourceFolderExternalReferenceCodeUnsafeSupplier.get();
 			}
 			catch (RuntimeException runtimeException) {
 				throw runtimeException;
@@ -503,13 +502,13 @@ public class ResourceFile implements Serializable {
 	}
 
 	@GraphQLField(
-		description = "The external reference code of the resource file's parent resource folder, used to reference an existing parent. Takes precedence over `parentResourceFolder` when both are set."
+		description = "The external reference code of the resource file's resource folder, used to reference an existing resource folder. Takes precedence over `resourceFolder` when both are set."
 	)
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
-	protected String parentResourceFolderExternalReferenceCode;
+	protected String resourceFolderExternalReferenceCode;
 
 	@JsonIgnore
-	private Supplier<String> _parentResourceFolderExternalReferenceCodeSupplier;
+	private Supplier<String> _resourceFolderExternalReferenceCodeSupplier;
 
 	@Override
 	public boolean equals(Object object) {
@@ -658,31 +657,31 @@ public class ResourceFile implements Serializable {
 			sb.append("\"");
 		}
 
-		ResourceFolder parentResourceFolder = getParentResourceFolder();
+		ResourceFolder resourceFolder = getResourceFolder();
 
-		if (parentResourceFolder != null) {
+		if (resourceFolder != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"parentResourceFolder\": ");
+			sb.append("\"resourceFolder\": ");
 
-			sb.append(String.valueOf(parentResourceFolder));
+			sb.append(String.valueOf(resourceFolder));
 		}
 
-		String parentResourceFolderExternalReferenceCode =
-			getParentResourceFolderExternalReferenceCode();
+		String resourceFolderExternalReferenceCode =
+			getResourceFolderExternalReferenceCode();
 
-		if (parentResourceFolderExternalReferenceCode != null) {
+		if (resourceFolderExternalReferenceCode != null) {
 			if (sb.length() > 1) {
 				sb.append(", ");
 			}
 
-			sb.append("\"parentResourceFolderExternalReferenceCode\": ");
+			sb.append("\"resourceFolderExternalReferenceCode\": ");
 
 			sb.append("\"");
 
-			sb.append(_escape(parentResourceFolderExternalReferenceCode));
+			sb.append(_escape(resourceFolderExternalReferenceCode));
 
 			sb.append("\"");
 		}
@@ -788,4 +787,4 @@ public class ResourceFile implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-313706338
+// LIFERAY-REST-BUILDER-HASH:700611756

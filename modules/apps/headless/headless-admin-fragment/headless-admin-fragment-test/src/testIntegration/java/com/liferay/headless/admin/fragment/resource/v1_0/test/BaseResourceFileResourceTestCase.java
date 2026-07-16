@@ -188,7 +188,7 @@ public abstract class BaseResourceFileResourceTestCase {
 		resourceFile.setExternalReferenceCode(regex);
 		resourceFile.setFragmentSetExternalReferenceCode(regex);
 		resourceFile.setName(regex);
-		resourceFile.setParentResourceFolderExternalReferenceCode(regex);
+		resourceFile.setResourceFolderExternalReferenceCode(regex);
 
 		String json = ResourceFileSerDes.toJSON(resourceFile);
 
@@ -201,7 +201,7 @@ public abstract class BaseResourceFileResourceTestCase {
 			regex, resourceFile.getFragmentSetExternalReferenceCode());
 		Assert.assertEquals(regex, resourceFile.getName());
 		Assert.assertEquals(
-			regex, resourceFile.getParentResourceFolderExternalReferenceCode());
+			regex, resourceFile.getResourceFolderExternalReferenceCode());
 	}
 
 	@Test
@@ -1280,10 +1280,8 @@ public abstract class BaseResourceFileResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"parentResourceFolder", additionalAssertFieldName)) {
-
-				if (resourceFile.getParentResourceFolder() == null) {
+			if (Objects.equals("resourceFolder", additionalAssertFieldName)) {
+				if (resourceFile.getResourceFolder() == null) {
 					valid = false;
 				}
 
@@ -1291,12 +1289,11 @@ public abstract class BaseResourceFileResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"parentResourceFolderExternalReferenceCode",
+					"resourceFolderExternalReferenceCode",
 					additionalAssertFieldName)) {
 
-				if (resourceFile.
-						getParentResourceFolderExternalReferenceCode() ==
-							null) {
+				if (resourceFile.getResourceFolderExternalReferenceCode() ==
+						null) {
 
 					valid = false;
 				}
@@ -1517,12 +1514,10 @@ public abstract class BaseResourceFileResourceTestCase {
 				continue;
 			}
 
-			if (Objects.equals(
-					"parentResourceFolder", additionalAssertFieldName)) {
-
+			if (Objects.equals("resourceFolder", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
-						resourceFile1.getParentResourceFolder(),
-						resourceFile2.getParentResourceFolder())) {
+						resourceFile1.getResourceFolder(),
+						resourceFile2.getResourceFolder())) {
 
 					return false;
 				}
@@ -1531,14 +1526,13 @@ public abstract class BaseResourceFileResourceTestCase {
 			}
 
 			if (Objects.equals(
-					"parentResourceFolderExternalReferenceCode",
+					"resourceFolderExternalReferenceCode",
 					additionalAssertFieldName)) {
 
 				if (!Objects.deepEquals(
-						resourceFile1.
-							getParentResourceFolderExternalReferenceCode(),
+						resourceFile1.getResourceFolderExternalReferenceCode(),
 						resourceFile2.
-							getParentResourceFolderExternalReferenceCode())) {
+							getResourceFolderExternalReferenceCode())) {
 
 					return false;
 				}
@@ -1864,16 +1858,14 @@ public abstract class BaseResourceFileResourceTestCase {
 			return sb.toString();
 		}
 
-		if (entityFieldName.equals("parentResourceFolder")) {
+		if (entityFieldName.equals("resourceFolder")) {
 			throw new IllegalArgumentException(
 				"Invalid entity field " + entityFieldName);
 		}
 
-		if (entityFieldName.equals(
-				"parentResourceFolderExternalReferenceCode")) {
-
+		if (entityFieldName.equals("resourceFolderExternalReferenceCode")) {
 			Object object =
-				resourceFile.getParentResourceFolderExternalReferenceCode();
+				resourceFile.getResourceFolderExternalReferenceCode();
 
 			String value = String.valueOf(object);
 
@@ -1972,8 +1964,8 @@ public abstract class BaseResourceFileResourceTestCase {
 				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
-				parentResourceFolderExternalReferenceCode =
-					StringUtil.toLowerCase(RandomTestUtil.randomString());
+				resourceFolderExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
 			}
 		};
 	}
@@ -2222,4 +2214,4 @@ public abstract class BaseResourceFileResourceTestCase {
 			_resourceFileResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-421373801
+// LIFERAY-REST-BUILDER-HASH:-611288577
