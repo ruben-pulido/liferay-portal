@@ -391,7 +391,6 @@ public class ResourceFolderResourceTest
 		throws Exception {
 
 		JSONObject exportTaskJSONObject = _waitForFinish(
-			"COMPLETED", false,
 			HTTPTestUtil.invokeToJSONObject(
 				null,
 				StringBundler.concat(
@@ -1183,14 +1182,14 @@ public class ResourceFolderResourceTest
 		FragmentCollection fragmentCollection1 = _addFragmentCollection(
 			testGroup.getGroupId());
 
+		ResourceFolder resourceFolder = _randomResourceFolder(
+			fragmentCollection1.getExternalReferenceCode());
+
 		FragmentCollection fragmentCollection2 = _addFragmentCollection(
 			testGroup.getGroupId());
 
-		ResourceFolder resourceFolder = _randomResourceFolder(
-			fragmentCollection2.getExternalReferenceCode());
-
 		resourceFolder.setFragmentSet(
-			_toFragmentSet(fragmentCollection1.getExternalReferenceCode()));
+			_toFragmentSet(fragmentCollection2.getExternalReferenceCode()));
 
 		ResourceFolder postResourceFolder =
 			resourceFolderResource.postSiteResourceFolder(
@@ -1202,11 +1201,11 @@ public class ResourceFolderResourceTest
 		FragmentSet getFragmentSet = getResourceFolder.getFragmentSet();
 
 		Assert.assertEquals(
-			fragmentCollection2.getExternalReferenceCode(),
+			fragmentCollection1.getExternalReferenceCode(),
 			getFragmentSet.getExternalReferenceCode());
 
 		Assert.assertEquals(
-			fragmentCollection2.getExternalReferenceCode(),
+			fragmentCollection1.getExternalReferenceCode(),
 			getResourceFolder.getFragmentSetExternalReferenceCode());
 	}
 
@@ -1297,10 +1296,12 @@ public class ResourceFolderResourceTest
 
 		ResourceFolder postParentResourceFolder1 = _postSiteResourceFolder(
 			fragmentCollection.getExternalReferenceCode());
+
+		resourceFolder.setParentResourceFolder(postParentResourceFolder1);
+
 		ResourceFolder postParentResourceFolder2 = _postSiteResourceFolder(
 			fragmentCollection.getExternalReferenceCode());
 
-		resourceFolder.setParentResourceFolder(postParentResourceFolder1);
 		resourceFolder.setParentResourceFolderExternalReferenceCode(
 			postParentResourceFolder2.getExternalReferenceCode());
 
@@ -1676,19 +1677,14 @@ public class ResourceFolderResourceTest
 		return fragmentSet;
 	}
 
-	private JSONObject _waitForFinish(
-			String expectedExecuteStatus, boolean importTask,
-			JSONObject jsonObject)
-		throws Exception {
-
-		String endpoint = StringBundler.concat(
-			"headless-batch-engine/v1.0/",
-			importTask ? "import-task" : "export-task",
-			"/by-external-reference-code/");
-
+	private JSONObject _waitForFinish(JSONObject jsonObject) throws Exception {
 		while (true) {
 			jsonObject = HTTPTestUtil.invokeToJSONObject(
-				null, endpoint + jsonObject.getString("externalReferenceCode"),
+				null,
+				StringBundler.concat(
+					"headless-batch-engine/v1.0/export-task",
+					"/by-external-reference-code/",
+					jsonObject.getString("externalReferenceCode")),
 				Http.Method.GET);
 
 			String executeStatus = jsonObject.getString("executeStatus");
@@ -1696,7 +1692,7 @@ public class ResourceFolderResourceTest
 			if (StringUtil.equals(executeStatus, "COMPLETED") ||
 				StringUtil.equals(executeStatus, "FAILED")) {
 
-				Assert.assertEquals(expectedExecuteStatus, executeStatus);
+				Assert.assertEquals("COMPLETED", executeStatus);
 
 				return jsonObject;
 			}

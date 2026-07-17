@@ -128,10 +128,10 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 
 		_httpServer.createContext(
 			"/thumbnail_1.png",
-			httpExchange -> _writeBytes(httpExchange, _thumbnail1Bytes));
+			httpExchange -> _writeBytes(_thumbnail1Bytes, httpExchange));
 		_httpServer.createContext(
 			"/thumbnail_2.png",
-			httpExchange -> _writeBytes(httpExchange, _thumbnail2Bytes));
+			httpExchange -> _writeBytes(_thumbnail2Bytes, httpExchange));
 
 		_httpServer.start();
 
@@ -431,7 +431,7 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		}
 	}
 
-	private static void _writeBytes(HttpExchange httpExchange, byte[] bytes)
+	private static void _writeBytes(byte[] bytes, HttpExchange httpExchange)
 		throws IOException {
 
 		Headers responseHeaders = httpExchange.getResponseHeaders();
@@ -722,7 +722,6 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		}
 
 		JSONObject exportTaskJSONObject = _waitForFinish(
-			"COMPLETED", false,
 			HTTPTestUtil.invokeToJSONObject(null, endpoint, Http.Method.POST));
 
 		try (InputStream inputStream = HTTPTestUtil.invokeToInputStream(
@@ -2928,19 +2927,14 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		};
 	}
 
-	private JSONObject _waitForFinish(
-			String expectedExecuteStatus, boolean importTask,
-			JSONObject jsonObject)
-		throws Exception {
-
-		String endpoint = StringBundler.concat(
-			"headless-batch-engine/v1.0/",
-			importTask ? "import-task" : "export-task",
-			"/by-external-reference-code/");
-
+	private JSONObject _waitForFinish(JSONObject jsonObject) throws Exception {
 		while (true) {
 			jsonObject = HTTPTestUtil.invokeToJSONObject(
-				null, endpoint + jsonObject.getString("externalReferenceCode"),
+				null,
+				StringBundler.concat(
+					"headless-batch-engine/v1.0/export-task",
+					"/by-external-reference-code/",
+					jsonObject.getString("externalReferenceCode")),
 				Http.Method.GET);
 
 			String executeStatus = jsonObject.getString("executeStatus");
@@ -2948,7 +2942,7 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 			if (StringUtil.equals(executeStatus, "COMPLETED") ||
 				StringUtil.equals(executeStatus, "FAILED")) {
 
-				Assert.assertEquals(expectedExecuteStatus, executeStatus);
+				Assert.assertEquals("COMPLETED", executeStatus);
 
 				return jsonObject;
 			}

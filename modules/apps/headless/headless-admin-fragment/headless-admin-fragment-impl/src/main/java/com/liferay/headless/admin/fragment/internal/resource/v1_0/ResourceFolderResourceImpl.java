@@ -5,24 +5,23 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
-import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.fragment.constants.FragmentActionKeys;
+import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
 import com.liferay.headless.admin.fragment.dto.v1_0.ResourceFolder;
 import com.liferay.headless.admin.fragment.internal.odata.entity.v1_0.ResourceFolderEntityModel;
 import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.FragmentSetUtil;
+import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.ResourceFolderUtil;
 import com.liferay.headless.admin.fragment.internal.resource.v1_0.util.ServiceContextUtil;
 import com.liferay.headless.admin.fragment.internal.util.EnabledUtil;
 import com.liferay.headless.admin.fragment.resource.v1_0.ResourceFolderResource;
 import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.petra.function.UnsafeConsumer;
-import com.liferay.petra.string.StringPool;
-import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
@@ -30,8 +29,10 @@ import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.filter.BooleanFilter;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermFilter;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
+import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterRegistry;
@@ -42,10 +43,7 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -74,7 +72,7 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 				true, contextCompany.getCompanyId(),
 				siteExternalReferenceCode));
 
-		_checkResourceFolder(
+		ResourceFolderUtil.checkResourceFolder(
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
 
 		_dlAppService.deleteFolder(folder.getFolderId());
@@ -96,6 +94,13 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 		long groupId = GroupUtil.getGroupId(
 			true, true, contextCompany.getCompanyId(),
 			siteExternalReferenceCode);
+
+		if (!_portletResourcePermission.contains(
+				PermissionThreadLocal.getPermissionChecker(), groupId,
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
+
+			return Page.of(Collections.emptyList());
+		}
 
 		FragmentCollection fragmentCollection =
 			_fragmentCollectionService.
@@ -128,7 +133,7 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 		DLFolder dlFolder = _dlFolderLocalService.getDLFolder(
 			folder.getFolderId());
 
-		_checkResourceFolder(dlFolder);
+		ResourceFolderUtil.checkResourceFolder(dlFolder);
 
 		return _toResourceFolder(dlFolder);
 	}
@@ -148,7 +153,7 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 		Folder folder = _dlAppService.getFolderByExternalReferenceCode(
 			resourceFolderExternalReferenceCode, groupId);
 
-		_checkResourceFolder(
+		ResourceFolderUtil.checkResourceFolder(
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
 
 		return _getResourceFoldersPage(
@@ -167,19 +172,25 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 			true, true, contextCompany.getCompanyId(),
 			siteExternalReferenceCode);
 
-		List<Long> resourcesFolderIds = new ArrayList<>();
+		if (!_portletResourcePermission.contains(
+				PermissionThreadLocal.getPermissionChecker(), groupId,
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
 
-		for (FragmentCollection fragmentCollection :
-				_fragmentCollectionLocalService.getFragmentCollections(
-					groupId)) {
-
-			long resourcesFolderId = fragmentCollection.getResourcesFolderId(
-				false);
-
-			if (resourcesFolderId > 0) {
-				resourcesFolderIds.add(resourcesFolderId);
-			}
+			return Page.of(Collections.emptyList());
 		}
+
+		long[] resourcesFolderIds = transformToLongArray(
+			_fragmentCollectionLocalService.getFragmentCollections(groupId),
+			fragmentCollection -> {
+				long resourcesFolderId =
+					fragmentCollection.getResourcesFolderId(false);
+
+				if (resourcesFolderId <= 0) {
+					return null;
+				}
+
+				return resourcesFolderId;
+			});
 
 		return _getResourceFoldersPage(
 			filter, groupId, pagination, resourcesFolderIds);
@@ -247,7 +258,7 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 					groupId, resourceFolder));
 		}
 
-		_checkResourceFolder(dlFolder);
+		ResourceFolderUtil.checkResourceFolder(dlFolder);
 
 		Folder folder = _dlAppService.updateFolder(
 			dlFolder.getFolderId(), resourceFolder.getName(),
@@ -266,27 +277,11 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 			ResourceFolder resourceFolder)
 		throws Exception {
 
-		DLFolder parentDLFolder = _getParentDLFolder(
-			fragmentCollection, groupId, resourceFolder);
-
-		Folder folder = _dlAppService.addFolder(
-			resourceFolder.getExternalReferenceCode(),
-			parentDLFolder.getRepositoryId(), parentDLFolder.getFolderId(),
-			resourceFolder.getName(), StringPool.BLANK,
-			ServiceContextUtil.getServiceContext(
-				contextCompany.getCompanyId(), resourceFolder.getDateCreated(),
-				groupId, contextHttpServletRequest,
-				resourceFolder.getDateModified(), contextUser.getUserId()));
-
-		return _dlFolderLocalService.getDLFolder(folder.getFolderId());
-	}
-
-	private void _checkResourceFolder(DLFolder dlFolder) throws Exception {
-		if (FragmentSetUtil.getFragmentCollection(dlFolder) == null) {
-			throw new NoSuchFolderException(
-				"No resource folder exists with external reference code " +
-					dlFolder.getExternalReferenceCode());
-		}
+		return ResourceFolderUtil.addDLFolder(
+			contextCompany.getCompanyId(), fragmentCollection, groupId,
+			contextHttpServletRequest,
+			contextAcceptLanguage.getPreferredLocale(), resourceFolder,
+			contextUser.getUserId());
 	}
 
 	private FragmentCollection _getOrAddFragmentCollection(
@@ -303,77 +298,12 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 			contextUser.getUserId());
 	}
 
-	private DLFolder _getParentDLFolder(
-			FragmentCollection fragmentCollection, long groupId,
-			ResourceFolder resourceFolder)
-		throws Exception {
-
-		ResourceFolder parentResourceFolder =
-			resourceFolder.getParentResourceFolder();
-		String parentResourceFolderExternalReferenceCode =
-			resourceFolder.getParentResourceFolderExternalReferenceCode();
-
-		if (Validator.isNull(parentResourceFolderExternalReferenceCode)) {
-			if (!LazyReferencingThreadLocal.isEnabled() ||
-				(parentResourceFolder == null) ||
-				Validator.isNull(
-					parentResourceFolder.getExternalReferenceCode())) {
-
-				return _dlFolderLocalService.getDLFolder(
-					fragmentCollection.getResourcesFolderId(true));
-			}
-
-			parentResourceFolderExternalReferenceCode =
-				parentResourceFolder.getExternalReferenceCode();
-		}
-
-		DLFolder parentDLFolder =
-			_dlFolderLocalService.fetchDLFolderByExternalReferenceCode(
-				parentResourceFolderExternalReferenceCode, groupId);
-
-		if ((parentDLFolder == null) && (parentResourceFolder != null) &&
-			LazyReferencingThreadLocal.isEnabled()) {
-
-			if (!Objects.equals(
-					parentResourceFolder.getExternalReferenceCode(),
-					parentResourceFolderExternalReferenceCode)) {
-
-				throw new IllegalArgumentException(
-					_language.get(
-						contextAcceptLanguage.getPreferredLocale(),
-						"the-parent-resource-folder-external-reference-codes-" +
-							"do-not-match"));
-			}
-
-			parentDLFolder = _addDLFolder(
-				_getOrAddFragmentCollection(groupId, parentResourceFolder),
-				groupId, parentResourceFolder);
-		}
-
-		if ((parentDLFolder != null) &&
-			(FragmentSetUtil.getFragmentCollection(parentDLFolder) == null)) {
-
-			parentDLFolder = null;
-		}
-
-		if (parentDLFolder == null) {
-			throw new IllegalArgumentException(
-				_language.format(
-					contextAcceptLanguage.getPreferredLocale(),
-					"no-resource-folder-was-found-with-external-reference-" +
-						"code-x",
-					parentResourceFolderExternalReferenceCode));
-		}
-
-		return parentDLFolder;
-	}
-
 	private Page<ResourceFolder> _getResourceFoldersPage(
 			Filter filter, long groupId, Pagination pagination,
-			List<Long> resourcesFolderIds)
+			long[] resourcesFolderIds)
 		throws Exception {
 
-		if (resourcesFolderIds.isEmpty()) {
+		if (ArrayUtil.isEmpty(resourcesFolderIds)) {
 			return Page.of(Collections.emptyList());
 		}
 
@@ -470,8 +400,10 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 	@Reference
 	private FragmentCollectionService _fragmentCollectionService;
 
-	@Reference
-	private Language _language;
+	@Reference(
+		target = "(resource.name=" + FragmentConstants.RESOURCE_NAME + ")"
+	)
+	private PortletResourcePermission _portletResourcePermission;
 
 	@Reference(
 		target = "(component.name=com.liferay.headless.admin.fragment.internal.dto.v1_0.converter.ResourceFolderDTOConverter)"
