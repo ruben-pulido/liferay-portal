@@ -95,17 +95,17 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 			true, true, contextCompany.getCompanyId(),
 			siteExternalReferenceCode);
 
-		FragmentCollection fragmentCollection =
-			_fragmentCollectionService.
-				getFragmentCollectionByExternalReferenceCode(
-					fragmentSetExternalReferenceCode, groupId);
-
 		if (!_portletResourcePermission.contains(
 				PermissionThreadLocal.getPermissionChecker(), groupId,
 				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
 
 			return Page.of(Collections.emptyList());
 		}
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId);
 
 		long resourcesFolderId = fragmentCollection.getResourcesFolderId(false);
 
