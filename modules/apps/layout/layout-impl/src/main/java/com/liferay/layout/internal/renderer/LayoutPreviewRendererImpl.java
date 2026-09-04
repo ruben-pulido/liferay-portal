@@ -11,13 +11,9 @@ import com.liferay.layout.util.structure.LayoutStructure;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
-import com.liferay.portal.kernel.model.LayoutConstants;
-import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.Theme;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.service.LayoutService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -26,12 +22,9 @@ import com.liferay.portal.kernel.servlet.ServletContextPool;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.theme.ThemeUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.HttpComponentsUtil;
-import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.kernel.webserver.WebServerServletToken;
 import com.liferay.segments.constants.SegmentsWebKeys;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,8 +64,6 @@ public class LayoutPreviewRendererImpl implements LayoutPreviewRenderer {
 		themeDisplay.setPlid(layout.getPlid());
 		themeDisplay.setScopeGroupId(layout.getGroupId());
 		themeDisplay.setSiteGroupId(layout.getGroupId());
-
-		_initThemeDisplay(themeDisplay, layout);
 
 		long originalClassNameId = layout.getClassNameId();
 		Layout originalLayout = (Layout)httpServletRequest.getAttribute(
@@ -188,72 +179,13 @@ public class LayoutPreviewRendererImpl implements LayoutPreviewRenderer {
 		}
 	}
 
-	private void _initThemeDisplay(ThemeDisplay themeDisplay, Layout layout)
-		throws Exception {
-
-		String pathImage = _portal.getPathImage();
-		String pathMain = _portal.getPathMain();
-
-		String companyLogo = pathImage + "/company_logo";
-
-		Company company = themeDisplay.getCompany();
-
-		long companyLogoId = company.getLogoId();
-
-		if (companyLogoId > 0) {
-			companyLogo = StringBundler.concat(
-				companyLogo, "?img_id=", companyLogoId, "&t=",
-				_webServerServletToken.getToken(companyLogoId));
-		}
-
-		String layoutSetLogo = null;
-
-		LayoutSet layoutSet = layout.getLayoutSet();
-
-		if (company.isSiteLogo() && layoutSet.isLogo()) {
-			long layoutSetLogoId = layoutSet.getLogoId();
-
-			if (layoutSetLogoId > 0) {
-				layoutSetLogo = StringBundler.concat(
-					pathImage, "/layout_set_logo?img_id=", layoutSetLogoId,
-					"&t=", _webServerServletToken.getToken(layoutSetLogoId));
-
-				companyLogo = layoutSetLogo;
-			}
-		}
-
-		themeDisplay.setCompanyLogo(companyLogo);
-		themeDisplay.setLayoutSetLogo(layoutSetLogo);
-		themeDisplay.setLayouts(
-			ListUtil.filter(
-				_layoutService.getLayouts(
-					layout.getGroupId(), layout.isPrivateLayout(),
-					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID),
-				curLayout -> !curLayout.isHidden() && curLayout.isPublished()));
-		themeDisplay.setPathContext(_portal.getPathContext());
-		themeDisplay.setPathImage(pathImage);
-		themeDisplay.setPathMain(pathMain);
-		themeDisplay.setRealCompanyLogo(companyLogo);
-		themeDisplay.setURLSignIn(
-			HttpComponentsUtil.addParameter(
-				StringBundler.concat(
-					themeDisplay.getPortalURL(), pathMain, "/portal/login"),
-				"p_l_id", layout.getPlid()));
-	}
-
 	private static final Log _log = LogFactoryUtil.getLog(
 		LayoutPreviewRendererImpl.class);
-
-	@Reference
-	private LayoutService _layoutService;
 
 	@Reference
 	private Portal _portal;
 
 	@Reference
 	private UserLocalService _userLocalService;
-
-	@Reference
-	private WebServerServletToken _webServerServletToken;
 
 }
