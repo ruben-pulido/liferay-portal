@@ -31,6 +31,7 @@ jest.mock(
 	'../../../src/main/resources/META-INF/resources/js/AIAssistantChat/api',
 	() => ({
 		createEventSource: jest.fn(() => Promise.resolve(null)),
+		executeHttpRequestAction: jest.fn(() => Promise.resolve()),
 		postChatByExternalReferenceCodeMessage: jest.fn(() =>
 			Promise.resolve()
 		),
@@ -43,6 +44,11 @@ jest.mock(
 		__esModule: true,
 		default: () => 'categorization-balloon',
 	})
+);
+
+jest.mock(
+	'../../../src/main/resources/META-INF/resources/js/AIAssistantChat/services/getObjectFields',
+	() => ({getObjectFields: jest.fn(() => Promise.resolve({items: []}))})
 );
 
 jest.mock(
@@ -193,14 +199,12 @@ describe('AIAssistantHost', () => {
 			value: 1440,
 		});
 
-		window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
 		mockCreateEventSource.mockReset();
 		mockCreateEventSource.mockResolvedValue(null);
 		mockGetSpaces.mockReset();
 		mockGetSpaces.mockResolvedValue([]);
 		mockPostChat.mockReset();
-		mockPostChat.mockResolvedValue(undefined);
+		mockPostChat.mockResolvedValue(undefined as never);
 		mockPostAIIssueReport.mockReset();
 		mockPostAIIssueReport.mockResolvedValue({id: 'report-1'});
 
@@ -647,6 +651,96 @@ describe('AIAssistantHost', () => {
 		);
 	});
 
+	it('omits the chatbot targeting code when the trigger does not set one', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+		await renderAndOpen({presentation: 'dropdown'});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'ref-code');
+		});
+
+		const textArea = screen.getByPlaceholderText('ask-me-anything');
+
+		await act(async () => {
+			fireEvent.change(textArea, {target: {value: 'Hello'}});
+		});
+
+		await act(async () => {
+			fireEvent.submit(textArea.closest('form') as HTMLFormElement);
+		});
+
+		expect(mockPostChat).toHaveBeenCalledWith(
+			expect.objectContaining({chatbotExternalReferenceCode: undefined})
+		);
+	});
+
+	it('sends the chatbot targeting code when the trigger sets one', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+		await renderAndOpen({
+			chatbotExternalReferenceCode: 'L_SEO_STUDIO_TITLE_GENERATOR',
+			presentation: 'dropdown',
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'ref-code');
+		});
+
+		const textArea = screen.getByPlaceholderText('ask-me-anything');
+
+		await act(async () => {
+			fireEvent.change(textArea, {target: {value: 'Hello'}});
+		});
+
+		await act(async () => {
+			fireEvent.submit(textArea.closest('form') as HTMLFormElement);
+		});
+
+		expect(mockPostChat).toHaveBeenCalledWith(
+			expect.objectContaining({
+				chatbotExternalReferenceCode: 'L_SEO_STUDIO_TITLE_GENERATOR',
+			})
+		);
+	});
+
+	it('does not carry the chatbot targeting code into a chat reopened by the event', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+		await renderAndOpen({
+			chatbotExternalReferenceCode: 'L_SEO_STUDIO_TITLE_GENERATOR',
+			presentation: 'sidebar',
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'ref-code');
+		});
+
+		const sidebar = await waitForSidebarOpen();
+
+		await act(async () => {
+			fireEvent.keyDown(document, {key: 'Escape'});
+		});
+
+		await waitFor(() => expect(sidebar).toHaveAttribute('inert'));
+
+		await act(async () => {
+			getLiferayHandler('openAIAssistantChat')?.({
+				message: 'Hello again',
+			});
+		});
+
+		expect(mockPostChat).toHaveBeenCalledWith(
+			expect.objectContaining({chatbotExternalReferenceCode: undefined})
+		);
+	});
+
 	it('moves the conversation into the sidebar when maximized', async () => {
 		const fakeEventSource = createFakeEventSource();
 
@@ -850,6 +944,142 @@ describe('AIAssistantHost', () => {
 		expect(
 			within(getSidebar()).getByPlaceholderText('ask-me-anything')
 		).toBe(inputBeforeExpand);
+	});
+
+	describe('scrolling', () => {
+		const SCROLL_HEIGHT = 900;
+
+		let scrollTo: jest.Mock;
+
+		beforeEach(() => {
+			scrollTo = jest.fn();
+
+			Object.defineProperty(
+				window.HTMLElement.prototype,
+				'scrollHeight',
+				{configurable: true, value: SCROLL_HEIGHT}
+			);
+
+			window.HTMLElement.prototype.scrollTo = scrollTo;
+		});
+
+		afterEach(() => {
+			Reflect.deleteProperty(
+				window.HTMLElement.prototype,
+				'scrollHeight'
+			);
+			Reflect.deleteProperty(window.HTMLElement.prototype, 'scrollTo');
+		});
+
+		it('scrolls the conversation to the bottom when a message arrives', async () => {
+			const fakeEventSource = createFakeEventSource();
+
+			mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+			await renderAndOpen();
+
+			scrollTo.mockClear();
+
+			await act(async () => {
+				fakeEventSource.emit(
+					'Chat Message Sent',
+					JSON.stringify({data: 'Here are your tags'})
+				);
+			});
+
+			expect(scrollTo).toHaveBeenCalledWith({
+				behavior: 'smooth',
+				top: SCROLL_HEIGHT,
+			});
+		});
+
+		it('scrolls the conversation to the bottom when the generating indicator appears without a new message', async () => {
+			const fakeEventSource = createFakeEventSource();
+
+			mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+			await renderAndOpen();
+
+			await act(async () => {
+				fakeEventSource.emit(
+					'Chat Message Sent',
+					JSON.stringify({
+						component: {
+							options: [
+								{
+									action: {
+										'http-request': {
+											href: '/o/tags',
+											method: 'POST',
+										},
+									},
+									label: 'generate-tags',
+								},
+							],
+							title: 'what-do-you-want-to-do',
+							type: 'quick-replies',
+						},
+						type: 'component',
+					})
+				);
+			});
+
+			scrollTo.mockClear();
+
+			await act(async () => {
+				fireEvent.click(
+					screen.getByRole('button', {name: 'generate-tags'})
+				);
+			});
+
+			expect(scrollTo).toHaveBeenCalledWith({
+				behavior: 'smooth',
+				top: SCROLL_HEIGHT,
+			});
+		});
+	});
+
+	it('keeps the composer and the selector usable when a content type is selected before the connection subscribes', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+
+		await renderAndOpen();
+
+		await act(async () => {
+			getLiferayHandler('openAIAssistantChat')?.({
+				contentTypes: [
+					{
+						externalReferenceCode: 'L_CMS_BLOG',
+						label: 'Blog',
+						name: 'C_Blog',
+					},
+				],
+			});
+		});
+
+		await act(async () => {
+			fireEvent.change(screen.getByLabelText('content-type'), {
+				target: {value: 'L_CMS_BLOG'},
+			});
+		});
+
+		await waitFor(() =>
+			expect(
+				screen.getByPlaceholderText('ask-me-anything')
+			).not.toHaveAttribute('readonly')
+		);
+
+		expect(screen.queryByText('generating')).toBeNull();
+
+		expect(Liferay.Util.openToast).toHaveBeenCalledWith(
+			expect.objectContaining({type: 'danger'})
+		);
+
+		const select = screen.getByLabelText('content-type');
+
+		expect(select).toBeEnabled();
+		expect(select).toHaveValue('');
 	});
 
 	it('sends the command initial message when the connection is already subscribed', async () => {

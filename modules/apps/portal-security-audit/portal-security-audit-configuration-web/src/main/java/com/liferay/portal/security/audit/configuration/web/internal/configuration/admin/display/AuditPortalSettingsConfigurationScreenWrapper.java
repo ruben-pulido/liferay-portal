@@ -18,6 +18,8 @@ import com.liferay.portal.kernel.module.configuration.ConfigurationException;
 import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
 import com.liferay.portal.security.audit.configuration.AuditConfiguration;
 import com.liferay.portal.security.audit.configuration.web.internal.display.context.AuditConfigurationDisplayContext;
+import com.liferay.portal.security.audit.router.configuration.FileSystemAuditMessageProcessorConfiguration;
+import com.liferay.portal.security.audit.router.configuration.PersistentAuditMessageProcessorConfiguration;
 import com.liferay.portal.settings.configuration.admin.display.PortalSettingsConfigurationScreenContributor;
 import com.liferay.portal.settings.configuration.admin.display.PortalSettingsConfigurationScreenFactory;
 
@@ -104,12 +106,8 @@ public class AuditPortalSettingsConfigurationScreenWrapper
 
 		@Override
 		public boolean isVisible() {
-			if (ExtendedObjectClassDefinition.Scope.COMPANY.equals(_scope)) {
-				return FeatureFlagManagerUtil.isEnabled(
-					CompanyThreadLocal.getCompanyId(), "LPD-6417");
-			}
-
-			return true;
+			return FeatureFlagManagerUtil.isEnabled(
+				CompanyThreadLocal.getCompanyId(), "LPD-6417");
 		}
 
 		@Override
@@ -120,24 +118,23 @@ public class AuditPortalSettingsConfigurationScreenWrapper
 			httpServletRequest.setAttribute(
 				AuditConfigurationDisplayContext.class.getName(),
 				new AuditConfigurationDisplayContext(
-					_getAuditConfiguration(),
-					ExtendedObjectClassDefinition.Scope.SYSTEM.equals(_scope) &&
-					!FeatureFlagManagerUtil.isEnabled(
-						CompanyThreadLocal.getCompanyId(), "LPD-6417")));
+					_getConfiguration(AuditConfiguration.class),
+					_getConfiguration(
+						FileSystemAuditMessageProcessorConfiguration.class),
+					_getConfiguration(
+						PersistentAuditMessageProcessorConfiguration.class)));
 		}
 
-		private AuditConfiguration _getAuditConfiguration() {
+		private <T> T _getConfiguration(Class<T> clazz) {
 			try {
 				if (ExtendedObjectClassDefinition.Scope.COMPANY.equals(
 						_scope)) {
 
 					return _configurationProvider.getCompanyConfiguration(
-						AuditConfiguration.class,
-						CompanyThreadLocal.getCompanyId());
+						clazz, CompanyThreadLocal.getCompanyId());
 				}
 
-				return _configurationProvider.getSystemConfiguration(
-					AuditConfiguration.class);
+				return _configurationProvider.getSystemConfiguration(clazz);
 			}
 			catch (ConfigurationException configurationException) {
 				return ReflectionUtil.throwException(configurationException);

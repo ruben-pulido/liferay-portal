@@ -10,12 +10,14 @@ import {
 	useMediaQuery,
 } from '@liferay/layout-js-components-web';
 import {openToast} from 'frontend-js-components-web';
-import {sub} from 'frontend-js-web';
+import {escapeHTML, sub} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
 import {Config, initializeConfig} from '../config';
 import PageVersionService from '../services/PageVersionService';
-import {PageVersion} from '../types/PageVersion';
+import {PageVersion, PageVersionExperience} from '../types/PageVersion';
+import {getVersionData} from '../utils/getVersionData';
+import PagePreview from './PagePreview';
 import ResponsivePanel from './ResponsivePanel';
 import Toolbar from './Toolbar';
 import VersionList from './VersionList';
@@ -39,6 +41,17 @@ export default function VersionHistory({config}: Props) {
 
 	const [versions, setVersions] = useState<PageVersion[] | null>(null);
 
+	const [pageVersionExperiences, setPageVersionExperiences] = useState<
+		PageVersionExperience[] | undefined
+	>();
+
+	const [currentExperienceERC, setCurrentExperienceERC] = useState(
+		config.availableSegmentsExperiences[0]?.segmentsExperienceERC
+	);
+	const [currentLanguageId, setCurrentLanguageId] = useState(
+		config.defaultLanguageId
+	);
+
 	const isScreenLarge = useMediaQuery(LARGE_MEDIA_QUERY);
 
 	useEffect(() => {
@@ -58,7 +71,7 @@ export default function VersionHistory({config}: Props) {
 			}
 
 			if (error) {
-				openToast({message: error, type: 'danger'});
+				openToast({message: escapeHTML(error), type: 'danger'});
 			}
 
 			setVersions(data?.items ?? []);
@@ -91,7 +104,7 @@ export default function VersionHistory({config}: Props) {
 		);
 
 		if (error) {
-			openToast({message: error, type: 'danger'});
+			openToast({message: escapeHTML(error), type: 'danger'});
 
 			return;
 		}
@@ -141,13 +154,58 @@ export default function VersionHistory({config}: Props) {
 		);
 
 		if (error) {
-			openToast({message: error, type: 'danger'});
+			openToast({message: escapeHTML(error), type: 'danger'});
 
 			return;
 		}
 
 		window.location.reload();
 	};
+
+	const selectedVersion = versions?.find(
+		({externalReferenceCode}) => externalReferenceCode === selectedKey
+	);
+
+	const selectedVersionERC = selectedVersion?.externalReferenceCode;
+
+	useEffect(() => {
+		if (!selectedVersionERC) {
+			setPageVersionExperiences(undefined);
+
+			return;
+		}
+
+		const controller = new AbortController();
+
+		const loadPageVersionExperiences = async () => {
+			const {data, error} =
+				await PageVersionService.getPageVersionPageExperiences(
+					selectedVersionERC,
+					controller.signal
+				);
+
+			if (controller.signal.aborted) {
+				return;
+			}
+
+			if (error) {
+				openToast({message: escapeHTML(error), type: 'danger'});
+			}
+
+			setPageVersionExperiences(data?.items ?? []);
+		};
+
+		loadPageVersionExperiences();
+
+		return () => controller.abort();
+	}, [selectedVersionERC]);
+
+	const {experiences, languages, selectedExperience, selectedLanguageId} =
+		getVersionData({
+			currentExperienceERC,
+			currentLanguageId,
+			pageVersionExperiences,
+		});
 
 	const keywords = search.trim().toLowerCase();
 
@@ -173,8 +231,14 @@ export default function VersionHistory({config}: Props) {
 	return (
 		<>
 			<Toolbar
+				availableLanguages={languages}
+				experiences={experiences}
 				isSidePanelOpen={isPanelOpen || isScreenLarge}
+				onChangeExperience={setCurrentExperienceERC}
+				onChangeLanguage={setCurrentLanguageId}
 				openSidePanel={() => setIsPanelOpen(true)}
+				selectedExperience={selectedExperience}
+				selectedLanguageId={selectedLanguageId}
 			/>
 
 			<ResponsivePanel
@@ -199,6 +263,13 @@ export default function VersionHistory({config}: Props) {
 					/>
 				)}
 			</ResponsivePanel>
+
+			<PagePreview
+				experienceERC={selectedExperience?.segmentsExperienceERC}
+				experienceId={selectedExperience?.segmentsExperienceId}
+				languageId={selectedLanguageId}
+				versionERC={selectedVersion?.externalReferenceCode}
+			/>
 		</>
 	);
 }

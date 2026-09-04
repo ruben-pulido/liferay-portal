@@ -29,8 +29,22 @@ public class MonitorEngine {
 	}
 
 	public Map<Monitor, MonitorResult> runCycle() {
+		List<Monitor> dueMonitors = _monitorScheduler.getDueMonitors(_monitors);
+
+		for (Monitor monitor : dueMonitors) {
+			try {
+				monitor.prepareCycle();
+			}
+			catch (RuntimeException runtimeException) {
+				System.out.println(
+					JenkinsResultsParserUtil.combine(
+						"WARNING: Unable to prepare monitor ", monitor.getId(),
+						": ", runtimeException.getMessage()));
+			}
+		}
+
 		Map<Monitor, MonitorResult> monitorResultsMap = _monitorRunner.run(
-			_monitorScheduler.getDueMonitors(_monitors));
+			dueMonitors);
 
 		long currentTimeMillis =
 			JenkinsResultsParserUtil.getCurrentTimeMillis();

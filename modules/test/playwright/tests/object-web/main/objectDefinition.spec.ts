@@ -133,7 +133,16 @@ test.describe('Manage object definitions through Model Builder', () => {
 			const objectDefinitionLabel =
 				'ObjectDefinitionLabel' + getRandomInt();
 
-			modelBuilderLeftSidebarPage.createNewObjectDefinitionButton.click();
+			await modelBuilderLeftSidebarPage.createNewObjectDefinitionButton.click();
+
+			const objectDefinitionResponsePromise =
+				modelBuilderDiagramPage.page.waitForResponse((response) =>
+					response
+						.url()
+						.includes(
+							'/object-definitions/by-external-reference-code/'
+						)
+				);
 
 			const objectDefinition =
 				await modalAddObjectDefinitionPage.createObjectDefinition(
@@ -144,6 +153,8 @@ test.describe('Manage object definitions through Model Builder', () => {
 				id: objectDefinition.id,
 				type: 'objectDefinition',
 			});
+
+			await objectDefinitionResponsePromise;
 
 			const rightSidebar =
 				modelBuilderRightSidebarPage.getRightSidebarLocator(
@@ -249,7 +260,7 @@ test.describe('Manage object definitions through Model Builder', () => {
 			objectDefinition1.label['en_US']
 		);
 
-		await modelBuilderObjectDefinitionNodePage.deleteObjectDefinitionOption.click();
+		await modelBuilderObjectDefinitionNodePage.deleteDraftObjectDefinition();
 
 		apiHelpers.data.splice(
 			apiHelpers.data.findIndex(
@@ -1265,11 +1276,6 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 					await editObjectDetailsPage.entryTitleField.textContent()
 				)?.trim() ?? '';
 
-			// The option already selected cannot be clicked: its own list item
-			// intercepts the pointer, so a run that finds the field already on
-			// the option it means to choose retries that click until the test
-			// times out. Choose one the field is not already on.
-
 			const entryTitleFieldName =
 				originalEntryTitleField === 'Screen Name'
 					? 'Email Address'
@@ -1290,12 +1296,6 @@ test.describe('Manage object definitions through View Object Definitions', () =>
 			await expect(editObjectDetailsPage.entryTitleField).toContainText(
 				entryTitleFieldName
 			);
-
-			// User is a system object shared by the whole run, so put its title
-			// field back the way it was found. Left on Screen Name, a later
-			// execution opens the dropdown with that option already selected and
-			// waits on it until the test times out, so the test can otherwise
-			// only pass once per environment.
 
 			await editObjectDetailsPage.entryTitleField.click();
 

@@ -11,6 +11,7 @@ import com.liferay.depot.model.DepotEntry;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.headless.cms.client.dto.v1_0.AssetStatistics;
 import com.liferay.headless.cms.client.resource.v1_0.AssetStatisticsResource;
+import com.liferay.headless.cms.resource.v1_0.test.util.CMSFreeTierTestUtil;
 import com.liferay.headless.cms.resource.v1_0.test.util.CMSOutboundLinkTestUtil;
 import com.liferay.object.constants.ObjectDefinitionConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
@@ -22,12 +23,9 @@ import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryFolderLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
-import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.role.RoleConstants;
-import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.UserLocalService;
@@ -234,6 +232,7 @@ public class AssetStatisticsResourceTest
 
 		_testGetAssetStatisticsBrokenLinksCount();
 		_testGetAssetStatisticsByAssetLibrary();
+		_testGetAssetStatisticsWithFreeTier();
 	}
 
 	@Override
@@ -379,12 +378,9 @@ public class AssetStatisticsResourceTest
 	private ObjectDefinition _getBasicWebContentObjectDefinition()
 		throws Exception {
 
-		Group cmsGroup = _groupLocalService.getGroup(
-			TestPropsValues.getCompanyId(), GroupConstants.CMS);
-
 		return _objectDefinitionLocalService.
 			getObjectDefinitionByExternalReferenceCode(
-				"L_CMS_BASIC_WEB_CONTENT", cmsGroup.getCompanyId());
+				"L_CMS_BASIC_WEB_CONTENT", TestPropsValues.getCompanyId());
 	}
 
 	private void _testGetAssetStatisticsBrokenLinksCount() throws Exception {
@@ -414,7 +410,7 @@ public class AssetStatisticsResourceTest
 
 			_assertBrokenLinksCount(depotEntry.getGroupId(), 1);
 
-			_addObjectEntry(
+			ObjectEntry referringObjectEntry = _addObjectEntry(
 				CMSOutboundLinkTestUtil.getImageHTML(
 					targetObjectEntry.getExternalReferenceCode()),
 				depotEntry, objectDefinition);
@@ -438,6 +434,13 @@ public class AssetStatisticsResourceTest
 				imageHTML + otherImageHTML, depotEntry, objectDefinition);
 
 			_assertBrokenLinksCount(depotEntry.getGroupId(), 3);
+
+			_objectEntryLocalService.updateStatus(
+				TestPropsValues.getUserId(),
+				referringObjectEntry.getObjectEntryId(),
+				WorkflowConstants.STATUS_EXPIRED, serviceContext);
+
+			_assertBrokenLinksCount(depotEntry.getGroupId(), 2);
 		}
 		finally {
 			_depotEntryLocalService.deleteDepotEntry(
@@ -489,15 +492,20 @@ public class AssetStatisticsResourceTest
 		_depotEntryLocalService.deleteDepotEntry(depotEntry2.getDepotEntryId());
 	}
 
+	private void _testGetAssetStatisticsWithFreeTier() throws Exception {
+		try (AutoCloseable autoCloseable = CMSFreeTierTestUtil.withFreeTier()) {
+			assertHttpResponseStatusCode(
+				400,
+				assetStatisticsResource.getAssetStatisticsHttpResponse(null));
+		}
+	}
+
 	private AssetStatisticsResource[] _assetStatisticsResources;
 	private User _cmsAdministratorUser;
 	private User _companyAdminUser;
 
 	@Inject
 	private DepotEntryLocalService _depotEntryLocalService;
-
-	@Inject
-	private GroupLocalService _groupLocalService;
 
 	@Inject
 	private ObjectDefinitionLocalService _objectDefinitionLocalService;

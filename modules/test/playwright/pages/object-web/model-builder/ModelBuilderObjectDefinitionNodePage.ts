@@ -120,12 +120,6 @@ export class ModelBuilderObjectDefinitionNodePage {
 		objectDefinitionName: string,
 		objectDefinitionNodes: Locator
 	) {
-
-		// The diagram floats the sidebars and the minimap over the canvas by
-		// design, so a node can legitimately sit under them and a regular
-		// click never passes the pointer interception check. Dispatch the
-		// click straight to the button instead.
-
 		await objectDefinitionNodes
 			.filter({hasText: objectDefinitionName})
 			.getByRole('button', {name: 'Show All Fields'})
@@ -202,13 +196,26 @@ export class ModelBuilderObjectDefinitionNodePage {
 		return objectRelationship;
 	}
 
+	async deleteDraftObjectDefinition() {
+		const reloadedResponse = this._waitForModelBuilderReload();
+
+		await this.deleteObjectDefinitionOption.click();
+
+		await reloadedResponse;
+	}
+
 	async deleteObjectDefinition(objectDefinitionName: string) {
 		await this.deleteObjectDefinitionOption.click();
 		await this.modalDeleteObjectDefinitionTextField.click();
 		await this.modalDeleteObjectDefinitionTextField.fill(
 			objectDefinitionName
 		);
+
+		const reloadedResponse = this._waitForModelBuilderReload();
+
 		await this.modalDeleteObjectDefinitionConfirmationButton.click();
+
+		await reloadedResponse;
 	}
 
 	async fillObjectFieldLabelInput(objectFieldLabel: string) {
@@ -249,5 +256,17 @@ export class ModelBuilderObjectDefinitionNodePage {
 				name: String(objectFieldBusinessType),
 			})
 			.click();
+	}
+
+	private _waitForModelBuilderReload() {
+		return this.page.waitForResponse(
+			(response) =>
+				response.request().method() === 'PUT' &&
+				response
+					.url()
+					.includes(
+						'/o/object-admin/v1.0/object-folders/by-external-reference-code/'
+					)
+		);
 	}
 }

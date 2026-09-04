@@ -37,15 +37,17 @@ import java.util.Map;
 public class AssetEntryQuery {
 
 	public static final String[] ORDER_BY_COLUMNS = {
-		"title", "createDate", "modifiedDate", "publishDate", "expirationDate",
-		"priority", "viewCount", "ratings", "ratingsTotalScore"
+		"title", "createDate", "modifiedDate", "publishDate", "displayDate",
+		"expirationDate", "priority", "viewCount", "ratings",
+		"ratingsTotalScore", "userName"
 	};
 
 	public static String checkOrderByCol(String orderByCol) {
 		if (ArrayUtil.contains(ORDER_BY_COLUMNS, orderByCol) ||
 			((orderByCol != null) &&
-			 orderByCol.startsWith(
-				 DDMStructureManager.STRUCTURE_INDEXER_FIELD_PREFIX))) {
+			 (orderByCol.startsWith(
+				 DDMStructureManager.STRUCTURE_INDEXER_FIELD_PREFIX) ||
+			  orderByCol.startsWith("nestedFieldArray.")))) {
 
 			return orderByCol;
 		}

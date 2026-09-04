@@ -7,7 +7,6 @@ import {Locator, Page, expect} from '@playwright/test';
 import path from 'path';
 
 import {ProductMenuPage} from '../../../../pages/product-navigation-control-menu-web/ProductMenuPage';
-import {clickAndExpectToBeHidden} from '../../../../utils/clickAndExpectToBeHidden';
 import {clickAndExpectToBeVisible} from '../../../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../../../utils/getRandomString';
 import {PORTLET_URLS} from '../../../../utils/portletUrls';
@@ -29,10 +28,6 @@ export class ExportImportPage {
 	readonly clearMenuItem: Locator;
 	readonly clearSearchButton: Locator;
 	readonly continueButton: Locator;
-	readonly copyAsNewRadioButton: Locator;
-	readonly deleteApplicationDataAlert: Locator;
-	readonly deleteApplicationDataCheckbox: Locator;
-	readonly deleteApplicationDataBeforeImportingWarningLabel: Locator;
 	readonly deletionsLabel: Locator;
 	readonly downloadButton: Locator;
 	readonly exportButton: Locator;
@@ -46,9 +41,7 @@ export class ExportImportPage {
 	readonly filterBackButton: Locator;
 	readonly filterButton: Locator;
 	readonly importButton: Locator;
-	readonly importModalButton: Locator;
 	readonly importPermissionsCheckbox: Locator;
-	readonly mirrorWithOverwritingRadioButton: Locator;
 	readonly newExportButton: Locator;
 	readonly newImportButton: Locator;
 	readonly page: Page;
@@ -74,11 +67,8 @@ export class ExportImportPage {
 		taskStatus?: taskStatus
 	) => Locator;
 	readonly title: Locator;
-	readonly updateDataAlert: Locator;
-	readonly updateDataMirrorWarningLabel: Locator;
 	readonly useCurrentUserAsAuthorCheckbox: Locator;
 	readonly viewReportEntriesMenuItem: Locator;
-	readonly warningHeader: Locator;
 
 	constructor(page: Page) {
 		this.addFilterButton = page.getByRole('button', {name: 'Add Filter'});
@@ -89,18 +79,6 @@ export class ExportImportPage {
 			name: 'Clear',
 		});
 		this.continueButton = page.getByRole('button', {name: 'Continue'});
-		this.copyAsNewRadioButton = page.getByLabel('Copy as new');
-		this.deleteApplicationDataAlert = page.locator('[role="alert"]', {
-			hasText: 'This option does not apply to object entries.',
-		});
-		this.deleteApplicationDataCheckbox = page.getByLabel(
-			'Delete Application Data'
-		);
-		this.deleteApplicationDataBeforeImportingWarningLabel = page
-			.getByLabel('Important Info About Your Import')
-			.getByText(
-				'Delete Application Data Before Importing: This option does not apply to object'
-			);
 		this.deletionsLabel = page
 			.getByLabel('Deletions', {exact: true})
 			.locator('label');
@@ -126,13 +104,7 @@ export class ExportImportPage {
 			.getByTestId('managementToolbar')
 			.getByRole('button', {name: 'Filter'});
 		this.importButton = page.getByRole('button', {name: 'Import'});
-		this.importModalButton = page
-			.getByLabel('Important Info About Your Import')
-			.getByRole('button', {name: 'Import'});
 		this.importPermissionsCheckbox = page.getByLabel('Import Permissions');
-		this.mirrorWithOverwritingRadioButton = page.getByLabel(
-			'Mirror with overwriting'
-		);
 		this.newExportButton = page.getByRole('link', {name: 'Custom Export'});
 		this.newImportButton = page.getByRole('link', {name: 'Import'});
 		this.page = page;
@@ -216,23 +188,11 @@ export class ExportImportPage {
 				.getByText(taskStatusTexts[taskStatus]);
 		};
 		this.title = page.getByPlaceholder('Enter the name of the process');
-		this.updateDataAlert = page.locator('[role="alert"]', {
-			hasText:
-				'Objects entries are always mirrored regardless of the selection.',
-		});
-		this.updateDataMirrorWarningLabel = page
-			.getByLabel('Important Info About Your Import')
-			.getByText(
-				'Update Data (Mirror): Objects entries are always mirrored regardless of the selection.'
-			);
 		this.useCurrentUserAsAuthorCheckbox = page.getByLabel(
 			'Use the Current User as Author: Assign the current user as the author of all'
 		);
 		this.viewReportEntriesMenuItem = page.getByRole('menuitem', {
 			name: 'View Report Entries',
-		});
-		this.warningHeader = page.getByRole('heading', {
-			name: 'Important Info About Your Import',
 		});
 	}
 
@@ -600,16 +560,6 @@ export class ExportImportPage {
 		});
 	}
 
-	async importByDefault(filePath: string) {
-		await this.selectImportFile({filePath});
-
-		await this.importButton.click();
-
-		await expect(
-			this.taskStatusLabel(path.basename(filePath), 'success')
-		).toBeVisible();
-	}
-
 	async getExportableItems() {
 		await this.newExportButton.click();
 
@@ -679,35 +629,6 @@ export class ExportImportPage {
 
 	async goToImportDetails(exportName: string) {
 		await this.clickTaskAction(exportName, 'View Report Entries');
-	}
-
-	async goToImportOptions(
-		folderPath: string,
-		siteUrl?: Site['friendlyUrlPath']
-	) {
-		await this.goToImport(siteUrl);
-		await this.newImportButton.click();
-		await this.page.getByRole('button', {name: 'Select File'}).waitFor();
-
-		const previousFileAlert = this.page.getByText(
-			'Warning:This file was previously uploaded'
-		);
-		if (await previousFileAlert.isVisible()) {
-			await clickAndExpectToBeHidden({
-				target: previousFileAlert,
-				trigger: this.page.getByRole('link', {
-					name: 'Delete File',
-				}),
-			});
-		}
-
-		const fileChooserPromise = this.page.waitForEvent('filechooser');
-		await this.fileSelector.click();
-		const fileChooser = await fileChooserPromise;
-		await fileChooser.setFiles(folderPath);
-
-		await this.continueButton.click();
-		this.page.getByText('File Summary');
 	}
 
 	async goToImportReportEntryDetails(externalReferenceCode: string) {

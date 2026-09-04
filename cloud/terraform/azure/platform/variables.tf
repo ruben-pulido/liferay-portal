@@ -29,6 +29,14 @@ variable "cluster_secret_store" {
 variable "deployment_name" {
 	type=string
 }
+variable "keda_config" {
+	default={}
+	type=object({
+		enabled=optional(bool, false)
+		namespace=optional(string, "keda-system")
+		service_account_name=optional(string, "keda-operator")
+	})
+}
 variable "observability_config" {
 	default={}
 	type=object({

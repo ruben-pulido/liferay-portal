@@ -137,6 +137,26 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testCredentialBuffer() throws Exception {
+		test(
+			SourceProcessorTestParameters.create(
+				"CredentialBuffer.testjava"
+			).addExpectedMessage(
+				"Assign \"credential.toCharArray()\" to a local variable so " +
+					"that it can be cleared after use, see LPD-93280",
+				22
+			).addExpectedMessage(
+				"Assign \"credential.getBytes()\" to a local variable so " +
+					"that it can be cleared after use, see LPD-93280",
+				26
+			).addExpectedMessage(
+				"Assign \"credential.toCharArray()\" to a local variable so " +
+					"that it can be cleared after use, see LPD-93280",
+				33
+			));
+	}
+
+	@Test
 	public void testDeserializationSecurity() throws Exception {
 		test(
 			"DeserializationSecurity.testjava",
@@ -353,11 +373,11 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 			SourceProcessorTestParameters.create(
 				"IncorrectImports2.testjava"
 			).addExpectedMessage(
-				"Illegal import: edu.emory.mathcs.backport.java"
+				"Illegal import: edu.emory.mathcs.backport.java", 8
 			).addExpectedMessage(
-				"Illegal import: jodd.util.StringPool"
+				"Use ProxyUtil instead of java.lang.reflect.Proxy", 10
 			).addExpectedMessage(
-				"Use ProxyUtil instead of java.lang.reflect.Proxy"
+				"Illegal import: jodd.util.StringPool", 12
 			));
 	}
 

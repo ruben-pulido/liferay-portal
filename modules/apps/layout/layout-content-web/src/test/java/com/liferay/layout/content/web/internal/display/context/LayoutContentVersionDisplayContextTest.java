@@ -62,15 +62,15 @@ public class LayoutContentVersionDisplayContextTest {
 	@Test
 	public void testGetContext() throws PortalException {
 		SegmentsExperience defaultSegmentsExperience = _getSegmentsExperience(
-			null, null);
+			0, null, null);
 
 		String segmentsEntryERC = RandomTestUtil.randomString();
 		String segmentsEntryScopeERC = RandomTestUtil.randomString();
 
 		SegmentsExperience loserSegmentsExperience = _getSegmentsExperience(
-			segmentsEntryERC, segmentsEntryScopeERC);
+			-1, segmentsEntryERC, segmentsEntryScopeERC);
 		SegmentsExperience winnerSegmentsExperience = _getSegmentsExperience(
-			segmentsEntryERC, segmentsEntryScopeERC);
+			1, segmentsEntryERC, segmentsEntryScopeERC);
 
 		Mockito.when(
 			_segmentsExperienceLocalService.getSegmentsExperiences(
@@ -119,6 +119,12 @@ public class LayoutContentVersionDisplayContextTest {
 		Assert.assertEquals(
 			_themeDisplay.getPathImage() + "/user_portrait?img_id=0",
 			config.get("defaultUserImageSrc"));
+		Assert.assertEquals(
+			_themeDisplay.getPathMain() + "/portal/get_page_preview",
+			config.get("getPagePreviewURL"));
+		Assert.assertEquals(
+			_themeDisplay.getPathMain() + "/portal/get_page_version_preview",
+			config.get("getPageVersionPreviewURL"));
 
 		Map<String, Object> layout = (Map<String, Object>)config.get("layout");
 
@@ -127,6 +133,15 @@ public class LayoutContentVersionDisplayContextTest {
 			_draftLayout.isApproved() ? "approved" : "draft",
 			layout.get("status"));
 
+		Assert.assertEquals(
+			StringBundler.concat(
+				"/o/headless-admin-site/v1.0/sites/",
+				_group.getExternalReferenceCode(), "/site-pages/",
+				_publishedLayout.getExternalReferenceCode(),
+				"/page-specification-versions",
+				"/{pageSpecificationVersionExternalReferenceCode}",
+				"/page-specification-version-page-experiences"),
+			config.get("pageSpecificationVersionPageExperiencesURL"));
 		Assert.assertEquals(
 			StringBundler.concat(
 				"/o/headless-admin-site/v1.0/sites/",
@@ -163,8 +178,14 @@ public class LayoutContentVersionDisplayContextTest {
 
 		Assert.assertEquals(active, segmentsExperienceMap.get("active"));
 		Assert.assertEquals(
+			segmentsExperience.getPriority(),
+			segmentsExperienceMap.get("priority"));
+		Assert.assertEquals(
 			segmentsExperience.getExternalReferenceCode(),
 			segmentsExperienceMap.get("segmentsExperienceERC"));
+		Assert.assertEquals(
+			String.valueOf(segmentsExperience.getSegmentsExperienceId()),
+			segmentsExperienceMap.get("segmentsExperienceId"));
 		Assert.assertEquals(
 			segmentsExperience.getName(_locale),
 			segmentsExperienceMap.get("segmentsExperienceName"));
@@ -184,7 +205,7 @@ public class LayoutContentVersionDisplayContextTest {
 	}
 
 	private SegmentsExperience _getSegmentsExperience(
-		String segmentsEntryERC, String segmentsEntryScopeERC) {
+		int priority, String segmentsEntryERC, String segmentsEntryScopeERC) {
 
 		SegmentsExperience segmentsExperience = Mockito.mock(
 			SegmentsExperience.class);
@@ -199,6 +220,12 @@ public class LayoutContentVersionDisplayContextTest {
 			segmentsExperience.getName(_locale)
 		).thenReturn(
 			RandomTestUtil.randomString()
+		);
+
+		Mockito.when(
+			segmentsExperience.getPriority()
+		).thenReturn(
+			priority
 		);
 
 		Mockito.when(
@@ -296,6 +323,12 @@ public class LayoutContentVersionDisplayContextTest {
 
 		Mockito.when(
 			_themeDisplay.getPathImage()
+		).thenReturn(
+			RandomTestUtil.randomString()
+		);
+
+		Mockito.when(
+			_themeDisplay.getPathMain()
 		).thenReturn(
 			RandomTestUtil.randomString()
 		);

@@ -29,7 +29,6 @@ import com.liferay.portal.background.task.service.BackgroundTaskLocalService;
 import com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskConstants;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
-import com.liferay.portal.kernel.exception.NoSuchBackgroundTaskException;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -82,7 +81,8 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		PermissionUtil.checkImportPermission(
 			contextCompany.getCompanyId(), backgroundTask.getGroupId());
 
-		_validateImportBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		_backgroundTaskLocalService.deleteBackgroundTask(backgroundTask);
 	}
@@ -112,7 +112,8 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		PermissionUtil.checkImportPermission(
 			contextCompany.getCompanyId(), backgroundTask.getGroupId());
 
-		_validateImportBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		return _toImportProcess(backgroundTask);
 	}
@@ -138,7 +139,8 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		PermissionUtil.checkImportPermission(
 			contextCompany.getCompanyId(), backgroundTask.getGroupId());
 
-		_validateImportBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		return new ProcessProgress() {
 			{
@@ -214,6 +216,12 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		return _backgroundTaskLocalService.dynamicQuery(
 			dynamicQuery, pagination.getStartPosition(),
 			pagination.getEndPosition());
+	}
+
+	private String _getDefaultErrorMessage() {
+		return _language.get(
+			contextAcceptLanguage.getPreferredLocale(),
+			"an-unexpected-error-occurred");
 	}
 
 	private DynamicQuery _getDynamicQuery(
@@ -450,11 +458,11 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 								backgroundTask.getStatusMessage(), true);
 
 						if (jsonObject == null) {
-							return backgroundTask.getStatusMessage();
+							return _getDefaultErrorMessage();
 						}
 
 						return jsonObject.getString(
-							"message", backgroundTask.getStatusMessage());
+							"message", _getDefaultErrorMessage());
 					});
 				setId(backgroundTask::getBackgroundTaskId);
 				setName(() -> BackgroundTaskUtil.getName(backgroundTask));
@@ -473,24 +481,10 @@ public class ImportProcessResourceImpl extends BaseImportProcessResourceImpl {
 		};
 	}
 
-	private void _validateImportBackgroundTask(BackgroundTask backgroundTask)
-		throws Exception {
-
-		String taskExecutorClassName =
-			backgroundTask.getTaskExecutorClassName();
-
-		if (!StringUtil.equals(
-				taskExecutorClassName,
-				BackgroundTaskExecutorNames.
-					LAYOUT_IMPORT_BACKGROUND_TASK_EXECUTOR) &&
-			!StringUtil.equals(
-				taskExecutorClassName,
-				BackgroundTaskExecutorNames.
-					PORTLET_IMPORT_BACKGROUND_TASK_EXECUTOR)) {
-
-			throw new NoSuchBackgroundTaskException();
-		}
-	}
+	private static final String[] _CLASS_NAMES_TASK_EXECUTOR = {
+		BackgroundTaskExecutorNames.LAYOUT_IMPORT_BACKGROUND_TASK_EXECUTOR,
+		BackgroundTaskExecutorNames.PORTLET_IMPORT_BACKGROUND_TASK_EXECUTOR
+	};
 
 	@Reference
 	private BackgroundTaskLocalService _backgroundTaskLocalService;

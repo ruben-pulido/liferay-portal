@@ -15,8 +15,10 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Supplier;
 
 /**
  * @author Christopher Kian
@@ -24,22 +26,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class AWSClientManager<T> {
 
 	public AWSClientManager(
-		ClientFactory<T> clientFactory, String fipsEndpointTemplate,
-		String region, boolean useFIPSEndpoint) {
+		String awsRegion, ClientFactory<T> clientFactory,
+		String fipsEndpointTemplate, boolean useFIPSEndpoint) {
 
-		_clientFactory = clientFactory;
-		_fipsEndpointTemplate = fipsEndpointTemplate;
-		_region = _resolveRegion(region);
-		_useFIPSEndpoint = useFIPSEndpoint;
-
-		_awsCredentialsProvider =
-			DefaultAWSCredentialsProviderChain.getInstance();
-
-		ReentrantReadWriteLock reentrantReadWriteLock =
-			new ReentrantReadWriteLock();
-
-		_readLock = reentrantReadWriteLock.readLock();
-		_writeLock = reentrantReadWriteLock.writeLock();
+		this(
+			awsRegion, AWSRegionUtil::getRegion, clientFactory,
+			fipsEndpointTemplate, useFIPSEndpoint);
 	}
 
 	public void close() {
@@ -83,8 +75,8 @@ public class AWSClientManager<T> {
 
 				if (_client == null) {
 					_client = _clientFactory.build(
-						_awsCredentialsProvider, _getEndpointConfiguration(),
-						_region);
+						_awsCredentialsProvider, _awsRegion,
+						_getEndpointConfiguration());
 				}
 			}
 			finally {
@@ -93,25 +85,20 @@ public class AWSClientManager<T> {
 		}
 	}
 
-	public String getRegion() {
-		return _region;
+	public String getAWSRegion() {
+		return _awsRegion;
 	}
 
-	public void updateConfiguration(String region, boolean useFIPSEndpoint) {
-		region = _resolveRegion(region);
-
-		if (Validator.isNull(region)) {
-			throw new IllegalArgumentException(
-				"AWS region could not be resolved");
-		}
+	public void updateConfiguration(String awsRegion, boolean useFIPSEndpoint) {
+		awsRegion = _resolveAWSRegion(awsRegion, _awsRegionSupplier);
 
 		_writeLock.lock();
 
 		try {
-			if (!region.equals(_region) ||
+			if (!Objects.equals(awsRegion, _awsRegion) ||
 				(useFIPSEndpoint != _useFIPSEndpoint)) {
 
-				_region = region;
+				_awsRegion = awsRegion;
 				_useFIPSEndpoint = useFIPSEndpoint;
 
 				_closeClient();
@@ -133,11 +120,31 @@ public class AWSClientManager<T> {
 	public interface ClientFactory<T> {
 
 		public T build(
-				AWSCredentialsProvider awsCredentialsProvider,
-				AwsClientBuilder.EndpointConfiguration endpointConfiguration,
-				String region)
+				AWSCredentialsProvider awsCredentialsProvider, String awsRegion,
+				AwsClientBuilder.EndpointConfiguration endpointConfiguration)
 			throws Exception;
 
+	}
+
+	protected AWSClientManager(
+		String awsRegion, Supplier<String> awsRegionSupplier,
+		ClientFactory<T> clientFactory, String fipsEndpointTemplate,
+		boolean useFIPSEndpoint) {
+
+		_awsRegion = _resolveAWSRegion(awsRegion, awsRegionSupplier);
+		_awsRegionSupplier = awsRegionSupplier;
+		_clientFactory = clientFactory;
+		_fipsEndpointTemplate = fipsEndpointTemplate;
+		_useFIPSEndpoint = useFIPSEndpoint;
+
+		_awsCredentialsProvider =
+			DefaultAWSCredentialsProviderChain.getInstance();
+
+		ReentrantReadWriteLock reentrantReadWriteLock =
+			new ReentrantReadWriteLock();
+
+		_readLock = reentrantReadWriteLock.readLock();
+		_writeLock = reentrantReadWriteLock.writeLock();
 	}
 
 	private void _closeClient() {
@@ -163,36 +170,39 @@ public class AWSClientManager<T> {
 	}
 
 	private AwsClientBuilder.EndpointConfiguration _getEndpointConfiguration() {
-		if (!_useFIPSEndpoint || Validator.isNull(_fipsEndpointTemplate) ||
-			Validator.isNull(_region)) {
+		if (!_useFIPSEndpoint || Validator.isNull(_awsRegion) ||
+			Validator.isNull(_fipsEndpointTemplate)) {
 
 			return null;
 		}
 
 		String endpoint = StringUtil.replace(
-			_fipsEndpointTemplate, "{region}", _region);
+			_fipsEndpointTemplate, "{region}", _awsRegion);
 
-		return new AwsClientBuilder.EndpointConfiguration(endpoint, _region);
+		return new AwsClientBuilder.EndpointConfiguration(endpoint, _awsRegion);
 	}
 
-	private String _resolveRegion(String region) {
-		if (Validator.isNull(region)) {
-			return AWSRegionUtil.getRegion();
+	private String _resolveAWSRegion(
+		String awsRegion, Supplier<String> awsRegionSupplier) {
+
+		if (Validator.isNull(awsRegion)) {
+			return awsRegionSupplier.get();
 		}
 
-		return region;
+		return awsRegion;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		AWSClientManager.class);
 
 	private final AWSCredentialsProvider _awsCredentialsProvider;
+	private volatile String _awsRegion;
+	private final Supplier<String> _awsRegionSupplier;
 	private volatile T _client;
 	private final ClientFactory<T> _clientFactory;
 	private volatile boolean _closed;
 	private final String _fipsEndpointTemplate;
 	private final Lock _readLock;
-	private volatile String _region;
 	private volatile boolean _useFIPSEndpoint;
 	private final Lock _writeLock;
 

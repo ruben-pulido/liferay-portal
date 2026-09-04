@@ -19,6 +19,7 @@ import com.liferay.asset.list.asset.entry.provider.AssetListAssetEntryProvider;
 import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.internal.configuration.AssetListConfiguration;
 import com.liferay.asset.list.internal.util.AssetListFiltersUtil;
+import com.liferay.asset.list.internal.util.AssetListOrderByColumnUtil;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.model.AssetListEntryAssetEntryRel;
 import com.liferay.asset.list.model.AssetListEntryAssetEntryRelModel;
@@ -261,15 +262,17 @@ public class AssetListAssetEntryProviderImpl
 			}
 		}
 
-		String orderByColumn1 = GetterUtil.getString(
-			unicodeProperties.getProperty("orderByColumn1", "priority"));
-
-		assetEntryQuery.setOrderByCol1(orderByColumn1);
-
-		String orderByColumn2 = GetterUtil.getString(
-			unicodeProperties.getProperty("orderByColumn2", "modifiedDate"));
-
-		assetEntryQuery.setOrderByCol2(orderByColumn2);
+		assetEntryQuery.setOrderByCol1(
+			_getOrderByColumn(
+				assetListEntry.getCompanyId(), Field.MODIFIED_DATE,
+				GetterUtil.getString(
+					unicodeProperties.getProperty(
+						"orderByColumn1", Field.MODIFIED_DATE))));
+		assetEntryQuery.setOrderByCol2(
+			_getOrderByColumn(
+				assetListEntry.getCompanyId(), "title",
+				GetterUtil.getString(
+					unicodeProperties.getProperty("orderByColumn2", "title"))));
 
 		assetEntryQuery.setOrderByType1(
 			GetterUtil.getString(
@@ -972,6 +975,25 @@ public class AssetListAssetEntryProviderImpl
 		return searchContext;
 	}
 
+	private String _getOrderByColumn(
+		long companyId, String defaultOrderByColumn, String orderByColumn) {
+
+		if (!orderByColumn.startsWith(StringPool.OPEN_CURLY_BRACE)) {
+			return _toAssetEntryQueryOrderByColumn(orderByColumn);
+		}
+
+		if (FeatureFlagManagerUtil.isEnabled(companyId, "LPD-74731")) {
+			orderByColumn = AssetListOrderByColumnUtil.toOrderByColumn(
+				companyId, orderByColumn);
+		}
+
+		if (orderByColumn.startsWith(StringPool.OPEN_CURLY_BRACE)) {
+			return _toAssetEntryQueryOrderByColumn(defaultOrderByColumn);
+		}
+
+		return orderByColumn;
+	}
+
 	private long[] _getReferencedModelsGroupIds(long[] groupIds) {
 		for (long groupId : groupIds) {
 			Group group = _groupLocalService.fetchGroup(groupId);
@@ -1158,6 +1180,14 @@ public class AssetListAssetEntryProviderImpl
 				Comparator.comparing(
 					AssetListEntrySegmentsEntryRel::getPriority)),
 			AssetListEntrySegmentsEntryRel::getSegmentsEntryId);
+	}
+
+	private String _toAssetEntryQueryOrderByColumn(String orderByColumn) {
+		if (orderByColumn.equals(Field.MODIFIED_DATE)) {
+			return "modifiedDate";
+		}
+
+		return orderByColumn;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

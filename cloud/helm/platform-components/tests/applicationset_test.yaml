@@ -1,6 +1,9 @@
 release:
     name: my-release
     namespace: argocd-system
+set:
+    clusterSecretStore:
+        name: liferay-test-secret-store
 suite: ApplicationSets and AppProjects
 templates:
     -   templates/application-infrastructure-provider.yaml
@@ -12,6 +15,24 @@ templates:
     -   templates/appproject-infrastructure.yaml
     -   templates/appproject-operator.yaml
 tests:
+    -   asserts:
+            -   equal:
+                    path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+                    value: "-80"
+                template: templates/application-infrastructure-provider.yaml
+            -   equal:
+                    path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+                    value: "-60"
+                template: templates/applicationset-infrastructure.yaml
+            -   equal:
+                    path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+                    value: "-60"
+                template: templates/applicationset-liferay.yaml
+            -   equal:
+                    path: metadata.annotations["argocd.argoproj.io/sync-wave"]
+                    value: "-60"
+                template: templates/applicationset-resources.yaml
+        it: Assigns the infrastructure provider application an earlier sync wave than the ApplicationSets it feeds
     -   asserts:
             -   contains:
                     content: oci://us-central1-docker.pkg.dev/external-assets-nonprd/liferay-helm-chart
@@ -150,6 +171,34 @@ tests:
                 repoURL: oci://example-registry/liferay-azure-infrastructure-provider
     -   asserts:
             -   contains:
+                    content:
+                        namespace: elastic-system
+                        server: https://kubernetes.default.svc
+                    path: spec.destinations
+                template: templates/appproject-operator.yaml
+            -   contains:
+                    content:
+                        namespace: monitoring
+                        server: https://kubernetes.default.svc
+                    path: spec.destinations
+                template: templates/appproject-operator.yaml
+            -   notContains:
+                    content:
+                        namespace: kube-system
+                        server: https://kubernetes.default.svc
+                    path: spec.destinations
+                template: templates/appproject-operator.yaml
+            -   lengthEqual:
+                    count: 9
+                    path: spec.destinations
+                template: templates/appproject-operator.yaml
+        it: Permits the extra destination namespaces declared by an operator application
+        set:
+            operatorApplications.eckOperator.extraDestinationNamespaces:
+                -   monitoring
+            operatorApplications.keda.extraDestinationNamespaces: null
+    -   asserts:
+            -   contains:
                     content: https://charts.example.com
                     path: spec.sourceRepos
                 template: templates/appproject-operator.yaml
@@ -200,6 +249,14 @@ tests:
             -   equal:
                     path: spec.template.spec.project
                     value: liferay-application
+                template: templates/applicationset-liferay.yaml
+            -   contains:
+                    content:
+                        group: apps
+                        kind: StatefulSet
+                        managedFieldsManagers:
+                            -   liferay-dxp-operator
+                    path: spec.template.spec.ignoreDifferences
                 template: templates/applicationset-liferay.yaml
             -   equal:
                     path: spec.template.spec.sources[1].ref
@@ -286,8 +343,14 @@ tests:
                         server: https://kubernetes.default.svc
                     path: spec.destinations
                 template: templates/appproject-operator.yaml
+            -   contains:
+                    content:
+                        namespace: kube-system
+                        server: https://kubernetes.default.svc
+                    path: spec.destinations
+                template: templates/appproject-operator.yaml
             -   lengthEqual:
-                    count: 8
+                    count: 9
                     path: spec.destinations
                 template: templates/appproject-operator.yaml
             -   equal:

@@ -16,15 +16,19 @@ import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.service.ObjectDefinitionService;
 import com.liferay.object.service.ObjectEntryLocalService;
+import com.liferay.object.service.ObjectEntryService;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.license.util.LicenseManagerUtil;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.portlet.LiferayWindowState;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.Sort;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -65,18 +69,21 @@ public class BrokenLinkAssetResourceImpl
 			Sort[] sorts)
 		throws Exception {
 
+		LicenseManagerUtil.checkFreeTier();
+
 		if (!FeatureFlagManagerUtil.isEnabled(
 				contextCompany.getCompanyId(), "LPD-82226")) {
 
 			throw new UnsupportedOperationException();
 		}
 
+		Long[] spaceGroupIds = CMSGroupUtil.getSpaceGroupIds(
+			contextCompany.getCompanyId(), _depotEntryService,
+			contextUser.getUserId());
+
 		Long[] selectedSpaceGroupIds = CMSGroupUtil.getSelectedSpaceGroupIds(
 			assetLibraryId, contextCompany.getCompanyId(),
-			_depotEntryLocalService, groupLocalService,
-			CMSGroupUtil.getSpaceGroupIds(
-				contextCompany.getCompanyId(), _depotEntryService,
-				contextUser.getUserId()));
+			_depotEntryLocalService, groupLocalService, spaceGroupIds);
 
 		if (ArrayUtil.isEmpty(selectedSpaceGroupIds)) {
 			return Page.of(Collections.emptyList());
@@ -104,18 +111,19 @@ public class BrokenLinkAssetResourceImpl
 				_objectEntryLocalService, _searcher,
 				_searchRequestBuilderFactory);
 
-		Map<String, Long> expiredAssetObjectEntryIds =
-			brokenLinkAssetSearcher.getExpiredAssetObjectEntryIds(
-				contextCompany.getCompanyId(), objectDefinitionIds);
+		Map<String, Long> expiredAssetObjectEntryIdsMap =
+			brokenLinkAssetSearcher.getExpiredAssetObjectEntryIdsMap(
+				contextCompany.getCompanyId(), objectDefinitionIds,
+				spaceGroupIds);
 
-		if (expiredAssetObjectEntryIds.isEmpty()) {
+		if (expiredAssetObjectEntryIdsMap.isEmpty()) {
 			return Page.of(Collections.emptyList());
 		}
 
 		SearchResponse searchResponse = brokenLinkAssetSearcher.search(
 			contextCompany.getCompanyId(), selectedSpaceGroupIds,
 			contextAcceptLanguage.getPreferredLanguageId(),
-			expiredAssetObjectEntryIds.keySet(), pagination, search, sorts);
+			expiredAssetObjectEntryIdsMap.keySet(), pagination, search, sorts);
 
 		Map<Long, String> externalReferenceCodes = new HashMap<>();
 
@@ -129,7 +137,7 @@ public class BrokenLinkAssetResourceImpl
 			transform(
 				searchResponse.getDocuments(),
 				document -> _toBrokenLinkAsset(
-					document, expiredAssetObjectEntryIds,
+					document, expiredAssetObjectEntryIdsMap,
 					externalReferenceCodes)),
 			pagination, searchResponse.getCount());
 	}
@@ -171,13 +179,13 @@ public class BrokenLinkAssetResourceImpl
 	}
 
 	private BrokenLinkAsset _toBrokenLinkAsset(
-		Document document, Map<String, Long> expiredAssetObjectEntryIds,
+		Document document, Map<String, Long> expiredAssetObjectEntryIdsMap,
 		Map<Long, String> externalReferenceCodes) {
 
 		Set<Long> brokenLinkObjectEntryIds = new LinkedHashSet<>();
 
 		for (String outboundLink : document.getStrings("outboundLinks")) {
-			Long brokenLinkObjectEntryId = expiredAssetObjectEntryIds.get(
+			Long brokenLinkObjectEntryId = expiredAssetObjectEntryIdsMap.get(
 				outboundLink);
 
 			if (brokenLinkObjectEntryId != null) {
@@ -185,11 +193,23 @@ public class BrokenLinkAssetResourceImpl
 			}
 		}
 
+		long objectDefinitionId = GetterUtil.getLong(
+			document.getString("objectDefinitionId"));
+
 		long objectEntryId = GetterUtil.getLong(
 			document.getString(Field.ENTRY_CLASS_PK));
 
 		return new BrokenLinkAsset() {
 			{
+				setActions(
+					() -> HashMapBuilder.put(
+						"update",
+						() -> addAction(
+							ActionKeys.UPDATE, objectEntryId,
+							"getBrokenLinkAssetsPage",
+							_objectEntryService.getModelResourcePermission(
+								objectDefinitionId))
+					).build());
 				setBrokenLinksCount(
 					() -> (long)brokenLinkObjectEntryIds.size());
 				setBrokenLinkTitle(
@@ -203,9 +223,7 @@ public class BrokenLinkAssetResourceImpl
 						objectEntryId));
 				setId(() -> objectEntryId);
 				setObjectDefinitionExternalReferenceCode(
-					() -> externalReferenceCodes.get(
-						GetterUtil.getLong(
-							document.getString("objectDefinitionId"))));
+					() -> externalReferenceCodes.get(objectDefinitionId));
 				setTitle(() -> _getTitle(document));
 			}
 		};
@@ -229,6 +247,9 @@ public class BrokenLinkAssetResourceImpl
 
 	@Reference
 	private ObjectEntryLocalService _objectEntryLocalService;
+
+	@Reference
+	private ObjectEntryService _objectEntryService;
 
 	@Reference
 	private Portal _portal;

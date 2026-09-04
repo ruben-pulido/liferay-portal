@@ -13,12 +13,18 @@ import com.liferay.asset.kernel.model.ClassTypeReader;
 import com.liferay.headless.delivery.dto.v1_0.AssetEntry;
 import com.liferay.headless.delivery.dto.v1_0.util.CreatorUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.role.RoleConstants;
 import com.liferay.portal.kernel.service.GroupLocalService;
+import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
 import com.liferay.portal.vulcan.dto.converter.DTOConverterContext;
+import com.liferay.portal.vulcan.fields.NestedFieldsSupplier;
+import com.liferay.portal.vulcan.permission.Permission;
+import com.liferay.portal.vulcan.permission.PermissionUtil;
 
+import java.util.Collection;
 import java.util.Locale;
 
 import org.osgi.service.component.annotations.Component;
@@ -94,6 +100,23 @@ public class AssetEntryDTOConverter
 
 						return group.getDescriptiveName(locale);
 					});
+				setPermissions(
+					() -> NestedFieldsSupplier.supply(
+						"permissions",
+						nestedFieldNames -> {
+							Collection<Permission> permissions =
+								PermissionUtil.getPermissions(
+									serviceBuilderAssetEntry.getCompanyId(),
+									_resourceActionLocalService.
+										getResourceActions(
+											serviceBuilderAssetEntry.
+												getClassName()),
+									serviceBuilderAssetEntry.getClassPK(),
+									serviceBuilderAssetEntry.getClassName(),
+									new String[] {RoleConstants.GUEST});
+
+							return permissions.toArray(new Permission[0]);
+						}));
 				setStatus(
 					() -> {
 						AssetRenderer<?> assetRenderer =
@@ -115,6 +138,9 @@ public class AssetEntryDTOConverter
 
 	@Reference
 	private Portal _portal;
+
+	@Reference
+	private ResourceActionLocalService _resourceActionLocalService;
 
 	@Reference
 	private UserLocalService _userLocalService;

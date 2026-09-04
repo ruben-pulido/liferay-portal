@@ -3054,6 +3054,12 @@ components:
                     $ref: "#/components/schemas/PageSpecification"
                     description:
                         The page specification version's page specification. It is not returned by default. It can be embedded via nestedFields.
+                pageSpecificationVersionPageExperiences:
+                    description:
+                        The page specification version's page experiences. It is not returned by default. It can be embedded via nestedFields.
+                    items:
+                        $ref: "#/components/schemas/PageSpecificationVersionPageExperience"
+                    type: array
                 status:
                     description:
                         The page specification version's status.
@@ -3069,6 +3075,32 @@ components:
                 version:
                     description:
                         The page specification version's version.
+                    format: int32
+                    type: integer
+            type: object
+        PageSpecificationVersionPageExperience:
+            description:
+                A page specification version's page experience.
+            properties:
+                availablePreviewLanguageIds:
+                    description:
+                        The page specification version page experience's available preview languages.
+                    items:
+                        type: string
+                    type: array
+                externalReferenceCode:
+                    description:
+                        The page specification version page experience's external reference code.
+                    type: string
+                name_i18n:
+                    additionalProperties:
+                        type: string
+                    description:
+                        The localized page specification version page experience's names.
+                    type: object
+                priority:
+                    description:
+                        The page specification version page experience's priority.
                     format: int32
                     type: integer
             type: object
@@ -4996,7 +5028,7 @@ components:
             type: object
 info:
     description:
-        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID 'com.liferay.headless.admin.site.client', and version '1.0.34'."
+        "A Java client JAR is available for use with the group ID 'com.liferay', artifact ID 'com.liferay.headless.admin.site.client', and version '1.0.35'."
     license:
         name: Apache 2.0
         url: http://www.apache.org/licenses/LICENSE-2.0.html
@@ -8868,6 +8900,53 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/PageSpecification"
             tags: ["PageSpecification"]
+    "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specification-versions/{pageSpecificationVersionExternalReferenceCode}/page-specification-version-page-experiences":
+        get:
+            description:
+                Retrieves the page experiences of a page specification version.
+            operationId: getSiteSitePagePageSpecificationVersionPageSpecificationVersionPageExperiencesPage
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: sitePageExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: pageSpecificationVersionExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: nestedFields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageSpecificationVersionPageExperience"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/PageSpecificationVersionPageExperience"
+                                type: array
+            tags: ["PageSpecificationVersionPageExperience"]
     "/sites/{siteExternalReferenceCode}/site-pages/{sitePageExternalReferenceCode}/page-specification-versions/{pageSpecificationVersionExternalReferenceCode}/restore":
         post:
             description:

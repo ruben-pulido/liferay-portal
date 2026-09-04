@@ -23,7 +23,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -60,14 +59,37 @@ public abstract class SecretsUtil {
 
 		String itemTitle = matcher.group("itemTitle");
 
-		if (vault.getItem(itemTitle) != null) {
+		Item item = vault.getItem(itemTitle);
+
+		if (item == null) {
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(
-					"Item ", itemTitle, " already exists in vault ",
+					"Unable to find item ", itemTitle, " in vault ",
 					vaultName));
 		}
 
-		_createItem(_generateJenkinsAPITokenMap(), itemTitle, vault);
+		Date date = new Date();
+
+		JSONObject jenkinsAPITokenJSONObject =
+			_generateJenkinsAPITokenJSONObject(date);
+
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
+			"yyyy-MM-dd_HH:mm:ss.SSS");
+
+		simpleDateFormat.setTimeZone(
+			TimeZone.getTimeZone("America/Los_Angeles"));
+
+		String jenkinsAPITokenFieldLabel =
+			"api.token.json." + simpleDateFormat.format(date);
+
+		_createItemField(
+			item, jenkinsAPITokenFieldLabel,
+			jenkinsAPITokenJSONObject.toString(), vault);
+
+		System.out.println(
+			JenkinsResultsParserUtil.combine(
+				"Generated API token \"", key, "/", jenkinsAPITokenFieldLabel,
+				"\""));
 	}
 
 	public static String getSecret(String key) {
@@ -458,66 +480,51 @@ public abstract class SecretsUtil {
 
 	}
 
-	private static void _createItem(
-		Map<String, String> itemFieldsMap, String itemTitle, Vault vault) {
+	private static void _createItemField(
+		Item item, String fieldLabel, String fieldValue, Vault vault) {
 
-		JSONArray fieldsJSONArray = new JSONArray();
-
-		for (Map.Entry<String, String> itemFieldEntry :
-				itemFieldsMap.entrySet()) {
-
-			fieldsJSONArray.put(
-				_getItemFieldJSONObject(
-					itemFieldEntry.getKey(), itemFieldEntry.getValue()));
+		if (item.getItemField(fieldLabel) != null) {
+			throw new RuntimeException(
+				JenkinsResultsParserUtil.combine(
+					"Item field ", fieldLabel, " already exists in item ",
+					item.getTitle()));
 		}
 
-		JSONObject itemJSONObject = _toJSONObject(
-			JenkinsResultsParserUtil.combine(
-				"/v1/vaults/", vault.getId(), "/items"),
-			HttpRequestMethod.POST,
-			String.valueOf(
-				new JSONObject(
-				).put(
-					"category", Item.Category.SECURE_NOTE
-				).put(
-					"fields", fieldsJSONArray
-				).put(
-					"title", itemTitle
-				).put(
-					"vault",
-					new JSONObject(
-					).put(
-						"id", vault.getId()
-					)
-				)));
+		String itemPath = JenkinsResultsParserUtil.combine(
+			"/v1/vaults/", vault.getId(), "/items/", item.getId());
+
+		JSONObject itemJSONObject = _toJSONObject(itemPath);
 
 		if ((itemJSONObject == null) || !itemJSONObject.has("id")) {
 			throw new RuntimeException(
 				JenkinsResultsParserUtil.combine(
-					"Unable to create item ", itemTitle, " in vault ",
+					"Unable to find item ", item.getTitle(), " in vault ",
 					vault.getSecretReference()));
 		}
 
-		Item item = new Item(itemJSONObject.getString("id"), itemTitle, vault);
-
-		vault.addItem(item);
-
-		JSONArray itemFieldsJSONArray = itemJSONObject.optJSONArray(
+		JSONArray fieldsJSONArray = itemJSONObject.optJSONArray(
 			"fields", new JSONArray());
 
-		for (int i = 0; i < itemFieldsJSONArray.length(); i++) {
-			JSONObject itemFieldJSONObject = itemFieldsJSONArray.getJSONObject(
-				i);
+		fieldsJSONArray.put(_getItemFieldJSONObject(fieldLabel, fieldValue));
 
-			item.addItemField(
-				new ItemField(
-					itemFieldJSONObject.getString("id"),
-					itemFieldJSONObject.getString("label"),
-					itemFieldJSONObject.getString("value")));
+		itemJSONObject.put("fields", fieldsJSONArray);
+
+		JSONObject updatedItemJSONObject = _toJSONObject(
+			itemPath, HttpRequestMethod.PUT, String.valueOf(itemJSONObject));
+
+		if ((updatedItemJSONObject == null) ||
+			!updatedItemJSONObject.has("id")) {
+
+			throw new RuntimeException(
+				JenkinsResultsParserUtil.combine(
+					"Unable to create item field ", fieldLabel, " in item ",
+					item.getTitle()));
 		}
+
+		item.refresh();
 	}
 
-	private static Map<String, String> _generateJenkinsAPITokenMap() {
+	private static JSONObject _generateJenkinsAPITokenJSONObject(Date date) {
 		byte[] randomBytes = new byte[16];
 
 		SecureRandom secureRandom = new SecureRandom();
@@ -534,31 +541,34 @@ public abstract class SecretsUtil {
 				"Unable to generate API token hash", noSuchAlgorithmException);
 		}
 
-		Map<String, String> apiTokenMap = new LinkedHashMap<>();
+		String apiTokenValue = _toHexString(randomBytes);
 
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd HH:mm:ss.SSS z");
 
 		simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 
-		apiTokenMap.put("creationDate", simpleDateFormat.format(new Date()));
-
-		String secretValue = _toHexString(randomBytes);
-
-		apiTokenMap.put(
-			"hash",
-			_toHexString(
-				messageDigest.digest(
-					secretValue.getBytes(StandardCharsets.US_ASCII))));
-		apiTokenMap.put("plainValue", _API_TOKEN_VERSION + secretValue);
+		String creationDateString = simpleDateFormat.format(date);
 
 		UUID uuid = UUID.randomUUID();
 
-		apiTokenMap.put("uuid", uuid.toString());
-
-		apiTokenMap.put("version", _API_TOKEN_VERSION);
-
-		return apiTokenMap;
+		return new JSONObject(
+		).put(
+			"api.token", _API_TOKEN_VERSION + apiTokenValue
+		).put(
+			"api.token.creation.date", creationDateString
+		).put(
+			"api.token.hash",
+			_toHexString(
+				messageDigest.digest(
+					apiTokenValue.getBytes(StandardCharsets.US_ASCII)))
+		).put(
+			"api.token.name", "API Token - " + creationDateString
+		).put(
+			"api.token.uuid", uuid.toString()
+		).put(
+			"api.token.version", _API_TOKEN_VERSION
+		);
 	}
 
 	private static synchronized String _getAccessToken() {

@@ -5,11 +5,16 @@
 
 package com.liferay.site.cms.site.initializer.internal.search.spi.model.index.contributor;
 
+import com.liferay.document.library.kernel.model.DLFileEntry;
+import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFieldSettingConstants;
+import com.liferay.object.field.setting.util.ObjectFieldSettingUtil;
 import com.liferay.object.model.ObjectDefinition;
 import com.liferay.object.model.ObjectEntry;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.bag.ObjectFieldBag;
+import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -31,6 +36,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Jürgen Kappler
@@ -78,7 +84,25 @@ public class CMSContentOutboundLinksModelDocumentContributor
 
 				if (Objects.equals(
 						businessType,
-						ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP)) {
+						ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT) &&
+					_isReferenceFileSource(objectField)) {
+
+					for (String value :
+							_getValues(indexedValues, objectField)) {
+
+						long classPK = _getClassPK(
+							GetterUtil.getLong(value), objectEntry);
+
+						if (classPK > 0) {
+							outboundLinks.add(
+								CMSOutboundLinksUtil.getObjectEntryIdToken(
+									classPK));
+						}
+					}
+				}
+				else if (Objects.equals(
+							businessType,
+							ObjectFieldConstants.BUSINESS_TYPE_RELATIONSHIP)) {
 
 					long objectEntryId = GetterUtil.getLong(
 						indexedValues.get(objectField.getName()));
@@ -94,7 +118,7 @@ public class CMSContentOutboundLinksModelDocumentContributor
 							ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT)) {
 
 					for (String content :
-							_getContents(indexedValues, objectField)) {
+							_getValues(indexedValues, objectField)) {
 
 						for (String externalReferenceCode :
 								OutboundLinksUtil.
@@ -125,7 +149,36 @@ public class CMSContentOutboundLinksModelDocumentContributor
 		}
 	}
 
-	private List<String> _getContents(
+	private long _getClassPK(long fileEntryId, ObjectEntry objectEntry) {
+		if (fileEntryId <= 0) {
+			return 0;
+		}
+
+		DLFileEntry dlFileEntry = _dlFileEntryLocalService.fetchDLFileEntry(
+			fileEntryId);
+
+		if (dlFileEntry == null) {
+			return 0;
+		}
+
+		long classPK = dlFileEntry.getClassPK();
+
+		if ((classPK <= 0) || (classPK == objectEntry.getObjectEntryId())) {
+			return 0;
+		}
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionLocalService.fetchObjectDefinitionByClassName(
+				objectEntry.getCompanyId(), dlFileEntry.getClassName());
+
+		if (objectDefinition == null) {
+			return 0;
+		}
+
+		return classPK;
+	}
+
+	private List<String> _getValues(
 		Map<String, Serializable> indexedValues, ObjectField objectField) {
 
 		if (objectField.isLocalized()) {
@@ -147,16 +200,38 @@ public class CMSContentOutboundLinksModelDocumentContributor
 			}
 		}
 
-		Object content = indexedValues.get(objectField.getName());
+		Object indexedValue = indexedValues.get(objectField.getName());
 
-		if (content == null) {
+		if (indexedValue == null) {
 			return Collections.emptyList();
 		}
 
-		return Collections.singletonList(String.valueOf(content));
+		return Collections.singletonList(String.valueOf(indexedValue));
+	}
+
+	private boolean _isReferenceFileSource(ObjectField objectField) {
+		String fileSource = ObjectFieldSettingUtil.getValue(
+			ObjectFieldSettingConstants.NAME_FILE_SOURCE, objectField);
+
+		if (Objects.equals(
+				fileSource,
+				ObjectFieldSettingConstants.VALUE_CMS_BASIC_DOCUMENT) ||
+			Objects.equals(
+				fileSource, ObjectFieldSettingConstants.VALUE_DOCS_AND_MEDIA)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		CMSContentOutboundLinksModelDocumentContributor.class);
+
+	@Reference
+	private DLFileEntryLocalService _dlFileEntryLocalService;
+
+	@Reference
+	private ObjectDefinitionLocalService _objectDefinitionLocalService;
 
 }

@@ -8,8 +8,8 @@ heartbeatInterval: 10m
 image:
     pullPolicy: IfNotPresent
     pullSecrets: []
-    repository: us-central1-docker.pkg.dev/external-assets-nonprd/liferay-cloud-native/liferay-dxp-operator
-    tag: 0.0.1
+    repository: us-central1-docker.pkg.dev/external-assets-prd/liferay-cloud-native/liferay-dxp-operator
+    tag: 0.1.0
 marketplace:
     claimName: ""
     csi:
@@ -24,6 +24,22 @@ metrics:
 nameOverride: ""
 namespaceOverride: ""
 nodeSelector: {}
+onlineActivationWorkflow:
+    defaultEnvironmentName: liferay-default
+    enabled: false
+    image:
+        repository: dtzar/helm-kubectl
+        tag: 4.1.1
+    resources:
+        limits:
+            cpu: 250m
+            memory: 256Mi
+        requests:
+            cpu: 100m
+            memory: 128Mi
+    serviceAccountName: online-activation-service-account
+    ttlSecondsAfterCompletion: 3600
+    waitTimeoutSeconds: 300
 podAnnotations: {}
 podSecurityContext:
     runAsNonRoot: true

@@ -12,6 +12,7 @@ import {formatDateToTimeZone} from 'shared/util/date';
 import {
 	isWebhookUserAgent,
 	SessionEvent,
+	TimelineCampaign,
 	VerticalTimelineHeader,
 	VerticalTimelineIndividual,
 	VerticalTimelineItem,
@@ -92,6 +93,44 @@ const EventCountPill: FC<{totalEvents?: number}> = ({totalEvents}) =>
 		</span>
 	);
 
+/**
+ * Marks a row the visitor reached through a campaign, shown beside the row's
+ * event count. Every touch reads the same on the row itself; which campaign it
+ * was rides in the tooltip, so a long Salesforce campaign name never stretches
+ * the row. A touch whose identity matched no stored campaign names its raw id
+ * there instead, so the two states stay tellable apart without the row
+ * carrying a machine-readable string.
+ */
+const CampaignLabel: FC<{campaign: TimelineCampaign}> = ({
+	campaign: {campaignId, campaignName},
+}) => (
+	<span
+		className="campaign-label-root align-items-center d-inline-flex flex-shrink-0"
+		data-tooltip
+		data-tooltip-align="top"
+		title={
+			campaignName ??
+			(sub(Liferay.Language.get('unresolved-campaign-x'), [
+				campaignId,
+			]) as string)
+		}
+	>
+		<ClayLabel
+			className="campaign-label flex-shrink-0 font-weight-semi-bold m-0"
+			displayType="warning"
+			withClose={false}
+		>
+			<ClayLabel.ItemBefore>
+				<ClayIcon symbol="megaphone" />
+			</ClayLabel.ItemBefore>
+
+			<ClayLabel.ItemExpand>
+				{Liferay.Language.get('campaign-touch')}
+			</ClayLabel.ItemExpand>
+		</ClayLabel>
+	</span>
+);
+
 const DeviceIcon: FC<{browserName?: string; device?: string}> = ({
 	browserName,
 	device = '',
@@ -148,6 +187,22 @@ const DataSourceLabel: FC<{applicationId?: string; isWebhook: boolean}> = ({
 		</ClayLabel>
 	) : null;
 
+const BecameKnownLabel: FC = () => (
+	<ClayLabel
+		className="became-known-label flex-shrink-0 font-weight-semi-bold m-0"
+		displayType="success"
+		withClose={false}
+	>
+		<ClayLabel.ItemBefore>
+			<ClayIcon symbol="user" />
+		</ClayLabel.ItemBefore>
+
+		<ClayLabel.ItemExpand>
+			{Liferay.Language.get('became-known')}
+		</ClayLabel.ItemExpand>
+	</ClayLabel>
+);
+
 const ExternalLink: FC<{url: string}> = ({url}) => (
 	<ClayLink
 		className="subtitle align-items-center align-self-start d-inline-flex font-weight-normal mw-100 text-secondary"
@@ -191,7 +246,7 @@ const IndividualRow: FC<{item: VerticalTimelineIndividual}> = ({
 	item: {individualId, individualName, individualUrl, isAnonymous},
 }) => (
 	<li className="timeline-row individual-row bg-white w-100">
-		<div className="row-content flex-fill d-flex align-items-start">
+		<div className="row-content flex-fill d-flex align-items-center">
 			<ClaySticker className="individual-sticker" shape="user-icon">
 				<ClayIcon
 					color="gray"
@@ -238,6 +293,7 @@ const SessionRow: FC<IRowProps<VerticalTimelineSession>> = ({
 	item: {
 		applicationId,
 		attributes,
+		becameKnown,
 		browserName,
 		device,
 		endTime,
@@ -293,6 +349,8 @@ const SessionRow: FC<IRowProps<VerticalTimelineSession>> = ({
 				</div>
 
 				<div className="row-details ml-auto pl-3 d-flex align-items-center">
+					{becameKnown && <BecameKnownLabel />}
+
 					{LDPEnabled && (
 						<DataSourceLabel
 							applicationId={applicationId}
@@ -327,7 +385,15 @@ const SessionRow: FC<IRowProps<VerticalTimelineSession>> = ({
  */
 const PageGroupRow: FC<IRowProps<VerticalTimelinePageGroup>> = ({
 	LDPEnabled,
-	item: {descriptionUrl, nestedItems, subtitle, time, title, totalEvents},
+	item: {
+		campaign,
+		descriptionUrl,
+		nestedItems,
+		subtitle,
+		time,
+		title,
+		totalEvents,
+	},
 	timeZoneId,
 }) => {
 	const [expanded, setExpanded] = useState<boolean>(false);
@@ -368,7 +434,11 @@ const PageGroupRow: FC<IRowProps<VerticalTimelinePageGroup>> = ({
 					<div className="page-info">
 						{subtitle && <ExternalLink url={subtitle} />}
 
-						<EventCountPill totalEvents={totalEvents} />
+						<div className="row-metrics d-flex align-items-center">
+							<EventCountPill totalEvents={totalEvents} />
+
+							{campaign && <CampaignLabel campaign={campaign} />}
+						</div>
 					</div>
 				</div>
 			</RowMain>
@@ -389,7 +459,15 @@ const PageGroupRow: FC<IRowProps<VerticalTimelinePageGroup>> = ({
  * A single event. Expanding it reveals its raw attributes.
  */
 const EventRow: FC<IRowProps<SessionEvent>> = ({
-	item: {attributes, description, descriptionUrl, subtitle, time, title},
+	item: {
+		attributes,
+		campaign,
+		description,
+		descriptionUrl,
+		subtitle,
+		time,
+		title,
+	},
 	timeZoneId,
 }) => {
 	const [expanded, setExpanded] = useState<boolean>(false);
@@ -430,6 +508,12 @@ const EventRow: FC<IRowProps<SessionEvent>> = ({
 						)}
 
 						{subtitle && <ExternalLink url={subtitle} />}
+
+						{campaign && (
+							<div className="row-metrics d-flex align-items-center">
+								<CampaignLabel campaign={campaign} />
+							</div>
+						)}
 					</div>
 				</div>
 			</RowMain>

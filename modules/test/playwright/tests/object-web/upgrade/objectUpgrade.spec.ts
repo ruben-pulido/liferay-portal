@@ -97,7 +97,10 @@ test.describe.serial('View Custom Object1 after upgrade', () => {
 				'Custom Objects1 Updated'
 			);
 
-			await editObjectDetailsPage.saveObjectDefinition();
+			const {reload} =
+				await editObjectDetailsPage.saveObjectDefinitionReturningReload();
+
+			await reload;
 
 			await expect(editObjectDetailsPage.labelInput).toHaveValue(
 				'Custom Object1 Updated'
@@ -549,12 +552,14 @@ test.describe.serial('View Picklist after upgrade', () => {
 				);
 
 				await listTypeDefinitionPage.modalSaveButton.click();
-			}
 
-			for (const itemNumber of ['1', '2', '3']) {
+				await listTypeDefinitionPage.modalNameInput.waitFor({
+					state: 'hidden',
+				});
+
 				await expect(
 					listTypeDefinitionPage.frameLocator.getByRole('link', {
-						name: `Picklist Item ${itemNumber} Updated`,
+						name: `${itemName} Updated`,
 					})
 				).toBeVisible();
 			}

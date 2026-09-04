@@ -23,6 +23,13 @@ jest.mock(
 );
 
 jest.mock(
+	'../../../../src/main/resources/META-INF/resources/js/main_view/dashboard/governance/components/WorkflowAndContentProgress',
+	() => ({
+		WorkflowAndContentProgress: () => null,
+	})
+);
+
+jest.mock(
 	'../../../../src/main/resources/META-INF/resources/js/main_view/dashboard/governance/GovernanceService'
 );
 jest.mock(
@@ -33,6 +40,11 @@ const mockedGovernanceService = GovernanceService as jest.Mocked<
 	typeof GovernanceService
 >;
 const mockedSpaceService = SpaceService as jest.Mocked<typeof SpaceService>;
+
+const CONSTANTS = {
+	ercContentStructures: 'ERC_CONTENT_STRUCTURES',
+	ercFileTypes: 'ERC_FILE_TYPES',
+};
 
 const STATISTICS = {
 	approvedCount: 0,
@@ -68,10 +80,21 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 			data: STATISTICS,
 			error: null,
 		} as any);
+
+		mockedGovernanceService.getCMSEntryClassNames.mockResolvedValue(
+			'com.liferay.object.ObjectDefinition#A'
+		);
+
+		mockedGovernanceService.getDuplicateTopicsCount.mockResolvedValue(9);
 	});
 
 	it("shows each card's count from the statistics", async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		expect(
 			await within(
@@ -99,7 +122,12 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 	});
 
 	it('requests all spaces on the initial render', async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		await waitFor(() =>
 			expect(
@@ -109,7 +137,12 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 	});
 
 	it('re-fetches the counts scoped by the selected space', async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		await waitFor(() =>
 			expect(
@@ -135,7 +168,12 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 	});
 
 	it('shows the four sub-scores next to the global score', async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		const banner = await screen.findByRole('region', {
 			name: 'governance-health',
@@ -161,7 +199,12 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 	});
 
 	it('explains what the score measures in a popover', async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		const button = await screen.findByRole('button', {
 			name: 'about-governance-health',
@@ -183,7 +226,12 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 	});
 
 	it('closes the popover with the escape key', async () => {
-		render(<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />);
+		render(
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
+		);
 
 		const button = await screen.findByRole('button', {
 			name: 'about-governance-health',
@@ -202,7 +250,10 @@ describe('[CMS Dashboard] GovernanceDashboard', () => {
 
 	it('has no accessibility violations', async () => {
 		const {container} = render(
-			<GovernanceDashboard additionalProps={ADDITIONAL_PROPS} />
+			<GovernanceDashboard
+				additionalProps={ADDITIONAL_PROPS}
+				constants={CONSTANTS}
+			/>
 		);
 
 		await checkAccessibility({bestPractices: true, context: container});

@@ -6,6 +6,7 @@
 import {EventSource} from 'eventsource';
 import {fetch} from 'frontend-js-web';
 
+import postAuthorizationToken from '../utils/postAuthorizationToken';
 import {HttpRequestAction} from './types';
 
 const AI_HUB_ENDPOINT = '/o/ai-hub/v1.0';
@@ -69,49 +70,15 @@ export async function executeHttpRequestAction({
 	});
 }
 
-async function postAuthorizationToken() {
-	try {
-		const response = await fetch(
-			'/o/ai-hub-cell/v1.0/authorization-tokens',
-			{
-				method: 'POST',
-			}
-		);
-
-		if (!response.ok) {
-			throw new Error(
-				`Unable to generate authorization token: ${response.statusText}`
-			);
-		}
-
-		const data = await response.json();
-
-		if (!data?.accessToken) {
-			throw new Error('Unable to generate authorization token.');
-		}
-
-		if (!data?.userToken) {
-			throw new Error('Unable to generate user token.');
-		}
-
-		if (!data?.serviceURL) {
-			throw new Error('Unable to find service URL.');
-		}
-
-		return data;
-	}
-	catch (error) {
-		console.warn((error as Error).message);
-	}
-}
-
 export async function postChatByExternalReferenceCodeMessage({
 	chatContext,
+	chatbotExternalReferenceCode,
 	eventSourceReference,
 	instructionDefinitionScope,
 	message,
 }: {
 	chatContext: ChatContext;
+	chatbotExternalReferenceCode?: string;
 	eventSourceReference: string;
 	instructionDefinitionScope: string;
 	message: string;
@@ -119,13 +86,14 @@ export async function postChatByExternalReferenceCodeMessage({
 	const authorizationToken = await postAuthorizationToken();
 
 	if (!authorizationToken) {
-		return;
+		throw new Error('Unable to authorize the chat message request');
 	}
 
-	return await fetch(
+	const response = await fetch(
 		`${authorizationToken.serviceURL}${AI_HUB_ENDPOINT}/chats/by-external-reference-code/${eventSourceReference}/messages`,
 		{
 			body: JSON.stringify({
+				chatbotExternalReferenceCode,
 				context: chatContext,
 				instructionDefinitionScope,
 				text: message,
@@ -140,4 +108,10 @@ export async function postChatByExternalReferenceCodeMessage({
 			method: 'POST',
 		}
 	);
+
+	if (!response.ok) {
+		throw new Error(`Unable to send the chat message: ${response.status}`);
+	}
+
+	return response;
 }

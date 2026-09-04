@@ -117,6 +117,7 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.exception.SystemException;
+import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -4147,19 +4148,20 @@ public class JournalArticleLocalServiceImpl
 
 		int oldStatus = article.getStatus();
 
-		List<JournalArticle> articleVersions =
+		List<JournalArticle> versionArticles =
 			journalArticlePersistence.findByG_A(
-				article.getGroupId(), article.getArticleId());
+				article.getGroupId(), article.getArticleId(), QueryUtil.ALL_POS,
+				QueryUtil.ALL_POS, null, false);
 
-		articleVersions = ListUtil.sort(
-			articleVersions, ArticleVersionComparator.getInstance(false));
+		versionArticles = ListUtil.sort(
+			versionArticles, ArticleVersionComparator.getInstance(false));
 
 		List<ObjectValuePair<Long, Integer>> articleVersionStatusOVPs =
 			new ArrayList<>();
 
-		if ((articleVersions != null) && !articleVersions.isEmpty()) {
+		if ((versionArticles != null) && !versionArticles.isEmpty()) {
 			articleVersionStatusOVPs = getArticleVersionStatuses(
-				articleVersions);
+				versionArticles);
 		}
 
 		article = updateStatus(
@@ -4183,11 +4185,15 @@ public class JournalArticleLocalServiceImpl
 		String trashArticleId = _trashHelper.getTrashTitle(
 			trashEntry.getEntryId());
 
-		for (JournalArticle articleVersion : articleVersions) {
-			articleVersion.setArticleId(trashArticleId);
-			articleVersion.setStatus(WorkflowConstants.STATUS_IN_TRASH);
+		for (JournalArticle versionArticle : versionArticles) {
+			versionArticle.setArticleId(trashArticleId);
+			versionArticle.setStatus(WorkflowConstants.STATUS_IN_TRASH);
 
-			journalArticlePersistence.update(articleVersion);
+			versionArticle = journalArticlePersistence.update(versionArticle);
+
+			if (article.equals(versionArticle)) {
+				article = versionArticle;
+			}
 		}
 
 		articleResource.setArticleId(trashArticleId);
@@ -6412,7 +6418,13 @@ public class JournalArticleLocalServiceImpl
 
 				if (Objects.equals(
 						ddmFormFieldValue.getType(),
-						DDMFormFieldTypeConstants.IMAGE)) {
+						DDMFormFieldTypeConstants.DOCUMENT_LIBRARY)) {
+
+					content = _toDocumentLibraryJSON(content);
+				}
+				else if (Objects.equals(
+							ddmFormFieldValue.getType(),
+							DDMFormFieldTypeConstants.IMAGE)) {
 
 					content = addImageFileEntries(article, content);
 				}
@@ -8574,6 +8586,84 @@ public class JournalArticleLocalServiceImpl
 
 				return null;
 			});
+	}
+
+	private String _toDocumentLibraryJSON(String content)
+		throws PortalException {
+
+		if (ExportImportThreadLocal.isImportInProcess()) {
+			return content;
+		}
+
+		JSONObject valueJSONObject = null;
+
+		try {
+			valueJSONObject = _jsonFactory.createJSONObject(content);
+		}
+		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsonException);
+			}
+
+			return content;
+		}
+
+		FileEntry fileEntry = _getFileEntry(valueJSONObject);
+
+		if (fileEntry == null) {
+			return content;
+		}
+
+		Group group = _groupLocalService.fetchGroup(fileEntry.getGroupId());
+		String previewURL = _dlURLHelper.getPreviewURL(
+			fileEntry, fileEntry.getFileVersion(), null, StringPool.BLANK,
+			false, true);
+
+		JSONObject jsonObject = JSONUtil.put(
+			"alt", valueJSONObject.getString("alt")
+		).put(
+			"classNameId",
+			_classNameLocalService.getClassNameId(FileEntry.class)
+		).put(
+			"classPK", fileEntry.getFileEntryId()
+		).put(
+			"description", valueJSONObject.getString("description")
+		).put(
+			"extension", fileEntry.getExtension()
+		).put(
+			"externalReferenceCode", fileEntry.getExternalReferenceCode()
+		).put(
+			"fileEntryId", fileEntry.getFileEntryId()
+		).put(
+			"groupExternalReferenceCode",
+			() -> {
+				if (group == null) {
+					return StringPool.BLANK;
+				}
+
+				return group.getExternalReferenceCode();
+			}
+		).put(
+			"groupId", fileEntry.getGroupId()
+		).put(
+			"name", fileEntry.getFileName()
+		).put(
+			"resourcePrimKey", fileEntry.getPrimaryKey()
+		).put(
+			"size", fileEntry.getSize()
+		).put(
+			"title", fileEntry.getTitle()
+		).put(
+			"type", "document"
+		).put(
+			"url", previewURL
+		).put(
+			"uuid", fileEntry.getUuid()
+		);
+
+		jsonObject = JSONUtil.merge(valueJSONObject, jsonObject);
+
+		return jsonObject.toString();
 	}
 
 	private String _toJSON(

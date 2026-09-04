@@ -5,6 +5,7 @@
 
 export {default as AddMembersInput} from './common/components/AddMembersInput';
 export {default as Breadcrumb} from './common/components/Breadcrumb';
+export {default as EnterpriseOnlyPlaceholder} from './common/components/EnterpriseOnlyPlaceholder';
 export {default as EnterpriseProductMenuBanner} from './common/components/EnterpriseProductMenuBanner';
 export {default as SpaceSelector} from './common/components/SpaceSelector';
 export {default as SpaceSticker} from './common/components/SpaceSticker';
@@ -75,6 +76,7 @@ export {
 	AdditionalProps,
 } from './main_view/props_transformer/AssetsFDSPropsTransformer';
 export {default as AssetsFilesDropFDSPropsTransformer} from './main_view/props_transformer/AssetsFilesDropFDSPropsTransformer';
+export {default as BrokenLinksFDSPropsTransformer} from './main_view/props_transformer/BrokenLinksFDSPropsTransformer';
 export {default as BulkActionTaskReportFDSPropsTransformer} from './main_view/props_transformer/BulkActionTaskReportFDSPropsTransformer';
 export {default as CategoryFDSPropsTransformer} from './main_view/props_transformer/CategoryFDSPropsTransformer';
 export {default as CategoryUsagesFDSPropsTransformer} from './main_view/props_transformer/CategoryUsagesFDSPropsTransformer';

@@ -16,12 +16,18 @@ import {isolatedSiteTest} from '../../../fixtures/isolatedSiteTest';
 import {loginTest} from '../../../fixtures/loginTest';
 import {objectPagesTest} from '../../../fixtures/objectPagesTest';
 import {pageEditorPagesTest} from '../../../fixtures/pageEditorPagesTest';
+import {clickAndExpectToBeVisible} from '../../../utils/clickAndExpectToBeVisible';
 import getRandomString from '../../../utils/getRandomString';
+import {normalizeRestPath} from '../../../utils/normalizeRestPath';
 import {waitForAlert} from '../../../utils/waitForAlert';
 import getFormContainerDefinition from '../../layout-content-page-editor-web/main/utils/getFormContainerDefinition';
 import getPageDefinition from '../../layout-content-page-editor-web/main/utils/getPageDefinition';
 import {generateObjectFields} from '../utils/generateObjectFields';
 import {salesforceConfig} from './salesforce.config';
+
+const EXTERNAL_REFERENCE_CODE = 'Playwright_Test__c';
+
+const OBJECT_DEFINITION_NAME = 'PlaywrightTest';
 
 const test = mergeTests(
 	dataApiHelpersTest,
@@ -36,7 +42,47 @@ const test = mergeTests(
 	pageEditorPagesTest
 );
 
-test.beforeEach(async ({instanceSettingsPage, page}) => {
+const createdSalesforceObjectEntries = [] as {
+	applicationName: string;
+	objectFieldValues: string[];
+}[];
+
+test.afterEach(async ({apiHelpers}) => {
+	for (const {
+		applicationName,
+		objectFieldValues,
+	} of createdSalesforceObjectEntries) {
+		try {
+			const {items} =
+				await apiHelpers.objectEntry.getObjectDefinitionObjectEntries(
+					applicationName,
+					new URLSearchParams({
+						filter: objectFieldValues
+							.map(
+								(objectFieldValue) =>
+									`title eq '${objectFieldValue}'`
+							)
+							.join(' or '),
+					})
+				);
+
+			for (const {externalReferenceCode} of items ?? []) {
+				await apiHelpers.delete(
+					`${apiHelpers.baseUrl}${applicationName}/by-external-reference-code/${externalReferenceCode}`
+				);
+			}
+		}
+		catch (error) {
+			console.error(
+				`Unable to delete the Salesforce object entries: ${error}`
+			);
+		}
+	}
+
+	createdSalesforceObjectEntries.length = 0;
+});
+
+test.beforeEach(async ({apiHelpers, instanceSettingsPage, page}) => {
 	test.skip(
 		!salesforceConfig.salesforceLoginURL ||
 			!salesforceConfig.salesforceConsumerKey ||
@@ -47,6 +93,15 @@ test.beforeEach(async ({instanceSettingsPage, page}) => {
 	);
 
 	page.setViewportSize({height: 1080, width: 1920});
+
+	const leftoverObjectDefinition =
+		await apiHelpers.objectAdmin.getObjectDefinitionByName(
+			OBJECT_DEFINITION_NAME
+		);
+
+	if (leftoverObjectDefinition) {
+		await apiHelpers.deleteObjectDefinition(leftoverObjectDefinition.id);
+	}
 
 	await test.step('Setup Salesforce Instance Settings', async () => {
 		await instanceSettingsPage.goToInstanceSetting(
@@ -98,9 +153,9 @@ test('Assert CRUD with created custom object using Salesforce storage type', asy
 	const {body: objectDefinition} =
 		await objectDefinitionAPIClient.postObjectDefinition({
 			active: true,
-			externalReferenceCode: 'Playwright_Test__c',
+			externalReferenceCode: EXTERNAL_REFERENCE_CODE,
 			label: {en_US: 'Playwright Test'},
-			name: 'PlaywrightTest',
+			name: OBJECT_DEFINITION_NAME,
 			objectFields,
 			panelCategoryKey: 'control_panel.object',
 			pluralLabel: {en_US: 'Playwright Tests'},
@@ -135,6 +190,11 @@ test('Assert CRUD with created custom object using Salesforce storage type', asy
 	const objectFieldValue = getRandomString();
 	const objectFieldUpdatedValue = getRandomString();
 
+	createdSalesforceObjectEntries.push({
+		applicationName: normalizeRestPath(objectDefinition.restContextPath!),
+		objectFieldValues: [objectFieldValue, objectFieldUpdatedValue],
+	});
+
 	await test.step('Create Object Entry', async () => {
 		await viewObjectEntriesPage.goto(objectDefinition.className);
 		await viewObjectEntriesPage.clickAddObjectEntry(
@@ -149,13 +209,16 @@ test('Assert CRUD with created custom object using Salesforce storage type', asy
 
 		await viewObjectEntriesPage.saveObjectEntryButton.click();
 		await waitForAlert(page);
-		await viewObjectEntriesPage.backButton.click();
 	});
 
 	await test.step('Read Object Entry', async () => {
-		await expect(
-			page.getByRole('cell', {exact: true, name: objectFieldValue})
-		).toBeVisible();
+		await clickAndExpectToBeVisible({
+			target: page.getByRole('cell', {
+				exact: true,
+				name: objectFieldValue,
+			}),
+			trigger: viewObjectEntriesPage.backButton,
+		});
 	});
 
 	await test.step('Update Object Entry', async () => {
@@ -173,11 +236,14 @@ test('Assert CRUD with created custom object using Salesforce storage type', asy
 
 		await viewObjectEntriesPage.saveObjectEntryButton.click();
 		await expect(viewObjectEntriesPage.successMessage).toBeVisible();
-		await viewObjectEntriesPage.backButton.click();
 
-		await expect(
-			page.getByRole('cell', {exact: true, name: objectFieldUpdatedValue})
-		).toBeVisible();
+		await clickAndExpectToBeVisible({
+			target: page.getByRole('cell', {
+				exact: true,
+				name: objectFieldUpdatedValue,
+			}),
+			trigger: viewObjectEntriesPage.backButton,
+		});
 	});
 
 	await test.step('Delete Object Entry', async () => {
@@ -220,9 +286,9 @@ test('Assert CRUD with created custom object using Salesforce storage type in fo
 	const {body: objectDefinition} =
 		await objectDefinitionAPIClient.postObjectDefinition({
 			active: true,
-			externalReferenceCode: 'Playwright_Test__c',
+			externalReferenceCode: EXTERNAL_REFERENCE_CODE,
 			label: {en_US: 'Playwright Test'},
-			name: 'PlaywrightTest',
+			name: OBJECT_DEFINITION_NAME,
 			objectFields,
 			panelCategoryKey: 'control_panel.object',
 			pluralLabel: {en_US: 'Playwright Tests'},
@@ -277,6 +343,11 @@ test('Assert CRUD with created custom object using Salesforce storage type in fo
 	});
 
 	const entryValue = getRandomString();
+
+	createdSalesforceObjectEntries.push({
+		applicationName: normalizeRestPath(objectDefinition.restContextPath!),
+		objectFieldValues: [entryValue],
+	});
 
 	await test.step('Submit an entry via the published form', async () => {
 		await page.goto(`/web${site.friendlyUrlPath}${layout.friendlyUrlPath}`);

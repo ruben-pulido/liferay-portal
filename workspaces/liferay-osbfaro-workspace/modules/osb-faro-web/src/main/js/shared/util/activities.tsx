@@ -6,11 +6,7 @@ import getEventDashboardUrl, {
 } from './getEventDashboardUrl';
 import {getCustomDateFormat} from 'shared/util/date';
 import {getSafeDecodedURIComponent} from './util';
-import {
-	AssetTypes,
-	LIFERAY_DXP_APPLICATION_IDS,
-	TimeIntervals,
-} from 'shared/util/constants';
+import {AssetTypes, TimeIntervals} from 'shared/util/constants';
 import {RangeSelectors} from 'shared/types';
 import {sub} from 'shared/util/lang';
 import {toLocale} from 'shared/util/numbers';
@@ -25,8 +21,21 @@ export const INTERVAL_MAP = {
 	W: TimeIntervals.Week,
 };
 
+/**
+ * The Salesforce Campaign a touch carried. `campaignId` is the raw value the
+ * tenant's configured campaign-identity query param held, and is always
+ * present. `campaignName` is the campaign that id resolved to, and is null when
+ * it matched none — an unresolved touch the timeline still has to show, rather
+ * than one that carried no campaign at all (which produces no campaign here).
+ */
+export type TimelineCampaign = {
+	campaignId: string;
+	campaignName: string | null;
+};
+
 export type SessionEvent = {
 	attributes: Record<string, unknown>;
+	campaign?: TimelineCampaign;
 	description: string;
 	descriptionUrl?: string;
 	subtitle: string | undefined;
@@ -54,6 +63,7 @@ export type VerticalTimelineHeader = {
 };
 
 export type VerticalTimelinePageGroup = {
+	campaign?: TimelineCampaign;
 	descriptionUrl?: string;
 	nestedItems: SessionEvent[];
 	pageGroup: true;
@@ -66,6 +76,7 @@ export type VerticalTimelinePageGroup = {
 export type VerticalTimelineSession = {
 	applicationId: string;
 	attributes: Record<string, unknown>;
+	becameKnown?: boolean;
 	browserName?: string;
 	device: string;
 	endTime?: Date | string | null;
@@ -173,6 +184,20 @@ export const isWebhookUserAgent = (userAgent?: string): boolean =>
 	!!userAgent?.toLowerCase().includes('webhook');
 
 /**
+ * The campaign a single event's touch carried, or undefined when it carried
+ * none. A resolved and an unresolved touch are both campaigns — only a touch
+ * with no campaign identity at all produces nothing, so the timeline can tell
+ * "this campaign did not resolve" apart from "there was no campaign here".
+ */
+export const getEventCampaign = ({
+	utmCampaignId,
+	utmCampaignName,
+}: UserSessionEvent): TimelineCampaign | undefined =>
+	utmCampaignId
+		? {campaignId: utmCampaignId, campaignName: utmCampaignName ?? null}
+		: undefined;
+
+/**
  * Formats UserSessions events and maps its attributes to the required to be used in VerticalTimeline component.
  * @param {Array} events Array of UserSessions events.
  * @returns {Array.<Object>} Array of objects for a vertical timeline.
@@ -197,6 +222,8 @@ export const formatEvents = (
 			properties,
 		} = event;
 
+		const campaign = getEventCampaign(event);
+
 		return {
 			attributes: {
 				applicationId,
@@ -211,6 +238,7 @@ export const formatEvents = (
 					),
 				}),
 			},
+			...(campaign && {campaign}),
 			description: assetTitle || pageTitle,
 			descriptionUrl: getEventDashboardUrl(event, {
 				...context,
@@ -226,30 +254,26 @@ export const formatEvents = (
 };
 
 /**
- * Only DXP events are page bound — they carry the page they happened on in
- * their canonical URL. Events from an external data source are not, so they get
- * no key and stay out of the grouping.
+ * The key the API grouped the event under, which is also the key it paged the
+ * results on. Deriving it here as well would let the rendered groups and the
+ * page boundaries drift apart, so the backend owns it: it is the page's
+ * canonical URL, and absent for an event that is not page bound.
  */
-const getPageGroupKey = ({
-	applicationId,
-	canonicalUrl,
-	url,
-}: UserSessionEvent): string =>
-	LIFERAY_DXP_APPLICATION_IDS.has(applicationId)
-		? canonicalUrl || url || ''
-		: '';
+const getPageGroupKey = ({pageGroupId}: UserSessionEvent): string =>
+	pageGroupId || '';
 
 /**
  * Groups a session's events by the page they happened on, so the activity
  * stream shows one entry per visited page instead of a raw list of events.
  *
- * Events are keyed by their canonical URL, so a page visited more than once in
- * the same session collapses into a single entry carrying the time range and
- * event count of every event on that page. Events that are not page bound (an
- * external data source, or a DXP event with no URL) stay as direct session
- * items. Groups and those loose events are ordered by their most recent event,
- * newest first, matching how the timeline already orders days and sessions.
- * Within a group the events keep the order they arrive in.
+ * Events are keyed by the page group the API assigned them, so a page visited
+ * more than once in the same session collapses into a single entry carrying the
+ * time range and event count of every event on that page. Events that are not
+ * page bound (an external data source, or a DXP event with no URL) carry no key
+ * and stay as direct session items. Groups and those loose events are ordered by
+ * their most recent event, newest first, matching how the timeline already
+ * orders days and sessions. Within a group the events keep the order they
+ * arrive in.
  */
 export const groupEventsByPage = (
 	events: UserSessionEvent[],
@@ -315,17 +339,28 @@ export const groupEventsByPage = (
 			context
 		);
 
+		// Every event on the page carries the campaign of the touch that
+		// brought the visitor to it, so the group takes the first one it
+		// finds — preferring the page-view event, the touch itself.
+
+		const groupCampaign = [pageEvent, ...pageEvents].reduce<
+			TimelineCampaign | undefined
+		>((campaign, event) => campaign ?? getEventCampaign(event), undefined);
+
 		sortableItems.push({
 			item: {
+				...(groupCampaign && {campaign: groupCampaign}),
 				descriptionUrl:
 					formattedPageEvents[Math.max(pageEventIndex, 0)]
 						.descriptionUrl,
 
-				// The page group's own subtitle already shows the page URL, so
-				// its nested events don't repeat it.
+				// The page group's own subtitle and campaign label already show
+				// the page URL and the touch it came from, so its nested
+				// events don't repeat either.
 
 				nestedItems: formattedPageEvents.map((event) => ({
 					...event,
+					campaign: undefined,
 					subtitle: undefined,
 				})),
 				pageGroup: true,
@@ -455,6 +490,7 @@ export const formatSessions = (
 					timezoneOffset: session.timezoneOffset,
 					userAgent: session.userAgent,
 				},
+				becameKnown: session.becameKnown,
 				browserName: session.browserName,
 				device: session.deviceType,
 				endTime: session.completeDate,

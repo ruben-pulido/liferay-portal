@@ -61,7 +61,7 @@ customInitContainers:
                         -   name: LIFERAY_SYNC_DEST
                             value: /opt/liferay/deploy/license.xml
                         -   name: LIFERAY_SYNC_INTERVAL
-                            value: {{ .license.syncInterval | quote }}
+                            value: {{ .licensing.syncInterval | quote }}
                         -   name: LIFERAY_SYNC_MARKER
                             value: /opt/liferay/.liferay-license-sync.sha
                         -   name: LIFERAY_SYNC_SOURCE
@@ -186,11 +186,11 @@ customInitContainers:
 
                             if [ -d /opt/liferay/deploy ] && [ -z "$(ls --all /temp/liferay/deploy/*license* 2>/dev/null)" ]
                             then
-                                if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls --all /temp/liferay/data/license/*.li)" ]
+                                if [ ! -d /temp/liferay/data/license ] || [ -z "$(ls --all /temp/liferay/data/license/*.li 2>/dev/null)" ]
                                 then
                                     mkdir --parents /temp/liferay/deploy
 
-                                    cp --force --verbose /opt/liferay/deploy/* /temp/liferay/deploy
+                                    cp --force --recursive --verbose /opt/liferay/deploy/. /temp/liferay/deploy
                                 fi
                             fi
                     image: {{ printf "%s:%s" .image.repository (.image.tag | toString) }}
@@ -287,11 +287,6 @@ customServicePorts: {}
 customVolumeClaimTemplates: {}
 customVolumeMounts: {}
 customVolumes:
-    x-license:
-        -   name: liferay-license
-            secret:
-                optional: true
-                secretName: liferay-license
     x-liferay-init-scripts-default:
         -   configMap:
                 defaultMode: 0755
@@ -367,10 +362,19 @@ image:
     tag: 2026.q1.8-lts
 initContainers: []
 license:
+    enabled: false
+    initScriptsVolumeName: liferay-init-scripts-default
+    secretName: ""
+licensing:
     activationCodeSecretKey: activationCode
     activationCodeSecretName: ""
     enabled: false
-    initScriptsVolumeName: liferay-init-scripts-default
+    offline: false
+    offlineActivationBundle: ""
+    onlineActivationWorkflow:
+        clusterRoleName: online-activation-cluster-role
+        enabled: true
+        serviceAccountName: online-activation-service-account
     syncInterval: 60
 livenessProbe:
     failureThreshold: 3
@@ -388,7 +392,6 @@ marketplace:
     enabled: false
     initScriptsVolumeName: liferay-init-scripts-default
     size: 10Gi
-    storageClassName: ""
     syncInterval: 600
 nameOverride: ""
 network:

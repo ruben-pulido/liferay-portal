@@ -13,6 +13,7 @@ import {
 	createCategorizationEventSource,
 	postCategorizationAgentInstance,
 } from '../../../../src/main/resources/META-INF/resources/js/Categorization/api';
+import {CATEGORIZE_EVENT} from '../../../../src/main/resources/META-INF/resources/js/Categorization/events';
 import {getCandidateCategories} from '../../../../src/main/resources/META-INF/resources/js/Categorization/services/getCandidateCategories';
 import {getExistingTags} from '../../../../src/main/resources/META-INF/resources/js/Categorization/services/getExistingTags';
 import {ECategorizationAgent} from '../../../../src/main/resources/META-INF/resources/js/Categorization/types';
@@ -59,8 +60,22 @@ function createFakeEventSource() {
 	};
 }
 
+function fireCategorizeEvent(payload: {agent: string}) {
+	const detachedHandlers = (Liferay.detach as jest.Mock).mock.calls.map(
+		([, handler]) => handler
+	);
+
+	(Liferay.on as jest.Mock).mock.calls
+		.filter(
+			([name, handler]) =>
+				name === CATEGORIZE_EVENT && !detachedHandlers.includes(handler)
+		)
+		.forEach(([, handler]) => handler(payload));
+}
+
 describe('CategorizationMessageBalloon', () => {
 	let mockFire: jest.Mock;
+	let setBalloonGenerating: jest.Mock;
 
 	beforeEach(() => {
 		mockCreateEventSource.mockReset();
@@ -70,6 +85,10 @@ describe('CategorizationMessageBalloon', () => {
 		mockGetExistingTags.mockReset();
 
 		mockFire = jest.fn();
+		setBalloonGenerating = jest.fn();
+
+		(Liferay.on as jest.Mock).mockClear();
+		(Liferay.detach as jest.Mock).mockClear();
 
 		global.Liferay = {
 			...global.Liferay,
@@ -81,6 +100,243 @@ describe('CategorizationMessageBalloon', () => {
 		(Liferay.Language.get as jest.Mock).mockImplementation(
 			(key: string) => key
 		);
+	});
+
+	it('reports loading through the shared state instead of its own indicator', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-7');
+		});
+
+		expect(screen.queryByText('generating-tags')).not.toBeInTheDocument();
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			true
+		);
+
+		await act(async () => {
+			fakeEventSource.emit(
+				'L_GENERATE_TAGS',
+				JSON.stringify({
+					data: '{"suggestions":[{"name":"Culture","isNew":true}]}',
+					nodeName: 'llm',
+				})
+			);
+		});
+
+		expect(screen.getByText('Culture')).toBeInTheDocument();
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			false
+		);
+	});
+
+	it('clears the shared state when it unmounts while loading', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		let unmount!: () => void;
+
+		await act(async () => {
+			unmount = render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			).unmount;
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-9');
+		});
+
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			true
+		);
+
+		act(() => {
+			unmount();
+		});
+
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			false
+		);
+	});
+
+	it('reports a replaced request when a new call to the same agent opens', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-11');
+		});
+
+		await act(async () => {
+			fireCategorizeEvent({agent: 'L_GENERATE_TAGS'});
+		});
+
+		expect(
+			screen.getByText('this-request-was-replaced-by-a-newer-one')
+		).toBeInTheDocument();
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			false
+		);
+		expect(fakeEventSource.close).toHaveBeenCalled();
+	});
+
+	it('keeps a loading balloon when the new call is for the other agent', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-13');
+		});
+
+		await act(async () => {
+			fireCategorizeEvent({agent: 'L_AUTO_CATEGORIZE'});
+		});
+
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			true
+		);
+		expect(fakeEventSource.close).not.toHaveBeenCalled();
+	});
+
+	it('keeps the suggestions of a balloon that already answered', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-12');
+		});
+
+		await act(async () => {
+			fakeEventSource.emit(
+				'L_GENERATE_TAGS',
+				JSON.stringify({
+					data: '{"suggestions":[{"name":"Culture","isNew":true}]}',
+					nodeName: 'llm',
+				})
+			);
+		});
+
+		await act(async () => {
+			fireCategorizeEvent({agent: 'L_GENERATE_TAGS'});
+		});
+
+		expect(screen.getByText('Culture')).toBeInTheDocument();
+	});
+
+	it('reports a replaced request while it is regenerating', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-14');
+		});
+
+		await act(async () => {
+			fakeEventSource.emit(
+				'L_GENERATE_TAGS',
+				JSON.stringify({
+					data: '{"suggestions":[{"name":"Culture","isNew":true}]}',
+					nodeName: 'llm',
+				})
+			);
+		});
+
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', {name: 'try-again'}));
+		});
+
+		await act(async () => {
+			fireCategorizeEvent({agent: 'L_GENERATE_TAGS'});
+		});
+
+		expect(
+			screen.getByText('this-request-was-replaced-by-a-newer-one')
+		).toBeInTheDocument();
 	});
 
 	it('counts only the tags not already on the content in the confirmation', async () => {
@@ -103,6 +359,7 @@ describe('CategorizationMessageBalloon', () => {
 					content="Japan"
 					currentTagNames={['Japan']}
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});
@@ -129,6 +386,31 @@ describe('CategorizationMessageBalloon', () => {
 		expect(screen.queryByText(/added 3 tags/)).not.toBeInTheDocument();
 	});
 
+	it('does not lock the chat when the channel is unavailable', async () => {
+		mockCreateEventSource.mockResolvedValue(null);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		expect(
+			screen.getByText('an-unexpected-error-occurred')
+		).toBeInTheDocument();
+		expect(setBalloonGenerating).toHaveBeenLastCalledWith(
+			expect.any(String),
+			false
+		);
+	});
+
 	it('does not show a confirmation when no new categories are added', async () => {
 		(Liferay.Language.get as jest.Mock).mockImplementation((key: string) =>
 			key === 'great-i-have-added-x-categories-to-your-content'
@@ -152,6 +434,7 @@ describe('CategorizationMessageBalloon', () => {
 					content="Japan"
 					currentCategoryIds={[39001, 39002]}
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});
@@ -200,6 +483,7 @@ describe('CategorizationMessageBalloon', () => {
 					content="Japan"
 					currentCategoryIds={[39001]}
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});
@@ -240,6 +524,7 @@ describe('CategorizationMessageBalloon', () => {
 					cmsGroupId={20124}
 					content="Japan"
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});
@@ -303,6 +588,7 @@ describe('CategorizationMessageBalloon', () => {
 					content="Japan"
 					currentTagNames={['japan']}
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});
@@ -328,6 +614,94 @@ describe('CategorizationMessageBalloon', () => {
 		).toBeInTheDocument();
 	});
 
+	it('keeps the balloon with its own indicator while regenerating', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		await act(async () => {
+			render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			);
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-8');
+		});
+
+		await act(async () => {
+			fakeEventSource.emit(
+				'L_GENERATE_TAGS',
+				JSON.stringify({
+					data: '{"suggestions":[{"name":"Culture","isNew":true}]}',
+					nodeName: 'llm',
+				})
+			);
+		});
+
+		setBalloonGenerating.mockClear();
+
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', {name: 'try-again'}));
+		});
+
+		expect(screen.getByText('generating-tags')).toBeInTheDocument();
+		expect(setBalloonGenerating).not.toHaveBeenCalledWith(
+			expect.any(String),
+			true
+		);
+	});
+
+	it('leaves the shared state alone when it unmounts after loading', async () => {
+		const fakeEventSource = createFakeEventSource();
+
+		mockCreateEventSource.mockResolvedValue(fakeEventSource as never);
+		mockGetExistingTags.mockResolvedValue([]);
+
+		let unmount!: () => void;
+
+		await act(async () => {
+			unmount = render(
+				<CategorizationMessageBalloon
+					agent={ECategorizationAgent.GENERATE_TAGS}
+					cmsGroupId={20124}
+					content="Japan"
+					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
+				/>
+			).unmount;
+		});
+
+		await act(async () => {
+			fakeEventSource.emit('Subscribe', 'sink-10');
+		});
+
+		await act(async () => {
+			fakeEventSource.emit(
+				'L_GENERATE_TAGS',
+				JSON.stringify({
+					data: '{"suggestions":[{"name":"Culture","isNew":true}]}',
+					nodeName: 'llm',
+				})
+			);
+		});
+
+		setBalloonGenerating.mockClear();
+
+		act(() => {
+			unmount();
+		});
+
+		expect(setBalloonGenerating).not.toHaveBeenCalled();
+	});
+
 	it('marks unknown tag targets as new and known ones as existing', async () => {
 		mockGetExistingTags.mockResolvedValue(['japan']);
 
@@ -338,6 +712,7 @@ describe('CategorizationMessageBalloon', () => {
 					cmsGroupId={20124}
 					content="Japan"
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 					targets={['kayaking', 'Japan']}
 				/>
 			);
@@ -365,6 +740,7 @@ describe('CategorizationMessageBalloon', () => {
 					cmsGroupId={20124}
 					content="Japan"
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 					targets={['fishing']}
 				/>
 			);
@@ -389,6 +765,7 @@ describe('CategorizationMessageBalloon', () => {
 					cmsGroupId={20124}
 					content="Japan"
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 					targets={['Fishing']}
 				/>
 			);
@@ -414,6 +791,7 @@ describe('CategorizationMessageBalloon', () => {
 					cmsGroupId={20124}
 					content="Japan"
 					scopeId={555}
+					setBalloonGenerating={setBalloonGenerating}
 				/>
 			);
 		});

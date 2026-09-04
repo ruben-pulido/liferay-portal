@@ -50,6 +50,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 
 	@Override
 	public void deletePortalInstance(String portalInstanceId) throws Exception {
+		_checkPermission();
+
 		Company company = _companyService.getCompanyByWebId(portalInstanceId);
 
 		_companyService.deleteCompany(company.getCompanyId());
@@ -59,6 +61,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	public PortalInstance getPortalInstance(String portalInstanceId)
 		throws Exception {
 
+		_checkPermission();
+
 		return _toPortalInstance(
 			_companyService.getCompanyByWebId(portalInstanceId));
 	}
@@ -66,6 +70,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	@Override
 	public Page<PortalInstance> getPortalInstancesPage(Boolean skipDefault)
 		throws Exception {
+
+		_checkPermission();
 
 		boolean finalSkipDefault = GetterUtil.getBoolean(skipDefault);
 
@@ -89,6 +95,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 			String portalInstanceId, PortalInstance portalInstance)
 		throws Exception {
 
+		_checkPermission();
+
 		Company company = _companyService.getCompanyByWebId(portalInstanceId);
 
 		String virtualHostname = GetterUtil.getString(
@@ -105,6 +113,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	@Override
 	public PortalInstance postPortalInstance(PortalInstance portalInstance)
 		throws Exception {
+
+		_checkPermission();
 
 		Admin admin = portalInstance.getAdmin();
 
@@ -264,6 +274,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	public void putPortalInstanceActivate(String portalInstanceId)
 		throws Exception {
 
+		_checkPermission();
+
 		Company company = _companyService.getCompanyByWebId(portalInstanceId);
 
 		_companyService.updateCompany(
@@ -274,6 +286,8 @@ public class PortalInstanceResourceImpl extends BasePortalInstanceResourceImpl {
 	@Override
 	public void putPortalInstanceDeactivate(String portalInstanceId)
 		throws Exception {
+
+		_checkPermission();
 
 		Company company = _companyService.getCompanyByWebId(portalInstanceId);
 

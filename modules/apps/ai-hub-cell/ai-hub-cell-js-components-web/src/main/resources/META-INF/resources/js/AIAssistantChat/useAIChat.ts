@@ -41,11 +41,12 @@ export interface AIChat {
 	markFeedbackGiven: (index: number) => void;
 	message: string;
 	messages: Message[];
-	messagesEndRef: React.RefObject<HTMLDivElement>;
+	messagesContainerRef: React.RefObject<HTMLDivElement>;
 	reportContext: AIChatReportContext | null;
 	runtimeContextRef: React.MutableRefObject<ChatContext>;
 	scrollToBottom: () => void;
-	sendMessage: (text: string) => void;
+	sendMessage: (text: string) => Promise<boolean>;
+	setBalloonGenerating: (key: string, generating: boolean) => void;
 	setIsGenerating: React.Dispatch<React.SetStateAction<boolean>>;
 	setMessage: (message: string) => void;
 	setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
@@ -54,6 +55,7 @@ export interface AIChat {
 }
 
 interface UseAIChatProps {
+	chatbotExternalReferenceCode?: string;
 	context?: ChatContext;
 	enableFreeFormCategorization?: boolean;
 	getContext?: () => ChatContext;
@@ -65,6 +67,7 @@ interface UseAIChatProps {
 }
 
 export default function useAIChat({
+	chatbotExternalReferenceCode,
 	context,
 	enableFreeFormCategorization = false,
 	getContext,
@@ -77,9 +80,10 @@ export default function useAIChat({
 	const [feedbackGiven, setFeedbackGiven] = useState<Record<number, boolean>>(
 		{}
 	);
+	const [generatingBalloons, setGeneratingBalloons] = useState<string[]>([]);
 	const [isGenerating, setIsGenerating] = useState<boolean>(false);
-	const [messages, setMessages] = useState<Message[]>([]);
 	const [message, setMessage] = useState<string>('');
+	const [messages, setMessages] = useState<Message[]>([]);
 	const [reportContext, setReportContext] =
 		useState<AIChatReportContext | null>(null);
 
@@ -96,7 +100,10 @@ export default function useAIChat({
 	const instructionDefinitionScopeRef = useRef<string>(
 		instructionDefinitionScope
 	);
-	const messagesEndRef = useRef<HTMLDivElement | null>(null);
+	const chatbotExternalReferenceCodeRef = useRef<string | undefined>(
+		chatbotExternalReferenceCode
+	);
+	const messagesContainerRef = useRef<HTMLDivElement | null>(null);
 	const sourceLanguageIdRef = useRef<string>(
 		Liferay.ThemeDisplay.getLanguageId()
 	);
@@ -109,6 +116,8 @@ export default function useAIChat({
 	>(onOpenRequested);
 
 	useEffect(() => {
+		chatbotExternalReferenceCodeRef.current = chatbotExternalReferenceCode;
+
 		if (context !== undefined) {
 			contextRef.current = context;
 		}
@@ -119,6 +128,7 @@ export default function useAIChat({
 		onCloseRequestedRef.current = onCloseRequested;
 		onOpenRequestedRef.current = onOpenRequested;
 	}, [
+		chatbotExternalReferenceCode,
 		context,
 		enableFreeFormCategorization,
 		getContext,
@@ -137,13 +147,31 @@ export default function useAIChat({
 			: '[data-ai-assistant-field-id]';
 	}, [triggerRef]);
 
+	const setBalloonGenerating = useCallback(
+		(key: string, generating: boolean) => {
+			setGeneratingBalloons((previousGeneratingBalloons) =>
+				generating
+					? [...previousGeneratingBalloons, key]
+					: previousGeneratingBalloons.filter(
+							(generatingKey) => generatingKey !== key
+						)
+			);
+		},
+		[]
+	);
+
 	const scrollToBottom = useCallback(() => {
-		messagesEndRef.current?.scrollIntoView({behavior: 'smooth'});
+		const container = messagesContainerRef.current;
+
+		container?.scrollTo?.({
+			behavior: 'smooth',
+			top: container.scrollHeight,
+		});
 	}, []);
 
 	useEffect(() => {
 		scrollToBottom();
-	}, [messages, scrollToBottom]);
+	}, [generatingBalloons, isGenerating, messages, scrollToBottom]);
 
 	useEffect(() => {
 		const onLocaleChanged = ({languageId}: {languageId: string}) => {
@@ -157,60 +185,89 @@ export default function useAIChat({
 		};
 	}, []);
 
-	const sendMessage = useCallback((text: string) => {
-		if (!text.trim()) {
-			return;
-		}
+	const reportSendFailure = useCallback(() => {
+		setIsGenerating(false);
 
 		setMessages((previousMessages) => [
 			...previousMessages,
-			{sender: 'user', text},
+			{
+				error: true,
+				sender: 'assistant',
+				text: Liferay.Language.get('an-unexpected-error-occurred'),
+			},
 		]);
 
-		setMessage('');
-
-		if (!eventSourceReference.current) {
-			return;
-		}
-
-		setIsGenerating(true);
-
-		const postToChat = () => {
-			postChatByExternalReferenceCodeMessage({
-				chatContext: {
-					...contextRef.current,
-					...getContextRef.current?.(),
-					...runtimeContextRef.current,
-				},
-				eventSourceReference: eventSourceReference.current as string,
-				instructionDefinitionScope:
-					instructionDefinitionScopeRef.current,
-				message: text,
-			}).catch(() => setIsGenerating(false));
-		};
-
-		if (!enableFreeFormCategorizationRef.current) {
-			postToChat();
-
-			return;
-		}
-
-		classifyCategorizationIntent(text)
-			.then((verdict) => {
-				if (verdict.passthrough || !verdict.actions.length) {
-					postToChat();
-
-					return;
-				}
-
-				setIsGenerating(false);
-
-				Liferay.fire(REQUEST_CATEGORIZE_EVENT, {
-					actions: verdict.actions,
-				});
-			})
-			.catch(() => postToChat());
+		Liferay.Util.openToast({
+			message: Liferay.Language.get('an-unexpected-error-occurred'),
+			type: 'danger',
+		});
 	}, []);
+
+	const sendMessage = useCallback(
+		async (text: string) => {
+			if (!text.trim()) {
+				return false;
+			}
+
+			setMessages((previousMessages) => [
+				...previousMessages,
+				{sender: 'user', text},
+			]);
+
+			setMessage('');
+
+			if (!eventSourceReference.current) {
+				reportSendFailure();
+
+				return false;
+			}
+
+			setIsGenerating(true);
+
+			const postToChat = () =>
+				postChatByExternalReferenceCodeMessage({
+					chatContext: {
+						...contextRef.current,
+						...getContextRef.current?.(),
+						...runtimeContextRef.current,
+					},
+					chatbotExternalReferenceCode:
+						chatbotExternalReferenceCodeRef.current,
+					eventSourceReference:
+						eventSourceReference.current as string,
+					instructionDefinitionScope:
+						instructionDefinitionScopeRef.current,
+					message: text,
+				})
+					.then(() => true)
+					.catch(() => {
+						reportSendFailure();
+
+						return false;
+					});
+
+			if (!enableFreeFormCategorizationRef.current) {
+				return postToChat();
+			}
+
+			return classifyCategorizationIntent(text)
+				.then((verdict) => {
+					if (verdict.passthrough || !verdict.actions.length) {
+						return postToChat();
+					}
+
+					setIsGenerating(false);
+
+					Liferay.fire(REQUEST_CATEGORIZE_EVENT, {
+						actions: verdict.actions,
+					});
+
+					return true;
+				})
+				.catch(() => postToChat());
+		},
+		[reportSendFailure]
+	);
 
 	useEffect(() => {
 		initialMessageRef.current = initialMessage;
@@ -497,15 +554,16 @@ export default function useAIChat({
 		fileUploadSelectorRef,
 		getContextRef,
 		giveThumbsUp,
-		isGenerating,
+		isGenerating: isGenerating || !!generatingBalloons.length,
 		markFeedbackGiven,
 		message,
 		messages,
-		messagesEndRef,
+		messagesContainerRef,
 		reportContext,
 		runtimeContextRef,
 		scrollToBottom,
 		sendMessage,
+		setBalloonGenerating,
 		setIsGenerating,
 		setMessage,
 		setMessages,

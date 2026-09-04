@@ -10,11 +10,14 @@ export interface AccountUserSessionEvent {
 	eventId: string;
 	name: string;
 	pageDescription: string;
+	pageGroupId?: string | null;
 	pageKeywords: string;
 	pageTitle: string;
 	properties: Array<{name: string; value: string}>;
 	referrer: string;
 	url: string;
+	utmCampaignId?: string | null;
+	utmCampaignName?: string | null;
 }
 
 export interface AccountUserSession {
@@ -37,7 +40,7 @@ export interface AccountUserSession {
 
 export interface AccountUserSessionData {
 	eventsByUserSessions: {
-		totalSessionsMetric: {value: number} | null;
+		totalPageGroupsMetric: {value: number} | null;
 		userSessions: AccountUserSession[];
 	};
 }
@@ -81,7 +84,7 @@ export default gql`
 			rangeStart: $rangeStart
 			size: $size
 		) {
-			totalSessionsMetric {
+			totalPageGroupsMetric {
 				value
 			}
 			userSessions {
@@ -101,6 +104,7 @@ export default gql`
 						eventId
 						name
 						pageDescription
+						pageGroupId
 						pageKeywords
 						pageTitle
 						properties {

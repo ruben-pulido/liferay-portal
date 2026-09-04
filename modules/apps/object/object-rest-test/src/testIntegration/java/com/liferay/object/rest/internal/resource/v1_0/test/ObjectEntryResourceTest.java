@@ -240,6 +240,7 @@ import com.liferay.sharing.model.SharingEntry;
 import com.liferay.sharing.security.permission.SharingEntryAction;
 import com.liferay.sharing.service.SharingEntryLocalService;
 
+import jakarta.ws.rs.BadRequestException;
 import jakarta.ws.rs.Priorities;
 import jakarta.ws.rs.container.ContainerResponseFilter;
 import jakarta.ws.rs.core.Feature;
@@ -9753,8 +9754,7 @@ public class ObjectEntryResourceTest {
 			_OBJECT_FIELD_NAME_1);
 
 		Date displayDate = new Date();
-		Date expirationDate = new Date(
-			System.currentTimeMillis() + Time.MINUTE);
+		Date expirationDate = new Date(System.currentTimeMillis() + Time.HOUR);
 		Date reviewDate = new Date();
 
 		ObjectEntry objectEntry = ObjectEntryTestUtil.addObjectEntry(
@@ -21257,6 +21257,11 @@ public class ObjectEntryResourceTest {
 						objectValidationRule1.getExternalReferenceCode())));
 
 			_setUpPermissionThreadLocal(TestPropsValues.getUser());
+
+			AssertUtils.assertFailure(
+				BadRequestException.class, "No values found in body",
+				() -> _validate(
+					scopeKey, objectEntryResource, new ValidationRequest()));
 
 			ValidationResponse validationResponse = _validate(
 				scopeKey, objectEntryResource,

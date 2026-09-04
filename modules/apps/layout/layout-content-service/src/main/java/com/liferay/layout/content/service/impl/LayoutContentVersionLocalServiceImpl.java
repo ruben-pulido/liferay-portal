@@ -11,24 +11,51 @@ import com.liferay.layout.content.exception.LayoutContentVersionNameException;
 import com.liferay.layout.content.exception.RequiredLayoutContentVersionException;
 import com.liferay.layout.content.exception.UnsupportedLayoutLayoutContentVersionException;
 import com.liferay.layout.content.model.LayoutContentVersion;
+import com.liferay.layout.content.service.LayoutContentVersionPreviewLocalService;
 import com.liferay.layout.content.service.base.LayoutContentVersionLocalServiceBaseImpl;
 import com.liferay.layout.content.util.comparator.LayoutContentVersionVersionComparator;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.layout.renderer.LayoutPreviewRenderer;
+import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.petra.string.StringBundler;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutConstants;
+import com.liferay.portal.kernel.model.LayoutSet;
 import com.liferay.portal.kernel.model.ModelHintsUtil;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.LayoutLocalService;
+import com.liferay.portal.kernel.service.LayoutService;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.service.UserLocalService;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.DigesterUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.kernel.webserver.WebServerServletToken;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.segments.model.SegmentsExperience;
+import com.liferay.segments.service.SegmentsExperienceLocalService;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import java.io.InputStream;
 
 import java.util.Date;
 import java.util.List;
@@ -106,7 +133,12 @@ public class LayoutContentVersionLocalServiceImpl
 		layoutContentVersion.setStatusByUserName(user.getFullName());
 		layoutContentVersion.setStatusDate(new Date());
 
-		return layoutContentVersionPersistence.update(layoutContentVersion);
+		layoutContentVersion = layoutContentVersionPersistence.update(
+			layoutContentVersion);
+
+		_addLayoutContentVersionPreviews(layout, layoutContentVersion, userId);
+
+		return layoutContentVersion;
 	}
 
 	@Override
@@ -168,6 +200,9 @@ public class LayoutContentVersionLocalServiceImpl
 
 			throw new RequiredLayoutContentVersionException();
 		}
+
+		_layoutContentVersionPreviewLocalService.
+			deleteLayoutContentVersionPreviews(layoutContentVersionId);
 
 		return layoutContentVersionPersistence.remove(layoutContentVersionId);
 	}
@@ -250,6 +285,105 @@ public class LayoutContentVersionLocalServiceImpl
 		return layoutContentVersionPersistence.update(layoutContentVersion);
 	}
 
+	private static String _read(String name) {
+		try (InputStream inputStream =
+				LayoutContentVersionLocalServiceImpl.class.getResourceAsStream(
+					"dependencies/" + name)) {
+
+			return StringUtil.read(inputStream);
+		}
+		catch (Exception exception) {
+			_log.error("Unable to read template " + name, exception);
+		}
+
+		return StringPool.BLANK;
+	}
+
+	private void _addLayoutContentVersionPreviews(
+		Layout layout, LayoutContentVersion layoutContentVersion, long userId) {
+
+		try (AutoCloseable autoCloseable =
+				_layoutServiceContextHelper.getServiceContextAutoCloseable(
+					layout)) {
+
+			ServiceContext serviceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			_initThemeDisplay(serviceContext.getRequest(), layout);
+
+			for (SegmentsExperience segmentsExperience :
+					_segmentsExperienceLocalService.getSegmentsExperiences(
+						layout.getGroupId(), layout.getPlid())) {
+
+				_addLayoutContentVersionPreviews(
+					layout, layoutContentVersion, segmentsExperience,
+					serviceContext, userId);
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isWarnEnabled()) {
+				_log.warn(
+					"Unable to add layout content version previews for PLID " +
+						layout.getPlid(),
+					exception);
+			}
+		}
+	}
+
+	private void _addLayoutContentVersionPreviews(
+		Layout layout, LayoutContentVersion layoutContentVersion,
+		SegmentsExperience segmentsExperience, ServiceContext serviceContext,
+		long userId) {
+
+		for (Locale locale :
+				_language.getAvailableLocales(layout.getGroupId())) {
+
+			String html = null;
+
+			try {
+				html = _layoutPreviewRenderer.render(
+					layout, locale,
+					segmentsExperience.getSegmentsExperienceId(),
+					serviceContext);
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						StringBundler.concat(
+							"Unable to render layout content version preview ",
+							"for language ID ", LocaleUtil.toLanguageId(locale),
+							", PLID ", layout.getPlid(),
+							", and segments experience ",
+							segmentsExperience.getSegmentsExperienceId()),
+						exception);
+				}
+
+				html = _getPreviewErrorHTML(locale);
+			}
+
+			try {
+				_layoutContentVersionPreviewLocalService.
+					addLayoutContentVersionPreview(
+						userId,
+						layoutContentVersion.getLayoutContentVersionId(), html,
+						LocaleUtil.toLanguageId(locale),
+						segmentsExperience.getExternalReferenceCode());
+			}
+			catch (Exception exception) {
+				if (_log.isWarnEnabled()) {
+					_log.warn(
+						StringBundler.concat(
+							"Unable to persist layout content version preview ",
+							"for language ID ", LocaleUtil.toLanguageId(locale),
+							", PLID ", layout.getPlid(),
+							", and segments experience ",
+							segmentsExperience.getSegmentsExperienceId()),
+						exception);
+				}
+			}
+		}
+	}
+
 	private int _getNextVersion(long plid) {
 		LayoutContentVersion layoutContentVersion =
 			layoutContentVersionPersistence.fetchByPlid_First(
@@ -260,6 +394,76 @@ public class LayoutContentVersionLocalServiceImpl
 		}
 
 		return layoutContentVersion.getVersion() + 1;
+	}
+
+	private String _getPreviewErrorHTML(Locale locale) {
+		return StringUtil.replace(
+			_PREVIEW_ERROR_HTML, new String[] {"[$MESSAGE$]", "[$TITLE$]"},
+			new String[] {
+				_language.get(
+					locale,
+					"this-preview-is-not-available.-an-error-occurred-while-" +
+						"generating-the-preview-when-this-version-was-created"),
+				_language.get(locale, "error")
+			});
+	}
+
+	private void _initThemeDisplay(
+			HttpServletRequest httpServletRequest, Layout layout)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		String pathImage = _portal.getPathImage();
+		String pathMain = _portal.getPathMain();
+
+		String companyLogo = pathImage + "/company_logo";
+
+		Company company = themeDisplay.getCompany();
+
+		long companyLogoId = company.getLogoId();
+
+		if (companyLogoId > 0) {
+			companyLogo = StringBundler.concat(
+				companyLogo, "?img_id=", companyLogoId, "&t=",
+				_webServerServletToken.getToken(companyLogoId));
+		}
+
+		String layoutSetLogo = null;
+
+		LayoutSet layoutSet = layout.getLayoutSet();
+
+		if (company.isSiteLogo() && layoutSet.isLogo()) {
+			long layoutSetLogoId = layoutSet.getLogoId();
+
+			if (layoutSetLogoId > 0) {
+				layoutSetLogo = StringBundler.concat(
+					pathImage, "/layout_set_logo?img_id=", layoutSetLogoId,
+					"&t=", _webServerServletToken.getToken(layoutSetLogoId));
+
+				companyLogo = layoutSetLogo;
+			}
+		}
+
+		themeDisplay.setCompanyLogo(companyLogo);
+		themeDisplay.setLayoutSetLogo(layoutSetLogo);
+		themeDisplay.setLayouts(
+			ListUtil.filter(
+				_layoutService.getLayouts(
+					layout.getGroupId(), layout.isPrivateLayout(),
+					LayoutConstants.DEFAULT_PARENT_LAYOUT_ID),
+				curLayout -> !curLayout.isHidden() && curLayout.isPublished()));
+		themeDisplay.setPathContext(_portal.getPathContext());
+		themeDisplay.setPathImage(pathImage);
+		themeDisplay.setPathMain(pathMain);
+		themeDisplay.setRealCompanyLogo(companyLogo);
+		themeDisplay.setURLSignIn(
+			HttpComponentsUtil.addParameter(
+				StringBundler.concat(
+					themeDisplay.getPortalURL(), pathMain, "/portal/login"),
+				"p_l_id", layout.getPlid()));
 	}
 
 	private void _validateExternalReferenceCode(
@@ -307,6 +511,22 @@ public class LayoutContentVersionLocalServiceImpl
 		}
 	}
 
+	private static final String _PREVIEW_ERROR_HTML;
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		LayoutContentVersionLocalServiceImpl.class);
+
+	static {
+		_PREVIEW_ERROR_HTML = _read("preview_error.html");
+	}
+
+	@Reference
+	private Language _language;
+
+	@Reference
+	private LayoutContentVersionPreviewLocalService
+		_layoutContentVersionPreviewLocalService;
+
 	@Reference
 	private LayoutLocalService _layoutLocalService;
 
@@ -315,6 +535,24 @@ public class LayoutContentVersionLocalServiceImpl
 		_layoutPageTemplateEntryLocalService;
 
 	@Reference
+	private LayoutPreviewRenderer _layoutPreviewRenderer;
+
+	@Reference
+	private LayoutService _layoutService;
+
+	@Reference
+	private LayoutServiceContextHelper _layoutServiceContextHelper;
+
+	@Reference
+	private Portal _portal;
+
+	@Reference
+	private SegmentsExperienceLocalService _segmentsExperienceLocalService;
+
+	@Reference
 	private UserLocalService _userLocalService;
+
+	@Reference
+	private WebServerServletToken _webServerServletToken;
 
 }

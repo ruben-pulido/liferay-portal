@@ -5,29 +5,36 @@
 
 import {ClayButtonWithIcon} from '@clayui/button';
 import ClayToolbar from '@clayui/toolbar';
-import {ExperienceSelector} from '@liferay/layout-js-components-web';
-import React, {useState} from 'react';
+import {
+	ExperienceSelector,
+	SegmentExperience,
+} from '@liferay/layout-js-components-web';
+import React from 'react';
 
-import {config} from '../config';
+import {AvailableLanguages} from '../config';
 import LocaleSelector from './LocaleSelector';
 
 interface Props {
+	availableLanguages: AvailableLanguages;
+	experiences: SegmentExperience[];
 	isSidePanelOpen: boolean;
+	onChangeExperience: (experienceERC: string) => void;
+	onChangeLanguage: (languageId: Liferay.Language.Locale) => void;
 	openSidePanel: () => void;
+	selectedExperience?: SegmentExperience;
+	selectedLanguageId: Liferay.Language.Locale;
 }
 
-export default function Toolbar({isSidePanelOpen, openSidePanel}: Props) {
-	const {availableSegmentsExperiences} = config;
-
-	const [selectedExperienceERC, setSelectedExperienceERC] = useState<
-		React.Key | undefined
-	>(availableSegmentsExperiences[0]?.segmentsExperienceERC);
-
-	const selectedExperience = availableSegmentsExperiences.find(
-		({segmentsExperienceERC}) =>
-			segmentsExperienceERC === selectedExperienceERC
-	);
-
+export default function Toolbar({
+	availableLanguages,
+	experiences,
+	isSidePanelOpen,
+	onChangeExperience,
+	onChangeLanguage,
+	openSidePanel,
+	selectedExperience,
+	selectedLanguageId,
+}: Props) {
 	return (
 		<ClayToolbar className="bg-white px-3 version-history__toolbar">
 			<ClayToolbar.Nav>
@@ -53,15 +60,21 @@ export default function Toolbar({isSidePanelOpen, openSidePanel}: Props) {
 
 						<ExperienceSelector
 							className="mb-0"
-							onChangeExperience={setSelectedExperienceERC}
-							segmentsExperiences={availableSegmentsExperiences}
+							onChangeExperience={(key) =>
+								onChangeExperience(String(key))
+							}
+							segmentsExperiences={experiences}
 							selectedSegmentsExperience={selectedExperience}
 						/>
 					</ClayToolbar.Item>
 				) : null}
 
 				<ClayToolbar.Item className="align-items-center d-flex">
-					<LocaleSelector />
+					<LocaleSelector
+						availableLanguages={availableLanguages}
+						onChange={onChangeLanguage}
+						selectedLanguageId={selectedLanguageId}
+					/>
 				</ClayToolbar.Item>
 			</ClayToolbar.Nav>
 		</ClayToolbar>

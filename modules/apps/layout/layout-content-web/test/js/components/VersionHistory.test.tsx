@@ -30,6 +30,7 @@ jest.mock('@liferay/layout-js-components-web', () => {
 			}),
 		hideProductMenuIfPresent: jest.fn(),
 		openConfirmModal: jest.fn(),
+		preventIframeNavigation: jest.fn(),
 		useMediaQuery: jest.fn(),
 	};
 });
@@ -116,9 +117,12 @@ function mockSmallScreen() {
 }
 
 function mockVersions(versions: typeof VERSIONS) {
-	mockFetch.mockReturnValue(
+	mockFetch.mockImplementation((url: string) =>
 		Promise.resolve({
-			json: () => Promise.resolve({items: versions}),
+			json: () =>
+				Promise.resolve({
+					items: url.startsWith('/page-experiences/') ? [] : versions,
+				}),
 			ok: true,
 		})
 	);
@@ -142,10 +146,14 @@ function renderComponent({hasDraft = false} = {}) {
 				availableSegmentsExperiences: [],
 				defaultLanguageId: 'en_US',
 				defaultUserImageSrc: '/image/user_portrait?img_id=0',
+				getPagePreviewURL: '/c/portal/get_page_preview',
+				getPageVersionPreviewURL: '/c/portal/get_page_version_preview',
 				layout: {
 					name: 'Home',
 					status: hasDraft ? 'draft' : 'approved',
 				},
+				pageSpecificationVersionPageExperiencesURL:
+					'/page-experiences/{pageSpecificationVersionExternalReferenceCode}',
 				pageSpecificationVersionsURL: 'url',
 			}}
 		/>

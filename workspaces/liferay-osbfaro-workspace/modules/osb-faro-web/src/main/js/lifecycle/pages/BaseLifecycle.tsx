@@ -7,6 +7,7 @@ import ClayLink from '@clayui/link';
 import {ClayButtonWithIcon} from '@clayui/button';
 import FilterPicker from '../components/FilterPicker';
 import LifecycleChart from 'lifecycle/components/LifecycleChart';
+import LifecycleDateRangeIndicator from '../components/LifecycleDateRangeIndicator';
 import Loading from 'shared/components/Loading';
 import NoResultsDisplay from 'shared/components/NoResultsDisplay';
 import OverviewSection from '../components/OverviewSection';
@@ -27,7 +28,8 @@ import {Routes, toRoute} from 'shared/util/router';
 import {SectionHeader} from 'shared/components/SectionHeader';
 import {useCurrentUser} from 'shared/hooks/useCurrentUser';
 import {useDataSources} from 'shared/context/dataSources';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistoryAdapter} from 'shared/hooks/useHistoryAdapter';
+import {useParams} from 'react-router-dom';
 import {useRequest} from 'shared/hooks/useRequest';
 import {useSegmentFilter} from 'shared/hooks/useSegmentFilter';
 
@@ -214,7 +216,7 @@ const BaseLifecycle = () => {
 	const currentUser = useCurrentUser();
 	const {selectedChannel} = useContext(ChannelContext);
 
-	const history = useHistory();
+	const history = useHistoryAdapter();
 
 	const {channelId, groupId} = useParams();
 
@@ -404,6 +406,8 @@ const BaseLifecycle = () => {
 									onFilterChange={setSegment}
 								/>
 							</div>
+
+							<LifecycleDateRangeIndicator />
 						</div>
 					</BasePage.SubHeader>
 				)}

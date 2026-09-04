@@ -22,7 +22,8 @@ import {ITopAsset, TopAssetMetric} from 'shared/api/assets';
 import {RangeSelectors, SafeRangeSelectors} from 'shared/types';
 import {Routes, setUriQueryValues, toRoute} from 'shared/util/router';
 import {toThousands} from 'shared/util/numbers';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistoryAdapter} from 'shared/hooks/useHistoryAdapter';
+import {useParams} from 'react-router-dom';
 import {useRequest} from 'shared/hooks/useRequest';
 
 const TABS = ['content', 'files'] as const;
@@ -78,7 +79,7 @@ const TopAssetsTabContent: React.FC<ITopAssetsTabContentProps> = ({
 	routeQueries,
 	setGroupBy,
 }) => {
-	const {channelId, groupId} = useParams<{
+	const {channelId = '', groupId = ''} = useParams<{
 		channelId: string;
 		groupId: string;
 	}>();
@@ -144,14 +145,10 @@ const TopAssetsTabContent: React.FC<ITopAssetsTabContentProps> = ({
 									groupId,
 									touchpoint: 'overview',
 									...(asset.assetType && {
-										type: encodeURIComponent(
-											asset.assetType
-										),
+										type: asset.assetType,
 									}),
 									...(asset.assetTitle && {
-										title: encodeURIComponent(
-											asset.assetTitle
-										),
+										title: asset.assetTitle,
 									}),
 								})
 							);
@@ -200,6 +197,7 @@ interface ITopAssetsBaseCardProps {
 	dataSourceFn: (variables: any) => Promise<{items: ITopAsset[]}> | undefined;
 	dataSourceParams: object;
 	routeQueries: {[key: string]: any};
+	showViewAll?: boolean;
 	skipRequest?: boolean;
 }
 
@@ -208,6 +206,7 @@ const TopAssetsBaseCard: React.FC<ITopAssetsBaseCardProps> = ({
 	dataSourceFn,
 	dataSourceParams,
 	routeQueries,
+	showViewAll = true,
 	skipRequest,
 }) => (
 	<BaseCard
@@ -222,6 +221,7 @@ const TopAssetsBaseCard: React.FC<ITopAssetsBaseCardProps> = ({
 				dataSourceParams={dataSourceParams}
 				rangeSelectors={rangeSelectors}
 				routeQueries={routeQueries}
+				showViewAll={showViewAll}
 				skipRequest={skipRequest}
 			/>
 		)}
@@ -238,10 +238,11 @@ const TopAssetsWithData: React.FC<ITopAssetsWithDataProps> = ({
 	dataSourceParams,
 	rangeSelectors,
 	routeQueries,
+	showViewAll,
 	skipRequest,
 }) => {
-	const history = useHistory();
-	const {channelId, groupId} = useParams<{
+	const history = useHistoryAdapter();
+	const {channelId = '', groupId = ''} = useParams<{
 		channelId: string;
 		groupId: string;
 	}>();
@@ -319,7 +320,7 @@ const TopAssetsWithData: React.FC<ITopAssetsWithDataProps> = ({
 				</ClayTabs.TabPane>
 			</ClayTabs.Content>
 
-			{assets.length > 0 && (
+			{showViewAll && assets.length > 0 && (
 				<div className="d-flex p-3">
 					<ClayButton
 						borderless

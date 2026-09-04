@@ -4,13 +4,13 @@
  */
 
 import ClayForm, {ClaySelectWithOption} from '@clayui/form';
-import ClayIcon from '@clayui/icon';
 import React, {useId, useState} from 'react';
 
 import {ChatContext} from '../api';
 import {getObjectFields} from '../services/getObjectFields';
 
 import '../chat.scss';
+import AIAssistantMessageBalloonIcon from './AIAssistantMessageBalloonIcon';
 
 export interface ContentType {
 	externalReferenceCode: string;
@@ -22,16 +22,33 @@ interface ContentTypeSelectorMessageBalloonProps {
 	contentTypes: ContentType[];
 	contextRef: React.MutableRefObject<ChatContext>;
 	message: string;
-	sendMessage: (text: string) => void;
+	sendMessage: (text: string) => Promise<boolean>;
+	setIsGenerating: (isGenerating: boolean) => void;
 }
 
 const ContentTypeSelectorMessageBalloon: React.FC<
 	ContentTypeSelectorMessageBalloonProps
-> = ({contentTypes, contextRef, message, sendMessage}) => {
+> = ({contentTypes, contextRef, message, sendMessage, setIsGenerating}) => {
 	const [externalReferenceCode, setExternalReferenceCode] = useState('');
 	const [submitted, setSubmitted] = useState(false);
 
 	const selectId = useId();
+
+	function resetSelection() {
+		setExternalReferenceCode('');
+		setSubmitted(false);
+
+		setIsGenerating(false);
+	}
+
+	function reportFailure() {
+		resetSelection();
+
+		Liferay.Util.openToast({
+			message: Liferay.Language.get('an-unexpected-error-occurred'),
+			type: 'danger',
+		});
+	}
 
 	async function handleChange(event: React.ChangeEvent<HTMLSelectElement>) {
 		const value = event.target.value;
@@ -46,26 +63,38 @@ const ContentTypeSelectorMessageBalloon: React.FC<
 			return;
 		}
 
-		const objectFields = await getObjectFields(
-			contentType.externalReferenceCode
-		);
-
-		// eslint-disable-next-line react-compiler/react-compiler
-		contextRef.current = {
-			...contextRef.current,
-			objectDefinitionName: contentType.name,
-			objectFields: JSON.stringify(objectFields),
-		};
-
+		setIsGenerating(true);
 		setSubmitted(true);
 
-		sendMessage(`${Liferay.Language.get('generate')} ${contentType.label}`);
+		try {
+			const objectFields = await getObjectFields(
+				contentType.externalReferenceCode
+			);
+
+			// eslint-disable-next-line react-compiler/react-compiler
+			contextRef.current = {
+				...contextRef.current,
+				objectDefinitionName: contentType.name,
+				objectFields: JSON.stringify(objectFields),
+			};
+
+			const sent = await sendMessage(
+				`${Liferay.Language.get('generate')} ${contentType.label}`
+			);
+
+			if (!sent) {
+				resetSelection();
+			}
+		}
+		catch {
+			reportFailure();
+		}
 	}
 
 	return (
 		<div className="ai-assistant-chat__ai-assistant-message-balloon ai-assistant-chat__content-generation-balloon">
 			<div className="ai-assistant-chat__content-generation-balloon-header">
-				<ClayIcon spritemap={Liferay.Icons.spritemap} symbol="stars" />
+				<AIAssistantMessageBalloonIcon />
 
 				<span>{message}</span>
 			</div>

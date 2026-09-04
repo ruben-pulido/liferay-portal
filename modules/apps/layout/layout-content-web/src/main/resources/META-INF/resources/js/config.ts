@@ -12,19 +12,24 @@ export type AvailableLanguage = {
 	w3cLanguageId: string;
 };
 
+export type AvailableLanguages = Partial<
+	Record<Liferay.Language.Locale, AvailableLanguage>
+>;
+
 export type Layout = {
 	name: string;
 	status: Status;
 };
 
 export type Config = {
-	availableLanguages: Partial<
-		Record<Liferay.Language.Locale, AvailableLanguage>
-	>;
+	availableLanguages: AvailableLanguages;
 	availableSegmentsExperiences: SegmentExperience[];
 	defaultLanguageId: Liferay.Language.Locale;
 	defaultUserImageSrc: string;
+	getPagePreviewURL: string;
+	getPageVersionPreviewURL: string;
 	layout: Layout;
+	pageSpecificationVersionPageExperiencesURL: string;
 	pageSpecificationVersionsURL: string;
 };
 

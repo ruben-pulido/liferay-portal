@@ -3,13 +3,12 @@
  * SPDX-License-Identifier: LGPL-2.1-or-later OR LicenseRef-Liferay-DXP-EULA-2.0.0-2023-06
  */
 
-import ClayIcon from '@clayui/icon';
-import ClayLoadingIndicator from '@clayui/loading-indicator';
 import {sub} from 'frontend-js-web';
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useId, useState} from 'react';
 
 import CategorizationSuggestions from '../../Categorization/components/CategorizationSuggestions';
 import {
+	CATEGORIZE_EVENT,
 	COMMIT_EVENT,
 	CategorizeEventPayload,
 } from '../../Categorization/events';
@@ -17,6 +16,11 @@ import {getCandidateCategories} from '../../Categorization/services/getCandidate
 import {getExistingTags} from '../../Categorization/services/getExistingTags';
 import {ECategorizationAgent, Suggestion} from '../../Categorization/types';
 import useCategorizationAgent from '../../Categorization/useCategorizationAgent';
+import AIAssistantMessageBalloonIcon from './AIAssistantMessageBalloonIcon';
+
+interface CategorizationMessageBalloonProps extends CategorizeEventPayload {
+	setBalloonGenerating: (key: string, generating: boolean) => void;
+}
 
 function getKey(suggestion: Suggestion): string {
 	return `${suggestion.id ?? suggestion.name}`;
@@ -31,12 +35,16 @@ export default function CategorizationMessageBalloon({
 	currentCategoryIds,
 	currentTagNames,
 	scopeId,
+	setBalloonGenerating,
 	targets,
-}: CategorizeEventPayload) {
+}: CategorizationMessageBalloonProps) {
+	const balloonId = useId();
+
 	const [committed, setCommitted] = useState(false);
 	const [dismissed, setDismissed] = useState<string[]>([]);
+	const [regenerated, setRegenerated] = useState(false);
 
-	const {regenerate, resolveTargets, run, status, suggestions} =
+	const {regenerate, resolveTargets, run, status, stop, suggestions} =
 		useCategorizationAgent(agent);
 
 	useEffect(() => {
@@ -139,22 +147,45 @@ export default function CategorizationMessageBalloon({
 
 	const isLoading = status === 'idle' || status === 'loading';
 
+	const isInitialLoading = !regenerated && isLoading;
+
+	useEffect(() => {
+		if (!isInitialLoading) {
+			return;
+		}
+
+		setBalloonGenerating(balloonId, true);
+
+		return () => setBalloonGenerating(balloonId, false);
+	}, [balloonId, isInitialLoading, setBalloonGenerating]);
+
+	useEffect(() => {
+		if (!isLoading) {
+			return;
+		}
+
+		const onCategorize = (payload: CategorizeEventPayload) => {
+			if (payload.agent === agent) {
+				stop();
+			}
+		};
+
+		Liferay.on(CATEGORIZE_EVENT, onCategorize);
+
+		return () => {
+			Liferay.detach(CATEGORIZE_EVENT, onCategorize);
+		};
+	}, [agent, isLoading, stop]);
+
+	if (isInitialLoading) {
+		return null;
+	}
+
 	return (
 		<>
 			<div className="ai-assistant-chat__ai-assistant-message-balloon d-flex flex-column mb-2 rounded">
 				<div className="d-flex flex-row">
-					<div
-						className={`align-items-start d-inline-block flex-shrink-0 ml-2 mt-2 text-2 ${isLoading ? '' : 'text-primary'}`}
-					>
-						{isLoading ? (
-							<ClayLoadingIndicator size="sm" />
-						) : (
-							<ClayIcon
-								spritemap={Liferay.Icons.spritemap}
-								symbol="stars"
-							/>
-						)}
-					</div>
+					<AIAssistantMessageBalloonIcon />
 
 					<div className="flex-grow-1 m-2">
 						<CategorizationSuggestions
@@ -178,10 +209,11 @@ export default function CategorizationMessageBalloon({
 							onRegenerate={() => {
 								setCommitted(false);
 								setDismissed([]);
+								setRegenerated(true);
 
 								regenerate();
 							}}
-							status={status === 'idle' ? 'loading' : status}
+							status={status}
 							suggestions={visibleSuggestions}
 						/>
 					</div>
@@ -191,12 +223,7 @@ export default function CategorizationMessageBalloon({
 			{committed && committedCount > 0 ? (
 				<div className="ai-assistant-chat__ai-assistant-message-balloon d-flex flex-column mb-2 rounded">
 					<div className="d-flex flex-row">
-						<div className="align-items-start d-inline-block flex-shrink-0 ml-2 mt-2 text-2 text-primary">
-							<ClayIcon
-								spritemap={Liferay.Icons.spritemap}
-								symbol="stars"
-							/>
-						</div>
+						<AIAssistantMessageBalloonIcon />
 
 						<div className="flex-grow-1 m-2">
 							{confirmationMessage}

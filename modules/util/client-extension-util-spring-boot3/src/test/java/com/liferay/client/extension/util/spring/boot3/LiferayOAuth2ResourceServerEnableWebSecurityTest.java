@@ -7,8 +7,6 @@ package com.liferay.client.extension.util.spring.boot3;
 
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2AccessTokenManager;
 import com.liferay.client.extension.util.spring.boot3.client.LiferayOAuth2ClientConfiguration;
-import com.liferay.portal.json.JSONFactoryImpl;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
 
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.source.RemoteJWKSet;
@@ -16,7 +14,10 @@ import com.nimbusds.jose.proc.JWSAlgorithmFamilyJWSKeySelector;
 
 import java.net.URL;
 
+import java.util.UUID;
+
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,15 +36,18 @@ import org.mockserver.model.HttpResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.mock.env.MockEnvironment;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 /**
  * @author Gregory Amerson
+ * @author Allen Ziegenfus
  */
 @ContextConfiguration(
 	classes = {
@@ -63,11 +67,6 @@ public class LiferayOAuth2ResourceServerEnableWebSecurityTest {
 
 	@BeforeClass
 	public static void setUpClass() throws Exception {
-		new JSONFactoryUtil(
-		).setJSONFactory(
-			new JSONFactoryImpl()
-		);
-
 		_mockedStatic = Mockito.mockStatic(
 			JWSAlgorithmFamilyJWSKeySelector.class);
 
@@ -110,6 +109,40 @@ public class LiferayOAuth2ResourceServerEnableWebSecurityTest {
 		_clientAndServer.stop();
 
 		_mockedStatic.close();
+	}
+
+	@Test
+	public void testGetClientIdLogMessage() {
+		LiferayOAuth2ResourceServerEnableWebSecurity
+			liferayOAuth2ResourceServerEnableWebSecurity =
+				new LiferayOAuth2ResourceServerEnableWebSecurity();
+
+		MockEnvironment mockEnvironment = new MockEnvironment();
+
+		mockEnvironment.setProperty(
+			"test-headless-server.oauth2.headless.server.client.id",
+			String.valueOf(UUID.randomUUID()));
+
+		ReflectionTestUtils.setField(
+			liferayOAuth2ResourceServerEnableWebSecurity, "_environment",
+			mockEnvironment);
+
+		Assert.assertEquals(
+			"Unable to get user agent client ID for external reference code " +
+				"test-external",
+			ReflectionTestUtils.invokeMethod(
+				liferayOAuth2ResourceServerEnableWebSecurity,
+				"_getClientIdLogMessage", null, "test-external"));
+		Assert.assertEquals(
+			"Using user agent client ID user-agent-id for external reference " +
+				"code test-user-agent",
+			ReflectionTestUtils.invokeMethod(
+				liferayOAuth2ResourceServerEnableWebSecurity,
+				"_getClientIdLogMessage", "user-agent-id", "test-user-agent"));
+		Assert.assertNull(
+			ReflectionTestUtils.invokeMethod(
+				liferayOAuth2ResourceServerEnableWebSecurity,
+				"_getClientIdLogMessage", null, "test-headless-server"));
 	}
 
 	@Test

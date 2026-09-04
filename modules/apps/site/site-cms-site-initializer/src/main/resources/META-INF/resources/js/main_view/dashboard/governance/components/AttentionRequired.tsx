@@ -38,7 +38,7 @@ const ATTENTION_CARDS: AttentionCard[] = [
 		description: Liferay.Language.get(
 			'these-are-expired-assets-across-the-selected-spaces'
 		),
-		icon: 'warning-full',
+		icon: 'warning',
 		statKey: 'expiredCount',
 		title: Liferay.Language.get('expired-assets'),
 	},
@@ -56,13 +56,14 @@ const ATTENTION_CARDS: AttentionCard[] = [
 		description: Liferay.Language.get(
 			'these-are-assets-with-pending-workflows-across-the-selected-spaces'
 		),
-		icon: 'flag-empty',
+		icon: 'workflow',
 		statKey: 'pendingCount',
 		title: Liferay.Language.get('pending-workflows'),
 	},
 ];
 
 const SECTION_PATHS: Partial<Record<keyof AssetStatistics, string>> = {
+	brokenLinksCount: 'broken-links',
 	expiredCount: 'expired-assets',
 	pendingCount: 'pending-workflows',
 	reviewDateOverdueCount: 'overdue-reviews',

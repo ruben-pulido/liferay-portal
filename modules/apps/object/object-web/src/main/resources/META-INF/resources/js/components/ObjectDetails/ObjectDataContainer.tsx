@@ -100,6 +100,33 @@ export function ObjectDataContainer({
 				translations={values.pluralLabel as LocalizedValue<string>}
 			/>
 
+			{Liferay.FeatureFlags['LPD-80279'] && !isReadOnly && (
+				<InputLocalized
+					component="textarea"
+					disabled={noPermissionOrLinked}
+					error={errors.description}
+					helpMessage={Liferay.Language.get(
+						'provide-descriptive-text-used-only-by-ai-agents-and-api-consumers'
+					)}
+					id="lfr-objects__object-data-container-description"
+					label={Liferay.Language.get('description')}
+					onBlur={(event) => {
+						event.stopPropagation();
+
+						if (onSubmit) {
+							onSubmit();
+						}
+					}}
+					onChange={(description) => setValues({description})}
+					onSelectedLocaleChange={setSelectedLocale}
+					placeholder=""
+					selectedLocale={selectedLocale}
+					translations={
+						(values.description ?? {}) as LocalizedValue<string>
+					}
+				/>
+			)}
+
 			<Input
 				disabled
 				id="lfr-objects__object-data-container-table-name"

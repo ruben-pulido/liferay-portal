@@ -33,7 +33,6 @@ import com.liferay.portal.kernel.backgroundtask.constants.BackgroundTaskConstant
 import com.liferay.portal.kernel.backgroundtask.display.BackgroundTaskDisplayFactory;
 import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
-import com.liferay.portal.kernel.exception.NoSuchBackgroundTaskException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.language.Language;
@@ -84,7 +83,8 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 
 		PermissionUtil.checkPublishPermission(backgroundTask.getGroupId());
 
-		_validatePublishBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		_backgroundTaskLocalService.deleteBackgroundTask(backgroundTask);
 	}
@@ -98,7 +98,8 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 
 		PermissionUtil.checkPublishPermission(backgroundTask.getGroupId());
 
-		_validatePublishBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		return _toPublishProcess(backgroundTask);
 	}
@@ -112,7 +113,8 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 
 		PermissionUtil.checkPublishPermission(backgroundTask.getGroupId());
 
-		_validatePublishBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		return new ProcessProgress() {
 			{
@@ -158,7 +160,8 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 
 		PermissionUtil.checkPublishPermission(backgroundTask.getGroupId());
 
-		_validatePublishBackgroundTask(backgroundTask);
+		BackgroundTaskUtil.checkTaskExecutorClassName(
+			backgroundTask, _CLASS_NAMES_TASK_EXECUTOR);
 
 		ExportImportConfiguration exportImportConfiguration =
 			ExportImportConfigurationFactory.cloneExportImportConfiguration(
@@ -274,6 +277,12 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 		return _backgroundTaskLocalService.dynamicQuery(
 			dynamicQuery, pagination.getStartPosition(),
 			pagination.getEndPosition());
+	}
+
+	private String _getDefaultErrorMessage() {
+		return _language.get(
+			contextAcceptLanguage.getPreferredLocale(),
+			"an-unexpected-error-occurred");
 	}
 
 	private DynamicQuery _getDynamicQuery(
@@ -423,11 +432,11 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 								backgroundTask.getStatusMessage(), true);
 
 						if (jsonObject == null) {
-							return backgroundTask.getStatusMessage();
+							return _getDefaultErrorMessage();
 						}
 
 						return jsonObject.getString(
-							"message", backgroundTask.getStatusMessage());
+							"message", _getDefaultErrorMessage());
 					});
 				setId(backgroundTask::getBackgroundTaskId);
 				setName(
@@ -489,17 +498,9 @@ public class PublishProcessResourceImpl extends BasePublishProcessResourceImpl {
 		}
 	}
 
-	private void _validatePublishBackgroundTask(BackgroundTask backgroundTask)
-		throws Exception {
-
-		if (!StringUtil.equals(
-				backgroundTask.getTaskExecutorClassName(),
-				BackgroundTaskExecutorNames.
-					LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR)) {
-
-			throw new NoSuchBackgroundTaskException();
-		}
-	}
+	private static final String[] _CLASS_NAMES_TASK_EXECUTOR = {
+		BackgroundTaskExecutorNames.LAYOUT_STAGING_BACKGROUND_TASK_EXECUTOR
+	};
 
 	@Reference
 	private BackgroundTaskDisplayFactory _backgroundTaskDisplayFactory;

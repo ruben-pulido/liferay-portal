@@ -14,6 +14,7 @@ import com.liferay.osb.faro.engine.client.model.AccountLifecycleStageMetric;
 import com.liferay.osb.faro.engine.client.model.AccountLifecycleStatus;
 import com.liferay.osb.faro.engine.client.model.AccountMetric;
 import com.liferay.osb.faro.engine.client.model.AccountName;
+import com.liferay.osb.faro.engine.client.model.AcquisitionParameter;
 import com.liferay.osb.faro.engine.client.model.Activity;
 import com.liferay.osb.faro.engine.client.model.ActivityAggregation;
 import com.liferay.osb.faro.engine.client.model.ActivityAsset;
@@ -199,7 +200,8 @@ public interface ContactsEngineClient {
 
 	public Results<Individual> getAccountIndividuals(
 		FaroProject faroProject, String accountId, String channelId,
-		String query, int cur, int delta, String sortString);
+		String query, String rangeEnd, Integer rangeKey, String rangeStart,
+		int cur, int delta, String sortString);
 
 	public Results<IndividualSegment> getAccountIndividualSegments(
 		FaroProject faroProject, String accountId, String channelId,
@@ -257,6 +259,9 @@ public interface ContactsEngineClient {
 		FaroProject faroProject, String channelId, String fieldMappingFieldName,
 		String filterString, String individualSegmentId, int count,
 		int numberOfBins, List<OrderByField> orderByFields);
+
+	public List<AcquisitionParameter> getAcquisitionParameters(
+		FaroProject faroProject, String channelId);
 
 	public Results<Activity> getActivities(
 		FaroProject faroProject, String ownerId, String ownerType,

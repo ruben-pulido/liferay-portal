@@ -40,14 +40,12 @@ export const TSC_DIR = path.resolve(MODULES_DIR, '.tsc');
 export const TSC_BUILDINFO_DIR = path.resolve(TSC_DIR, 'buildinfo');
 export const TSC_TYPES_DIR = path.resolve(TSC_DIR, 'types');
 
-export const YARN_SCRIPT_DIR = path.resolve(
-	PORTAL_DIR,
-	'build',
-	'node',
-	'lib',
-	'node_modules',
-	'yarn'
-);
+export const NODE_DIR = path.resolve(PORTAL_DIR, 'build', 'node');
+export const NODE_MODULES_DIR =
+	process.platform === 'win32'
+		? path.resolve(NODE_DIR, 'node_modules')
+		: path.resolve(NODE_DIR, 'lib', 'node_modules');
+export const YARN_SCRIPT_DIR = path.resolve(NODE_MODULES_DIR, 'yarn');
 
 //
 // Files

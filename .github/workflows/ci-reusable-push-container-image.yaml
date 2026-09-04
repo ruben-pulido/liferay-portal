@@ -5,6 +5,7 @@ jobs:
     push:
         outputs:
             image_ref: ${{steps.push.outputs.image_ref}}
+            version: ${{steps.push.outputs.version}}
         runs-on: ubuntu-latest
         steps:
             -   name: Checkout code
@@ -50,9 +51,9 @@ jobs:
 
                         sanitized_branch=$(echo "${GITHUB_REF_NAME}" | tr 'A-Z/' 'a-z-')
 
-                        local registry_path="${CONTAINER_IMAGE_REGISTRY_NONPRODUCTION}/${sanitized_branch}"
+                        local registry_path="${CONTAINER_IMAGE_REGISTRY_NONPRODUCTION}/${sanitized_branch}/${GITHUB_SHA::7}"
 
-                        local image_ref="${registry_path}/${{inputs.image_name}}:${version}-g${GITHUB_SHA::7}"
+                        local image_ref="${registry_path}/${{inputs.image_name}}:${version}"
 
                         docker \
                             build \
@@ -63,6 +64,7 @@ jobs:
                         docker push "${image_ref}"
 
                         echo "image_ref=${image_ref}" >> ${GITHUB_OUTPUT}
+                        echo "version=${version}" >> ${GITHUB_OUTPUT}
                     }
 
                     main "${@}"
@@ -82,6 +84,8 @@ on:
         outputs:
             image_ref:
                 value: ${{jobs.push.outputs.image_ref}}
+            version:
+                value: ${{jobs.push.outputs.version}}
 permissions:
     contents: read
     id-token: write

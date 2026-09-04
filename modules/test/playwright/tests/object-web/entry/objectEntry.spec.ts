@@ -899,19 +899,20 @@ cmsTest.describe('Manage object entries schedule properties', () => {
 
 			await page.keyboard.press('Escape');
 
+			const today =
+				await viewObjectEntriesPage.publishDateInput.inputValue();
+
 			await viewObjectEntriesPage.schedulePublicationButton.click();
 
 			await waitForAlert(page);
-
-			const date = new Date();
-
-			const today = getObjectEntryUIDateTimeFormat(date);
 
 			await viewObjectEntriesPage.choosePublicationOption('schedule');
 
 			await expect(viewObjectEntriesPage.publishDateInput).toHaveValue(
 				today
 			);
+
+			const date = new Date(today);
 
 			date.setDate(date.getDate() + 1);
 
@@ -1017,17 +1018,18 @@ cmsTest.describe('Manage object entries schedule properties', () => {
 
 			await page.keyboard.press('Escape');
 
+			const today =
+				await viewObjectEntriesPage.reviewDateInput.inputValue();
+
 			await viewObjectEntriesPage.choosePublicationOption('publish');
 
 			await waitForAlert(page);
 
-			const date = new Date();
-
-			const today = getObjectEntryUIDateTimeFormat(date);
-
 			await expect(viewObjectEntriesPage.reviewDateInput).toHaveValue(
 				today
 			);
+
+			const date = new Date(today);
 
 			date.setDate(date.getDate() + 1);
 
@@ -1583,7 +1585,7 @@ test.describe('Manage object entries through Friendly URL', () => {
 
 			await editObjectDetailsPage.saveObjectDefinition();
 
-			await page.waitForLoadState('networkidle');
+			await waitForAlert(page, 'The object was saved successfully');
 
 			await page.goto(
 				`/web${site.friendlyUrlPath}/${newObjectFriendlyURLSeparator}/` +
@@ -3716,11 +3718,9 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 			await expect(viewObjectEntriesPage.successMessage).toBeVisible();
 
-			expect(
-				(
-					await page.getByPlaceholder('Search').inputValue()
-				).toLowerCase()
-			).toBe(userAccount.givenName.toLowerCase());
+			await expect(page.getByPlaceholder('Search')).toHaveValue(
+				new RegExp(`^${userAccount.givenName}$`, 'i')
+			);
 		}
 	);
 
@@ -3816,11 +3816,9 @@ test.describe('Manage object entries through View Object Entries', () => {
 					viewObjectEntriesPage.successMessage
 				).toBeVisible();
 
-				expect(
-					(
-						await page.getByPlaceholder('Search').inputValue()
-					).toLowerCase()
-				).toBe(userAccount.givenName.toLowerCase());
+				await expect(page.getByPlaceholder('Search')).toHaveValue(
+					new RegExp(`^${userAccount.givenName}$`, 'i')
+				);
 			}
 		}
 	);
@@ -4597,9 +4595,6 @@ test.describe('Manage object entries through View Object Entries', () => {
 			applicationName
 		);
 
-		// The save's navigation has had the entry seeding to land in; consume
-		// it before the next address is asked for, or the two collide.
-
 		await navigation;
 
 		await viewObjectEntriesPage.goto(objectDefinition.className);
@@ -4665,6 +4660,66 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 		await expect(autoIncrementInput).toHaveValue('HAT-1');
 	});
+
+	test(
+		'can verify conditional read only field keeps its value in object entries',
+		{tag: ['@LPD-103669']},
+		async ({apiHelpers, page, viewObjectEntriesPage}) => {
+			const objectFields = generateObjectFields({
+				objectFieldBusinessTypes: [
+					{businessType: 'Integer', name: 'age'},
+					{
+						businessType: 'Text',
+						name: 'employeeName',
+						readOnly: 'conditional',
+						readOnlyConditionExpression: 'age == 20',
+					},
+				],
+			});
+
+			const objectDefinition =
+				await apiHelpers.objectAdmin.postRandomObjectDefinition({
+					objectFields,
+					status: {code: 0},
+				});
+
+			apiHelpers.data.push({
+				id: objectDefinition.id,
+				type: 'objectDefinition',
+			});
+
+			await apiHelpers.objectEntry.postObjectEntry(
+				{age: 20, employeeName: 'John'},
+				'c/' + objectDefinition.name.toLowerCase() + 's'
+			);
+
+			await viewObjectEntriesPage.goto(objectDefinition.className);
+
+			await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+			const ageInput = page.getByLabel(objectFields[0].label['en_US']);
+
+			const employeeNameInput = page.getByLabel(
+				objectFields[1].label['en_US']
+			);
+
+			await expect(employeeNameInput).toBeDisabled();
+
+			await expect(employeeNameInput).toHaveValue('John');
+
+			await ageInput.fill('21');
+
+			await viewObjectEntriesPage.saveObjectEntryButton.click();
+
+			await waitForAlert(page);
+
+			await viewObjectEntriesPage.backButton.click();
+
+			await viewObjectEntriesPage.frontendDatasetItems.first().click();
+
+			await expect(employeeNameInput).toHaveValue('John');
+		}
+	);
 
 	test('can view all entries related to an object in the relationship field using autocomplete', async ({
 		apiHelpers,
@@ -5304,13 +5359,6 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 			await expect(viewObjectEntriesPage.successMessage).toBeVisible();
 
-			// The save fires its toast before it navigates to the saved entry,
-			// and the remounted relationship field publishes an empty hidden
-			// input until its option fetch resolves, so a read taken here can
-			// see the render before the save or the field before its value.
-			// Land on the saved entry and reload so the read is the persisted
-			// value.
-
 			await page.waitForURL(/externalReferenceCode=/);
 
 			await page.reload();
@@ -5334,13 +5382,6 @@ test.describe('Manage object entries through View Object Entries', () => {
 			await viewObjectEntriesPage.saveObjectEntryButton.click();
 
 			await expect(viewObjectEntriesPage.successMessage).toBeVisible();
-
-			// The save fires its toast before it navigates to the saved entry,
-			// and the remounted relationship field publishes an empty hidden
-			// input until its option fetch resolves, so a read taken here can
-			// see the render before the save or the field before its value.
-			// Land on the saved entry and reload so the read is the persisted
-			// value.
 
 			await page.waitForURL(/externalReferenceCode=/);
 
@@ -6033,17 +6074,19 @@ test.describe('Manage object entries through View Object Entries', () => {
 
 		await viewObjectEntriesPage.goto(objectDefinition.className);
 
-		await viewObjectEntriesPage.clickAddObjectEntry(
-			objectDefinition.label['en_US']
-		);
-
-		await page.waitForResponse(
+		const accountsResponsePromise = page.waitForResponse(
 			(response) =>
 				response
 					.url()
 					.includes('/o/headless-admin-user/v1.0/accounts') &&
 				response.request().method() === 'GET'
 		);
+
+		await viewObjectEntriesPage.clickAddObjectEntry(
+			objectDefinition.label['en_US']
+		);
+
+		await accountsResponsePromise;
 
 		expect(apiCalls).toBe(1);
 		expect(apiURL).not.toContain('pageSize=-1');
@@ -6133,9 +6176,6 @@ test.describe('Manage object entries through View Object Entries', () => {
 		await page
 			.getByRole('button', {name: 'astronaut.png'})
 			.waitFor({state: 'visible'});
-
-		// The replaced temporary file is deleted asynchronously, so poll
-		// instead of asserting the very first read
 
 		await expect
 			.poll(
@@ -6728,7 +6768,7 @@ test.describe('Manage object entries through Workflow', () => {
 			applicationName
 		);
 
-		await globalMenuPage.goToApplications('Metrics');
+		await globalMenuPage.goToApplications('Workflow Metrics');
 
 		await metricsPage.chooseProcess(assetType);
 
@@ -6873,6 +6913,8 @@ test.describe('Manage object entries through Workflow', () => {
 			);
 
 			await usersAndOrganizationsPage.saveTimeZoneButton.click();
+
+			await waitForAlert(page);
 
 			// Check if the time has changed
 

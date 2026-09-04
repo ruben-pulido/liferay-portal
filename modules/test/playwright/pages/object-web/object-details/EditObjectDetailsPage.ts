@@ -99,25 +99,46 @@ export class EditObjectDetailsPage {
 		await this.viewObjectDefinitionsPage.clickEditObjectDefinitionLink(
 			objectDefinitionLabel
 		);
+
+		await expect(this.detailsTabItem).toHaveAttribute(
+			'aria-current',
+			'page'
+		);
 	}
 
 	async goToDetailsTab() {
-		await this.detailsTabItem.click();
+		const ariaCurrent =
+			await this.detailsTabItem.getAttribute('aria-current');
 
-		await this.page.waitForLoadState('networkidle');
+		if (ariaCurrent !== 'page') {
+			await this.detailsTabItem.click();
+
+			await expect(this.detailsTabItem).toHaveAttribute(
+				'aria-current',
+				'page'
+			);
+		}
+
+		await this.waitForDetailsFormLoaded();
 	}
 
 	async waitForDetailsFormLoaded() {
-
-		// The form is interactive before its mount fetch lands, and the fetch
-		// merges the persisted definition over anything already typed. The
-		// toolbar buttons unlock only once that fetch is done, so wait there.
-
 		await expect(this.saveButton).toBeEnabled();
 	}
 
 	async saveObjectDefinition() {
 		await this.saveButton.click();
+	}
+
+	async saveObjectDefinitionReturningReload() {
+		const reload = this.page.waitForNavigation({
+			timeout: 10000,
+			waitUntil: 'load',
+		});
+
+		await this.saveButton.click();
+
+		return {reload};
 	}
 
 	async selectEntryTitleField(fieldName: string) {

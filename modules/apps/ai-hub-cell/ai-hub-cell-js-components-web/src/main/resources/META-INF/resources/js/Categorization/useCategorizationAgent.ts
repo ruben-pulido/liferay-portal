@@ -115,6 +115,7 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 	const mountedRef = useRef<boolean>(true);
 	const pendingRef = useRef<boolean>(false);
 	const sseEventSinkKeyRef = useRef<string | null>(null);
+	const stoppedRef = useRef<boolean>(false);
 
 	const closeEventSource = useCallback(() => {
 		eventSourceRef.current?.close();
@@ -132,6 +133,10 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 				});
 			}
 			catch {
+				if (stoppedRef.current) {
+					return;
+				}
+
 				setError(Liferay.Language.get('an-unexpected-error-occurred'));
 				setStatus('error');
 
@@ -152,7 +157,7 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 			.then((eventSource) => {
 				connectingRef.current = false;
 
-				if (!mountedRef.current) {
+				if (!mountedRef.current || stoppedRef.current) {
 					eventSource?.close();
 
 					return;
@@ -161,7 +166,10 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 				if (!eventSource) {
 					pendingRef.current = false;
 
-					setStatus('idle');
+					setError(
+						Liferay.Language.get('an-unexpected-error-occurred')
+					);
+					setStatus('error');
 
 					return;
 				}
@@ -224,6 +232,19 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 						closeEventSource();
 					}
 				);
+
+				eventSource.addEventListener('error', () => {
+					if (stoppedRef.current) {
+						return;
+					}
+
+					setError(
+						Liferay.Language.get('an-unexpected-error-occurred')
+					);
+					setStatus('error');
+
+					closeEventSource();
+				});
 			})
 			.catch(() => {
 				connectingRef.current = false;
@@ -240,6 +261,10 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 
 	const run = useCallback(
 		(context: CategorizationContext) => {
+			if (stoppedRef.current) {
+				return;
+			}
+
 			lastContextRef.current = context;
 			lastTargetsRef.current = null;
 
@@ -261,6 +286,10 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 
 	const resolveTargets = useCallback(
 		(context: CategorizationContext, targets: string[]) => {
+			if (stoppedRef.current) {
+				return;
+			}
+
 			lastContextRef.current = context;
 			lastTargetsRef.current = targets;
 
@@ -287,7 +316,17 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 		}
 	}, [resolveTargets, run]);
 
+	const stop = useCallback(() => {
+		stoppedRef.current = true;
+
+		closeEventSource();
+
+		setStatus('stopped');
+	}, [closeEventSource]);
+
 	const reset = useCallback(() => {
+		stoppedRef.current = false;
+
 		setError(undefined);
 		setSuggestions([]);
 		setStatus('idle');
@@ -309,5 +348,14 @@ export default function useCategorizationAgent(agent: ECategorizationAgent) {
 		};
 	}, [agent, closeEventSource]);
 
-	return {error, regenerate, reset, resolveTargets, run, status, suggestions};
+	return {
+		error,
+		regenerate,
+		reset,
+		resolveTargets,
+		run,
+		status,
+		stop,
+		suggestions,
+	};
 }

@@ -13,7 +13,6 @@ import com.liferay.depot.constants.DepotRolesConstants;
 import com.liferay.depot.service.DepotEntryGroupRelLocalService;
 import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
-import com.liferay.document.library.text.DLFileEntryTextProvider;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManager;
 import com.liferay.exportimport.kernel.empty.model.EmptyModelManagerUtil;
 import com.liferay.fragment.cache.FragmentEntryLinkCache;
@@ -27,6 +26,7 @@ import com.liferay.object.constants.ObjectDefinitionSettingConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
 import com.liferay.object.constants.ObjectFieldSettingConstants;
 import com.liferay.object.constants.ObjectRelationshipConstants;
+import com.liferay.object.constants.ObjectValidationRuleSettingConstants;
 import com.liferay.object.definition.security.permission.resource.util.ObjectDefinitionResourcePermissionUtil;
 import com.liferay.object.definition.setting.util.ObjectDefinitionSettingUtil;
 import com.liferay.object.definition.tree.util.ObjectDefinitionTreeUtil;
@@ -87,6 +87,7 @@ import com.liferay.object.model.ObjectEntryTable;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectFolder;
 import com.liferay.object.model.ObjectRelationship;
+import com.liferay.object.model.ObjectValidationRuleSetting;
 import com.liferay.object.model.impl.ObjectDefinitionImpl;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionLocalizationTable;
 import com.liferay.object.petra.sql.dsl.DynamicObjectDefinitionLocalizationTableFactory;
@@ -116,6 +117,7 @@ import com.liferay.object.service.persistence.ObjectEntryPersistence;
 import com.liferay.object.service.persistence.ObjectFieldPersistence;
 import com.liferay.object.service.persistence.ObjectFolderPersistence;
 import com.liferay.object.service.persistence.ObjectRelationshipPersistence;
+import com.liferay.object.service.persistence.ObjectValidationRuleSettingPersistence;
 import com.liferay.object.system.SystemObjectDefinitionManager;
 import com.liferay.petra.function.transform.TransformUtil;
 import com.liferay.petra.lang.SafeCloseable;
@@ -142,7 +144,6 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.mass.delete.MassDeleteCacheThreadLocal;
-import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.GroupConstants;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.SystemEventConstants;
@@ -670,9 +671,15 @@ public class ObjectDefinitionLocalServiceImpl
 					_objectRelationshipPersistence.findByODI1_R(
 						objectDefinition.getObjectDefinitionId(), false)) {
 
+				_deleteCompositeKeyObjectValidationRule(
+					objectRelationship.getObjectFieldId2());
+
 				_objectRelationshipLocalService.deleteObjectRelationship(
 					objectRelationship);
 			}
+
+			_objectValidationRuleLocalService.deleteObjectValidationRules(
+				objectDefinition.getObjectDefinitionId());
 
 			for (ObjectRelationship objectRelationship :
 					_objectRelationshipPersistence.findByODI2_R(
@@ -681,9 +688,6 @@ public class ObjectDefinitionLocalServiceImpl
 				_objectRelationshipLocalService.deleteObjectRelationship(
 					objectRelationship);
 			}
-
-			_objectValidationRuleLocalService.deleteObjectValidationRules(
-				objectDefinition.getObjectDefinitionId());
 
 			_objectViewLocalService.deleteObjectViews(
 				objectDefinition.getObjectDefinitionId());
@@ -728,14 +732,6 @@ public class ObjectDefinitionLocalServiceImpl
 			_dropTable(objectDefinition.getLocalizationDBTableName());
 
 			undeployObjectDefinition(objectDefinition);
-
-			// undeployObjectDefinition calls _invalidatePortalCache which calls
-			// _classNameLocalService#getClassNameId
-
-			ClassName className = _classNameLocalService.getClassName(
-				objectDefinition.getClassName());
-
-			_classNameLocalService.deleteClassName(className);
 
 			_registerTransactionCallbackForCluster(
 				_undeployObjectDefinitionMethodKey, objectDefinition);
@@ -1078,10 +1074,10 @@ public class ObjectDefinitionLocalServiceImpl
 			_accountEntryLocalService, _accountEntryOrganizationRelLocalService,
 			_assetEntryLocalService, _bundleContext,
 			_depotEntryGroupRelLocalService, _depotEntryLocalService,
-			_dlFileEntryLocalService, _dlFileEntryTextProvider,
-			_groupLocalService, _kaleoDefinitionLocalService,
-			_listTypeLocalService, _objectActionLocalService,
-			objectDefinitionLocalService, _objectDefinitionSettingLocalService,
+			_dlFileEntryLocalService, _groupLocalService,
+			_kaleoDefinitionLocalService, _listTypeLocalService,
+			_objectActionLocalService, objectDefinitionLocalService,
+			_objectDefinitionSettingLocalService,
 			_objectEntryFolderLocalService, _objectEntryLocalService,
 			_objectEntryService, _objectFieldBusinessTypeRegistry,
 			_objectFieldLocalService, _objectFolderLocalService,
@@ -1199,19 +1195,26 @@ public class ObjectDefinitionLocalServiceImpl
 			return;
 		}
 
-		_undeploy(
-			_objectDefinitionDeployer,
-			_objectDefinitionDeployerServiceRegistrationsMap, objectDefinition);
+		try (SafeCloseable safeCloseable = CompanyThreadLocal.lock(
+				objectDefinition.getCompanyId())) {
 
-		for (Map.Entry
-				<ObjectDefinitionDeployer,
-				 Map<String, List<ServiceRegistration<?>>>> entry :
-					_activeServiceRegistrationsMaps.entrySet()) {
+			_undeploy(
+				_objectDefinitionDeployer,
+				_objectDefinitionDeployerServiceRegistrationsMap,
+				objectDefinition);
 
-			_undeploy(entry.getKey(), entry.getValue(), objectDefinition);
+			for (Map.Entry
+					<ObjectDefinitionDeployer,
+					 Map<String, List<ServiceRegistration<?>>>> entry :
+						_activeServiceRegistrationsMaps.entrySet()) {
+
+				_undeploy(entry.getKey(), entry.getValue(), objectDefinition);
+			}
+
+			_unregister(objectDefinition, _inactiveServiceRegistrationsMap);
+
+			_invalidatePortalCache(objectDefinition);
 		}
-
-		_invalidatePortalCache(objectDefinition);
 	}
 
 	@Indexable(type = IndexableType.REINDEX)
@@ -1492,8 +1495,6 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		objectDefinition = objectDefinitionPersistence.update(objectDefinition);
-
-		addOrUpdateObjectDefinitionPLOEntries(objectDefinition);
 
 		_resourceLocalService.addResources(
 			objectDefinition.getCompanyId(), 0, objectDefinition.getUserId(),
@@ -2228,6 +2229,21 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 	}
 
+	private void _deleteCompositeKeyObjectValidationRule(long objectFieldId)
+		throws PortalException {
+
+		ObjectValidationRuleSetting objectValidationRuleSetting =
+			_objectValidationRuleSettingPersistence.fetchByN_V(
+				ObjectValidationRuleSettingConstants.
+					NAME_COMPOSITE_KEY_OBJECT_FIELD_ID,
+				String.valueOf(objectFieldId));
+
+		if (objectValidationRuleSetting != null) {
+			_objectValidationRuleLocalService.deleteObjectValidationRule(
+				objectValidationRuleSetting.getObjectValidationRuleId());
+		}
+	}
+
 	private void _deleteFromTable(String dbTableName) throws PortalException {
 		Session session = objectDefinitionPersistence.openSession();
 
@@ -2692,17 +2708,26 @@ public class ObjectDefinitionLocalServiceImpl
 
 		objectDefinitionDeployer.undeploy(objectDefinition);
 
+		_unregister(objectDefinition, serviceRegistrationsMap);
+	}
+
+	private void _unregister(
+		ObjectDefinition objectDefinition,
+		Map<String, List<ServiceRegistration<?>>> serviceRegistrationsMap) {
+
 		List<ServiceRegistration<?>> serviceRegistrations =
 			serviceRegistrationsMap.remove(
 				DBPartitionUtil.getPartitionKey(
 					objectDefinition.getObjectDefinitionId()));
 
-		if (serviceRegistrations != null) {
-			for (ServiceRegistration<?> serviceRegistration :
-					serviceRegistrations) {
+		if (serviceRegistrations == null) {
+			return;
+		}
 
-				serviceRegistration.unregister();
-			}
+		for (ServiceRegistration<?> serviceRegistration :
+				serviceRegistrations) {
+
+			serviceRegistration.unregister();
 		}
 	}
 
@@ -4073,9 +4098,6 @@ public class ObjectDefinitionLocalServiceImpl
 	private DLFileEntryLocalService _dlFileEntryLocalService;
 
 	@Reference
-	private DLFileEntryTextProvider _dlFileEntryTextProvider;
-
-	@Reference
 	private EmptyModelManager _emptyModelManager;
 
 	@Reference
@@ -4180,6 +4202,10 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Reference
 	private ObjectValidationRuleLocalService _objectValidationRuleLocalService;
+
+	@Reference
+	private ObjectValidationRuleSettingPersistence
+		_objectValidationRuleSettingPersistence;
 
 	@Reference
 	private ObjectViewLocalService _objectViewLocalService;
