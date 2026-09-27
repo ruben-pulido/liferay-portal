@@ -8,6 +8,8 @@ package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 import com.liferay.exportimport.constants.ExportImportConstants;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.kernel.model.ExportImportConfiguration;
+import com.liferay.exportimport.kernel.service.ExportImportConfigurationLocalService;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
@@ -17,6 +19,7 @@ import com.liferay.fragment.exception.UnsupportedUnpublishFragmentEntryOperation
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionService;
+import com.liferay.fragment.service.FragmentEntryLinkLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
 import com.liferay.fragment.service.FragmentEntryService;
 import com.liferay.headless.admin.fragment.dto.v1_0.ApprovedFragmentVersion;
@@ -42,14 +45,17 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.UserConstants;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
+import com.liferay.portal.kernel.service.LayoutLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -65,8 +71,10 @@ import jakarta.ws.rs.core.MultivaluedMap;
 import java.io.Serializable;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -92,11 +100,16 @@ public class FragmentResourceImpl
 
 		EnabledUtil.checkEnabled(contextCompany);
 
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		if (ExportImportThreadLocal.isLayoutDataDeletionImportInProcess()) {
+			_deletePublishedFragmentEntryLinks(
+				fragmentExternalReferenceCode, groupId);
+		}
+
 		_fragmentEntryService.deleteFragmentEntry(
-			fragmentExternalReferenceCode,
-			GroupUtil.getStagingAwareGroupId(
-				true, contextCompany.getCompanyId(),
-				siteExternalReferenceCode));
+			fragmentExternalReferenceCode, groupId);
 	}
 
 	@Override
@@ -402,6 +415,74 @@ public class FragmentResourceImpl
 		return _toFragment(fragmentEntry);
 	}
 
+	private void _deletePublishedFragmentEntryLinks(
+			String externalReferenceCode, long groupId)
+		throws Exception {
+
+		ExportImportConfiguration exportImportConfiguration =
+			_exportImportConfigurationLocalService.
+				fetchExportImportConfiguration(
+					GetterUtil.getLong(
+						ExportImportThreadLocal.
+							getExportImportConfigurationId()));
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.
+				fetchFragmentEntryByExternalReferenceCode(
+					externalReferenceCode, groupId);
+
+		if ((exportImportConfiguration == null) || (fragmentEntry == null)) {
+			return;
+		}
+
+		Map<String, Serializable> settingsMap =
+			exportImportConfiguration.getSettingsMap();
+
+		boolean privateLayout = MapUtil.getBoolean(
+			settingsMap, "privateLayout");
+		long sourceGroupId = MapUtil.getLong(settingsMap, "sourceGroupId");
+
+		Set<Long> plids = new HashSet<>();
+
+		for (long layoutId :
+				GetterUtil.getLongValues(settingsMap.get("layoutIds"))) {
+
+			Layout sourceLayout = _layoutLocalService.fetchLayout(
+				sourceGroupId, privateLayout, layoutId);
+
+			if (sourceLayout == null) {
+				continue;
+			}
+
+			Layout layout = _layoutLocalService.fetchLayoutByUuidAndGroupId(
+				sourceLayout.getUuid(), groupId, privateLayout);
+
+			if (layout == null) {
+				continue;
+			}
+
+			plids.add(layout.getPlid());
+
+			Layout draftLayout = layout.fetchDraftLayout();
+
+			if (draftLayout != null) {
+				plids.add(draftLayout.getPlid());
+			}
+		}
+
+		_fragmentEntryLinkLocalService.deleteFragmentEntryLinks(
+			transformToLongArray(
+				_fragmentEntryLinkLocalService.
+					getFragmentEntryLinksByFragmentEntry(
+						groupId, fragmentEntry),
+				fragmentEntryLink -> {
+					if (!plids.contains(fragmentEntryLink.getPlid())) {
+						return null;
+					}
+
+					return fragmentEntryLink.getFragmentEntryLinkId();
+				}));
+	}
+
 	private <T extends FragmentVersion> T _getFragmentVersion(
 		Class<T> clazz, Fragment fragment) {
 
@@ -648,12 +729,19 @@ public class FragmentResourceImpl
 	private DTOConverterRegistry _dtoConverterRegistry;
 
 	@Reference
+	private ExportImportConfigurationLocalService
+		_exportImportConfigurationLocalService;
+
+	@Reference
 	private FragmentCollectionService _fragmentCollectionService;
 
 	@Reference(
 		target = "(component.name=com.liferay.headless.admin.fragment.internal.dto.v1_0.converter.FragmentDTOConverter)"
 	)
 	private DTOConverter<FragmentEntry, Fragment> _fragmentDTOConverter;
+
+	@Reference
+	private FragmentEntryLinkLocalService _fragmentEntryLinkLocalService;
 
 	@Reference
 	private FragmentEntryLocalService _fragmentEntryLocalService;
@@ -666,6 +754,9 @@ public class FragmentResourceImpl
 
 	@Reference
 	private Language _language;
+
+	@Reference
+	private LayoutLocalService _layoutLocalService;
 
 	@Reference(
 		target = "(resource.name=" + FragmentConstants.RESOURCE_NAME + ")"
