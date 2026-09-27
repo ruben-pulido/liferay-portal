@@ -6,8 +6,13 @@
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
 import com.liferay.depot.constants.DepotConstants;
+import com.liferay.exportimport.constants.ExportImportConstants;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
+import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
@@ -29,6 +34,7 @@ import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.vulcan.crud.VulcanCRUDItemDelegate;
 import com.liferay.portal.vulcan.dto.converter.DTOConverter;
@@ -39,6 +45,8 @@ import com.liferay.portal.vulcan.pagination.Pagination;
 import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
+
+import java.io.Serializable;
 
 import java.util.Collections;
 import java.util.Map;
@@ -54,13 +62,15 @@ import org.osgi.service.component.annotations.ServiceScope;
 	properties = "OSGI-INF/liferay/rest/v1_0/fragment-set.properties",
 	property = {
 		"crud.entity.class.name=com.liferay.headless.admin.fragment.dto.v1_0.FragmentSet",
-		"crud.item.delegate=true"
+		"crud.item.delegate=true",
+		"export.import.vulcan.batch.engine.task.item.delegate=true"
 	},
 	scope = ServiceScope.PROTOTYPE, service = FragmentSetResource.class
 )
 public class FragmentSetResourceImpl
 	extends BaseFragmentSetResourceImpl
-	implements VulcanCRUDItemDelegate<FragmentSet> {
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<FragmentSet>,
+			   VulcanCRUDItemDelegate<FragmentSet> {
 
 	@Override
 	public void deleteDesignLibraryFragmentSet(
@@ -136,6 +146,66 @@ public class FragmentSetResourceImpl
 	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
+	}
+
+	@Override
+	public ExportImportDescriptor<FragmentCollection>
+		getExportImportDescriptor() {
+
+		return new ExportImportDescriptor<>() {
+
+			@Override
+			public String getKey() {
+				return FragmentSet.class.getName();
+			}
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "fragment-sets";
+			}
+
+			@Override
+			public Class<FragmentCollection> getModelClass() {
+				return FragmentCollection.class;
+			}
+
+			@Override
+			public Map<String, Serializable> getParameters(
+				PortletDataContext portletDataContext) {
+
+				return HashMapBuilder.<String, Serializable>put(
+					"filter",
+					() -> {
+						if (ExportImportThreadLocal.isStagingInProcess()) {
+							return null;
+						}
+
+						return "marketplace eq false";
+					}
+				).build();
+			}
+
+			@Override
+			public String getPortletId() {
+				return FragmentPortletKeys.FRAGMENT;
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_DESIGN;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
+		};
 	}
 
 	@Override
