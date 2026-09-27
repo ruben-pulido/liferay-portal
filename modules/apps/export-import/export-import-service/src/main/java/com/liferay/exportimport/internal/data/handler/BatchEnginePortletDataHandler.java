@@ -183,8 +183,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					portletDataContext.getScopeGroupId()),
 				JSONUtil.toJSONArray(
 					externalReferenceCodes,
-					externalReferenceCode -> JSONUtil.put(
-						"externalReferenceCode", externalReferenceCode)
+					exportImportDescriptor::getDeletionJSONObject
 				).toString());
 
 			manifestSummary.addModelDeletionCount(
