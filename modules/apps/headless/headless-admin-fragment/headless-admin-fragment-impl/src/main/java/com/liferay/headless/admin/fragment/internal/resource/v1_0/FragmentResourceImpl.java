@@ -5,6 +5,10 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.exportimport.constants.ExportImportConstants;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.kernel.lar.PortletDataContext;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentPortletKeys;
@@ -33,6 +37,7 @@ import com.liferay.headless.admin.site.dto.v1_0.util.FileEntryUtil;
 import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.log.Log;
@@ -44,6 +49,7 @@ import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.odata.entity.EntityModel;
@@ -56,7 +62,11 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 
 import jakarta.ws.rs.core.MultivaluedMap;
 
+import java.io.Serializable;
+
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -67,9 +77,12 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/fragment.properties",
+	property = "export.import.vulcan.batch.engine.task.item.delegate=true",
 	scope = ServiceScope.PROTOTYPE, service = FragmentResource.class
 )
-public class FragmentResourceImpl extends BaseFragmentResourceImpl {
+public class FragmentResourceImpl
+	extends BaseFragmentResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<Fragment> {
 
 	@Override
 	public void deleteSiteFragment(
@@ -89,6 +102,80 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
+	}
+
+	@Override
+	public ExportImportDescriptor<FragmentEntry> getExportImportDescriptor() {
+		return new ExportImportDescriptor<>() {
+
+			@Override
+			public JSONObject getDeletionJSONObject(
+				String externalReferenceCode) {
+
+				return JSONUtil.put(
+					"externalReferenceCode", externalReferenceCode
+				).put(
+					"type", Fragment.Type.BASIC_FRAGMENT.getValue()
+				);
+			}
+
+			@Override
+			public String getKey() {
+				return Fragment.class.getName();
+			}
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "fragments";
+			}
+
+			@Override
+			public Class<FragmentEntry> getModelClass() {
+				return FragmentEntry.class;
+			}
+
+			@Override
+			public List<String> getNestedFields() {
+				return List.of("fragmentSet", "thumbnailURLReference");
+			}
+
+			@Override
+			public Map<String, Serializable> getParameters(
+				PortletDataContext portletDataContext) {
+
+				return HashMapBuilder.<String, Serializable>put(
+					"filter",
+					() -> {
+						if (ExportImportThreadLocal.isStagingInProcess()) {
+							return null;
+						}
+
+						return "marketplace eq false";
+					}
+				).build();
+			}
+
+			@Override
+			public String getPortletId() {
+				return FragmentPortletKeys.FRAGMENT;
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_DESIGN;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
+		};
 	}
 
 	@Override
