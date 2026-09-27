@@ -5,7 +5,9 @@
 
 package com.liferay.headless.admin.fragment.internal.util;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
+import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Company;
 
 /**
@@ -19,6 +21,14 @@ public class EnabledUtil {
 	}
 
 	public static void checkEnabled(Company company) {
+		if (LazyReferencingThreadLocal.isEnabled() ||
+			ExportImportThreadLocal.isExportInProcess() ||
+			ExportImportThreadLocal.isImportInProcess() ||
+			ExportImportThreadLocal.isStagingInProcess()) {
+
+			return;
+		}
+
 		FeatureFlagManagerUtil.checkEnabled(
 			company.getCompanyId(), "LPD-39244");
 	}
