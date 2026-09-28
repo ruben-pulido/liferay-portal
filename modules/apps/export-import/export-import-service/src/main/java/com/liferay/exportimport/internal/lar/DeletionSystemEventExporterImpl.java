@@ -7,6 +7,7 @@ package com.liferay.exportimport.internal.lar;
 
 import com.liferay.exportimport.internal.data.handler.BatchEnginePortletDataHandler;
 import com.liferay.exportimport.internal.data.handler.BatchEnginePortletDataHandlerRegistryUtil;
+import com.liferay.exportimport.internal.data.handler.TypedStagedModelType;
 import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportProcessCallbackRegistry;
@@ -96,9 +97,8 @@ public class DeletionSystemEventExporterImpl
 				new HashMap<>();
 
 			for (SystemEvent systemEvent : systemEvents) {
-				if (BatchEnginePortletDataHandlerRegistryUtil.hasByClassName(
-						systemEvent.getClassName(),
-						portletDataContext.getCompanyId())) {
+				if (_isBatchDeletionSystemEvent(
+						portletDataContext, systemEvent)) {
 
 					List<SystemEvent> batchSystemEvents =
 						batchSystemEventsMap.computeIfAbsent(
@@ -248,6 +248,24 @@ public class DeletionSystemEventExporterImpl
 								portletDataContext.isPrivateLayout() + "\"%"));
 				}
 
+				if (stagedModelType instanceof
+						TypedStagedModelType typedStagedModelType) {
+
+					Property extraDataProperty = PropertyFactoryUtil.forName(
+						"extraData");
+
+					Disjunction typeDisjunction =
+						RestrictionsFactoryUtil.disjunction();
+
+					for (String type : typedStagedModelType.getTypes()) {
+						typeDisjunction.add(
+							extraDataProperty.like(
+								"%\"type\":\"" + type + "\"%"));
+					}
+
+					conjunction.add(typeDisjunction);
+				}
+
 				referrerClassNameIdDisjunction.add(conjunction);
 			}
 
@@ -375,6 +393,22 @@ public class DeletionSystemEventExporterImpl
 		actionableDynamicQuery.performActions();
 
 		return systemEvents;
+	}
+
+	private boolean _isBatchDeletionSystemEvent(
+			PortletDataContext portletDataContext, SystemEvent systemEvent)
+		throws Exception {
+
+		BatchEnginePortletDataHandler batchEnginePortletDataHandler =
+			BatchEnginePortletDataHandlerRegistryUtil.getByClassName(
+				portletDataContext.getCompanyId(), systemEvent.getClassName());
+
+		if (batchEnginePortletDataHandler == null) {
+			return false;
+		}
+
+		return batchEnginePortletDataHandler.isDeletionSystemEventSupported(
+			systemEvent);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

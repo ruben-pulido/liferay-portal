@@ -97,6 +97,10 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 			return false;
 		}
 
+		public default boolean isModelClassShared() {
+			return false;
+		}
+
 		public default boolean isStagingSupported() {
 			return false;
 		}

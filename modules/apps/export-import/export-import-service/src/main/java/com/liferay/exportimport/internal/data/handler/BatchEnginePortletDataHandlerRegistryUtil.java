@@ -48,16 +48,6 @@ public class BatchEnginePortletDataHandlerRegistryUtil {
 		return portletId;
 	}
 
-	public static boolean hasByClassName(String className, long companyId) {
-		String portletId = _classNamePortletIdsMap.get(className);
-
-		if (portletId == null) {
-			return false;
-		}
-
-		return _isAllowed(companyId, portletId);
-	}
-
 	protected static BatchEnginePortletDataHandler getByPortletId(
 		long companyId, String portletId) {
 

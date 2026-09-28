@@ -171,7 +171,9 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				typedExternalReferenceCodesMap.getOrDefault(
 					exportImportDescriptor.getKey(), Collections.emptyList()));
 
-			externalReferenceCodes.addAll(untypedExternalReferenceCodes);
+			if (!exportImportDescriptor.isModelClassShared()) {
+				externalReferenceCodes.addAll(untypedExternalReferenceCodes);
+			}
 
 			if (externalReferenceCodes.isEmpty()) {
 				continue;
@@ -306,6 +308,36 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			portletDataContext, true);
 
 		return !activeRegistrations.isEmpty();
+	}
+
+	public boolean isDeletionSystemEventSupported(SystemEvent systemEvent)
+		throws Exception {
+
+		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject(
+			systemEvent.getExtraData());
+
+		for (Registration registration : _registrations) {
+			ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
+				exportImportDescriptor =
+					registration.getExportImportDescriptor();
+
+			if (!StringUtil.equals(
+					systemEvent.getClassName(),
+					exportImportDescriptor.getModelClassName())) {
+
+				continue;
+			}
+
+			if (!exportImportDescriptor.isModelClassShared() ||
+				StringUtil.equals(
+					exportImportDescriptor.getKey(),
+					extraDataJSONObject.getString("type"))) {
+
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
@@ -682,6 +714,10 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			}
 
 			for (String modelClassName : getClassNames()) {
+				if (_getModelClassSharedKeys(modelClassName) != null) {
+					continue;
+				}
+
 				manifestSummary.addModelDeletionCount(
 					modelClassName,
 					_exportImportHelper.getModelDeletionCount(
@@ -800,6 +836,30 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		return unsyncByteArrayOutputStream.toByteArray();
 	}
 
+	private List<String> _getModelClassSharedKeys(String className) {
+		List<String> keys = new ArrayList<>();
+
+		for (Registration registration : _registrations) {
+			ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
+				exportImportDescriptor =
+					registration.getExportImportDescriptor();
+
+			if (!StringUtil.equals(
+					className, exportImportDescriptor.getModelClassName())) {
+
+				continue;
+			}
+
+			if (!exportImportDescriptor.isModelClassShared()) {
+				return null;
+			}
+
+			keys.add(exportImportDescriptor.getKey());
+		}
+
+		return keys;
+	}
+
 	private PortletDataHandlerControl _getPortletDataHandlerControl(
 		Registration registration) {
 
@@ -824,7 +884,9 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 			String modelClassName = exportImportDescriptor.getModelClassName();
 
-			if (!classNames.add(modelClassName)) {
+			if (!classNames.add(modelClassName) ||
+				exportImportDescriptor.isModelClassShared()) {
+
 				sharedClassNames.add(modelClassName);
 			}
 		}
@@ -907,8 +969,18 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		setDeletionSystemEventStagedModelTypes(
 			TransformUtil.transformToArray(
 				Arrays.asList(getClassNames()),
-				className -> new StagedModelType(
-					className, StagedModelType.REFERRER_CLASS_NAME_ALL),
+				className -> {
+					List<String> modelClassSharedKeys =
+						_getModelClassSharedKeys(className);
+
+					if (modelClassSharedKeys == null) {
+						return new StagedModelType(
+							className, StagedModelType.REFERRER_CLASS_NAME_ALL);
+					}
+
+					return new TypedStagedModelType(
+						className, modelClassSharedKeys);
+				},
 				StagedModelType.class));
 	}
 
@@ -935,7 +1007,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 		Set<String> sharedClassNames = _getSharedClassNames();
 
 		if (_serviceRegistration == null) {
-			if ((_registrations.size() > 1) && !sharedClassNames.isEmpty()) {
+			if (!sharedClassNames.isEmpty()) {
 				SystemEventExtraDataContributor
 					systemEventExtraDataContributor =
 						(baseModel, extraData) -> {
@@ -968,7 +1040,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					).build());
 			}
 		}
-		else if ((_registrations.size() <= 1) || sharedClassNames.isEmpty()) {
+		else if (sharedClassNames.isEmpty()) {
 			try {
 				_serviceRegistration.unregister();
 			}
