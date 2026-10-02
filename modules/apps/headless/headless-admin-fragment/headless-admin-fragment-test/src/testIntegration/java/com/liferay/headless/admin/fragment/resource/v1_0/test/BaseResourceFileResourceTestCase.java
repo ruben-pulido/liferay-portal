@@ -193,6 +193,7 @@ public abstract class BaseResourceFileResourceTestCase {
 		resourceFile.setFragmentSetExternalReferenceCode(regex);
 		resourceFile.setName(regex);
 		resourceFile.setResourceFolderExternalReferenceCode(regex);
+		resourceFile.setUuid(regex);
 
 		String json = ResourceFileSerDes.toJSON(resourceFile);
 
@@ -206,6 +207,7 @@ public abstract class BaseResourceFileResourceTestCase {
 		Assert.assertEquals(regex, resourceFile.getName());
 		Assert.assertEquals(
 			regex, resourceFile.getResourceFolderExternalReferenceCode());
+		Assert.assertEquals(regex, resourceFile.getUuid());
 	}
 
 	@Test
@@ -1306,6 +1308,14 @@ public abstract class BaseResourceFileResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (resourceFile.getUuid() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			throw new IllegalArgumentException(
 				"Invalid additional assert field name " +
 					additionalAssertFieldName);
@@ -1538,6 +1548,16 @@ public abstract class BaseResourceFileResourceTestCase {
 						resourceFile1.getResourceFolderExternalReferenceCode(),
 						resourceFile2.
 							getResourceFolderExternalReferenceCode())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						resourceFile1.getUuid(), resourceFile2.getUuid())) {
 
 					return false;
 				}
@@ -1915,6 +1935,52 @@ public abstract class BaseResourceFileResourceTestCase {
 			return sb.toString();
 		}
 
+		if (entityFieldName.equals("uuid")) {
+			Object object = resourceFile.getUuid();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -1971,6 +2037,7 @@ public abstract class BaseResourceFileResourceTestCase {
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				resourceFolderExternalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 			}
 		};
 	}
@@ -2219,4 +2286,4 @@ public abstract class BaseResourceFileResourceTestCase {
 			_resourceFileResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-134485573
+// LIFERAY-REST-BUILDER-HASH:1471754081
