@@ -47,6 +47,7 @@ public class ResourceFolderUtil {
 
 		serviceContext.setAddGroupPermissions(true);
 		serviceContext.setAddGuestPermissions(true);
+		serviceContext.setUuid(resourceFolder.getUuid());
 
 		Folder folder = DLAppLocalServiceUtil.addFolder(
 			resourceFolder.getExternalReferenceCode(), userId,
