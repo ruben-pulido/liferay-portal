@@ -307,6 +307,11 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			resourceFile.getResourceFolderExternalReferenceCode(),
 			contextUser.getUserId());
 
+		ServiceContext serviceContext = _getServiceContext(
+			groupId, resourceFile);
+
+		serviceContext.setUuid(resourceFile.getUuid());
+
 		return _toResourceFile(
 			_dlAppLocalService.addFileEntry(
 				resourceFile.getExternalReferenceCode(),
@@ -314,7 +319,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 				dlFolder.getFolderId(), resourceFile.getName(),
 				_mimeTypes.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null, bytes, null, null,
-				null, _getServiceContext(groupId, resourceFile)));
+				null, serviceContext));
 	}
 
 	private void _checkBytes(byte[] bytes) {
