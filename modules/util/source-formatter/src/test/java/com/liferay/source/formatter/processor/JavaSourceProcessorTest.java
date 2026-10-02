@@ -1202,6 +1202,13 @@ public class JavaSourceProcessorTest extends BaseSourceProcessorTestCase {
 	}
 
 	@Test
+	public void testStringSuffixVariableNames() throws Exception {
+		test(
+			"StringSuffixVariableNames.testjava",
+			"Rename variable \"portletURL\" to \"portletURLString\"", 16);
+	}
+
+	@Test
 	public void testSwitchExpression() throws Exception {
 		test(
 			"SwitchExpression.testjava",
