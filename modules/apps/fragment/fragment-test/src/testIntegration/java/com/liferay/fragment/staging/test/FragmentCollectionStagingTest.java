@@ -24,6 +24,7 @@ import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
+import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.test.util.UserTestUtil;
@@ -63,6 +64,7 @@ public class FragmentCollectionStagingTest {
 	}
 
 	@Test
+	@TestInfo("LPD-D")
 	public void testFragmentResourcesWithFoldersCopiedWhenLocalStagingActivated()
 		throws Exception {
 
@@ -149,6 +151,7 @@ public class FragmentCollectionStagingTest {
 	}
 
 	@Test
+	@TestInfo("LPD-D")
 	public void testSingleFragmentResourceCopiedWhenLocalStagingActivated()
 		throws Exception {
 
@@ -186,7 +189,7 @@ public class FragmentCollectionStagingTest {
 			FragmentCollection.class.getName(),
 			fragmentCollection.getFragmentCollectionId(),
 			FragmentPortletKeys.FRAGMENT, folderId,
-			new UnsyncByteArrayInputStream(new byte[0]), name,
+			new UnsyncByteArrayInputStream(RandomTestUtil.randomBytes()), name,
 			ContentTypes.IMAGE_PNG, false);
 	}
 
