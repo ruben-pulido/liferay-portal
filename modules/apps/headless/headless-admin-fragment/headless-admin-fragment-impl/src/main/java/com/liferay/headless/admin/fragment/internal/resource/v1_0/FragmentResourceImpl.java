@@ -39,6 +39,7 @@ import com.liferay.headless.admin.fragment.resource.v1_0.FragmentResource;
 import com.liferay.headless.admin.site.dto.v1_0.util.FileEntryUtil;
 import com.liferay.headless.common.spi.util.GroupUtil;
 import com.liferay.info.item.InfoItemServiceRegistry;
+import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.portal.kernel.exception.NoSuchModelException;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
@@ -313,34 +314,37 @@ public class FragmentResourceImpl
 
 		EnabledUtil.checkEnabled(contextCompany);
 
-		long groupId = GroupUtil.getStagingAwareGroupId(
-			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+		try (AutoCloseable autoCloseable = _getServiceContextAutoCloseable()) {
+			long groupId = GroupUtil.getStagingAwareGroupId(
+				true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
-		try {
-			FragmentEntry fragmentEntry =
-				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
-					fragmentExternalReferenceCode, groupId);
+			try {
+				FragmentEntry fragmentEntry =
+					_fragmentEntryService.
+						getFragmentEntryByExternalReferenceCode(
+							fragmentExternalReferenceCode, groupId);
 
-			return _updateFragmentEntry(fragment, fragmentEntry, groupId);
-		}
-		catch (NoSuchModelException noSuchModelException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(noSuchModelException);
+				return _updateFragmentEntry(fragment, fragmentEntry, groupId);
 			}
+			catch (NoSuchModelException noSuchModelException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(noSuchModelException);
+				}
 
-			FragmentEntry draftFragmentEntry =
-				_fragmentEntryLocalService.
-					fetchFragmentEntryByExternalReferenceCode(
-						fragmentExternalReferenceCode, groupId, false);
+				FragmentEntry draftFragmentEntry =
+					_fragmentEntryLocalService.
+						fetchFragmentEntryByExternalReferenceCode(
+							fragmentExternalReferenceCode, groupId, false);
 
-			if (draftFragmentEntry != null) {
-				return _updateFragmentEntry(
-					fragment, draftFragmentEntry, groupId);
+				if (draftFragmentEntry != null) {
+					return _updateFragmentEntry(
+						fragment, draftFragmentEntry, groupId);
+				}
+
+				return _addFragmentEntry(
+					fragmentExternalReferenceCode, fragment,
+					_getOrAddFragmentCollection(fragment, groupId), groupId);
 			}
-
-			return _addFragmentEntry(
-				fragmentExternalReferenceCode, fragment,
-				_getOrAddFragmentCollection(fragment, groupId), groupId);
 		}
 	}
 
@@ -557,6 +561,18 @@ public class FragmentResourceImpl
 			fragment.getThumbnailURLReference(), contextUser.getUserId());
 	}
 
+	private AutoCloseable _getServiceContextAutoCloseable() throws Exception {
+		if ((contextHttpServletRequest != null) ||
+			!ExportImportThreadLocal.isImportInProcess()) {
+
+			return () -> {
+			};
+		}
+
+		return _layoutServiceContextHelper.getServiceContextAutoCloseable(
+			contextCompany, contextUser);
+	}
+
 	private int _getType(Fragment fragment) {
 		Fragment.Type type = fragment.getType();
 
@@ -757,6 +773,9 @@ public class FragmentResourceImpl
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private LayoutServiceContextHelper _layoutServiceContextHelper;
 
 	@Reference(
 		target = "(resource.name=" + FragmentConstants.RESOURCE_NAME + ")"
