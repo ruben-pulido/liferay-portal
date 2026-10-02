@@ -661,6 +661,10 @@ components:
                     description:
                         The external reference code of the resource file's resource folder, used to reference an existing resource folder. Takes precedence over `resourceFolder` when both are set.
                     type: string
+                uuid:
+                    description:
+                        The resource file's universally unique identifier. On write, used only when the resource file is created, to keep the identifier of an exported resource file.
+                    type: string
             type: object
         ResourceFolder:
             description:
