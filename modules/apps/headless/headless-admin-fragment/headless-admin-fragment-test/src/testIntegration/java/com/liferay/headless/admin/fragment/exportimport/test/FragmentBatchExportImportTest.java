@@ -23,6 +23,7 @@ import com.liferay.journal.model.JournalArticle;
 import com.liferay.journal.service.JournalArticleLocalService;
 import com.liferay.journal.test.util.JournalTestUtil;
 import com.liferay.layout.test.util.LayoutTestUtil;
+import com.liferay.petra.io.unsync.UnsyncByteArrayInputStream;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
@@ -31,6 +32,9 @@ import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
@@ -39,7 +43,10 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.ContentTypes;
+import com.liferay.portal.kernel.util.FileUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.Time;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.log.LogCapture;
 import com.liferay.portal.test.log.LogEntry;
@@ -84,9 +91,24 @@ public class FragmentBatchExportImportTest {
 	}
 
 	@Test
-	@TestInfo({"LPD-A", "LPD-B"})
+	@TestInfo({"LPD-A", "LPD-B", "LPD-D"})
 	public void testExportImport() throws Exception {
 		FragmentCollection fragmentCollection = _addFragmentCollection();
+
+		FileEntry fileEntry1 = _addFileEntry(
+			fragmentCollection, fragmentCollection.getResourcesFolderId(),
+			"Image1");
+
+		Folder folder1 = _addFolder(
+			fragmentCollection.getResourcesFolderId(), "Folder1");
+
+		FileEntry fileEntry2 = _addFileEntry(
+			fragmentCollection, folder1.getFolderId(), "Image2");
+
+		Folder folder2 = _addFolder(folder1.getFolderId(), "Folder2");
+
+		FileEntry fileEntry3 = _addFileEntry(
+			fragmentCollection, folder2.getFolderId(), "Image3");
 
 		String configuration = JSONUtil.put(
 			"fieldSets",
@@ -135,6 +157,16 @@ public class FragmentBatchExportImportTest {
 			fragmentCollection.getName(), importedFragmentCollection.getName());
 		Assert.assertEquals(
 			fragmentCollection.getUuid(), importedFragmentCollection.getUuid());
+
+		Map<String, FileEntry> resourcesMap =
+			importedFragmentCollection.getResourcesMap();
+
+		Assert.assertEquals(resourcesMap.toString(), 3, resourcesMap.size());
+
+		_assertFileEntry(fileEntry1, resourcesMap.get("Image1"));
+		_assertFileEntry(fileEntry2, resourcesMap.get("Folder1/Image2"));
+		_assertFileEntry(
+			fileEntry3, resourcesMap.get("Folder1/Folder2/Image3"));
 
 		FragmentEntry importedFragmentEntry =
 			_fragmentEntryLocalService.getFragmentEntryByExternalReferenceCode(
@@ -251,6 +283,65 @@ public class FragmentBatchExportImportTest {
 			defaultValueJSONObject.getString("externalReferenceCode"));
 	}
 
+	@Test
+	@TestInfo("LPD-D")
+	public void testExportWithDateRange() throws Exception {
+		FragmentCollection fragmentCollection = _addFragmentCollection();
+
+		Folder folder1 = _addFolder(
+			fragmentCollection.getResourcesFolderId(), "Folder1");
+
+		FileEntry fileEntry = _addFileEntry(
+			fragmentCollection, folder1.getFolderId(), "Image1");
+
+		Thread.sleep(Time.SECOND * 2);
+
+		Date endDate = new Date();
+
+		Thread.sleep(Time.SECOND * 2);
+
+		Folder folder2 = _addFolder(
+			fragmentCollection.getResourcesFolderId(), "Folder2");
+
+		_addFileEntry(fragmentCollection, folder2.getFolderId(), "Image2");
+
+		_import(_export(endDate, new Date(endDate.getTime() - Time.HOUR)));
+
+		FragmentCollection importedFragmentCollection =
+			_fragmentCollectionLocalService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentCollection.getExternalReferenceCode(),
+					_importedGroup.getGroupId());
+
+		Map<String, FileEntry> resourcesMap =
+			importedFragmentCollection.getResourcesMap();
+
+		_assertFileEntry(fileEntry, resourcesMap.get("Folder1/Image1"));
+		Assert.assertEquals(resourcesMap.toString(), 1, resourcesMap.size());
+	}
+
+	private FileEntry _addFileEntry(
+			FragmentCollection fragmentCollection, long folderId, String name)
+		throws Exception {
+
+		return PortletFileRepositoryUtil.addPortletFileEntry(
+			null, _group.getGroupId(), TestPropsValues.getUserId(),
+			FragmentCollection.class.getName(),
+			fragmentCollection.getFragmentCollectionId(),
+			FragmentPortletKeys.FRAGMENT, folderId,
+			new UnsyncByteArrayInputStream(RandomTestUtil.randomBytes()), name,
+			ContentTypes.IMAGE_PNG, false);
+	}
+
+	private Folder _addFolder(long parentFolderId, String name)
+		throws Exception {
+
+		return PortletFileRepositoryUtil.addPortletFolder(
+			_group.getGroupId(), TestPropsValues.getUserId(),
+			FragmentPortletKeys.FRAGMENT, parentFolderId, name,
+			_getServiceContext());
+	}
+
 	private FragmentCollection _addFragmentCollection() throws Exception {
 		return _fragmentCollectionLocalService.addFragmentCollection(
 			null, TestPropsValues.getUserId(), _group.getGroupId(),
@@ -270,6 +361,22 @@ public class FragmentBatchExportImportTest {
 			configuration, null, 0, false, false,
 			FragmentConstants.TYPE_COMPONENT, null,
 			WorkflowConstants.STATUS_APPROVED, _getServiceContext());
+	}
+
+	private void _assertFileEntry(
+			FileEntry expectedFileEntry, FileEntry actualFileEntry)
+		throws Exception {
+
+		Assert.assertNotNull(actualFileEntry);
+
+		Assert.assertArrayEquals(
+			FileUtil.getBytes(expectedFileEntry.getContentStream()),
+			FileUtil.getBytes(actualFileEntry.getContentStream()));
+		Assert.assertEquals(
+			expectedFileEntry.getExternalReferenceCode(),
+			actualFileEntry.getExternalReferenceCode());
+		Assert.assertEquals(
+			expectedFileEntry.getUuid(), actualFileEntry.getUuid());
 	}
 
 	private File _export(Date endDate, Date startDate) throws Exception {
