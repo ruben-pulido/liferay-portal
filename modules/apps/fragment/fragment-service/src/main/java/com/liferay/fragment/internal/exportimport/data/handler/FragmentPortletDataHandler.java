@@ -18,7 +18,6 @@ import com.liferay.exportimport.portlet.data.handler.helper.PortletDataHandlerHe
 import com.liferay.exportimport.staged.model.repository.StagedModelRepository;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentPortletKeys;
-import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.layout.util.LayoutServiceContextHelper;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
@@ -77,7 +76,6 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 	@Activate
 	protected void activate() {
 		setDeletionSystemEventStagedModelTypes(
-			new StagedModelType(FragmentCollection.class),
 			new StagedModelType(FragmentEntry.class));
 		setExportPortletDataHandlerControls(
 			new PortletDataHandlerBoolean(
@@ -102,8 +100,6 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 
 		_fragmentEntryStagedModelRepository.deleteStagedModels(
 			portletDataContext);
-		_fragmentCollectionStagedModelRepository.deleteStagedModels(
-			portletDataContext);
 
 		return portletPreferences;
 	}
@@ -126,12 +122,6 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 		rootElement.addAttribute(
 			"group-id", String.valueOf(portletDataContext.getScopeGroupId()));
 
-		ActionableDynamicQuery fragmentCollectionExportActionableDynamicQuery =
-			_fragmentCollectionStagedModelRepository.
-				getExportActionableDynamicQuery(portletDataContext);
-
-		fragmentCollectionExportActionableDynamicQuery.performActions();
-
 		ActionableDynamicQuery fragmentEntryActionableDynamicQuery =
 			_fragmentEntryStagedModelRepository.getExportActionableDynamicQuery(
 				portletDataContext);
@@ -153,18 +143,6 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 
 		portletDataContext.importPortletPermissions(
 			FragmentConstants.RESOURCE_NAME);
-
-		Element fragmentCollectionsElement =
-			portletDataContext.getImportDataGroupElement(
-				FragmentCollection.class);
-
-		List<Element> fragmentCollectionElements =
-			fragmentCollectionsElement.elements();
-
-		for (Element fragmentCollectionElement : fragmentCollectionElements) {
-			StagedModelDataHandlerUtil.importStagedModel(
-				portletDataContext, fragmentCollectionElement);
-		}
 
 		Element fragmentEntriesElement =
 			portletDataContext.getImportDataGroupElement(FragmentEntry.class);
@@ -201,18 +179,11 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 			_staging.populateLastPublishDateCounts(
 				portletDataContext,
 				new StagedModelType[] {
-					new StagedModelType(FragmentCollection.class.getName()),
 					new StagedModelType(FragmentEntry.class.getName())
 				});
 
 			return;
 		}
-
-		ActionableDynamicQuery fragmentCollectionExportActionableDynamicQuery =
-			_fragmentCollectionStagedModelRepository.
-				getExportActionableDynamicQuery(portletDataContext);
-
-		fragmentCollectionExportActionableDynamicQuery.performCount();
 
 		ActionableDynamicQuery fragmentEntryExportActionableDynamicQuery =
 			_fragmentEntryStagedModelRepository.getExportActionableDynamicQuery(
@@ -223,13 +194,6 @@ public class FragmentPortletDataHandler extends BasePortletDataHandler {
 
 	@Reference
 	private CompanyLocalService _companyLocalService;
-
-	@Reference(
-		target = "(model.class.name=com.liferay.fragment.model.FragmentCollection)",
-		unbind = "-"
-	)
-	private StagedModelRepository<FragmentCollection>
-		_fragmentCollectionStagedModelRepository;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.fragment.model.FragmentEntry)",
