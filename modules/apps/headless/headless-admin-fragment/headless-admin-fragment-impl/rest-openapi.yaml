@@ -705,6 +705,10 @@ components:
                     description:
                         The external reference code of the resource folder's parent resource folder, used to reference an existing parent. Takes precedence over `parentResourceFolder` when both are set.
                     type: string
+                uuid:
+                    description:
+                        The resource folder's universally unique identifier. On write, used only when the resource folder is created, to keep the identifier of an exported resource folder.
+                    type: string
             type: object
         SelectField:
             allOf:
