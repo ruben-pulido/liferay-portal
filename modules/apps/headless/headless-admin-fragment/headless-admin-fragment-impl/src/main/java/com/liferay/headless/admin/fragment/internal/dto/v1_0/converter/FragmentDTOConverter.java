@@ -133,6 +133,7 @@ public class FragmentDTOConverter
 								getFileEntryThumbnailURLReference(
 									fragmentEntry.getPreviewFileEntryId())));
 				setType(() -> Fragment.Type.BASIC_FRAGMENT);
+				setUuid(fragmentEntry::getUuid);
 			}
 		};
 
@@ -207,6 +208,7 @@ public class FragmentDTOConverter
 								getFileEntryThumbnailURLReference(
 									fragmentEntry.getPreviewFileEntryId())));
 				setType(() -> Fragment.Type.FORM_FRAGMENT);
+				setUuid(fragmentEntry::getUuid);
 			}
 		};
 

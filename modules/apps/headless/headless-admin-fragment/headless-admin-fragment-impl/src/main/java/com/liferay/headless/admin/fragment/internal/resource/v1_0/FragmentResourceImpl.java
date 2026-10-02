@@ -263,6 +263,8 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 			contextHttpServletRequest, fragment.getDateModified(),
 			contextUser.getUserId());
 
+		serviceContext.setUuid(fragment.getUuid());
+
 		long previewFileEntryId = _getPreviewFileEntryId(fragment, groupId);
 
 		if (approvedFragmentVersion != null) {
