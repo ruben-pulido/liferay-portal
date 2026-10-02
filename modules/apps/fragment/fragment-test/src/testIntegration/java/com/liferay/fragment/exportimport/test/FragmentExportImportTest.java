@@ -235,7 +235,7 @@ public class FragmentExportImportTest extends BasePortletExportImportTestCase {
 	}
 
 	@Test
-	@TestInfo("LPD-93455")
+	@TestInfo({"LPD-93455", "LPD-B"})
 	public void testExportImportPortletWithValidation() throws Exception {
 		ServiceContext serviceContext =
 			ServiceContextTestUtil.getServiceContext(
@@ -387,18 +387,22 @@ public class FragmentExportImportTest extends BasePortletExportImportTestCase {
 		}
 	}
 
-	private void _assertFragmentEntryContentException(Exception exception) {
-		Throwable throwable = exception;
+	private void _assertFragmentEntryContentException(Throwable throwable) {
+		Throwable currentThrowable = throwable;
 
-		while (throwable != null) {
-			if (throwable instanceof FragmentEntryContentException) {
+		while (currentThrowable != null) {
+			String throwableString = currentThrowable.toString();
+
+			if (throwableString.startsWith(
+					FragmentEntryContentException.class.getName())) {
+
 				return;
 			}
 
-			throwable = throwable.getCause();
+			currentThrowable = currentThrowable.getCause();
 		}
 
-		throw new AssertionError(exception);
+		throw new AssertionError(throwable);
 	}
 
 	private String _getLayoutContent(Layout layout, Locale locale)
@@ -449,30 +453,30 @@ public class FragmentExportImportTest extends BasePortletExportImportTestCase {
 			fragmentEntry.getHtml(), importedGroupFragmentEntry.getHtml());
 	}
 
-	private void _testExportImportPortletWithValidationWithFragmentEntryContentException() {
+	private void _testExportImportPortletWithValidationWithFragmentEntryContentException()
+		throws Exception {
+
 		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
-				"com.liferay.exportimport.internal.lifecycle." +
-					"LoggerExportImportLifecycleListener",
+				"com.liferay.batch.engine.internal." +
+					"BatchEngineImportTaskExecutorImpl",
 				LoggerTestUtil.ERROR)) {
 
-			try {
-				exportImportPortlet(FragmentPortletKeys.FRAGMENT, false);
-
-				Assert.fail();
-			}
-			catch (Exception exception) {
-				_assertFragmentEntryContentException(exception);
-			}
+			exportImportPortlet(FragmentPortletKeys.FRAGMENT, false);
 
 			List<LogEntry> logEntries = logCapture.getLogEntries();
 
-			Assert.assertFalse(logEntries.toString(), logEntries.isEmpty());
+			Assert.assertEquals(logEntries.toString(), 1, logEntries.size());
+
+			LogEntry logEntry = logEntries.get(0);
+
+			_assertFragmentEntryContentException(logEntry.getThrowable());
 		}
 	}
 
 	private void
-		_testExportImportPortletWithValidationWithFragmentEntryContentException(
-			FragmentEntry fragmentEntry) {
+			_testExportImportPortletWithValidationWithFragmentEntryContentException(
+				FragmentEntry fragmentEntry)
+		throws Exception {
 
 		String expectedHTML = null;
 
