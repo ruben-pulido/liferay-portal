@@ -6,19 +6,31 @@
 package com.liferay.headless.admin.fragment.exportimport.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.document.library.kernel.model.DLFolder;
+import com.liferay.document.library.kernel.service.DLAppLocalService;
+import com.liferay.document.library.kernel.service.DLFolderLocalService;
 import com.liferay.exportimport.kernel.lar.PortletDataHandlerKeys;
 import com.liferay.exportimport.kernel.service.StagingLocalService;
 import com.liferay.exportimport.kernel.staging.StagingConstants;
 import com.liferay.exportimport.test.util.ExportImportTestUtil;
 import com.liferay.fragment.constants.FragmentConstants;
+import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentEntryLocalService;
+import com.liferay.headless.admin.fragment.dto.v1_0.ResourceFolder;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.SystemEvent;
+import com.liferay.portal.kernel.model.SystemEventConstants;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -26,10 +38,13 @@ import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
+
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -126,6 +141,55 @@ public class FragmentBatchStagingTest {
 					_liveGroup.getGroupId()));
 	}
 
+	@Test
+	@TestInfo("LPD-C")
+	public void testPublishResourceDeletions() throws Exception {
+		FragmentCollection liveFragmentCollection = _addFragmentCollection(
+			_liveGroup);
+
+		Folder liveFolder1 = _addFolder(
+			_liveGroup, "Folder1",
+			liveFragmentCollection.getResourcesFolderId());
+
+		Folder liveFolder2 = _addFolder(
+			_liveGroup, "Folder2", liveFolder1.getFolderId());
+
+		Group stagingGroup = _enableLocalStaging();
+
+		Folder stagingFolder1 =
+			_dlAppLocalService.getFolderByExternalReferenceCode(
+				liveFolder1.getExternalReferenceCode(),
+				stagingGroup.getGroupId());
+
+		_dlAppLocalService.deleteFolder(stagingFolder1.getFolderId());
+
+		_assertSystemEventType(
+			ResourceFolder.class.getName(), DLFolder.class.getName(),
+			stagingFolder1.getFolderId(), stagingGroup.getGroupId());
+
+		ExportImportTestUtil.publishLayoutsRangeFromLastPublishedDate(
+			stagingGroup, _liveGroup);
+
+		Assert.assertNull(
+			_dlFolderLocalService.fetchDLFolderByExternalReferenceCode(
+				liveFolder1.getExternalReferenceCode(),
+				_liveGroup.getGroupId()));
+		Assert.assertNull(
+			_dlFolderLocalService.fetchDLFolderByExternalReferenceCode(
+				liveFolder2.getExternalReferenceCode(),
+				_liveGroup.getGroupId()));
+	}
+
+	private Folder _addFolder(Group group, String name, long parentFolderId)
+		throws Exception {
+
+		return PortletFileRepositoryUtil.addPortletFolder(
+			group.getGroupId(), TestPropsValues.getUserId(),
+			FragmentPortletKeys.FRAGMENT, parentFolderId, name,
+			ServiceContextTestUtil.getServiceContext(
+				group.getGroupId(), TestPropsValues.getUserId()));
+	}
+
 	private FragmentCollection _addFragmentCollection(Group group)
 		throws Exception {
 
@@ -150,6 +214,26 @@ public class FragmentBatchStagingTest {
 			WorkflowConstants.STATUS_APPROVED,
 			ServiceContextTestUtil.getServiceContext(
 				fragmentCollection.getGroupId(), TestPropsValues.getUserId()));
+	}
+
+	private void _assertSystemEventType(
+			String expectedType, String className, long classPK, long groupId)
+		throws Exception {
+
+		List<SystemEvent> systemEvents =
+			_systemEventLocalService.getSystemEvents(
+				groupId, PortalUtil.getClassNameId(className), classPK,
+				SystemEventConstants.TYPE_DELETE);
+
+		Assert.assertEquals(systemEvents.toString(), 1, systemEvents.size());
+
+		SystemEvent systemEvent = systemEvents.get(0);
+
+		JSONObject extraDataJSONObject = JSONFactoryUtil.createJSONObject(
+			systemEvent.getExtraData());
+
+		Assert.assertEquals(
+			expectedType, extraDataJSONObject.getString("type", null));
 	}
 
 	private Group _enableLocalStaging() throws Exception {
@@ -179,6 +263,12 @@ public class FragmentBatchStagingTest {
 	}
 
 	@Inject
+	private DLAppLocalService _dlAppLocalService;
+
+	@Inject
+	private DLFolderLocalService _dlFolderLocalService;
+
+	@Inject
 	private FragmentCollectionLocalService _fragmentCollectionLocalService;
 
 	@Inject
@@ -192,5 +282,8 @@ public class FragmentBatchStagingTest {
 
 	@Inject
 	private StagingLocalService _stagingLocalService;
+
+	@Inject
+	private SystemEventLocalService _systemEventLocalService;
 
 }
