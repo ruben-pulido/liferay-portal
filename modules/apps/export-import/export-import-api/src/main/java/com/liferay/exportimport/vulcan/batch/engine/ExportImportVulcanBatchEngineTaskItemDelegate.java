@@ -75,6 +75,10 @@ public interface ExportImportVulcanBatchEngineTaskItemDelegate<T>
 			return null;
 		}
 
+		public default String getReferrerClassName() {
+			return null;
+		}
+
 		public Scope getScope();
 
 		public default String getSectionKey() {

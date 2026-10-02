@@ -123,7 +123,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 
 		Map<String, List<String>> typedExternalReferenceCodesMap =
 			new HashMap<>();
-		List<String> untypedExternalReferenceCodes = new ArrayList<>();
+		List<SystemEvent> untypedSystemEvents = new ArrayList<>();
 
 		for (SystemEvent systemEvent : systemEvents) {
 			String externalReferenceCode =
@@ -139,7 +139,7 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			String type = jsonObject.getString("type");
 
 			if (Validator.isNull(type)) {
-				untypedExternalReferenceCodes.add(externalReferenceCode);
+				untypedSystemEvents.add(systemEvent);
 			}
 			else {
 				typedExternalReferenceCodesMap.computeIfAbsent(
@@ -171,8 +171,20 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 				typedExternalReferenceCodesMap.getOrDefault(
 					exportImportDescriptor.getKey(), Collections.emptyList()));
 
-			if (!exportImportDescriptor.isModelClassShared()) {
-				externalReferenceCodes.addAll(untypedExternalReferenceCodes);
+			String referrerClassName =
+				exportImportDescriptor.getReferrerClassName();
+
+			for (SystemEvent systemEvent : untypedSystemEvents) {
+				if (((referrerClassName == null) &&
+					 !exportImportDescriptor.isModelClassShared()) ||
+					((referrerClassName != null) &&
+					 StringUtil.equals(
+						 referrerClassName,
+						 systemEvent.getReferrerClassName()))) {
+
+					externalReferenceCodes.add(
+						systemEvent.getClassExternalReferenceCode());
+				}
 			}
 
 			if (externalReferenceCodes.isEmpty()) {
@@ -324,6 +336,20 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			if (!StringUtil.equals(
 					systemEvent.getClassName(),
 					exportImportDescriptor.getModelClassName())) {
+
+				continue;
+			}
+
+			String referrerClassName =
+				exportImportDescriptor.getReferrerClassName();
+
+			if (referrerClassName != null) {
+				if (StringUtil.equals(
+						referrerClassName,
+						systemEvent.getReferrerClassName())) {
+
+					return true;
+				}
 
 				continue;
 			}
@@ -703,18 +729,27 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 					type = exportImportDescriptor.getKey();
 				}
 
+				String referrerClassName =
+					exportImportDescriptor.getReferrerClassName();
+
+				if (referrerClassName == null) {
+					referrerClassName = StagedModelType.REFERRER_CLASS_NAME_ALL;
+				}
+
 				manifestSummary.addModelDeletionCount(
 					exportImportDescriptor.getKey(),
 					_exportImportHelper.getModelDeletionCount(
 						portletDataContext,
 						new StagedModelType(
 							exportImportDescriptor.getModelClassName(),
-							StagedModelType.REFERRER_CLASS_NAME_ALL),
+							referrerClassName),
 						type));
 			}
 
 			for (String modelClassName : getClassNames()) {
-				if (_getModelClassSharedKeys(modelClassName) != null) {
+				if ((_getModelClassSharedKeys(modelClassName) != null) ||
+					(_getReferrerClassName(modelClassName) != null)) {
+
 					continue;
 				}
 
@@ -872,6 +907,22 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			exportImportDescriptor.getKey(), null);
 	}
 
+	private String _getReferrerClassName(String className) {
+		for (Registration registration : _registrations) {
+			ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
+				exportImportDescriptor =
+					registration.getExportImportDescriptor();
+
+			if (StringUtil.equals(
+					className, exportImportDescriptor.getModelClassName())) {
+
+				return exportImportDescriptor.getReferrerClassName();
+			}
+		}
+
+		return null;
+	}
+
 	private Set<String> _getSharedClassNames() {
 		Set<String> sharedClassNames = new HashSet<>();
 
@@ -881,6 +932,10 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			ExportImportVulcanBatchEngineTaskItemDelegate.ExportImportDescriptor
 				exportImportDescriptor =
 					registration.getExportImportDescriptor();
+
+			if (exportImportDescriptor.getReferrerClassName() != null) {
+				continue;
+			}
 
 			String modelClassName = exportImportDescriptor.getModelClassName();
 
@@ -970,6 +1025,13 @@ public class BatchEnginePortletDataHandler extends BasePortletDataHandler {
 			TransformUtil.transformToArray(
 				Arrays.asList(getClassNames()),
 				className -> {
+					String referrerClassName = _getReferrerClassName(className);
+
+					if (referrerClassName != null) {
+						return new StagedModelType(
+							className, referrerClassName);
+					}
+
 					List<String> modelClassSharedKeys =
 						_getModelClassSharedKeys(className);
 
