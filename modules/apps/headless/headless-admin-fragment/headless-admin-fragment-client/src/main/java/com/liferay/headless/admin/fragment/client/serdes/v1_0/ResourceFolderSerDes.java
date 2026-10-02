@@ -177,6 +177,20 @@ public class ResourceFolderSerDes {
 			sb.append("\"");
 		}
 
+		if (resourceFolder.getUuid() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(resourceFolder.getUuid()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -282,6 +296,13 @@ public class ResourceFolderSerDes {
 						getParentResourceFolderExternalReferenceCode()));
 		}
 
+		if (resourceFolder.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(resourceFolder.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -335,6 +356,9 @@ public class ResourceFolderSerDes {
 						jsonParserFieldName,
 						"parentResourceFolderExternalReferenceCode")) {
 
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -408,6 +432,11 @@ public class ResourceFolderSerDes {
 				if (jsonParserFieldValue != null) {
 					resourceFolder.setParentResourceFolderExternalReferenceCode(
 						(String)jsonParserFieldValue);
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					resourceFolder.setUuid((String)jsonParserFieldValue);
 				}
 			}
 		}
@@ -497,4 +526,4 @@ public class ResourceFolderSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-263657552
+// LIFERAY-REST-BUILDER-HASH:-924687628

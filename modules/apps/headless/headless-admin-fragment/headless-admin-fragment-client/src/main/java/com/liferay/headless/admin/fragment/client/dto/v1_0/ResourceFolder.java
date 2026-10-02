@@ -224,6 +224,25 @@ public class ResourceFolder implements Cloneable, Serializable {
 
 	protected String parentResourceFolderExternalReferenceCode;
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		try {
+			uuid = uuidUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String uuid;
+
 	@Override
 	public ResourceFolder clone() throws CloneNotSupportedException {
 		return (ResourceFolder)super.clone();
@@ -256,4 +275,4 @@ public class ResourceFolder implements Cloneable, Serializable {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-241184010
+// LIFERAY-REST-BUILDER-HASH:62187424
