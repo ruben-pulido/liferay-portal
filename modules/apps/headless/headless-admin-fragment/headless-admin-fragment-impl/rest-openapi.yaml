@@ -394,6 +394,10 @@ components:
                         The fragment's type.
                     enum: [BasicFragment, FormFragment]
                     type: string
+                uuid:
+                    description:
+                        The fragment's universally unique identifier. On write, used only when the fragment is created, to keep the identifier of an exported fragment.
+                    type: string
             type: object
         FragmentSet:
             description:
