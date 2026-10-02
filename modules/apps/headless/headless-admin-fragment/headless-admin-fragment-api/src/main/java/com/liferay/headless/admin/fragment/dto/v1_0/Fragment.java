@@ -750,6 +750,49 @@ public abstract class Fragment implements Serializable {
 	@JsonIgnore
 	private Supplier<Type> _typeSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The fragment's universally unique identifier. On write, used only when the fragment is created, to keep the identifier of an exported fragment."
+	)
+	public String getUuid() {
+		if (_uuidSupplier != null) {
+			uuid = _uuidSupplier.get();
+
+			_uuidSupplier = null;
+		}
+
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+
+		_uuidSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		_uuidSupplier = () -> {
+			try {
+				return uuidUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "The fragment's universally unique identifier. On write, used only when the fragment is created, to keep the identifier of an exported fragment."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String uuid;
+
+	@JsonIgnore
+	private Supplier<String> _uuidSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -1002,6 +1045,22 @@ public abstract class Fragment implements Serializable {
 			sb.append("\"");
 		}
 
+		String uuid = getUuid();
+
+		if (uuid != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(uuid));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -1162,4 +1221,4 @@ public abstract class Fragment implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:453255890
+// LIFERAY-REST-BUILDER-HASH:-25090992

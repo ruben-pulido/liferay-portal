@@ -200,6 +200,13 @@ public class FragmentSerDes {
 			map.put("type", String.valueOf(fragment.getType()));
 		}
 
+		if (fragment.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(fragment.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -267,6 +274,9 @@ public class FragmentSerDes {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "type")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -405,6 +415,11 @@ public class FragmentSerDes {
 						Fragment.Type.create((String)jsonParserFieldValue));
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					fragment.setUuid((String)jsonParserFieldValue);
+				}
+			}
 		}
 
 	}
@@ -492,4 +507,4 @@ public class FragmentSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1010067502
+// LIFERAY-REST-BUILDER-HASH:32410789

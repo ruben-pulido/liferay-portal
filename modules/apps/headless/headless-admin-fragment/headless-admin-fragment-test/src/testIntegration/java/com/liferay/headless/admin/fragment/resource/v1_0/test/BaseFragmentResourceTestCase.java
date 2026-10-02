@@ -197,6 +197,7 @@ public abstract class BaseFragmentResourceTestCase {
 		fragment.setIcon(regex);
 		fragment.setKey(regex);
 		fragment.setName(regex);
+		fragment.setUuid(regex);
 
 		String json = FragmentSerDes.toJSON(fragment);
 
@@ -210,6 +211,7 @@ public abstract class BaseFragmentResourceTestCase {
 		Assert.assertEquals(regex, fragment.getIcon());
 		Assert.assertEquals(regex, fragment.getKey());
 		Assert.assertEquals(regex, fragment.getName());
+		Assert.assertEquals(regex, fragment.getUuid());
 	}
 
 	@Test
@@ -764,6 +766,7 @@ public abstract class BaseFragmentResourceTestCase {
 				marketplace = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				readOnly = RandomTestUtil.randomBoolean();
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 
 				type = Type.create("BasicFragment");
 			}
@@ -786,6 +789,7 @@ public abstract class BaseFragmentResourceTestCase {
 				marketplace = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				readOnly = RandomTestUtil.randomBoolean();
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 
 				type = Type.create("FormFragment");
 			}
@@ -826,6 +830,7 @@ public abstract class BaseFragmentResourceTestCase {
 				marketplace = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				readOnly = RandomTestUtil.randomBoolean();
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 
 				type = Type.create("BasicFragment");
 			}
@@ -849,6 +854,7 @@ public abstract class BaseFragmentResourceTestCase {
 				marketplace = RandomTestUtil.randomBoolean();
 				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
 				readOnly = RandomTestUtil.randomBoolean();
+				uuid = StringUtil.toLowerCase(RandomTestUtil.randomString());
 
 				type = Type.create("FormFragment");
 			}
@@ -1151,6 +1157,14 @@ public abstract class BaseFragmentResourceTestCase {
 				continue;
 			}
 
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (fragment.getUuid() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
 			if (Objects.equals("fieldTypes", additionalAssertFieldName)) {
 				if (!(fragment instanceof FormFragment)) {
 					continue;
@@ -1439,6 +1453,16 @@ public abstract class BaseFragmentResourceTestCase {
 			if (Objects.equals("type", additionalAssertFieldName)) {
 				if (!Objects.deepEquals(
 						fragment1.getType(), fragment2.getType())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals("uuid", additionalAssertFieldName)) {
+				if (!Objects.deepEquals(
+						fragment1.getUuid(), fragment2.getUuid())) {
 
 					return false;
 				}
@@ -1898,6 +1922,52 @@ public abstract class BaseFragmentResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("uuid")) {
+			Object object = fragment.getUuid();
+
+			String value = String.valueOf(object);
+
+			if (operator.equals("contains")) {
+				sb = new StringBundler();
+
+				sb.append("contains(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 2)) {
+					sb.append(value.substring(1, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else if (operator.equals("startswith")) {
+				sb = new StringBundler();
+
+				sb.append("startswith(");
+				sb.append(entityFieldName);
+				sb.append(",'");
+
+				if ((object != null) && (value.length() > 1)) {
+					sb.append(value.substring(0, value.length() - 1));
+				}
+				else {
+					sb.append(value);
+				}
+
+				sb.append("')");
+			}
+			else {
+				sb.append("'");
+				sb.append(value);
+				sb.append("'");
+			}
+
+			return sb.toString();
+		}
+
 		throw new IllegalArgumentException(
 			"Invalid entity field " + entityFieldName);
 	}
@@ -1962,6 +2032,8 @@ public abstract class BaseFragmentResourceTestCase {
 				fragment.setName(
 					StringUtil.toLowerCase(RandomTestUtil.randomString()));
 				fragment.setReadOnly(RandomTestUtil.randomBoolean());
+				fragment.setUuid(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()));
 
 				fragment.setType(Fragment.Type.create("BasicFragment"));
 
@@ -1985,6 +2057,8 @@ public abstract class BaseFragmentResourceTestCase {
 				fragment.setName(
 					StringUtil.toLowerCase(RandomTestUtil.randomString()));
 				fragment.setReadOnly(RandomTestUtil.randomBoolean());
+				fragment.setUuid(
+					StringUtil.toLowerCase(RandomTestUtil.randomString()));
 
 				fragment.setType(Fragment.Type.create("FormFragment"));
 
@@ -2240,4 +2314,4 @@ public abstract class BaseFragmentResourceTestCase {
 		_fragmentResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:457707802
+// LIFERAY-REST-BUILDER-HASH:939326841
