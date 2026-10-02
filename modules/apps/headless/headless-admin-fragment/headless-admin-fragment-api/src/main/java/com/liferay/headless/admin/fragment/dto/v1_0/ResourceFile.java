@@ -513,6 +513,49 @@ public class ResourceFile implements Serializable {
 	@JsonIgnore
 	private Supplier<String> _resourceFolderExternalReferenceCodeSupplier;
 
+	@io.swagger.v3.oas.annotations.media.Schema(
+		description = "The resource file's universally unique identifier. On write, used only when the resource file is created, to keep the identifier of an exported resource file."
+	)
+	public String getUuid() {
+		if (_uuidSupplier != null) {
+			uuid = _uuidSupplier.get();
+
+			_uuidSupplier = null;
+		}
+
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+
+		_uuidSupplier = null;
+	}
+
+	@JsonIgnore
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		_uuidSupplier = () -> {
+			try {
+				return uuidUnsafeSupplier.get();
+			}
+			catch (RuntimeException runtimeException) {
+				throw runtimeException;
+			}
+			catch (Exception exception) {
+				throw new RuntimeException(exception);
+			}
+		};
+	}
+
+	@GraphQLField(
+		description = "The resource file's universally unique identifier. On write, used only when the resource file is created, to keep the identifier of an exported resource file."
+	)
+	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
+	protected String uuid;
+
+	@JsonIgnore
+	private Supplier<String> _uuidSupplier;
+
 	@Override
 	public boolean equals(Object object) {
 		if (this == object) {
@@ -689,6 +732,22 @@ public class ResourceFile implements Serializable {
 			sb.append("\"");
 		}
 
+		String uuid = getUuid();
+
+		if (uuid != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(uuid));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -811,4 +870,4 @@ public class ResourceFile implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:2101590315
+// LIFERAY-REST-BUILDER-HASH:1630172887

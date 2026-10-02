@@ -275,6 +275,20 @@ public class FormFragmentSerDes {
 			sb.append("\"");
 		}
 
+		if (formFragment.getUuid() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(formFragment.getUuid()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -424,6 +438,13 @@ public class FormFragmentSerDes {
 			map.put("type", String.valueOf(formFragment.getType()));
 		}
 
+		if (formFragment.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(formFragment.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -495,6 +516,9 @@ public class FormFragmentSerDes {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "type")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -624,6 +648,11 @@ public class FormFragmentSerDes {
 						FormFragment.Type.create((String)jsonParserFieldValue));
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					formFragment.setUuid((String)jsonParserFieldValue);
+				}
+			}
 		}
 
 	}
@@ -711,4 +740,4 @@ public class FormFragmentSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1403447820
+// LIFERAY-REST-BUILDER-HASH:-1644189066

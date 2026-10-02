@@ -9,12 +9,18 @@ import com.liferay.document.library.kernel.exception.NoSuchFolderException;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppLocalServiceUtil;
 import com.liferay.document.library.kernel.service.DLFolderLocalServiceUtil;
+import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionServiceUtil;
 import com.liferay.headless.admin.fragment.dto.v1_0.ResourceFolder;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.model.Repository;
+import com.liferay.portal.kernel.portletfilerepository.PortletFileRepositoryUtil;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.util.Validator;
@@ -47,6 +53,7 @@ public class ResourceFolderUtil {
 
 		serviceContext.setAddGroupPermissions(true);
 		serviceContext.setAddGuestPermissions(true);
+		serviceContext.setUuid(resourceFolder.getUuid());
 
 		Folder folder = DLAppLocalServiceUtil.addFolder(
 			resourceFolder.getExternalReferenceCode(), userId,
@@ -148,5 +155,48 @@ public class ResourceFolderUtil {
 
 		return dlFolder;
 	}
+
+	public static boolean isResourceDLFolder(DLFolder dlFolder) {
+		if (!_isFragmentRepository(
+				dlFolder.getGroupId(), dlFolder.getRepositoryId()) ||
+			(getResourceDLFolder(dlFolder) == null)) {
+
+			return false;
+		}
+
+		try {
+			if (FragmentSetUtil.getFragmentCollection(dlFolder) != null) {
+				return true;
+			}
+
+			return false;
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException);
+			}
+
+			return false;
+		}
+	}
+
+	private static boolean _isFragmentRepository(
+		long groupId, long repositoryId) {
+
+		Repository repository =
+			PortletFileRepositoryUtil.fetchPortletRepository(
+				groupId, FragmentPortletKeys.FRAGMENT);
+
+		if ((repository == null) ||
+			(repository.getRepositoryId() != repositoryId)) {
+
+			return false;
+		}
+
+		return true;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		ResourceFolderUtil.class);
 
 }

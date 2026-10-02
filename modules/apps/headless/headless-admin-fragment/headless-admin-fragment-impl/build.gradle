@@ -22,6 +22,7 @@ dependencies {
 	compileOnly project(":apps:info:info-api")
 	compileOnly project(":apps:info:info-list-provider-item-selector-api")
 	compileOnly project(":apps:item-selector:item-selector-criteria-api")
+	compileOnly project(":apps:layout:layout-api")
 	compileOnly project(":apps:portal-odata:portal-odata-api")
 	compileOnly project(":apps:portal-vulcan:portal-vulcan-api")
 	compileOnly project(":apps:site-navigation:site-navigation-api")

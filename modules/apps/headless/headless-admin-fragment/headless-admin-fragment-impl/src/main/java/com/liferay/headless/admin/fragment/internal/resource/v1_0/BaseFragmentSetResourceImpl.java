@@ -370,7 +370,7 @@ public abstract class BaseFragmentSetResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets' -d $'{"dateCreated": ___, "dateModified": ___, "description": ___, "externalReferenceCode": ___, "key": ___, "marketplace": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets' -d $'{"dateCreated": ___, "dateModified": ___, "description": ___, "externalReferenceCode": ___, "key": ___, "marketplace": ___, "name": ___, "uuid": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Adds a new fragment set."
@@ -536,7 +536,7 @@ public abstract class BaseFragmentSetResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}' -d $'{"dateCreated": ___, "dateModified": ___, "description": ___, "externalReferenceCode": ___, "key": ___, "marketplace": ___, "name": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}' -d $'{"dateCreated": ___, "dateModified": ___, "description": ___, "externalReferenceCode": ___, "key": ___, "marketplace": ___, "name": ___, "uuid": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
 		description = "Updates the fragment set with the given external reference code, or creates it if it does not exist. On update, `dateModified`, `description`, and `name` are honored; any values sent for `dateCreated`, `externalReferenceCode`, `key`, and `marketplace` are ignored."
@@ -1336,4 +1336,4 @@ public abstract class BaseFragmentSetResourceImpl
 		LogFactoryUtil.getLog(BaseFragmentSetResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:-316978317
+// LIFERAY-REST-BUILDER-HASH:233369751

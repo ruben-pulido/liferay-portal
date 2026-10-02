@@ -8,8 +8,12 @@ package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.exportimport.constants.ExportImportConstants;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
+import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
@@ -44,6 +48,8 @@ import com.liferay.portal.vulcan.util.SearchUtil;
 import jakarta.ws.rs.core.MultivaluedMap;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.function.Function;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -54,9 +60,12 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/resource-folder.properties",
+	property = "export.import.vulcan.batch.engine.task.item.delegate=true",
 	scope = ServiceScope.PROTOTYPE, service = ResourceFolderResource.class
 )
-public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
+public class ResourceFolderResourceImpl
+	extends BaseResourceFolderResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<ResourceFolder> {
 
 	@Override
 	public void deleteSiteResourceFolder(
@@ -66,11 +75,21 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 
 		EnabledUtil.checkEnabled(contextCompany);
 
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		DLFolder dlFolder =
+			_dlFolderLocalService.fetchDLFolderByExternalReferenceCode(
+				resourceFolderExternalReferenceCode, groupId);
+
+		if (ExportImportThreadLocal.isDataDeletionImportInProcess() &&
+			(dlFolder == null)) {
+
+			return;
+		}
+
 		Folder folder = _dlAppLocalService.getFolderByExternalReferenceCode(
-			resourceFolderExternalReferenceCode,
-			GroupUtil.getStagingAwareGroupId(
-				true, contextCompany.getCompanyId(),
-				siteExternalReferenceCode));
+			resourceFolderExternalReferenceCode, groupId);
 
 		ResourceFolderUtil.checkResourceFolder(
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
@@ -81,6 +100,63 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
+	}
+
+	@Override
+	public ExportImportDescriptor<DLFolder> getExportImportDescriptor() {
+		return new ExportImportDescriptor<>() {
+
+			@Override
+			public Function<DLFolder, Boolean> getApplicableModelFunction() {
+				return ResourceFolderUtil::isResourceDLFolder;
+			}
+
+			@Override
+			public String getKey() {
+				return ResourceFolder.class.getName();
+			}
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "resource-folders";
+			}
+
+			@Override
+			public Class<DLFolder> getModelClass() {
+				return DLFolder.class;
+			}
+
+			@Override
+			public List<String> getNestedFields() {
+				return List.of("fragmentSet", "parentResourceFolder");
+			}
+
+			@Override
+			public String getPortletId() {
+				return FragmentPortletKeys.FRAGMENT;
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_DESIGN;
+			}
+
+			@Override
+			public boolean isModelClassShared() {
+				return true;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
+		};
 	}
 
 	@Override

@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.fragment.internal.dto.v1_0.converter;
 
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
@@ -133,6 +134,7 @@ public class FragmentDTOConverter
 								getFileEntryThumbnailURLReference(
 									fragmentEntry.getPreviewFileEntryId())));
 				setType(() -> Fragment.Type.BASIC_FRAGMENT);
+				setUuid(fragmentEntry::getUuid);
 			}
 		};
 
@@ -207,6 +209,7 @@ public class FragmentDTOConverter
 								getFileEntryThumbnailURLReference(
 									fragmentEntry.getPreviewFileEntryId())));
 				setType(() -> Fragment.Type.FORM_FRAGMENT);
+				setUuid(fragmentEntry::getUuid);
 			}
 		};
 
@@ -260,7 +263,9 @@ public class FragmentDTOConverter
 					}
 				};
 
-			if (!fragmentEntry.isMarketplace()) {
+			if (ExportImportThreadLocal.isStagingInProcess() ||
+				!fragmentEntry.isMarketplace()) {
+
 				draftFragmentVersion.setConfiguration(
 					fragmentEntry::getConfiguration);
 				draftFragmentVersion.setCss(fragmentEntry::getCss);
@@ -278,7 +283,9 @@ public class FragmentDTOConverter
 				}
 			};
 
-		if (!fragmentEntry.isMarketplace()) {
+		if (ExportImportThreadLocal.isStagingInProcess() ||
+			!fragmentEntry.isMarketplace()) {
+
 			Configuration configuration = ConfigurationUtil.toConfiguration(
 				_fragmentConfigurationFieldValueDTOConverter, fragmentEntry);
 

@@ -6,6 +6,7 @@
 package com.liferay.exportimport.internal.lar;
 
 import com.liferay.exportimport.internal.data.handler.BatchEnginePortletDataHandler;
+import com.liferay.exportimport.internal.data.handler.TypedStagedModelType;
 import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -169,6 +170,10 @@ public class DeletionSystemEventImporterImpl
 		}
 
 		for (StagedModelType curStagedModelType : stagedModelTypes) {
+			if (curStagedModelType instanceof TypedStagedModelType) {
+				continue;
+			}
+
 			if ((curStagedModelType.getClassNameId() ==
 					stagedModelType.getClassNameId()) &&
 				(StagedModelType.REFERRER_CLASS_NAME_ALL.equals(

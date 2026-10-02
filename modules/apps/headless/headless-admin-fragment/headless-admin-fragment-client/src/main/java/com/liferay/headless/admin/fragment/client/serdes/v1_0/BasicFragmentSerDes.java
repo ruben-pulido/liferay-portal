@@ -251,6 +251,20 @@ public class BasicFragmentSerDes {
 			sb.append("\"");
 		}
 
+		if (basicFragment.getUuid() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(basicFragment.getUuid()));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -394,6 +408,13 @@ public class BasicFragmentSerDes {
 			map.put("type", String.valueOf(basicFragment.getType()));
 		}
 
+		if (basicFragment.getUuid() == null) {
+			map.put("uuid", null);
+		}
+		else {
+			map.put("uuid", String.valueOf(basicFragment.getUuid()));
+		}
+
 		return map;
 	}
 
@@ -462,6 +483,9 @@ public class BasicFragmentSerDes {
 				return false;
 			}
 			else if (Objects.equals(jsonParserFieldName, "type")) {
+				return false;
+			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
 				return false;
 			}
 
@@ -576,6 +600,11 @@ public class BasicFragmentSerDes {
 							(String)jsonParserFieldValue));
 				}
 			}
+			else if (Objects.equals(jsonParserFieldName, "uuid")) {
+				if (jsonParserFieldValue != null) {
+					basicFragment.setUuid((String)jsonParserFieldValue);
+				}
+			}
 		}
 
 	}
@@ -663,4 +692,4 @@ public class BasicFragmentSerDes {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:40981949
+// LIFERAY-REST-BUILDER-HASH:1609688721

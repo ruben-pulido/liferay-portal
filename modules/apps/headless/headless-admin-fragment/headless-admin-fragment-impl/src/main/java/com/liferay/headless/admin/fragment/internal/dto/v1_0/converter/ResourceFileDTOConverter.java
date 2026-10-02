@@ -119,6 +119,7 @@ public class ResourceFileDTOConverter
 
 						return resourceDLFolder.getExternalReferenceCode();
 					});
+				setUuid(fileEntry::getUuid);
 			}
 		};
 	}

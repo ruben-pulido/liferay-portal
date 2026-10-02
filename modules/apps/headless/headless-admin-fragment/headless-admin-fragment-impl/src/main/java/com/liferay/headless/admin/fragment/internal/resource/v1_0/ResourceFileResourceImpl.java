@@ -12,8 +12,12 @@ import com.liferay.document.library.kernel.model.DLVersionNumberIncrease;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFileEntryLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
+import com.liferay.exportimport.constants.ExportImportConstants;
+import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
+import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
+import com.liferay.fragment.constants.FragmentPortletKeys;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentCollectionService;
@@ -59,6 +63,7 @@ import jakarta.ws.rs.core.MultivaluedMap;
 import java.io.IOException;
 
 import java.util.Collections;
+import java.util.List;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -69,9 +74,12 @@ import org.osgi.service.component.annotations.ServiceScope;
  */
 @Component(
 	properties = "OSGI-INF/liferay/rest/v1_0/resource-file.properties",
+	property = "export.import.vulcan.batch.engine.task.item.delegate=true",
 	scope = ServiceScope.PROTOTYPE, service = ResourceFileResource.class
 )
-public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
+public class ResourceFileResourceImpl
+	extends BaseResourceFileResourceImpl
+	implements ExportImportVulcanBatchEngineTaskItemDelegate<ResourceFile> {
 
 	@Override
 	public void deleteSiteResourceFile(
@@ -81,12 +89,22 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 
 		EnabledUtil.checkEnabled(contextCompany);
 
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		DLFileEntry dlFileEntry =
+			_dlFileEntryLocalService.fetchFileEntryByExternalReferenceCode(
+				groupId, resourceFileExternalReferenceCode);
+
+		if (ExportImportThreadLocal.isDataDeletionImportInProcess() &&
+			(dlFileEntry == null)) {
+
+			return;
+		}
+
 		FileEntry fileEntry =
 			_dlAppLocalService.getFileEntryByExternalReferenceCode(
-				resourceFileExternalReferenceCode,
-				GroupUtil.getStagingAwareGroupId(
-					true, contextCompany.getCompanyId(),
-					siteExternalReferenceCode));
+				resourceFileExternalReferenceCode, groupId);
 
 		_checkResourceFile(fileEntry);
 
@@ -96,6 +114,63 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
+	}
+
+	@Override
+	public ExportImportDescriptor<DLFileEntry> getExportImportDescriptor() {
+		return new ExportImportDescriptor<>() {
+
+			@Override
+			public String getKey() {
+				return ResourceFile.class.getName();
+			}
+
+			@Override
+			public String getLabelLanguageKey() {
+				return "resource-files";
+			}
+
+			@Override
+			public Class<DLFileEntry> getModelClass() {
+				return DLFileEntry.class;
+			}
+
+			@Override
+			public List<String> getNestedFields() {
+				return List.of("fragmentSet", "resourceFolder");
+			}
+
+			@Override
+			public String getPortletId() {
+				return FragmentPortletKeys.FRAGMENT;
+			}
+
+			@Override
+			public String getReferrerClassName() {
+				return FragmentCollection.class.getName();
+			}
+
+			@Override
+			public Scope getScope() {
+				return Scope.SITE;
+			}
+
+			@Override
+			public String getSectionKey() {
+				return ExportImportConstants.SECTION_KEY_DESIGN;
+			}
+
+			@Override
+			public boolean isModelClassShared() {
+				return true;
+			}
+
+			@Override
+			public boolean isStagingSupported() {
+				return true;
+			}
+
+		};
 	}
 
 	@Override
@@ -307,6 +382,11 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			resourceFile.getResourceFolderExternalReferenceCode(),
 			contextUser.getUserId());
 
+		ServiceContext serviceContext = _getServiceContext(
+			groupId, resourceFile);
+
+		serviceContext.setUuid(resourceFile.getUuid());
+
 		return _toResourceFile(
 			_dlAppLocalService.addFileEntry(
 				resourceFile.getExternalReferenceCode(),
@@ -314,7 +394,7 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 				dlFolder.getFolderId(), resourceFile.getName(),
 				_mimeTypes.getContentType(resourceFile.getName()),
 				resourceFile.getName(), null, null, null, bytes, null, null,
-				null, _getServiceContext(groupId, resourceFile)));
+				null, serviceContext));
 	}
 
 	private void _checkBytes(byte[] bytes) {

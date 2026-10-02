@@ -7,6 +7,7 @@ package com.liferay.headless.admin.fragment.internal.resource.v1_0.util;
 
 import com.liferay.headless.common.spi.service.context.ServiceContextBuilder;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextThreadLocal;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -29,6 +30,15 @@ public class ServiceContextUtil {
 		serviceContext.setCreateDate(createDate);
 		serviceContext.setModifiedDate(modifiedDate);
 		serviceContext.setUserId(userId);
+
+		if (httpServletRequest == null) {
+			ServiceContext currentServiceContext =
+				ServiceContextThreadLocal.getServiceContext();
+
+			if (currentServiceContext != null) {
+				serviceContext.setRequest(currentServiceContext.getRequest());
+			}
+		}
 
 		return serviceContext;
 	}

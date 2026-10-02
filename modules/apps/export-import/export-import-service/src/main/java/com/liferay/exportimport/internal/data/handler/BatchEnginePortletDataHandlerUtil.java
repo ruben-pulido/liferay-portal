@@ -267,6 +267,7 @@ public class BatchEnginePortletDataHandlerUtil {
 
 		if (ExportImportDateUtil.isRangeFromLastPublishDate(
 				portletDataContext) &&
+			!exportImportDescriptor.isModelClassShared() &&
 			!ExportImportThreadLocal.isInitialLayoutStagingInProcess()) {
 
 			String lastPublishDateFilterString =

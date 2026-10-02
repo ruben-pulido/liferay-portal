@@ -350,6 +350,25 @@ public abstract class Fragment implements Cloneable, Serializable {
 
 	protected Type type;
 
+	public String getUuid() {
+		return uuid;
+	}
+
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
+
+	public void setUuid(UnsafeSupplier<String, Exception> uuidUnsafeSupplier) {
+		try {
+			uuid = uuidUnsafeSupplier.get();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected String uuid;
+
 	@Override
 	public Fragment clone() throws CloneNotSupportedException {
 		return (Fragment)super.clone();
@@ -415,4 +434,4 @@ public abstract class Fragment implements Cloneable, Serializable {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-415793736
+// LIFERAY-REST-BUILDER-HASH:-1388566174

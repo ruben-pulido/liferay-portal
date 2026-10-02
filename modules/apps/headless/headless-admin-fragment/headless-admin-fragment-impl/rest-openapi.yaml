@@ -394,6 +394,10 @@ components:
                         The fragment's type.
                     enum: [BasicFragment, FormFragment]
                     type: string
+                uuid:
+                    description:
+                        The fragment's universally unique identifier. On write, used only when the fragment is created, to keep the identifier of an exported fragment.
+                    type: string
             type: object
         FragmentSet:
             description:
@@ -446,6 +450,10 @@ components:
                 name:
                     description:
                         The fragment set's name.
+                    type: string
+                uuid:
+                    description:
+                        The fragment set's universally unique identifier. On write, used only when the fragment set is created, to keep the identifier of an exported fragment set.
                     type: string
             type: object
         FragmentVersion:
@@ -653,6 +661,10 @@ components:
                     description:
                         The external reference code of the resource file's resource folder, used to reference an existing resource folder. Takes precedence over `resourceFolder` when both are set.
                     type: string
+                uuid:
+                    description:
+                        The resource file's universally unique identifier. On write, used only when the resource file is created, to keep the identifier of an exported resource file.
+                    type: string
             type: object
         ResourceFolder:
             description:
@@ -696,6 +708,10 @@ components:
                 parentResourceFolderExternalReferenceCode:
                     description:
                         The external reference code of the resource folder's parent resource folder, used to reference an existing parent. Takes precedence over `parentResourceFolder` when both are set.
+                    type: string
+                uuid:
+                    description:
+                        The resource folder's universally unique identifier. On write, used only when the resource folder is created, to keep the identifier of an exported resource folder.
                     type: string
             type: object
         SelectField:

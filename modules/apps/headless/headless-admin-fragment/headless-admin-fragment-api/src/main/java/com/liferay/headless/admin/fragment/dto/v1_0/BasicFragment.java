@@ -305,6 +305,22 @@ public class BasicFragment extends Fragment implements Serializable {
 			sb.append("\"");
 		}
 
+		String uuid = getUuid();
+
+		if (uuid != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"uuid\": ");
+
+			sb.append("\"");
+
+			sb.append(_escape(uuid));
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -427,4 +443,4 @@ public class BasicFragment extends Fragment implements Serializable {
 	private Map<String, Serializable> _extendedProperties;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-631316396
+// LIFERAY-REST-BUILDER-HASH:-1522001069

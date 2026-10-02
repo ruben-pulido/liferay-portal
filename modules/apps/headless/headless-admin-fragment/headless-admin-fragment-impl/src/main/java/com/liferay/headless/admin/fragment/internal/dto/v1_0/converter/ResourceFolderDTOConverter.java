@@ -95,6 +95,7 @@ public class ResourceFolderDTOConverter
 
 						return parentDLFolder.getExternalReferenceCode();
 					});
+				setUuid(dlFolder::getUuid);
 			}
 		};
 	}

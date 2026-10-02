@@ -17,6 +17,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
@@ -57,6 +58,7 @@ public class FragmentEntryStagingTest {
 	}
 
 	@Test
+	@TestInfo("LPD-B")
 	public void testInputFragmentCopiedWhenLocalStagingActivated()
 		throws PortalException {
 
@@ -76,7 +78,7 @@ public class FragmentEntryStagingTest {
 				RandomTestUtil.randomString(), false, StringPool.BLANK, null, 0,
 				false, false, FragmentConstants.TYPE_INPUT,
 				JSONUtil.put(
-					"fieldTypes", JSONUtil.put("string")
+					"fieldTypes", JSONUtil.put("text")
 				).toString(),
 				WorkflowConstants.STATUS_APPROVED, serviceContext);
 
