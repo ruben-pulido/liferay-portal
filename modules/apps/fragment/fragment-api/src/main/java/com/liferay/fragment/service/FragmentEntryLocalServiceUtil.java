@@ -541,6 +541,12 @@ public class FragmentEntryLocalServiceUtil {
 			fragmentEntryId, fragmentCollectionId);
 	}
 
+	public static void propagateChanges(long fragmentEntryId)
+		throws PortalException {
+
+		getService().propagateChanges(fragmentEntryId);
+	}
+
 	public static FragmentEntry publishDraft(FragmentEntry draftFragmentEntry)
 		throws PortalException {
 
@@ -632,4 +638,4 @@ public class FragmentEntryLocalServiceUtil {
 			FragmentEntryLocalService.class);
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:1358558076
+// LIFERAY-SERVICE-BUILDER-HASH:677727295
