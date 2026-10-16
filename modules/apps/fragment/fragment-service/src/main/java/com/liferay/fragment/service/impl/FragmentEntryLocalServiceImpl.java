@@ -626,6 +626,12 @@ public class FragmentEntryLocalServiceImpl
 		return fragmentEntryPersistence.update(fragmentEntry);
 	}
 
+	@Override
+	public void propagateChanges(long fragmentEntryId) throws PortalException {
+		_propagateChanges(
+			fragmentEntryPersistence.findByPrimaryKey(fragmentEntryId));
+	}
+
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public FragmentEntry publishDraft(FragmentEntry draftFragmentEntry)
