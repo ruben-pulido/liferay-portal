@@ -201,6 +201,23 @@ public class FragmentSetResourceImpl
 	}
 
 	@Override
+	public FragmentSet postDesignLibraryFragmentSet(
+			String designLibraryExternalReferenceCode, FragmentSet fragmentSet)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _addFragmentSet(
+			fragmentSet.getExternalReferenceCode(), fragmentSet, groupId,
+			_getDesignLibraryActionsUnsafeFunction(
+				designLibraryExternalReferenceCode, groupId));
+	}
+
+	@Override
 	public FragmentSet postSiteFragmentSet(
 			String siteExternalReferenceCode, FragmentSet fragmentSet)
 		throws Exception {
@@ -210,17 +227,27 @@ public class FragmentSetResourceImpl
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
-		return _toFragmentSet(
-			_fragmentCollectionService.addFragmentCollection(
-				fragmentSet.getExternalReferenceCode(), groupId,
-				fragmentSet.getKey(), fragmentSet.getName(),
-				fragmentSet.getDescription(),
-				GetterUtil.getBoolean(fragmentSet.getMarketplace()),
-				ServiceContextUtil.getServiceContext(
-					contextCompany.getCompanyId(), fragmentSet.getDateCreated(),
-					groupId, contextHttpServletRequest,
-					fragmentSet.getDateModified(), contextUser.getUserId())),
+		return _addFragmentSet(
+			fragmentSet.getExternalReferenceCode(), fragmentSet, groupId,
 			_getSiteActionsUnsafeFunction(groupId, siteExternalReferenceCode));
+	}
+
+	@Override
+	public FragmentSet putDesignLibraryFragmentSet(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, FragmentSet fragmentSet)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _putFragmentSet(
+			fragmentSetExternalReferenceCode, fragmentSet, groupId,
+			_getDesignLibraryActionsUnsafeFunction(
+				designLibraryExternalReferenceCode, groupId));
 	}
 
 	@Override
@@ -234,45 +261,28 @@ public class FragmentSetResourceImpl
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
-		FragmentCollection fragmentCollection =
-			_fragmentCollectionLocalService.
-				fetchFragmentCollectionByExternalReferenceCode(
-					fragmentSetExternalReferenceCode, groupId);
+		return _putFragmentSet(
+			fragmentSetExternalReferenceCode, fragmentSet, groupId,
+			_getSiteActionsUnsafeFunction(groupId, siteExternalReferenceCode));
+	}
 
-		if (fragmentCollection == null) {
-			return _toFragmentSet(
-				_fragmentCollectionService.addFragmentCollection(
-					fragmentSetExternalReferenceCode, groupId,
-					fragmentSet.getKey(), fragmentSet.getName(),
-					fragmentSet.getDescription(),
-					GetterUtil.getBoolean(fragmentSet.getMarketplace()),
-					ServiceContextUtil.getServiceContext(
-						contextCompany.getCompanyId(),
-						fragmentSet.getDateCreated(), groupId,
-						contextHttpServletRequest,
-						fragmentSet.getDateModified(),
-						contextUser.getUserId())),
-				_getSiteActionsUnsafeFunction(
-					groupId, siteExternalReferenceCode));
-		}
+	private FragmentSet _addFragmentSet(
+			String externalReferenceCode, FragmentSet fragmentSet, long groupId,
+			UnsafeFunction
+				<FragmentCollection, Map<String, Map<String, String>>,
+				 Exception> unsafeFunction)
+		throws Exception {
 
-		ServiceContextThreadLocal.pushServiceContext(
-			ServiceContextUtil.getServiceContext(
-				contextCompany.getCompanyId(), null, groupId,
-				contextHttpServletRequest, fragmentSet.getDateModified(),
-				contextUser.getUserId()));
-
-		try {
-			return _toFragmentSet(
-				_fragmentCollectionService.updateFragmentCollection(
-					fragmentCollection.getFragmentCollectionId(),
-					fragmentSet.getName(), fragmentSet.getDescription()),
-				_getSiteActionsUnsafeFunction(
-					groupId, siteExternalReferenceCode));
-		}
-		finally {
-			ServiceContextThreadLocal.popServiceContext();
-		}
+		return _toFragmentSet(
+			_fragmentCollectionService.addFragmentCollection(
+				externalReferenceCode, groupId, fragmentSet.getKey(),
+				fragmentSet.getName(), fragmentSet.getDescription(),
+				GetterUtil.getBoolean(fragmentSet.getMarketplace()),
+				ServiceContextUtil.getServiceContext(
+					contextCompany.getCompanyId(), fragmentSet.getDateCreated(),
+					groupId, contextHttpServletRequest,
+					fragmentSet.getDateModified(), contextUser.getUserId())),
+			unsafeFunction);
 	}
 
 	private UnsafeFunction
@@ -321,6 +331,41 @@ public class FragmentSetResourceImpl
 		return _portletResourcePermission.contains(
 			PermissionThreadLocal.getPermissionChecker(), groupId,
 			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+	}
+
+	private FragmentSet _putFragmentSet(
+			String externalReferenceCode, FragmentSet fragmentSet, long groupId,
+			UnsafeFunction
+				<FragmentCollection, Map<String, Map<String, String>>,
+				 Exception> unsafeFunction)
+		throws Exception {
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionLocalService.
+				fetchFragmentCollectionByExternalReferenceCode(
+					externalReferenceCode, groupId);
+
+		if (fragmentCollection == null) {
+			return _addFragmentSet(
+				externalReferenceCode, fragmentSet, groupId, unsafeFunction);
+		}
+
+		ServiceContextThreadLocal.pushServiceContext(
+			ServiceContextUtil.getServiceContext(
+				contextCompany.getCompanyId(), null, groupId,
+				contextHttpServletRequest, fragmentSet.getDateModified(),
+				contextUser.getUserId()));
+
+		try {
+			return _toFragmentSet(
+				_fragmentCollectionService.updateFragmentCollection(
+					fragmentCollection.getFragmentCollectionId(),
+					fragmentSet.getName(), fragmentSet.getDescription()),
+				unsafeFunction);
+		}
+		finally {
+			ServiceContextThreadLocal.popServiceContext();
+		}
 	}
 
 	private Page<FragmentSet> _search(

@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.fragment.constants.FragmentActionKeys;
 import com.liferay.fragment.constants.FragmentConstants;
 import com.liferay.fragment.constants.FragmentPortletKeys;
@@ -87,6 +88,39 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 	}
 
 	@Override
+	public Fragment getDesignLibraryFragment(
+			String designLibraryExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		return _getFragment(
+			fragmentExternalReferenceCode,
+			GroupUtil.getDepotGroupId(
+				contextCompany.getCompanyId(),
+				designLibraryExternalReferenceCode,
+				DepotConstants.TYPE_DESIGN_LIBRARY));
+	}
+
+	@Override
+	public Page<Fragment> getDesignLibraryFragmentSetFragmentsPage(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, Pagination pagination)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		return _getFragmentSetFragmentsPage(
+			fragmentSetExternalReferenceCode,
+			GroupUtil.getDepotGroupId(
+				contextCompany.getCompanyId(),
+				designLibraryExternalReferenceCode,
+				DepotConstants.TYPE_DESIGN_LIBRARY),
+			pagination);
+	}
+
+	@Override
 	public EntityModel getEntityModel(MultivaluedMap multivaluedMap) {
 		return _entityModel;
 	}
@@ -99,31 +133,11 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 
 		EnabledUtil.checkEnabled(contextCompany);
 
-		long groupId = GroupUtil.getGroupId(
-			true, true, contextCompany.getCompanyId(),
-			siteExternalReferenceCode);
-
-		try {
-			return _toFragment(
-				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
-					fragmentExternalReferenceCode, groupId));
-		}
-		catch (NoSuchModelException noSuchModelException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(noSuchModelException);
-			}
-
-			FragmentEntry draftFragmentEntry =
-				_fragmentEntryLocalService.
-					fetchFragmentEntryByExternalReferenceCode(
-						fragmentExternalReferenceCode, groupId, false);
-
-			if (draftFragmentEntry == null) {
-				throw noSuchModelException;
-			}
-
-			return _toFragment(draftFragmentEntry);
-		}
+		return _getFragment(
+			fragmentExternalReferenceCode,
+			GroupUtil.getGroupId(
+				true, true, contextCompany.getCompanyId(),
+				siteExternalReferenceCode));
 	}
 
 	@Override
@@ -134,21 +148,11 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 
 		EnabledUtil.checkEnabled(contextCompany);
 
-		long groupId = GroupUtil.getGroupId(
-			true, true, contextCompany.getCompanyId(),
-			siteExternalReferenceCode);
-
-		if (!_hasManageFragmentEntriesPermission(groupId)) {
-			return Page.of(Collections.emptyList());
-		}
-
-		FragmentCollection fragmentCollection =
-			_fragmentCollectionService.
-				getFragmentCollectionByExternalReferenceCode(
-					fragmentSetExternalReferenceCode, groupId);
-
-		return _getFragmentsPage(
-			null, fragmentCollection.getFragmentCollectionId(), groupId,
+		return _getFragmentSetFragmentsPage(
+			fragmentSetExternalReferenceCode,
+			GroupUtil.getGroupId(
+				true, true, contextCompany.getCompanyId(),
+				siteExternalReferenceCode),
 			pagination);
 	}
 
@@ -169,6 +173,26 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		}
 
 		return _getFragmentsPage(filter, 0, groupId, pagination);
+	}
+
+	@Override
+	public Fragment postDesignLibraryFragmentSetFragment(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _addFragmentEntry(
+			fragment.getExternalReferenceCode(), fragment,
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId),
+			groupId);
 	}
 
 	@Override
@@ -206,6 +230,21 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 	}
 
 	@Override
+	public Fragment putDesignLibraryFragment(
+			String designLibraryExternalReferenceCode,
+			String fragmentExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _putFragment(fragmentExternalReferenceCode, fragment, groupId);
+	}
+
+	@Override
 	public Fragment putSiteFragment(
 			String siteExternalReferenceCode,
 			String fragmentExternalReferenceCode, Fragment fragment)
@@ -216,32 +255,7 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		long groupId = GroupUtil.getStagingAwareGroupId(
 			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
 
-		try {
-			FragmentEntry fragmentEntry =
-				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
-					fragmentExternalReferenceCode, groupId);
-
-			return _updateFragmentEntry(fragment, fragmentEntry, groupId);
-		}
-		catch (NoSuchModelException noSuchModelException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(noSuchModelException);
-			}
-
-			FragmentEntry draftFragmentEntry =
-				_fragmentEntryLocalService.
-					fetchFragmentEntryByExternalReferenceCode(
-						fragmentExternalReferenceCode, groupId, false);
-
-			if (draftFragmentEntry != null) {
-				return _updateFragmentEntry(
-					fragment, draftFragmentEntry, groupId);
-			}
-
-			return _addFragmentEntry(
-				fragmentExternalReferenceCode, fragment,
-				_getOrAddFragmentCollection(fragment, groupId), groupId);
-		}
+		return _putFragment(fragmentExternalReferenceCode, fragment, groupId);
 	}
 
 	private Fragment _addFragmentEntry(
@@ -311,6 +325,52 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		}
 
 		return _toFragment(fragmentEntry);
+	}
+
+	private Fragment _getFragment(
+			String fragmentExternalReferenceCode, long groupId)
+		throws Exception {
+
+		try {
+			return _toFragment(
+				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
+					fragmentExternalReferenceCode, groupId));
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchModelException);
+			}
+
+			FragmentEntry draftFragmentEntry =
+				_fragmentEntryLocalService.
+					fetchFragmentEntryByExternalReferenceCode(
+						fragmentExternalReferenceCode, groupId, false);
+
+			if (draftFragmentEntry == null) {
+				throw noSuchModelException;
+			}
+
+			return _toFragment(draftFragmentEntry);
+		}
+	}
+
+	private Page<Fragment> _getFragmentSetFragmentsPage(
+			String fragmentSetExternalReferenceCode, long groupId,
+			Pagination pagination)
+		throws Exception {
+
+		if (!_hasManageFragmentEntriesPermission(groupId)) {
+			return Page.of(Collections.emptyList());
+		}
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId);
+
+		return _getFragmentsPage(
+			null, fragmentCollection.getFragmentCollectionId(), groupId,
+			pagination);
 	}
 
 	private <T extends FragmentVersion> T _getFragmentVersion(
@@ -421,6 +481,39 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		return _portletResourcePermission.contains(
 			PermissionThreadLocal.getPermissionChecker(), groupId,
 			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+	}
+
+	private Fragment _putFragment(
+			String fragmentExternalReferenceCode, Fragment fragment,
+			long groupId)
+		throws Exception {
+
+		try {
+			FragmentEntry fragmentEntry =
+				_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
+					fragmentExternalReferenceCode, groupId);
+
+			return _updateFragmentEntry(fragment, fragmentEntry, groupId);
+		}
+		catch (NoSuchModelException noSuchModelException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchModelException);
+			}
+
+			FragmentEntry draftFragmentEntry =
+				_fragmentEntryLocalService.
+					fetchFragmentEntryByExternalReferenceCode(
+						fragmentExternalReferenceCode, groupId, false);
+
+			if (draftFragmentEntry != null) {
+				return _updateFragmentEntry(
+					fragment, draftFragmentEntry, groupId);
+			}
+
+			return _addFragmentEntry(
+				fragmentExternalReferenceCode, fragment,
+				_getOrAddFragmentCollection(fragment, groupId), groupId);
+		}
 	}
 
 	private String _toConfigurationJSON(

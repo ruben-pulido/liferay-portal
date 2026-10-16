@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.document.library.kernel.exception.NoSuchFileEntryException;
 import com.liferay.document.library.kernel.model.DLFileEntry;
 import com.liferay.document.library.kernel.model.DLFolder;
@@ -206,6 +207,25 @@ public class ResourceFileResourceImpl extends BaseResourceFileResourceImpl {
 			_dlFolderLocalService.getDLFolder(folder.getFolderId()));
 
 		return _getResourceFilesPage(folder.getFolderId(), groupId, pagination);
+	}
+
+	@Override
+	public ResourceFile postDesignLibraryFragmentSetResourceFile(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, ResourceFile resourceFile)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _addResourceFile(
+			_fragmentCollectionService.
+				getFragmentCollectionByExternalReferenceCode(
+					fragmentSetExternalReferenceCode, groupId),
+			groupId, resourceFile);
 	}
 
 	@Override
