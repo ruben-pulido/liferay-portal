@@ -340,6 +340,51 @@ public abstract class BaseResourceFileResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "resourceFolder": ___, "resourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Adds a new resource file to a fragment set of the design library."
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "designLibraryExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "fragmentSetExternalReferenceCode", required = true
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "ResourceFile")}
+	)
+	@jakarta.ws.rs.Consumes({"application/json", "application/xml"})
+	@jakarta.ws.rs.Path(
+		"/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files"
+	)
+	@jakarta.ws.rs.POST
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public ResourceFile postDesignLibraryFragmentSetResourceFile(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("designLibraryExternalReferenceCode")
+			String designLibraryExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("fragmentSetExternalReferenceCode")
+			String fragmentSetExternalReferenceCode,
+			ResourceFile resourceFile)
+		throws Exception {
+
+		return new ResourceFile();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files' -d $'{"dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fileURLReference": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "name": ___, "resourceFolder": ___, "resourceFolderExternalReferenceCode": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
@@ -1352,4 +1397,4 @@ public abstract class BaseResourceFileResourceImpl
 		LogFactoryUtil.getLog(BaseResourceFileResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:910828700
+// LIFERAY-REST-BUILDER-HASH:-2128498897

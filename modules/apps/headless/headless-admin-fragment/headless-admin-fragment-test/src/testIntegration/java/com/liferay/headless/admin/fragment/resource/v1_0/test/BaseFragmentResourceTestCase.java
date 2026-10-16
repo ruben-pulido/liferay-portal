@@ -246,6 +246,257 @@ public abstract class BaseFragmentResourceTestCase {
 	}
 
 	@Test
+	public void testGetDesignLibraryFragment() throws Exception {
+		Fragment postFragment = testGetDesignLibraryFragment_addFragment();
+
+		Fragment getFragment = fragmentResource.getDesignLibraryFragment(
+			testGetDesignLibraryFragment_getDesignLibraryExternalReferenceCode(),
+			postFragment.getExternalReferenceCode());
+
+		assertEquals(postFragment, getFragment);
+		assertValid(getFragment);
+	}
+
+	protected Fragment testGetDesignLibraryFragment_addFragment()
+		throws Exception {
+
+		return fragmentResource.postSiteFragment(
+			testGroup.getExternalReferenceCode(), randomFragment());
+	}
+
+	protected String
+			testGetDesignLibraryFragment_getDesignLibraryExternalReferenceCode()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testGetDesignLibraryFragmentSetFragmentsPage()
+		throws Exception {
+
+		String designLibraryExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getDesignLibraryExternalReferenceCode();
+		String irrelevantDesignLibraryExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getIrrelevantDesignLibraryExternalReferenceCode();
+		String fragmentSetExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getFragmentSetExternalReferenceCode();
+		String irrelevantFragmentSetExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getIrrelevantFragmentSetExternalReferenceCode();
+
+		Page<Fragment> page =
+			fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, Pagination.of(1, 10));
+
+		long totalCount = page.getTotalCount();
+
+		if ((irrelevantDesignLibraryExternalReferenceCode != null) &&
+			(irrelevantFragmentSetExternalReferenceCode != null)) {
+
+			Fragment irrelevantFragment =
+				testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+					irrelevantDesignLibraryExternalReferenceCode,
+					irrelevantFragmentSetExternalReferenceCode,
+					randomIrrelevantFragment());
+
+			page = fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+				irrelevantDesignLibraryExternalReferenceCode,
+				irrelevantFragmentSetExternalReferenceCode,
+				Pagination.of(1, (int)totalCount + 1));
+
+			Assert.assertEquals(totalCount + 1, page.getTotalCount());
+
+			assertContains(irrelevantFragment, (List<Fragment>)page.getItems());
+			assertValid(
+				page,
+				testGetDesignLibraryFragmentSetFragmentsPage_getExpectedActions(
+					irrelevantDesignLibraryExternalReferenceCode,
+					irrelevantFragmentSetExternalReferenceCode));
+		}
+
+		Fragment fragment1 =
+			testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, randomFragment());
+
+		Fragment fragment2 =
+			testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, randomFragment());
+
+		page = fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+			designLibraryExternalReferenceCode,
+			fragmentSetExternalReferenceCode,
+			Pagination.of(1, (int)totalCount + 2));
+
+		Assert.assertEquals(totalCount + 2, page.getTotalCount());
+
+		assertContains(fragment1, (List<Fragment>)page.getItems());
+		assertContains(fragment2, (List<Fragment>)page.getItems());
+		assertValid(
+			page,
+			testGetDesignLibraryFragmentSetFragmentsPage_getExpectedActions(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode));
+	}
+
+	protected Map<String, Map<String, String>>
+			testGetDesignLibraryFragmentSetFragmentsPage_getExpectedActions(
+				String designLibraryExternalReferenceCode,
+				String fragmentSetExternalReferenceCode)
+		throws Exception {
+
+		Map<String, Map<String, String>> expectedActions = new HashMap<>();
+
+		return expectedActions;
+	}
+
+	@Test
+	public void testGetDesignLibraryFragmentSetFragmentsPageWithPagination()
+		throws Exception {
+
+		String designLibraryExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getDesignLibraryExternalReferenceCode();
+		String fragmentSetExternalReferenceCode =
+			testGetDesignLibraryFragmentSetFragmentsPage_getFragmentSetExternalReferenceCode();
+
+		Page<Fragment> fragmentsPage =
+			fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, null);
+
+		int totalCount = GetterUtil.getInteger(fragmentsPage.getTotalCount());
+
+		Fragment fragment1 =
+			testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, randomFragment());
+
+		Fragment fragment2 =
+			testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, randomFragment());
+
+		Fragment fragment3 =
+			testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+				designLibraryExternalReferenceCode,
+				fragmentSetExternalReferenceCode, randomFragment());
+
+		// See com.liferay.portal.vulcan.internal.configuration.HeadlessAPICompanyConfiguration#pageSizeLimit
+
+		int pageSizeLimit = 500;
+
+		if (totalCount >= (pageSizeLimit - 2)) {
+			Page<Fragment> page1 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 1.0) / pageSizeLimit),
+						pageSizeLimit));
+
+			Assert.assertEquals(totalCount + 3, page1.getTotalCount());
+
+			assertContains(fragment1, (List<Fragment>)page1.getItems());
+
+			Page<Fragment> page2 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 2.0) / pageSizeLimit),
+						pageSizeLimit));
+
+			assertContains(fragment2, (List<Fragment>)page2.getItems());
+
+			Page<Fragment> page3 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(
+						(int)Math.ceil((totalCount + 3.0) / pageSizeLimit),
+						pageSizeLimit));
+
+			assertContains(fragment3, (List<Fragment>)page3.getItems());
+		}
+		else {
+			Page<Fragment> page1 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(1, totalCount + 2));
+
+			List<Fragment> fragments1 = (List<Fragment>)page1.getItems();
+
+			Assert.assertEquals(
+				fragments1.toString(), totalCount + 2, fragments1.size());
+
+			Page<Fragment> page2 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(2, totalCount + 2));
+
+			Assert.assertEquals(totalCount + 3, page2.getTotalCount());
+
+			List<Fragment> fragments2 = (List<Fragment>)page2.getItems();
+
+			Assert.assertEquals(fragments2.toString(), 1, fragments2.size());
+
+			Page<Fragment> page3 =
+				fragmentResource.getDesignLibraryFragmentSetFragmentsPage(
+					designLibraryExternalReferenceCode,
+					fragmentSetExternalReferenceCode,
+					Pagination.of(1, (int)totalCount + 3));
+
+			assertContains(fragment1, (List<Fragment>)page3.getItems());
+			assertContains(fragment2, (List<Fragment>)page3.getItems());
+			assertContains(fragment3, (List<Fragment>)page3.getItems());
+		}
+	}
+
+	protected Fragment testGetDesignLibraryFragmentSetFragmentsPage_addFragment(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, Fragment fragment)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected String
+			testGetDesignLibraryFragmentSetFragmentsPage_getDesignLibraryExternalReferenceCode()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected String
+			testGetDesignLibraryFragmentSetFragmentsPage_getIrrelevantDesignLibraryExternalReferenceCode()
+		throws Exception {
+
+		return null;
+	}
+
+	protected String
+			testGetDesignLibraryFragmentSetFragmentsPage_getFragmentSetExternalReferenceCode()
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	protected String
+			testGetDesignLibraryFragmentSetFragmentsPage_getIrrelevantFragmentSetExternalReferenceCode()
+		throws Exception {
+
+		return null;
+	}
+
+	@Test
 	public void testGetSiteFragment() throws Exception {
 		Fragment postFragment = testGetSiteFragment_addFragment();
 
@@ -741,6 +992,73 @@ public abstract class BaseFragmentResourceTestCase {
 	}
 
 	@Test
+	public void testPostDesignLibraryFragmentSetFragment() throws Exception {
+		Fragment randomFragment = randomFragment();
+
+		Fragment postFragment =
+			testPostDesignLibraryFragmentSetFragment_addFragment(
+				randomFragment);
+
+		assertEquals(randomFragment, postFragment);
+		assertValid(postFragment);
+
+		BasicFragment basicFragment = new BasicFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("BasicFragment");
+			}
+		};
+
+		assertEquals(
+			basicFragment,
+			testPostDesignLibraryFragmentSetFragment_addFragment(
+				basicFragment));
+
+		FormFragment formFragment = new FormFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("FormFragment");
+			}
+		};
+
+		assertEquals(
+			formFragment,
+			testPostDesignLibraryFragmentSetFragment_addFragment(formFragment));
+	}
+
+	protected Fragment testPostDesignLibraryFragmentSetFragment_addFragment(
+			Fragment fragment)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSiteFragment() throws Exception {
 		Fragment randomFragment = randomFragment();
 
@@ -861,6 +1179,42 @@ public abstract class BaseFragmentResourceTestCase {
 
 	protected Fragment testPostSiteFragmentSetFragment_addFragment(
 			Fragment fragment)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPutDesignLibraryFragment() throws Exception {
+		Fragment postFragment = testPutDesignLibraryFragment_addFragment();
+
+		Fragment randomFragment = randomFragment();
+
+		Fragment putFragment = fragmentResource.putDesignLibraryFragment(
+			testPutDesignLibraryFragment_getDesignLibraryExternalReferenceCode(),
+			postFragment.getExternalReferenceCode(), randomFragment);
+
+		assertEquals(randomFragment, putFragment);
+		assertValid(putFragment);
+
+		Fragment getFragment = fragmentResource.getDesignLibraryFragment(
+			testPutDesignLibraryFragment_getDesignLibraryExternalReferenceCode(),
+			putFragment.getExternalReferenceCode());
+
+		assertEquals(randomFragment, getFragment);
+		assertValid(getFragment);
+	}
+
+	protected Fragment testPutDesignLibraryFragment_addFragment()
+		throws Exception {
+
+		return fragmentResource.postSiteFragment(
+			testGroup.getExternalReferenceCode(), randomFragment());
+	}
+
+	protected String
+			testPutDesignLibraryFragment_getDesignLibraryExternalReferenceCode()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -2240,4 +2594,4 @@ public abstract class BaseFragmentResourceTestCase {
 		_fragmentResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:457707802
+// LIFERAY-REST-BUILDER-HASH:-717758394

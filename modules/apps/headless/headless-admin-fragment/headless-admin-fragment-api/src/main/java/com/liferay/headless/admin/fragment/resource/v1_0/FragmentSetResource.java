@@ -78,6 +78,10 @@ public interface FragmentSetResource {
 			Pagination pagination)
 		throws Exception;
 
+	public FragmentSet postDesignLibraryFragmentSet(
+			String designLibraryExternalReferenceCode, FragmentSet fragmentSet)
+		throws Exception;
+
 	public FragmentSet postSiteFragmentSet(
 			String siteExternalReferenceCode, FragmentSet fragmentSet)
 		throws Exception;
@@ -90,6 +94,11 @@ public interface FragmentSetResource {
 			String siteExternalReferenceCode,
 			com.liferay.portal.kernel.search.filter.Filter filter,
 			String callbackURL, String contentType, String fieldNames)
+		throws Exception;
+
+	public FragmentSet putDesignLibraryFragmentSet(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, FragmentSet fragmentSet)
 		throws Exception;
 
 	public FragmentSet putSiteFragmentSet(
@@ -193,4 +202,4 @@ public interface FragmentSetResource {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:363318245
+// LIFERAY-REST-BUILDER-HASH:-1193270256

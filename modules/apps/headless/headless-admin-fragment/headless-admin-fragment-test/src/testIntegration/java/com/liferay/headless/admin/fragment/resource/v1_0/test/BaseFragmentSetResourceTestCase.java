@@ -573,8 +573,8 @@ public abstract class BaseFragmentSetResourceTestCase {
 			String designLibraryExternalReferenceCode, FragmentSet fragmentSet)
 		throws Exception {
 
-		throw new UnsupportedOperationException(
-			"This method needs to be implemented");
+		return fragmentSetResource.postDesignLibraryFragmentSet(
+			designLibraryExternalReferenceCode, fragmentSet);
 	}
 
 	protected String
@@ -899,6 +899,25 @@ public abstract class BaseFragmentSetResourceTestCase {
 	}
 
 	@Test
+	public void testPostDesignLibraryFragmentSet() throws Exception {
+		FragmentSet randomFragmentSet = randomFragmentSet();
+
+		FragmentSet postFragmentSet =
+			testPostDesignLibraryFragmentSet_addFragmentSet(randomFragmentSet);
+
+		assertEquals(randomFragmentSet, postFragmentSet);
+		assertValid(postFragmentSet);
+	}
+
+	protected FragmentSet testPostDesignLibraryFragmentSet_addFragmentSet(
+			FragmentSet fragmentSet)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSiteFragmentSet() throws Exception {
 		FragmentSet randomFragmentSet = randomFragmentSet();
 
@@ -911,6 +930,45 @@ public abstract class BaseFragmentSetResourceTestCase {
 
 	protected FragmentSet testPostSiteFragmentSet_addFragmentSet(
 			FragmentSet fragmentSet)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPutDesignLibraryFragmentSet() throws Exception {
+		FragmentSet postFragmentSet =
+			testPutDesignLibraryFragmentSet_addFragmentSet();
+
+		FragmentSet randomFragmentSet = randomFragmentSet();
+
+		FragmentSet putFragmentSet =
+			fragmentSetResource.putDesignLibraryFragmentSet(
+				testPutDesignLibraryFragmentSet_getDesignLibraryExternalReferenceCode(),
+				postFragmentSet.getExternalReferenceCode(), randomFragmentSet);
+
+		assertEquals(randomFragmentSet, putFragmentSet);
+		assertValid(putFragmentSet);
+
+		FragmentSet getFragmentSet =
+			fragmentSetResource.getDesignLibraryFragmentSet(
+				testPutDesignLibraryFragmentSet_getDesignLibraryExternalReferenceCode(),
+				putFragmentSet.getExternalReferenceCode());
+
+		assertEquals(randomFragmentSet, getFragmentSet);
+		assertValid(getFragmentSet);
+	}
+
+	protected FragmentSet testPutDesignLibraryFragmentSet_addFragmentSet()
+		throws Exception {
+
+		return fragmentSetResource.postSiteFragmentSet(
+			testGroup.getExternalReferenceCode(), randomFragmentSet());
+	}
+
+	protected String
+			testPutDesignLibraryFragmentSet_getDesignLibraryExternalReferenceCode()
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -2042,4 +2100,4 @@ public abstract class BaseFragmentSetResourceTestCase {
 			_fragmentSetResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1631788681
+// LIFERAY-REST-BUILDER-HASH:-17934575

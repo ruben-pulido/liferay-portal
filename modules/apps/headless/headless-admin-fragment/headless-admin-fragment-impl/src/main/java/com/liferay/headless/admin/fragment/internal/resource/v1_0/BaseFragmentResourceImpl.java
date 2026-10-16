@@ -113,6 +113,117 @@ public abstract class BaseFragmentResourceImpl
 	/**
 	 * Invoke this method with the command line:
 	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-admin-fragment/v1.0/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Retrieves a specific fragment of the design library."
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "designLibraryExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "fragmentExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "fields"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "restrictFields"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Fragment")}
+	)
+	@jakarta.ws.rs.GET
+	@jakarta.ws.rs.Path(
+		"/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}"
+	)
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Fragment getDesignLibraryFragment(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("designLibraryExternalReferenceCode")
+			String designLibraryExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("fragmentExternalReferenceCode")
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		return null;
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'GET' 'http://localhost:8080/o/headless-admin-fragment/v1.0/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments'  -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Retrieves the fragments of a fragment set of the design library."
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "designLibraryExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "fragmentSetExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "fields"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "page"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "pageSize"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "restrictFields"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Fragment")}
+	)
+	@jakarta.ws.rs.GET
+	@jakarta.ws.rs.Path(
+		"/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments"
+	)
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Page<Fragment> getDesignLibraryFragmentSetFragmentsPage(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("designLibraryExternalReferenceCode")
+			String designLibraryExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("fragmentSetExternalReferenceCode")
+			String fragmentSetExternalReferenceCode,
+			@jakarta.ws.rs.core.Context Pagination pagination)
+		throws Exception {
+
+		return Page.of(Collections.emptyList());
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
 	 * curl -X 'GET' 'http://localhost:8080/o/headless-admin-fragment/v1.0/sites/{siteExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}'  -u 'test@liferay.com:test'
 	 */
 	@io.swagger.v3.oas.annotations.Operation(
@@ -275,6 +386,51 @@ public abstract class BaseFragmentResourceImpl
 		throws Exception {
 
 		return Page.of(Collections.emptyList());
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'POST' 'http://localhost:8080/o/headless-admin-fragment/v1.0/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments' -d $'{"cacheable": ___, "dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "fragmentVersions": ___, "icon": ___, "key": ___, "marketplace": ___, "name": ___, "readOnly": ___, "thumbnailURLReference": ___, "type": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Adds a new fragment to a fragment set of the design library."
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "designLibraryExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "fragmentSetExternalReferenceCode", required = true
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Fragment")}
+	)
+	@jakarta.ws.rs.Consumes({"application/json", "application/xml"})
+	@jakarta.ws.rs.Path(
+		"/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments"
+	)
+	@jakarta.ws.rs.POST
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@Override
+	public Fragment postDesignLibraryFragmentSetFragment(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("designLibraryExternalReferenceCode")
+			String designLibraryExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("fragmentSetExternalReferenceCode")
+			String fragmentSetExternalReferenceCode,
+			Fragment fragment)
+		throws Exception {
+
+		return null;
 	}
 
 	/**
@@ -483,6 +639,59 @@ public abstract class BaseFragmentResourceImpl
 			vulcanBatchEngineExportTaskResource.postExportTask(
 				Fragment.class.getName(), callbackURL, contentType, fieldNames)
 		).build();
+	}
+
+	/**
+	 * Invoke this method with the command line:
+	 *
+	 * curl -X 'PUT' 'http://localhost:8080/o/headless-admin-fragment/v1.0/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}' -d $'{"cacheable": ___, "dateCreated": ___, "dateModified": ___, "externalReferenceCode": ___, "fragmentSet": ___, "fragmentSetExternalReferenceCode": ___, "fragmentVersions": ___, "icon": ___, "key": ___, "marketplace": ___, "name": ___, "readOnly": ___, "thumbnailURLReference": ___, "type": ___}' --header 'Content-Type: application/json' -u 'test@liferay.com:test'
+	 */
+	@io.swagger.v3.oas.annotations.Operation(
+		description = "Updates the fragment of the design library with the given external reference code, or creates it if it does not exist."
+	)
+	@io.swagger.v3.oas.annotations.Parameters(
+		value = {
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "designLibraryExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.PATH,
+				name = "fragmentExternalReferenceCode", required = true
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "fields"
+			),
+			@io.swagger.v3.oas.annotations.Parameter(
+				in = io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY,
+				name = "restrictFields"
+			)
+		}
+	)
+	@io.swagger.v3.oas.annotations.tags.Tags(
+		value = {@io.swagger.v3.oas.annotations.tags.Tag(name = "Fragment")}
+	)
+	@jakarta.ws.rs.Consumes({"application/json", "application/xml"})
+	@jakarta.ws.rs.Path(
+		"/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}"
+	)
+	@jakarta.ws.rs.Produces({"application/json", "application/xml"})
+	@jakarta.ws.rs.PUT
+	@Override
+	public Fragment putDesignLibraryFragment(
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("designLibraryExternalReferenceCode")
+			String designLibraryExternalReferenceCode,
+			@io.swagger.v3.oas.annotations.Parameter(hidden = true)
+			@jakarta.validation.constraints.NotNull
+			@jakarta.ws.rs.PathParam("fragmentExternalReferenceCode")
+			String fragmentExternalReferenceCode,
+			Fragment fragment)
+		throws Exception {
+
+		return null;
 	}
 
 	/**
@@ -1286,4 +1495,4 @@ public abstract class BaseFragmentResourceImpl
 		LogFactoryUtil.getLog(BaseFragmentResourceImpl.class);
 
 }
-// LIFERAY-REST-BUILDER-HASH:299727434
+// LIFERAY-REST-BUILDER-HASH:-1989070790

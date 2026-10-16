@@ -72,6 +72,11 @@ public interface ResourceFileResource {
 			String resourceFolderExternalReferenceCode, Pagination pagination)
 		throws Exception;
 
+	public ResourceFile postDesignLibraryFragmentSetResourceFile(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode, ResourceFile resourceFile)
+		throws Exception;
+
 	public ResourceFile postSiteFragmentSetResourceFile(
 			String siteExternalReferenceCode,
 			String fragmentSetExternalReferenceCode, ResourceFile resourceFile)
@@ -192,4 +197,4 @@ public interface ResourceFileResource {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:1324800289
+// LIFERAY-REST-BUILDER-HASH:-786113474

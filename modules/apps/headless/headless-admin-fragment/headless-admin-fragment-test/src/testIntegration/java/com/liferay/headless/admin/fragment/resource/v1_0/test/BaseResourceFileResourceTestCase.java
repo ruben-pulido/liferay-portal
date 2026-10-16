@@ -1010,6 +1010,29 @@ public abstract class BaseResourceFileResourceTestCase {
 	}
 
 	@Test
+	public void testPostDesignLibraryFragmentSetResourceFile()
+		throws Exception {
+
+		ResourceFile randomResourceFile = randomResourceFile();
+
+		ResourceFile postResourceFile =
+			testPostDesignLibraryFragmentSetResourceFile_addResourceFile(
+				randomResourceFile);
+
+		assertEquals(randomResourceFile, postResourceFile);
+		assertValid(postResourceFile);
+	}
+
+	protected ResourceFile
+			testPostDesignLibraryFragmentSetResourceFile_addResourceFile(
+				ResourceFile resourceFile)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSiteFragmentSetResourceFile() throws Exception {
 		ResourceFile randomResourceFile = randomResourceFile();
 
@@ -2219,4 +2242,4 @@ public abstract class BaseResourceFileResourceTestCase {
 			_resourceFileResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-134485573
+// LIFERAY-REST-BUILDER-HASH:948559700
