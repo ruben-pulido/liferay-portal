@@ -176,6 +176,21 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 	}
 
 	@Override
+	public Fragment postDesignLibraryFragmentPropagate(
+			String designLibraryExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _propagateFragment(fragmentExternalReferenceCode, groupId);
+	}
+
+	@Override
 	public Fragment postDesignLibraryFragmentSetFragment(
 			String designLibraryExternalReferenceCode,
 			String fragmentSetExternalReferenceCode, Fragment fragment)
@@ -208,6 +223,20 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		return _addFragmentEntry(
 			fragment.getExternalReferenceCode(), fragment,
 			_getOrAddFragmentCollection(fragment, groupId), groupId);
+	}
+
+	@Override
+	public Fragment postSiteFragmentPropagate(
+			String siteExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception {
+
+		EnabledUtil.checkEnabled(contextCompany);
+
+		long groupId = GroupUtil.getStagingAwareGroupId(
+			true, contextCompany.getCompanyId(), siteExternalReferenceCode);
+
+		return _propagateFragment(fragmentExternalReferenceCode, groupId);
 	}
 
 	@Override
@@ -481,6 +510,24 @@ public class FragmentResourceImpl extends BaseFragmentResourceImpl {
 		return _portletResourcePermission.contains(
 			PermissionThreadLocal.getPermissionChecker(), groupId,
 			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+	}
+
+	private Fragment _propagateFragment(
+			String fragmentExternalReferenceCode, long groupId)
+		throws Exception {
+
+		_portletResourcePermission.check(
+			PermissionThreadLocal.getPermissionChecker(), groupId,
+			FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES);
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryService.getFragmentEntryByExternalReferenceCode(
+				fragmentExternalReferenceCode, groupId);
+
+		_fragmentEntryLocalService.propagateChanges(
+			fragmentEntry.getFragmentEntryId());
+
+		return _toFragment(fragmentEntry);
 	}
 
 	private Fragment _putFragment(
