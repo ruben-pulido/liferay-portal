@@ -992,6 +992,71 @@ public abstract class BaseFragmentResourceTestCase {
 	}
 
 	@Test
+	public void testPostDesignLibraryFragmentPropagate() throws Exception {
+		Fragment randomFragment = randomFragment();
+
+		Fragment postFragment =
+			testPostDesignLibraryFragmentPropagate_addFragment(randomFragment);
+
+		assertEquals(randomFragment, postFragment);
+		assertValid(postFragment);
+
+		BasicFragment basicFragment = new BasicFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("BasicFragment");
+			}
+		};
+
+		assertEquals(
+			basicFragment,
+			testPostDesignLibraryFragmentPropagate_addFragment(basicFragment));
+
+		FormFragment formFragment = new FormFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("FormFragment");
+			}
+		};
+
+		assertEquals(
+			formFragment,
+			testPostDesignLibraryFragmentPropagate_addFragment(formFragment));
+	}
+
+	protected Fragment testPostDesignLibraryFragmentPropagate_addFragment(
+			Fragment fragment)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostDesignLibraryFragmentSetFragment() throws Exception {
 		Fragment randomFragment = randomFragment();
 
@@ -1114,6 +1179,71 @@ public abstract class BaseFragmentResourceTestCase {
 	}
 
 	protected Fragment testPostSiteFragment_addFragment(Fragment fragment)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
+	public void testPostSiteFragmentPropagate() throws Exception {
+		Fragment randomFragment = randomFragment();
+
+		Fragment postFragment = testPostSiteFragmentPropagate_addFragment(
+			randomFragment);
+
+		assertEquals(randomFragment, postFragment);
+		assertValid(postFragment);
+
+		BasicFragment basicFragment = new BasicFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("BasicFragment");
+			}
+		};
+
+		assertEquals(
+			basicFragment,
+			testPostSiteFragmentPropagate_addFragment(basicFragment));
+
+		FormFragment formFragment = new FormFragment() {
+			{
+				cacheable = RandomTestUtil.randomBoolean();
+				dateCreated = RandomTestUtil.nextDate();
+				dateModified = RandomTestUtil.nextDate();
+				externalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				fragmentSetExternalReferenceCode = StringUtil.toLowerCase(
+					RandomTestUtil.randomString());
+				icon = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				key = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				marketplace = RandomTestUtil.randomBoolean();
+				name = StringUtil.toLowerCase(RandomTestUtil.randomString());
+				readOnly = RandomTestUtil.randomBoolean();
+
+				type = Type.create("FormFragment");
+			}
+		};
+
+		assertEquals(
+			formFragment,
+			testPostSiteFragmentPropagate_addFragment(formFragment));
+	}
+
+	protected Fragment testPostSiteFragmentPropagate_addFragment(
+			Fragment fragment)
 		throws Exception {
 
 		throw new UnsupportedOperationException(
@@ -2594,4 +2724,4 @@ public abstract class BaseFragmentResourceTestCase {
 		_fragmentResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-717758394
+// LIFERAY-REST-BUILDER-HASH:-601882136

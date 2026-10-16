@@ -77,6 +77,11 @@ public interface FragmentResource {
 			Pagination pagination)
 		throws Exception;
 
+	public Fragment postDesignLibraryFragmentPropagate(
+			String designLibraryExternalReferenceCode,
+			String fragmentExternalReferenceCode)
+		throws Exception;
+
 	public Fragment postDesignLibraryFragmentSetFragment(
 			String designLibraryExternalReferenceCode,
 			String fragmentSetExternalReferenceCode, Fragment fragment)
@@ -88,6 +93,11 @@ public interface FragmentResource {
 
 	public Response postSiteFragmentBatch(
 			String siteExternalReferenceCode, String callbackURL, Object object)
+		throws Exception;
+
+	public Fragment postSiteFragmentPropagate(
+			String siteExternalReferenceCode,
+			String fragmentExternalReferenceCode)
 		throws Exception;
 
 	public Fragment postSiteFragmentSetFragment(
@@ -207,4 +217,4 @@ public interface FragmentResource {
 	}
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1373068273
+// LIFERAY-REST-BUILDER-HASH:1624733479
