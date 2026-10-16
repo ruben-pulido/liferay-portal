@@ -1259,7 +1259,7 @@ paths:
             tags: ["Fragment"]
         put:
             description:
-                Updates the fragment of the design library with the given external reference code, or creates it if it does not exist.
+                Updates the fragment of the design library with the given external reference code, or creates it if it does not exist. Pages that use the fragment keep their copy until the changes are propagated.
             operationId: putDesignLibraryFragment
             parameters:
                 -   in: path
@@ -1288,6 +1288,44 @@ paths:
                     application/xml:
                         schema:
                             $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+    "/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}/propagate":
+        post:
+            description:
+                Propagates the approved version of a fragment of the design library to every page that uses it, in the design library and in all the sites connected to it.
+            operationId: postDesignLibraryFragmentPropagate
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
             responses:
                 200:
                     content:
@@ -1863,6 +1901,44 @@ paths:
                     application/xml:
                         schema:
                             $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+    "/sites/{siteExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}/propagate":
+        post:
+            description:
+                Propagates the approved version of a fragment to every page that uses it.
+            operationId: postSiteFragmentPropagate
+            parameters:
+                -   in: path
+                    name: siteExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json: {}
+                    application/xml: {}
             responses:
                 200:
                     content:
