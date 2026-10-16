@@ -986,6 +986,34 @@ paths:
                                     $ref: "#/components/schemas/FragmentSet"
                                 type: array
             tags: ["FragmentSet"]
+        post:
+            description:
+                Adds a new fragment set to the design library.
+            operationId: postDesignLibraryFragmentSet
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+            tags: ["FragmentSet"]
     "/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}":
         delete:
             description:
@@ -1041,6 +1069,235 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/FragmentSet"
             tags: ["FragmentSet"]
+        put:
+            description:
+                Updates the fragment set of the design library with the given external reference code, or creates it if it does not exist.
+            operationId: putDesignLibraryFragmentSet
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/FragmentSet"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/FragmentSet"
+            tags: ["FragmentSet"]
+    "/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/fragments":
+        get:
+            description:
+                Retrieves the fragments of a fragment set of the design library.
+            operationId: getDesignLibraryFragmentSetFragmentsPage
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: page
+                    schema:
+                        type: integer
+                -   in: query
+                    name: pageSize
+                    schema:
+                        type: integer
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Fragment"
+                                type: array
+                        application/xml:
+                            schema:
+                                items:
+                                    $ref: "#/components/schemas/Fragment"
+                                type: array
+            tags: ["Fragment"]
+        post:
+            description:
+                Adds a new fragment to a fragment set of the design library.
+            operationId: postDesignLibraryFragmentSetFragment
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+    "/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-files":
+        post:
+            description:
+                Adds a new resource file to a fragment set of the design library.
+            operationId: postDesignLibraryFragmentSetResourceFile
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFile"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFile"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFile"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFile"
+            tags: ["ResourceFile"]
+    "/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}":
+        get:
+            description:
+                Retrieves a specific fragment of the design library.
+            operationId: getDesignLibraryFragment
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
+        put:
+            description:
+                Updates the fragment of the design library with the given external reference code, or creates it if it does not exist.
+            operationId: putDesignLibraryFragment
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: query
+                    name: fields
+                    schema:
+                        type: string
+                -   in: query
+                    name: restrictFields
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/Fragment"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/Fragment"
+            tags: ["Fragment"]
     "/sites/{siteExternalReferenceCode}/fragment-sets":
         get:
             description:
