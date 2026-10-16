@@ -13,6 +13,10 @@ import com.liferay.asset.kernel.service.AssetVocabularyLocalService;
 import com.liferay.asset.list.constants.AssetListEntryTypeConstants;
 import com.liferay.asset.list.model.AssetListEntry;
 import com.liferay.asset.list.service.AssetListEntryLocalService;
+import com.liferay.depot.constants.DepotConstants;
+import com.liferay.depot.model.DepotEntry;
+import com.liferay.depot.service.DepotEntryGroupRelLocalService;
+import com.liferay.depot.service.DepotEntryLocalService;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
@@ -20,6 +24,7 @@ import com.liferay.dynamic.data.mapping.test.util.DDMStructureTestUtil;
 import com.liferay.exportimport.test.util.LazyReferencingTestUtil;
 import com.liferay.fragment.model.FragmentCollection;
 import com.liferay.fragment.model.FragmentEntry;
+import com.liferay.fragment.model.FragmentEntryLink;
 import com.liferay.fragment.model.FragmentEntryVersion;
 import com.liferay.fragment.service.FragmentCollectionLocalService;
 import com.liferay.fragment.service.FragmentEntryLinkLocalService;
@@ -277,6 +282,72 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		_testGetSiteFragmentsPageWithoutPermissions();
 	}
 
+	@FeatureFlag("LPD-57283")
+	@Override
+	@Test
+	@TestInfo("DEVCON-2026")
+	public void testPostDesignLibraryFragmentPropagate() throws Exception {
+		DepotEntry depotEntry = _depotEntryLocalService.addDepotEntry(
+			Collections.singletonMap(
+				LocaleUtil.getDefault(), RandomTestUtil.randomString()),
+			null, DepotConstants.TYPE_DESIGN_LIBRARY,
+			ServiceContextTestUtil.getServiceContext(
+				testGroup.getGroupId(), TestPropsValues.getUserId()));
+
+		_depotEntryGroupRelLocalService.addDepotEntryGroupRel(
+			depotEntry.getDepotEntryId(), testGroup.getGroupId());
+
+		Group group = depotEntry.getGroup();
+
+		FragmentCollection fragmentCollection =
+			_fragmentCollectionLocalService.addFragmentCollection(
+				null, TestPropsValues.getUserId(), group.getGroupId(),
+				RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+				RandomTestUtil.randomString(), false,
+				ServiceContextTestUtil.getServiceContext(group.getGroupId()));
+
+		Fragment fragment =
+			fragmentResource.postDesignLibraryFragmentSetFragment(
+				group.getExternalReferenceCode(),
+				fragmentCollection.getExternalReferenceCode(),
+				_randomFragment(true, false, null, fragmentCollection, null));
+
+		FragmentEntryLink fragmentEntryLink = _addFragmentEntryLink(
+			fragment.getExternalReferenceCode(),
+			group.getExternalReferenceCode(), group.getGroupId());
+
+		fragmentResource.putDesignLibraryFragment(
+			group.getExternalReferenceCode(),
+			fragment.getExternalReferenceCode(),
+			_randomFragment(
+				true, false, fragment.getExternalReferenceCode(),
+				fragmentCollection, null));
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.getFragmentEntryByExternalReferenceCode(
+				fragment.getExternalReferenceCode(), group.getGroupId());
+
+		_assertFragmentEntryLinkHTML(
+			fragmentEntryLink.getHtml(),
+			fragmentEntryLink.getFragmentEntryLinkId());
+
+		Assert.assertNotEquals(
+			fragmentEntry.getHtml(), fragmentEntryLink.getHtml());
+
+		Fragment postFragment =
+			fragmentResource.postDesignLibraryFragmentPropagate(
+				group.getExternalReferenceCode(),
+				fragment.getExternalReferenceCode());
+
+		Assert.assertEquals(
+			fragment.getExternalReferenceCode(),
+			postFragment.getExternalReferenceCode());
+
+		_assertFragmentEntryLinkHTML(
+			fragmentEntry.getHtml(),
+			fragmentEntryLink.getFragmentEntryLinkId());
+	}
+
 	@Override
 	@Test
 	@TestInfo(
@@ -324,6 +395,42 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 		_testPostSiteFragmentThumbnailURLReferenceURLUnsupportedProtocolProblemException();
 		_testPostSiteFragmentWithFormFragment();
 		_testPostSiteFragmentWithoutPermissionsProblemException();
+	}
+
+	@Override
+	@Test
+	@TestInfo("DEVCON-2026")
+	public void testPostSiteFragmentPropagate() throws Exception {
+		Fragment fragment = _postSiteFragmentSetFragment(
+			_randomFragment(true, false));
+
+		FragmentEntryLink fragmentEntryLink = _addFragmentEntryLink(
+			fragment.getExternalReferenceCode(), null, testGroup.getGroupId());
+
+		fragmentResource.putSiteFragment(
+			testGroup.getExternalReferenceCode(),
+			fragment.getExternalReferenceCode(),
+			_randomFragment(
+				true, false, fragment.getExternalReferenceCode(), null));
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.getFragmentEntryByExternalReferenceCode(
+				fragment.getExternalReferenceCode(), testGroup.getGroupId());
+
+		_assertFragmentEntryLinkHTML(
+			fragmentEntryLink.getHtml(),
+			fragmentEntryLink.getFragmentEntryLinkId());
+
+		Assert.assertNotEquals(
+			fragmentEntry.getHtml(), fragmentEntryLink.getHtml());
+
+		fragmentResource.postSiteFragmentPropagate(
+			testGroup.getExternalReferenceCode(),
+			fragment.getExternalReferenceCode());
+
+		_assertFragmentEntryLinkHTML(
+			fragmentEntry.getHtml(),
+			fragmentEntryLink.getFragmentEntryLinkId());
 	}
 
 	@Override
@@ -559,6 +666,34 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 			serviceContext);
 	}
 
+	private FragmentEntryLink _addFragmentEntryLink(
+			String fragmentEntryExternalReferenceCode,
+			String fragmentEntryScopeExternalReferenceCode, long groupId)
+		throws Exception {
+
+		FragmentEntry fragmentEntry =
+			_fragmentEntryLocalService.getFragmentEntryByExternalReferenceCode(
+				fragmentEntryExternalReferenceCode, groupId);
+
+		Layout layout = _layoutLocalService.addLayout(
+			null, TestPropsValues.getUserId(), testGroup.getGroupId(), false,
+			LayoutConstants.DEFAULT_PARENT_LAYOUT_ID,
+			RandomTestUtil.randomString(), RandomTestUtil.randomString(),
+			StringPool.BLANK, LayoutConstants.TYPE_CONTENT, false,
+			StringPool.BLANK,
+			ServiceContextTestUtil.getServiceContext(testGroup.getGroupId()));
+
+		return _fragmentEntryLinkLocalService.addFragmentEntryLink(
+			null, TestPropsValues.getUserId(), testGroup.getGroupId(), null,
+			fragmentEntryExternalReferenceCode,
+			fragmentEntryScopeExternalReferenceCode, 0, layout.getPlid(),
+			fragmentEntry.getCss(), fragmentEntry.getHtml(),
+			fragmentEntry.getJs(), fragmentEntry.getConfiguration(),
+			StringPool.BLANK, StringPool.BLANK, 0, StringPool.BLANK,
+			fragmentEntry.getType(),
+			ServiceContextTestUtil.getServiceContext(testGroup.getGroupId()));
+	}
+
 	private FileEntry _addPortletFileEntry(String fileName) throws Exception {
 		Repository repository = _portletFileRepository.addPortletRepository(
 			testGroup.getGroupId(), RandomTestUtil.randomString(),
@@ -682,6 +817,17 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 				fragment.getExternalReferenceCode(), group.getGroupId());
 
 		Assert.assertEquals(fragment.getName(), fragmentEntry.getName());
+	}
+
+	private void _assertFragmentEntryLinkHTML(
+			String expectedHTML, long fragmentEntryLinkId)
+		throws Exception {
+
+		FragmentEntryLink fragmentEntryLink =
+			_fragmentEntryLinkLocalService.getFragmentEntryLink(
+				fragmentEntryLinkId);
+
+		Assert.assertEquals(expectedHTML, fragmentEntryLink.getHtml());
 	}
 
 	private void _assertGetSiteFragmentsPageWithFilter(
@@ -3989,6 +4135,12 @@ public class FragmentResourceTest extends BaseFragmentResourceTestCase {
 
 	@Inject
 	private AssetVocabularyLocalService _assetVocabularyLocalService;
+
+	@Inject
+	private DepotEntryGroupRelLocalService _depotEntryGroupRelLocalService;
+
+	@Inject
+	private DepotEntryLocalService _depotEntryLocalService;
 
 	private FragmentCollection _fragmentCollection;
 
