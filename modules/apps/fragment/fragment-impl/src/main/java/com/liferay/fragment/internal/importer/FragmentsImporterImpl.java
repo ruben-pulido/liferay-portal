@@ -516,6 +516,22 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 						folderPath = fileEntryPath.substring(0, index + 1);
 					}
 
+					String zipEntryName = zipEntryNames.get(fileEntryPath);
+
+					FileEntry copyFileEntry = _fetchSameContentCopyFileEntry(
+						fileEntry, folderPath, resources, zipEntryName,
+						zipFile);
+
+					if (copyFileEntry != null) {
+						resourceReferences.put(
+							fileEntryPath,
+							folderPath + copyFileEntry.getFileName());
+
+						zipEntryNames.remove(fileEntryPath);
+
+						continue;
+					}
+
 					String newFileName =
 						PortletFileRepositoryUtil.getUniqueFileName(
 							fileEntry.getGroupId(), fileEntry.getFolderId(),
@@ -524,9 +540,7 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 					resourceReferences.put(
 						fileEntryPath, folderPath + newFileName);
 
-					zipEntryNames.put(
-						folderPath + newFileName,
-						zipEntryNames.get(fileEntryPath));
+					zipEntryNames.put(folderPath + newFileName, zipEntryName);
 
 					zipEntryNames.remove(fileEntryPath);
 				}
@@ -548,6 +562,41 @@ public class FragmentsImporterImpl implements FragmentsImporter {
 				groupId, entry.getKey(), repository, userId, entry.getValue(),
 				zipFile);
 		}
+	}
+
+	private FileEntry _fetchSameContentCopyFileEntry(
+			FileEntry fileEntry, String folderPath,
+			Map<String, FileEntry> resources, String zipEntryName,
+			ZipFile zipFile)
+		throws Exception {
+
+		FileEntry copyFileEntry = null;
+
+		String fileName = fileEntry.getFileName();
+
+		for (Map.Entry<String, FileEntry> entry : resources.entrySet()) {
+			FileEntry currentFileEntry = entry.getValue();
+
+			String currentFileName = currentFileEntry.getFileName();
+
+			if (!Objects.equals(entry.getKey(), folderPath + currentFileName) ||
+				Objects.equals(currentFileName, fileName) ||
+				!Objects.equals(
+					FileUtil.stripParentheticalSuffix(currentFileName),
+					fileName) ||
+				((copyFileEntry != null) &&
+				 (currentFileEntry.getFileEntryId() <
+					 copyFileEntry.getFileEntryId())) ||
+				!_isSameContent(
+					currentFileEntry, _getInputStream(zipFile, zipEntryName))) {
+
+				continue;
+			}
+
+			copyFileEntry = currentFileEntry;
+		}
+
+		return copyFileEntry;
 	}
 
 	private String _getContent(ZipFile zipFile, String fileName)
