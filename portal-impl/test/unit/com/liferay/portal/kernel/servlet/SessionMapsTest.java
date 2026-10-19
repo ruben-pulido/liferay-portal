@@ -49,6 +49,10 @@ public class SessionMapsTest extends BaseSessionMapsTestCase {
 
 		Assert.assertFalse(SessionMaps.contains(httpSession, _MAP_KEY, KEY1));
 
+		SessionMaps.add(httpSession, _MAP_KEY, null, VALUE1);
+
+		Assert.assertTrue(SessionMaps.isEmpty(httpSession, _MAP_KEY));
+
 		SessionMaps.add(httpSession, _MAP_KEY, KEY1, VALUE1);
 		SessionMaps.add(httpSession, _MAP_KEY, KEY2, VALUE2);
 
@@ -161,6 +165,9 @@ public class SessionMapsTest extends BaseSessionMapsTestCase {
 		Assert.assertFalse(
 			"SessionMaps should not contain " + KEY2,
 			SessionMaps.contains(httpSession, _MAP_KEY, KEY2));
+		Assert.assertFalse(
+			"SessionMaps should not contain a null key",
+			SessionMaps.contains(httpSession, _MAP_KEY, null));
 	}
 
 	@Test
@@ -172,6 +179,7 @@ public class SessionMapsTest extends BaseSessionMapsTestCase {
 		Assert.assertEquals(
 			VALUE1, SessionMaps.get(httpSession, _MAP_KEY, KEY1));
 		Assert.assertNull(SessionMaps.get(httpSession, _MAP_KEY, KEY2));
+		Assert.assertNull(SessionMaps.get(httpSession, _MAP_KEY, null));
 	}
 
 	@Test
@@ -263,6 +271,11 @@ public class SessionMapsTest extends BaseSessionMapsTestCase {
 		Assert.assertNull(SessionMaps.get(httpSession, _MAP_KEY, KEY1));
 
 		SessionMaps.add(httpSession, _MAP_KEY, KEY1, VALUE1);
+
+		Assert.assertEquals(
+			VALUE1, SessionMaps.get(httpSession, _MAP_KEY, KEY1));
+
+		SessionMaps.remove(httpSession, _MAP_KEY, null);
 
 		Assert.assertEquals(
 			VALUE1, SessionMaps.get(httpSession, _MAP_KEY, KEY1));

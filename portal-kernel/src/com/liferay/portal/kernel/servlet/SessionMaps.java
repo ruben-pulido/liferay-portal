@@ -25,7 +25,7 @@ public class SessionMaps {
 	public static void add(
 		HttpSession httpSession, String mapKey, String key, Object value) {
 
-		if (value == null) {
+		if ((key == null) || (value == null)) {
 			return;
 		}
 
@@ -41,7 +41,7 @@ public class SessionMaps {
 
 		Map<String, Object> map = _getMap(httpSession, mapKey);
 
-		if (map == null) {
+		if ((key == null) || (map == null)) {
 			return false;
 		}
 
@@ -53,7 +53,7 @@ public class SessionMaps {
 
 		Map<String, Object> map = _getMap(httpSession, mapKey);
 
-		if (map == null) {
+		if ((key == null) || (map == null)) {
 			return null;
 		}
 
@@ -96,6 +96,10 @@ public class SessionMaps {
 
 	public static void remove(
 		HttpSession httpSession, String mapKey, String key) {
+
+		if (key == null) {
+			return;
+		}
 
 		_updateMap(httpSession, mapKey, false, map -> map.remove(key));
 	}
