@@ -636,6 +636,65 @@ public class FragmentsImporterTest {
 	}
 
 	@Test
+	@TestInfo("LPD-109711")
+	public void testImportFragmentEntriesWithUpdatedResourcesTwice()
+		throws Exception {
+
+		File updatedResourcesFile = _generateUpdatedResourcesZipFile();
+
+		try {
+			_fragmentsImporter.importFragmentEntries(
+				_user.getUserId(), _group.getGroupId(), 0, _resourcesFile,
+				FragmentsImportStrategy.OVERWRITE, false);
+			_fragmentsImporter.importFragmentEntries(
+				_user.getUserId(), _group.getGroupId(), 0, updatedResourcesFile,
+				FragmentsImportStrategy.OVERWRITE, false);
+
+			List<FragmentCollection> fragmentCollections =
+				_fragmentCollectionLocalService.getFragmentCollections(
+					_group.getGroupId(), QueryUtil.ALL_POS, QueryUtil.ALL_POS);
+
+			FragmentCollection fragmentCollection = fragmentCollections.get(0);
+
+			List<FragmentEntry> fragmentEntries =
+				_fragmentEntryLocalService.getFragmentEntries(
+					fragmentCollection.getFragmentCollectionId());
+
+			FragmentEntry fragmentEntry = fragmentEntries.get(0);
+
+			List<FragmentEntryVersion> fragmentEntryVersions =
+				_fragmentEntryLocalService.getVersions(fragmentEntry);
+
+			_fragmentsImporter.importFragmentEntries(
+				_user.getUserId(), _group.getGroupId(), 0, updatedResourcesFile,
+				FragmentsImportStrategy.OVERWRITE, false);
+
+			List<FileEntry> fileEntries = fragmentCollection.getResources();
+
+			Assert.assertEquals(fileEntries.toString(), 2, fileEntries.size());
+
+			FragmentEntry reimportedFragmentEntry =
+				_fragmentEntryLocalService.getFragmentEntry(
+					fragmentEntry.getFragmentEntryId());
+
+			List<FragmentEntryVersion> reimportedFragmentEntryVersions =
+				_fragmentEntryLocalService.getVersions(reimportedFragmentEntry);
+
+			Assert.assertEquals(
+				reimportedFragmentEntryVersions.toString(),
+				fragmentEntryVersions.size(),
+				reimportedFragmentEntryVersions.size());
+
+			String html = reimportedFragmentEntry.getHtml();
+
+			Assert.assertTrue(html, html.contains("[resources:image (1).png]"));
+		}
+		finally {
+			FileUtil.delete(updatedResourcesFile);
+		}
+	}
+
+	@Test
 	@TestInfo("LPS-96113")
 	public void testImportFragmentEntriesWithValidation() throws Exception {
 		_fragmentsImporter.importFragmentEntries(
