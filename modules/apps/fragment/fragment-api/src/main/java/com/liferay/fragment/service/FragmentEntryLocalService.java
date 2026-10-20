@@ -440,6 +440,8 @@ public interface FragmentEntryLocalService
 			long fragmentEntryId, long fragmentCollectionId)
 		throws PortalException;
 
+	public void propagateChanges(long fragmentEntryId) throws PortalException;
+
 	@Indexable(type = IndexableType.REINDEX)
 	@Override
 	public FragmentEntry publishDraft(FragmentEntry draftFragmentEntry)
@@ -513,4 +515,4 @@ public interface FragmentEntryLocalService
 		throws E;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1873906920
+// LIFERAY-SERVICE-BUILDER-HASH:-411910235

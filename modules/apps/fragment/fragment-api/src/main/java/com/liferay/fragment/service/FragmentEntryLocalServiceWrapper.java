@@ -630,6 +630,13 @@ public class FragmentEntryLocalServiceWrapper
 	}
 
 	@Override
+	public void propagateChanges(long fragmentEntryId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		_fragmentEntryLocalService.propagateChanges(fragmentEntryId);
+	}
+
+	@Override
 	public FragmentEntry publishDraft(FragmentEntry draftFragmentEntry)
 		throws com.liferay.portal.kernel.exception.PortalException {
 
@@ -760,4 +767,4 @@ public class FragmentEntryLocalServiceWrapper
 	private FragmentEntryLocalService _fragmentEntryLocalService;
 
 }
-// LIFERAY-SERVICE-BUILDER-HASH:-1282295569
+// LIFERAY-SERVICE-BUILDER-HASH:276348648
