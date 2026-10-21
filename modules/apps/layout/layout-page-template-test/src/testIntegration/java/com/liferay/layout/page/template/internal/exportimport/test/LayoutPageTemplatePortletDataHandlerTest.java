@@ -183,6 +183,7 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 	}
 
 	@Test
+	@TestInfo("LPD-00000")
 	public void testExportImportLayoutPageTemplateEntriesDeletions()
 		throws Exception {
 
@@ -233,6 +234,19 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
 				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT);
 
+		LayoutPageTemplateEntry widgetPageLayoutPageTemplateEntry1 =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+		LayoutPageTemplateEntry widgetPageLayoutPageTemplateEntry2 =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+
 		_importLayouts(
 			false, _importedGroup.getGroupId(),
 			_exportLayouts(false, _group.getGroupId()));
@@ -249,6 +263,10 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry1);
 		_assertExists(
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry2);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry1);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry2);
 
 		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
 			basicLayoutPageTemplateEntry2);
@@ -256,6 +274,8 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			displayPageLayoutPageTemplateEntry2);
 		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
 			masterLayoutPageTemplateEntry2);
+		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
+			widgetPageLayoutPageTemplateEntry2);
 
 		_importLayouts(
 			true, _importedGroup.getGroupId(),
@@ -273,6 +293,10 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry1);
 		_assertDoesNotExist(
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry2);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry1);
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry2);
 	}
 
 	private Group _addDesignLibraryGroup() throws Exception {
