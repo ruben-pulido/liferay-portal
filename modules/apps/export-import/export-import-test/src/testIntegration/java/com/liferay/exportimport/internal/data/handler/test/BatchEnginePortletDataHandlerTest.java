@@ -5692,12 +5692,10 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	private SafeCloseable _register(
-			TestExportImportVulcanBatchEngineTaskItemDelegate
-				testExportImportVulcanBatchEngineTaskItemDelegate)
+			String itemClassName, String portletId,
+			VulcanBatchEngineTaskItemDelegate<?>
+				vulcanBatchEngineTaskItemDelegate)
 		throws Exception {
-
-		String portletId =
-			testExportImportVulcanBatchEngineTaskItemDelegate._portletId;
 
 		SafeCloseable safeCloseable1 = () -> {
 		};
@@ -5717,12 +5715,11 @@ public class BatchEnginePortletDataHandlerTest {
 
 		SafeCloseable safeCloseable2 = _registerServiceWithSafeCloseable(
 			VulcanBatchEngineTaskItemDelegate.class,
-			testExportImportVulcanBatchEngineTaskItemDelegate,
+			vulcanBatchEngineTaskItemDelegate,
 			HashMapDictionaryBuilder.put(
 				"batch.engine.task.item.delegate", "true"
 			).put(
-				"batch.engine.task.item.delegate.class.name",
-				TestItem.class.getName()
+				"batch.engine.task.item.delegate.class.name", itemClassName
 			).put(
 				"batch.engine.task.item.delegate.name",
 				RandomTestUtil.randomString()
@@ -5742,6 +5739,17 @@ public class BatchEnginePortletDataHandlerTest {
 				finalSafeCloseable.close();
 			}
 		};
+	}
+
+	private SafeCloseable _register(
+			TestExportImportVulcanBatchEngineTaskItemDelegate
+				testExportImportVulcanBatchEngineTaskItemDelegate)
+		throws Exception {
+
+		return _register(
+			TestItem.class.getName(),
+			testExportImportVulcanBatchEngineTaskItemDelegate._portletId,
+			testExportImportVulcanBatchEngineTaskItemDelegate);
 	}
 
 	private <S> SafeCloseable _registerServiceWithSafeCloseable(
