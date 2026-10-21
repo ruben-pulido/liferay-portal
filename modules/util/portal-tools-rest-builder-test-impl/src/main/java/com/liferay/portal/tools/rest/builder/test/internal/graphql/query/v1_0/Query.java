@@ -989,7 +989,7 @@ public class Query {
 	/**
 	 * Invoke this method with the command line:
 	 *
-	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testEntity(testEntityId: ___){dateCreated, dateModified, description, documentId, id, jsonProperty, name, nestedTestEntity, self, stringTestEntities, stringTestEntity, testEntities, type}}"}' -u 'test@liferay.com:test'
+	 * curl -H 'Content-Type: text/plain; charset=utf-8' -X 'POST' 'http://localhost:8080/o/graphql' -d $'{"query": "query {testEntity(testEntityId: ___){dateCreated, dateModified, description, documentId, externalReferenceCode, id, jsonProperty, name, nestedTestEntity, self, stringTestEntities, stringTestEntity, testEntities, type}}"}' -u 'test@liferay.com:test'
 	 */
 	@GraphQLField
 	public TestEntity testEntity(@GraphQLName("testEntityId") Long testEntityId)
@@ -2154,4 +2154,4 @@ public class Query {
 	private com.liferay.portal.kernel.model.User _user;
 
 }
-// LIFERAY-REST-BUILDER-HASH:-1479221263
+// LIFERAY-REST-BUILDER-HASH:1306651008
