@@ -46,6 +46,7 @@ import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalServ
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
@@ -135,8 +136,46 @@ public class PageTemplateResourceImpl
 				getApplicableModelFunction() {
 
 				return layoutPageTemplateEntry ->
-					layoutPageTemplateEntry.getType() ==
-						LayoutPageTemplateEntryTypeConstants.BASIC;
+					(layoutPageTemplateEntry.getType() ==
+						LayoutPageTemplateEntryTypeConstants.BASIC) ||
+					(layoutPageTemplateEntry.getType() ==
+						LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+			}
+
+			@Override
+			public JSONObject getDeletionJSONObject(
+				String externalReferenceCode, long groupId) {
+
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					_layoutPageTemplateEntryLocalService.
+						fetchLayoutPageTemplateEntryByExternalReferenceCode(
+							externalReferenceCode, groupId);
+
+				if (layoutPageTemplateEntry == null) {
+					return null;
+				}
+
+				Function<LayoutPageTemplateEntry, Boolean>
+					applicableModelFunction = getApplicableModelFunction();
+
+				if (!applicableModelFunction.apply(layoutPageTemplateEntry)) {
+					return null;
+				}
+
+				JSONObject jsonObject =
+					ExportImportDescriptor.super.getDeletionJSONObject(
+						externalReferenceCode, groupId);
+
+				if (layoutPageTemplateEntry.getType() ==
+						LayoutPageTemplateEntryTypeConstants.BASIC) {
+
+					return jsonObject.put(
+						"type",
+						PageTemplate.Type.CONTENT_PAGE_TEMPLATE.getValue());
+				}
+
+				return jsonObject.put(
+					"type", PageTemplate.Type.WIDGET_PAGE_TEMPLATE.getValue());
 			}
 
 			@Override

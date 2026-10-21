@@ -24,7 +24,11 @@ import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.model.SystemEvent;
+import com.liferay.portal.kernel.service.SystemEventLocalService;
 import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
@@ -36,6 +40,9 @@ import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.FeatureFlag;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -183,6 +190,7 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 	}
 
 	@Test
+	@TestInfo("LPD-00000")
 	public void testExportImportLayoutPageTemplateEntriesDeletions()
 		throws Exception {
 
@@ -233,6 +241,19 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
 				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT);
 
+		LayoutPageTemplateEntry widgetPageLayoutPageTemplateEntry1 =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+		LayoutPageTemplateEntry widgetPageLayoutPageTemplateEntry2 =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+
 		_importLayouts(
 			false, _importedGroup.getGroupId(),
 			_exportLayouts(false, _group.getGroupId()));
@@ -249,6 +270,10 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry1);
 		_assertExists(
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry2);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry1);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry2);
 
 		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
 			basicLayoutPageTemplateEntry2);
@@ -256,6 +281,8 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			displayPageLayoutPageTemplateEntry2);
 		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
 			masterLayoutPageTemplateEntry2);
+		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
+			widgetPageLayoutPageTemplateEntry2);
 
 		_importLayouts(
 			true, _importedGroup.getGroupId(),
@@ -273,6 +300,83 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry1);
 		_assertDoesNotExist(
 			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry2);
+		_assertExists(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry1);
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry2);
+	}
+
+	@Test
+	@TestInfo("LPD-00000")
+	public void testExportImportUntypedLayoutPageTemplateEntriesDeletions()
+		throws Exception {
+
+		LayoutPageTemplateCollection layoutPageTemplateCollection =
+			_addLayoutPageTemplateCollection(
+				_group.getGroupId(),
+				LayoutPageTemplateCollectionTypeConstants.BASIC);
+
+		LayoutPageTemplateEntry basicLayoutPageTemplateEntry =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.BASIC);
+
+		LayoutPageTemplateEntry displayPageLayoutPageTemplateEntry =
+			_addLayoutPageTemplateEntry(
+				_portal.getClassNameId(JournalArticle.class.getName()),
+				_group.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE);
+		LayoutPageTemplateEntry masterLayoutPageTemplateEntry =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				LayoutPageTemplateConstants.
+					PARENT_LAYOUT_PAGE_TEMPLATE_COLLECTION_ID_DEFAULT,
+				LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT);
+		LayoutPageTemplateEntry widgetPageLayoutPageTemplateEntry =
+			_addLayoutPageTemplateEntry(
+				0, _group.getGroupId(),
+				layoutPageTemplateCollection.
+					getLayoutPageTemplateCollectionId(),
+				LayoutPageTemplateEntryTypeConstants.WIDGET_PAGE);
+
+		_importLayouts(
+			false, _importedGroup.getGroupId(),
+			_exportLayouts(false, _group.getGroupId()));
+
+		_deleteLayoutPageTemplateEntryWithoutType(basicLayoutPageTemplateEntry);
+		_deleteLayoutPageTemplateEntryWithoutType(
+			displayPageLayoutPageTemplateEntry);
+		_deleteLayoutPageTemplateEntryWithoutType(
+			masterLayoutPageTemplateEntry);
+		_deleteLayoutPageTemplateEntryWithoutType(
+			widgetPageLayoutPageTemplateEntry);
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.batch.engine.internal." +
+					"BatchEngineImportTaskExecutorImpl",
+				LoggerTestUtil.ERROR)) {
+
+			_importLayouts(
+				true, _importedGroup.getGroupId(),
+				_exportLayouts(true, _group.getGroupId()));
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertTrue(logEntries.toString(), logEntries.isEmpty());
+		}
+
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), basicLayoutPageTemplateEntry);
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), displayPageLayoutPageTemplateEntry);
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), masterLayoutPageTemplateEntry);
+		_assertDoesNotExist(
+			_importedGroup.getGroupId(), widgetPageLayoutPageTemplateEntry);
 	}
 
 	private Group _addDesignLibraryGroup() throws Exception {
@@ -358,6 +462,30 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 					groupId));
 	}
 
+	private void _deleteLayoutPageTemplateEntryWithoutType(
+			LayoutPageTemplateEntry layoutPageTemplateEntry)
+		throws Exception {
+
+		_layoutPageTemplateEntryLocalService.deleteLayoutPageTemplateEntry(
+			layoutPageTemplateEntry);
+
+		for (SystemEvent systemEvent :
+				_systemEventLocalService.getSystemEvents(
+					layoutPageTemplateEntry.getGroupId(),
+					_portal.getClassNameId(LayoutPageTemplateEntry.class),
+					layoutPageTemplateEntry.getLayoutPageTemplateEntryId())) {
+
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				systemEvent.getExtraData());
+
+			jsonObject.remove("type");
+
+			systemEvent.setExtraData(jsonObject.toString());
+
+			_systemEventLocalService.updateSystemEvent(systemEvent);
+		}
+	}
+
 	private File _exportLayouts(boolean deletions, long groupId)
 		throws Exception {
 
@@ -437,5 +565,8 @@ public class LayoutPageTemplatePortletDataHandlerTest {
 
 	@Inject
 	private Portal _portal;
+
+	@Inject
+	private SystemEventLocalService _systemEventLocalService;
 
 }

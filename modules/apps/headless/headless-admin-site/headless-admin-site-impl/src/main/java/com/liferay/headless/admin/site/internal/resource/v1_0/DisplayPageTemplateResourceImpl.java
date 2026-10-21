@@ -44,9 +44,11 @@ import com.liferay.layout.page.template.exception.LayoutPageTemplateEntryDefault
 import com.liferay.layout.page.template.model.LayoutPageTemplateCollection;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
 import com.liferay.layout.page.template.service.LayoutPageTemplateCollectionService;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
 import com.liferay.petra.function.UnsafeFunction;
 import com.liferay.portal.kernel.dao.orm.QueryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.lazy.referencing.LazyReferencingThreadLocal;
 import com.liferay.portal.kernel.model.ClassName;
 import com.liferay.portal.kernel.model.Group;
@@ -215,6 +217,30 @@ public class DisplayPageTemplateResourceImpl
 				return layoutPageTemplateEntry ->
 					layoutPageTemplateEntry.getType() ==
 						LayoutPageTemplateEntryTypeConstants.DISPLAY_PAGE;
+			}
+
+			@Override
+			public JSONObject getDeletionJSONObject(
+				String externalReferenceCode, long groupId) {
+
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					_layoutPageTemplateEntryLocalService.
+						fetchLayoutPageTemplateEntryByExternalReferenceCode(
+							externalReferenceCode, groupId);
+
+				if (layoutPageTemplateEntry == null) {
+					return null;
+				}
+
+				Function<LayoutPageTemplateEntry, Boolean>
+					applicableModelFunction = getApplicableModelFunction();
+
+				if (!applicableModelFunction.apply(layoutPageTemplateEntry)) {
+					return null;
+				}
+
+				return ExportImportDescriptor.super.getDeletionJSONObject(
+					externalReferenceCode, groupId);
 			}
 
 			@Override
@@ -1162,6 +1188,10 @@ public class DisplayPageTemplateResourceImpl
 	@Reference
 	private LayoutPageTemplateCollectionService
 		_layoutPageTemplateCollectionService;
+
+	@Reference
+	private LayoutPageTemplateEntryLocalService
+		_layoutPageTemplateEntryLocalService;
 
 	@Reference(
 		target = "(model.class.name=com.liferay.layout.page.template.model.LayoutPageTemplateEntry)"

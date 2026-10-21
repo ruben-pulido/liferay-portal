@@ -5,6 +5,9 @@
 
 package com.liferay.exportimport.internal.data.handler.test;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.model.AccountRole;
@@ -33,6 +36,7 @@ import com.liferay.exportimport.kernel.configuration.ExportImportConfigurationSe
 import com.liferay.exportimport.kernel.configuration.constants.ExportImportConfigurationConstants;
 import com.liferay.exportimport.kernel.exception.MissingPortletDataHandlerException;
 import com.liferay.exportimport.kernel.lar.ExportImportDateUtil;
+import com.liferay.exportimport.kernel.lar.ExportImportPathUtil;
 import com.liferay.exportimport.kernel.lar.ExportImportThreadLocal;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
 import com.liferay.exportimport.kernel.lar.PortletDataContext;
@@ -51,6 +55,7 @@ import com.liferay.exportimport.report.constants.ExportImportReportEntryConstant
 import com.liferay.exportimport.report.model.ExportImportReportEntry;
 import com.liferay.exportimport.report.service.ExportImportReportEntryLocalService;
 import com.liferay.exportimport.test.util.ExportImportTestUtil;
+import com.liferay.exportimport.test.util.TestUserIdStrategy;
 import com.liferay.exportimport.vulcan.batch.engine.ExportImportVulcanBatchEngineTaskItemDelegate;
 import com.liferay.friendly.url.model.FriendlyURLEntry;
 import com.liferay.friendly.url.service.FriendlyURLEntryLocalService;
@@ -178,6 +183,10 @@ import com.liferay.portal.kernel.workflow.WorkflowDefinition;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReader;
+import com.liferay.portal.kernel.zip.ZipReader;
+import com.liferay.portal.kernel.zip.ZipReaderFactory;
+import com.liferay.portal.kernel.zip.ZipWriter;
+import com.liferay.portal.kernel.zip.ZipWriterFactory;
 import com.liferay.portal.language.override.constants.PLOPortletKeys;
 import com.liferay.portal.language.override.model.PLOEntry;
 import com.liferay.portal.language.override.service.PLOEntryLocalService;
@@ -294,6 +303,77 @@ public class BatchEnginePortletDataHandlerTest {
 		}
 
 		_workflowDefinitions.clear();
+	}
+
+	@Test
+	@TestInfo("LPD-86581")
+	public void testDeleteDataWithPolymorphicEntities() throws Exception {
+		String key = RandomTestUtil.randomString();
+		String portletId = RandomTestUtil.randomString();
+
+		TestEntityVulcanBatchEngineTaskItemDelegate
+			testEntityVulcanBatchEngineTaskItemDelegate =
+				new TestEntityVulcanBatchEngineTaskItemDelegate(
+					key, portletId,
+					HashMapBuilder.put(
+						"childTestEntity1", "ChildTestEntity1"
+					).put(
+						"childTestEntity2", "ChildTestEntity2"
+					).build());
+
+		Company company = _companyLocalService.getCompany(
+			TestPropsValues.getCompanyId());
+
+		ZipWriter zipWriter = _zipWriterFactory.getZipWriter();
+
+		zipWriter.addEntry(
+			"/manifest.xml",
+			StringBundler.concat(
+				"<root><header group-id=\"", company.getGroupId(),
+				"\" /></root>"));
+		zipWriter.addEntry(
+			StringBundler.concat(
+				StringPool.FORWARD_SLASH,
+				ExportImportPathUtil.PATH_PREFIX_GROUP,
+				StringPool.FORWARD_SLASH, company.getGroupId(),
+				StringPool.FORWARD_SLASH, key, "_deletions.json"),
+			JSONUtil.putAll(
+				JSONUtil.put("externalReferenceCode", "childTestEntity1"),
+				JSONUtil.put("externalReferenceCode", "childTestEntity2"),
+				JSONUtil.put(
+					"externalReferenceCode", RandomTestUtil.randomString())
+			).toString());
+
+		try (SafeCloseable safeCloseable = _register(
+				TestEntity.class.getName(), portletId,
+				testEntityVulcanBatchEngineTaskItemDelegate);
+			ZipReader zipReader = _zipReaderFactory.getZipReader(
+				zipWriter.getFile())) {
+
+			PortletDataHandler portletDataHandler =
+				_portletDataHandlerProvider.provide(
+					TestPropsValues.getCompanyId(), portletId);
+
+			portletDataHandler.deleteData(
+				PortletDataContextFactoryUtil.createImportPortletDataContext(
+					TestPropsValues.getCompanyId(), company.getGroupId(),
+					new HashMap<String, String[]>(), new TestUserIdStrategy(),
+					zipReader),
+				portletId, null);
+		}
+
+		FileUtil.delete(zipWriter.getFile());
+
+		Assert.assertEquals(
+			Arrays.asList(
+				company.getGroupId(), company.getGroupId(),
+				company.getGroupId()),
+			testEntityVulcanBatchEngineTaskItemDelegate.getDeletionGroupIds());
+		Assert.assertEquals(
+			Arrays.asList(
+				"ChildTestEntity1:childTestEntity1",
+				"ChildTestEntity2:childTestEntity2"),
+			testEntityVulcanBatchEngineTaskItemDelegate.getDeletions());
 	}
 
 	@Test
@@ -4301,6 +4381,49 @@ public class BatchEnginePortletDataHandlerTest {
 		}
 	}
 
+	public static class ChildTestEntity1 extends TestEntity {
+	}
+
+	public static class ChildTestEntity2 extends TestEntity {
+	}
+
+	@JsonSubTypes(
+		{
+			@JsonSubTypes.Type(
+				name = "ChildTestEntity1", value = ChildTestEntity1.class
+			),
+			@JsonSubTypes.Type(
+				name = "ChildTestEntity2", value = ChildTestEntity2.class
+			)
+		}
+	)
+	@JsonTypeInfo(
+		include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type",
+		use = JsonTypeInfo.Id.NAME, visible = true
+	)
+	public abstract static class TestEntity {
+
+		public String getExternalReferenceCode() {
+			return externalReferenceCode;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setExternalReferenceCode(String externalReferenceCode) {
+			this.externalReferenceCode = externalReferenceCode;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		protected String externalReferenceCode;
+		protected String type;
+
+	}
+
 	public static class TestItem implements Serializable {
 
 		public TestItem(long id) {
@@ -5692,12 +5815,10 @@ public class BatchEnginePortletDataHandlerTest {
 	}
 
 	private SafeCloseable _register(
-			TestExportImportVulcanBatchEngineTaskItemDelegate
-				testExportImportVulcanBatchEngineTaskItemDelegate)
+			String itemClassName, String portletId,
+			VulcanBatchEngineTaskItemDelegate<?>
+				vulcanBatchEngineTaskItemDelegate)
 		throws Exception {
-
-		String portletId =
-			testExportImportVulcanBatchEngineTaskItemDelegate._portletId;
 
 		SafeCloseable safeCloseable1 = () -> {
 		};
@@ -5717,12 +5838,11 @@ public class BatchEnginePortletDataHandlerTest {
 
 		SafeCloseable safeCloseable2 = _registerServiceWithSafeCloseable(
 			VulcanBatchEngineTaskItemDelegate.class,
-			testExportImportVulcanBatchEngineTaskItemDelegate,
+			vulcanBatchEngineTaskItemDelegate,
 			HashMapDictionaryBuilder.put(
 				"batch.engine.task.item.delegate", "true"
 			).put(
-				"batch.engine.task.item.delegate.class.name",
-				TestItem.class.getName()
+				"batch.engine.task.item.delegate.class.name", itemClassName
 			).put(
 				"batch.engine.task.item.delegate.name",
 				RandomTestUtil.randomString()
@@ -5742,6 +5862,17 @@ public class BatchEnginePortletDataHandlerTest {
 				finalSafeCloseable.close();
 			}
 		};
+	}
+
+	private SafeCloseable _register(
+			TestExportImportVulcanBatchEngineTaskItemDelegate
+				testExportImportVulcanBatchEngineTaskItemDelegate)
+		throws Exception {
+
+		return _register(
+			TestItem.class.getName(),
+			testExportImportVulcanBatchEngineTaskItemDelegate._portletId,
+			testExportImportVulcanBatchEngineTaskItemDelegate);
 	}
 
 	private <S> SafeCloseable _registerServiceWithSafeCloseable(
@@ -6686,6 +6817,184 @@ public class BatchEnginePortletDataHandlerTest {
 
 	private final List<WorkflowDefinition> _workflowDefinitions =
 		new ArrayList<>();
+
+	@Inject
+	private ZipReaderFactory _zipReaderFactory;
+
+	@Inject
+	private ZipWriterFactory _zipWriterFactory;
+
+	private static class TestEntityVulcanBatchEngineTaskItemDelegate
+		implements ExportImportVulcanBatchEngineTaskItemDelegate<TestEntity>,
+				   VulcanBatchEngineTaskItemDelegate<TestEntity> {
+
+		public TestEntityVulcanBatchEngineTaskItemDelegate(
+			String key, String portletId, Map<String, String> types) {
+
+			_key = key;
+			_portletId = portletId;
+			_types = types;
+		}
+
+		@Override
+		public void create(
+			Collection<TestEntity> testEntities,
+			Map<String, Serializable> parameters) {
+		}
+
+		@Override
+		public void delete(
+			Collection<TestEntity> testEntities,
+			Map<String, Serializable> parameters) {
+
+			for (TestEntity testEntity : testEntities) {
+				if (testEntity instanceof ChildTestEntity1) {
+					_deletions.add(
+						"ChildTestEntity1:" +
+							testEntity.getExternalReferenceCode());
+				}
+				else if (testEntity instanceof ChildTestEntity2) {
+					_deletions.add(
+						"ChildTestEntity2:" +
+							testEntity.getExternalReferenceCode());
+				}
+			}
+		}
+
+		public List<Long> getDeletionGroupIds() {
+			return _deletionGroupIds;
+		}
+
+		public List<String> getDeletions() {
+			return _deletions;
+		}
+
+		@Override
+		public EntityModel getEntityModel(
+			Map<String, List<String>> multivaluedMap) {
+
+			return null;
+		}
+
+		@Override
+		public ExportImportDescriptor getExportImportDescriptor() {
+			return new ExportImportDescriptor() {
+
+				@Override
+				public JSONObject getDeletionJSONObject(
+					String externalReferenceCode, long groupId) {
+
+					_deletionGroupIds.add(groupId);
+
+					String type = _types.get(externalReferenceCode);
+
+					if (type == null) {
+						return null;
+					}
+
+					JSONObject jsonObject =
+						ExportImportDescriptor.super.getDeletionJSONObject(
+							externalReferenceCode, groupId);
+
+					return jsonObject.put("type", type);
+				}
+
+				@Override
+				public String getKey() {
+					return _key;
+				}
+
+				@Override
+				public String getLabelLanguageKey() {
+					return _key;
+				}
+
+				@Override
+				public Class getModelClass() {
+					return null;
+				}
+
+				@Override
+				public String getModelClassName() {
+					return TestEntity.class.getName();
+				}
+
+				@Override
+				public String getPortletId() {
+					return _portletId;
+				}
+
+				@Override
+				public Scope getScope() {
+					return Scope.COMPANY;
+				}
+
+			};
+		}
+
+		@Override
+		public Page<TestEntity> read(
+			Filter filter, Pagination pagination, Sort[] sorts,
+			Map<String, Serializable> parameters, String search) {
+
+			return null;
+		}
+
+		@Override
+		public void setContextBatchUnsafeBiConsumer(
+			UnsafeBiConsumer
+				<Collection<TestEntity>,
+				 UnsafeFunction<TestEntity, TestEntity, Exception>, Exception>
+					contextBatchUnsafeBiConsumer) {
+		}
+
+		@Override
+		public void setContextCompany(Company contextCompany) {
+		}
+
+		@Override
+		public void setContextUriInfo(UriInfo uriInfo) {
+		}
+
+		@Override
+		public void setContextUser(User contextUser) {
+		}
+
+		@Override
+		public void setGroupLocalService(GroupLocalService groupLocalService) {
+		}
+
+		@Override
+		public void setLanguageId(String languageId) {
+		}
+
+		@Override
+		public void setResourceActionLocalService(
+			ResourceActionLocalService resourceActionLocalService) {
+		}
+
+		@Override
+		public void setResourcePermissionLocalService(
+			ResourcePermissionLocalService resourcePermissionLocalService) {
+		}
+
+		@Override
+		public void setRoleLocalService(RoleLocalService roleLocalService) {
+		}
+
+		@Override
+		public void update(
+			Collection<TestEntity> testEntities,
+			Map<String, Serializable> parameters) {
+		}
+
+		private final List<Long> _deletionGroupIds = new ArrayList<>();
+		private final List<String> _deletions = new ArrayList<>();
+		private final String _key;
+		private final String _portletId;
+		private final Map<String, String> _types;
+
+	}
 
 	private static class TestExportImportVulcanBatchEngineTaskItemDelegate
 		implements EntityModelResource,
