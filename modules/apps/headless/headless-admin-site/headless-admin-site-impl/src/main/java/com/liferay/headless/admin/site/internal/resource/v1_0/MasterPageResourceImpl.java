@@ -26,7 +26,9 @@ import com.liferay.layout.page.template.admin.constants.LayoutPageTemplateAdminP
 import com.liferay.layout.page.template.constants.LayoutPageTemplateConstants;
 import com.liferay.layout.page.template.constants.LayoutPageTemplateEntryTypeConstants;
 import com.liferay.layout.page.template.model.LayoutPageTemplateEntry;
+import com.liferay.layout.page.template.service.LayoutPageTemplateEntryLocalService;
 import com.liferay.layout.page.template.service.LayoutPageTemplateEntryService;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.model.LayoutConstants;
 import com.liferay.portal.kernel.search.Field;
@@ -108,6 +110,30 @@ public class MasterPageResourceImpl
 				return layoutPageTemplateEntry ->
 					layoutPageTemplateEntry.getType() ==
 						LayoutPageTemplateEntryTypeConstants.MASTER_LAYOUT;
+			}
+
+			@Override
+			public JSONObject getDeletionJSONObject(
+				String externalReferenceCode, long groupId) {
+
+				LayoutPageTemplateEntry layoutPageTemplateEntry =
+					_layoutPageTemplateEntryLocalService.
+						fetchLayoutPageTemplateEntryByExternalReferenceCode(
+							externalReferenceCode, groupId);
+
+				if (layoutPageTemplateEntry == null) {
+					return null;
+				}
+
+				Function<LayoutPageTemplateEntry, Boolean>
+					applicableModelFunction = getApplicableModelFunction();
+
+				if (!applicableModelFunction.apply(layoutPageTemplateEntry)) {
+					return null;
+				}
+
+				return ExportImportDescriptor.super.getDeletionJSONObject(
+					externalReferenceCode, groupId);
 			}
 
 			@Override
@@ -514,6 +540,10 @@ public class MasterPageResourceImpl
 
 	@Reference
 	private LayoutLocalService _layoutLocalService;
+
+	@Reference
+	private LayoutPageTemplateEntryLocalService
+		_layoutPageTemplateEntryLocalService;
 
 	@Reference
 	private LayoutPageTemplateEntryService _layoutPageTemplateEntryService;
