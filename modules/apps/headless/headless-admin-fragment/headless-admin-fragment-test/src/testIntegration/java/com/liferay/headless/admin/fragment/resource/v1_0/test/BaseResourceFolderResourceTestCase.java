@@ -1040,6 +1040,29 @@ public abstract class BaseResourceFolderResourceTestCase {
 	}
 
 	@Test
+	public void testPostDesignLibraryFragmentSetResourceFolder()
+		throws Exception {
+
+		ResourceFolder randomResourceFolder = randomResourceFolder();
+
+		ResourceFolder postResourceFolder =
+			testPostDesignLibraryFragmentSetResourceFolder_addResourceFolder(
+				randomResourceFolder);
+
+		assertEquals(randomResourceFolder, postResourceFolder);
+		assertValid(postResourceFolder);
+	}
+
+	protected ResourceFolder
+			testPostDesignLibraryFragmentSetResourceFolder_addResourceFolder(
+				ResourceFolder resourceFolder)
+		throws Exception {
+
+		throw new UnsupportedOperationException(
+			"This method needs to be implemented");
+	}
+
+	@Test
 	public void testPostSiteFragmentSetResourceFolder() throws Exception {
 		ResourceFolder randomResourceFolder = randomResourceFolder();
 
@@ -2243,4 +2266,4 @@ public abstract class BaseResourceFolderResourceTestCase {
 			_resourceFolderResource;
 
 }
-// LIFERAY-REST-BUILDER-HASH:1053185537
+// LIFERAY-REST-BUILDER-HASH:-174011794
