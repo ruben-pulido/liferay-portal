@@ -5,6 +5,7 @@
 
 package com.liferay.headless.admin.fragment.internal.resource.v1_0;
 
+import com.liferay.depot.constants.DepotConstants;
 import com.liferay.document.library.kernel.model.DLFolder;
 import com.liferay.document.library.kernel.service.DLAppLocalService;
 import com.liferay.document.library.kernel.service.DLFolderLocalService;
@@ -188,6 +189,27 @@ public class ResourceFolderResourceImpl extends BaseResourceFolderResourceImpl {
 
 		return _getResourceFoldersPage(
 			filter, groupId, pagination, resourcesFolderIds);
+	}
+
+	@Override
+	public ResourceFolder postDesignLibraryFragmentSetResourceFolder(
+			String designLibraryExternalReferenceCode,
+			String fragmentSetExternalReferenceCode,
+			ResourceFolder resourceFolder)
+		throws Exception {
+
+		EnabledUtil.checkDesignLibrariesEnabled(contextCompany);
+
+		long groupId = GroupUtil.getDepotGroupId(
+			contextCompany.getCompanyId(), designLibraryExternalReferenceCode,
+			DepotConstants.TYPE_DESIGN_LIBRARY);
+
+		return _toResourceFolder(
+			_addDLFolder(
+				_fragmentCollectionService.
+					getFragmentCollectionByExternalReferenceCode(
+						fragmentSetExternalReferenceCode, groupId),
+				groupId, resourceFolder));
 	}
 
 	@Override
