@@ -1223,6 +1223,40 @@ paths:
                             schema:
                                 $ref: "#/components/schemas/ResourceFile"
             tags: ["ResourceFile"]
+    "/design-libraries/{designLibraryExternalReferenceCode}/fragment-sets/{fragmentSetExternalReferenceCode}/resource-folders":
+        post:
+            description:
+                Adds a new resource folder to a fragment set of the design library.
+            operationId: postDesignLibraryFragmentSetResourceFolder
+            parameters:
+                -   in: path
+                    name: designLibraryExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+                -   in: path
+                    name: fragmentSetExternalReferenceCode
+                    required: true
+                    schema:
+                        type: string
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+                    application/xml:
+                        schema:
+                            $ref: "#/components/schemas/ResourceFolder"
+            responses:
+                200:
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+                        application/xml:
+                            schema:
+                                $ref: "#/components/schemas/ResourceFolder"
+            tags: ["ResourceFolder"]
     "/design-libraries/{designLibraryExternalReferenceCode}/fragments/{fragmentExternalReferenceCode}":
         get:
             description:
