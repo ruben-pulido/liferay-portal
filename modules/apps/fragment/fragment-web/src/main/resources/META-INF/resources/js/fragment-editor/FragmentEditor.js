@@ -149,10 +149,12 @@ const FragmentEditor = ({
 			APPLY_FRAGMENT_CODE_EVENT,
 			({configuration, css, html, js}) => {
 				setLoadedCode({
-					configuration: JSON.stringify(configuration, null, '\t'),
-					css,
+					configuration: configuration
+						? JSON.stringify(configuration, null, '\t')
+						: codeRef.current.configuration,
+					css: css ?? codeRef.current.css,
 					html,
-					js,
+					js: js ?? codeRef.current.js,
 				});
 			}
 		);
