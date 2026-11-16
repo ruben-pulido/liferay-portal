@@ -181,7 +181,7 @@ export function ImageSelectorSize({
 				'has-warning': showImageSizeWarning,
 			})}
 		>
-			{onImageSizeIdChanged && (
+			{onImageSizeIdChanged && !!imageSizes.length && (
 				<ClayForm.Group className="mb-2">
 					<label htmlFor={imageSizeSelectId}>
 						{Liferay.Language.get('resolution')}
