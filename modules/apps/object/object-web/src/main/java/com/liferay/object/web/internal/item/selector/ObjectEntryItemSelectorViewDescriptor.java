@@ -5,6 +5,7 @@
 
 package com.liferay.object.web.internal.item.selector;
 
+import com.liferay.account.exception.NoSuchGroupException;
 import com.liferay.item.selector.ItemSelectorReturnType;
 import com.liferay.item.selector.ItemSelectorViewDescriptor;
 import com.liferay.item.selector.criteria.InfoItemItemSelectorReturnType;
@@ -186,6 +187,13 @@ public class ObjectEntryItemSelectorViewDescriptor
 							_objectDefinition, objectEntry)),
 					GetterUtil.getInteger(page.getTotalCount()));
 			}
+		}
+		catch (NoSuchGroupException noSuchGroupException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(noSuchGroupException);
+			}
+
+			searchContainer.setResultsAndTotal(ArrayList::new, 0);
 		}
 		catch (Exception exception) {
 			_log.error(exception);
