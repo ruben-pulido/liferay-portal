@@ -99,6 +99,18 @@ describe('ImageSelectorSize', () => {
 		expect(container.firstChild.textContent).toBe('width:300px');
 	});
 
+	it('does not render the resolution selector if there are no image sizes', async () => {
+		ImageService.getAvailableImageConfigurations.mockReturnValue(
+			Promise.resolve([])
+		);
+
+		renderImageSelectorSize({onImageSizeIdChanged: jest.fn()});
+
+		await act(() => imageSizesPromise);
+
+		expect(screen.queryByLabelText('resolution')).not.toBeInTheDocument();
+	});
+
 	it('allows modifying imageSizeId of onImageSizeIdChange is specified', async () => {
 		const onImageSizeIdChanged = jest.fn();
 

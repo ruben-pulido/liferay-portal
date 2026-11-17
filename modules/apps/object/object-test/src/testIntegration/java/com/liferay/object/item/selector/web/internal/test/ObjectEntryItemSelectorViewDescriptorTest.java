@@ -19,15 +19,18 @@ import com.liferay.object.rest.test.util.ObjectEntryTestUtil;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.test.util.ObjectDefinitionTestUtil;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
+import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.scheduler.TimeUnit;
 import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.service.CompanyLocalServiceUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
+import com.liferay.portal.kernel.test.TestInfo;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderRequest;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletRenderResponse;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletURL;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -37,6 +40,9 @@ import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import com.liferay.portal.test.log.LogCapture;
+import com.liferay.portal.test.log.LogEntry;
+import com.liferay.portal.test.log.LoggerTestUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
@@ -104,7 +110,8 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 			).build());
 
 		ItemSelectorViewDescriptor<Object> itemSelectorViewDescriptor =
-			_getItemSelectorViewDescriptor();
+			_getItemSelectorViewDescriptor(
+				TestPropsValues.getGroupId(), _objectDefinition);
 
 		SearchContainer<Object> searchContainer =
 			itemSelectorViewDescriptor.getSearchContainer();
@@ -141,7 +148,8 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 			_objectDefinition, "text", RandomTestUtil.randomString());
 
 		ItemSelectorViewDescriptor<Object> itemSelectorViewDescriptor =
-			_getItemSelectorViewDescriptor();
+			_getItemSelectorViewDescriptor(
+				TestPropsValues.getGroupId(), _objectDefinition);
 
 		itemSelectorViewDescriptor.getSearchContainer();
 
@@ -152,7 +160,8 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 		ObjectEntryTestUtil.addObjectEntry(
 			_objectDefinition, "text", RandomTestUtil.randomString());
 
-		itemSelectorViewDescriptor = _getItemSelectorViewDescriptor();
+		itemSelectorViewDescriptor = _getItemSelectorViewDescriptor(
+			TestPropsValues.getGroupId(), _objectDefinition);
 
 		SearchContainer<Object> searchContainer =
 			itemSelectorViewDescriptor.getSearchContainer();
@@ -160,6 +169,45 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 		List<Object> objectEntries = searchContainer.getResults();
 
 		Assert.assertEquals(objectEntries.toString(), 2, objectEntries.size());
+	}
+
+	@Test
+	@TestInfo("LPP-66601")
+	public void testGetSearchContainerWithDepotScopeWithoutConnectedDepots()
+		throws Exception {
+
+		_group = GroupTestUtil.addGroup();
+
+		_depotObjectDefinition =
+			ObjectDefinitionTestUtil.publishObjectDefinition(
+				Collections.singletonList(
+					ObjectFieldUtil.createObjectField(
+						ObjectFieldConstants.BUSINESS_TYPE_TEXT,
+						ObjectFieldConstants.DB_TYPE_STRING, "text", "text",
+						false)),
+				ObjectDefinitionConstants.SCOPE_DEPOT);
+
+		ItemSelectorViewDescriptor<Object> itemSelectorViewDescriptor =
+			_getItemSelectorViewDescriptor(
+				_group.getGroupId(), _depotObjectDefinition);
+
+		try (LogCapture logCapture = LoggerTestUtil.configureLog4JLogger(
+				"com.liferay.object.web.internal.item.selector." +
+					"ObjectEntryItemSelectorViewDescriptor",
+				LoggerTestUtil.ERROR)) {
+
+			SearchContainer<Object> searchContainer =
+				itemSelectorViewDescriptor.getSearchContainer();
+
+			List<LogEntry> logEntries = logCapture.getLogEntries();
+
+			Assert.assertTrue(logEntries.toString(), logEntries.isEmpty());
+
+			List<Object> objectEntries = searchContainer.getResults();
+
+			Assert.assertTrue(
+				objectEntries.toString(), objectEntries.isEmpty());
+		}
 	}
 
 	private ItemSelectorView<InfoItemItemSelectorCriterion>
@@ -192,13 +240,14 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 		return null;
 	}
 
-	private ItemSelectorViewDescriptor<Object> _getItemSelectorViewDescriptor()
+	private ItemSelectorViewDescriptor<Object> _getItemSelectorViewDescriptor(
+			long groupId, ObjectDefinition objectDefinition)
 		throws Exception {
 
 		ItemSelectorView<InfoItemItemSelectorCriterion> itemSelectorView =
-			_getItemSelectorView(_objectDefinition);
+			_getItemSelectorView(objectDefinition);
 
-		ServletRequest servletRequest = _mockHttpServletRequest();
+		ServletRequest servletRequest = _mockHttpServletRequest(groupId);
 
 		itemSelectorView.renderHTML(
 			servletRequest, new MockHttpServletResponse(),
@@ -215,7 +264,9 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 			"getItemSelectorViewDescriptor", new Class<?>[0], null);
 	}
 
-	private ServletRequest _mockHttpServletRequest() throws Exception {
+	private ServletRequest _mockHttpServletRequest(long groupId)
+		throws Exception {
+
 		MockHttpServletRequest mockHttpServletRequest =
 			new MockHttpServletRequest();
 
@@ -242,7 +293,7 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 		themeDisplay.setPermissionChecker(
 			PermissionThreadLocal.getPermissionChecker());
 		themeDisplay.setRequest(mockHttpServletRequest);
-		themeDisplay.setScopeGroupId(TestPropsValues.getGroupId());
+		themeDisplay.setScopeGroupId(groupId);
 		themeDisplay.setUser(TestPropsValues.getUser());
 
 		mockHttpServletRequest.setAttribute(
@@ -250,6 +301,12 @@ public class ObjectEntryItemSelectorViewDescriptorTest {
 
 		return mockHttpServletRequest;
 	}
+
+	@DeleteAfterTestRun
+	private ObjectDefinition _depotObjectDefinition;
+
+	@DeleteAfterTestRun
+	private Group _group;
 
 	@DeleteAfterTestRun
 	private ObjectDefinition _objectDefinition;
