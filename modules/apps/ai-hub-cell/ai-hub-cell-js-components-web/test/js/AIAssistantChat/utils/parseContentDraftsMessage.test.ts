@@ -58,6 +58,23 @@ describe('parseContentDraftsMessage', () => {
 		]);
 	});
 
+	it('encodes the external reference code of fragment edit links', () => {
+		const editURL =
+			'/manage?_mvcRenderCommandName=%2Ffragment%2Fedit_fragment_entry&p_p_auth=abc&_externalReferenceCode=';
+
+		const {drafts: encodedDrafts} = parseContentDraftsMessage(
+			`[Hero Banner](${editURL}hero%26banner%231%2B2)`
+		);
+		const {drafts: rawDrafts} = parseContentDraftsMessage(
+			`[Hero Banner](${editURL}hero&banner#1+2)`
+		);
+
+		expect(encodedDrafts[0].editURL).toBe(
+			`${editURL}hero%26banner%231%2B2`
+		);
+		expect(rawDrafts[0].editURL).toBe(`${editURL}hero%26banner%231%2B2`);
+	});
+
 	it('extracts fragment edit links', () => {
 		const {drafts, text} = parseContentDraftsMessage(
 			'I created the fragment as a draft:\n\n' +

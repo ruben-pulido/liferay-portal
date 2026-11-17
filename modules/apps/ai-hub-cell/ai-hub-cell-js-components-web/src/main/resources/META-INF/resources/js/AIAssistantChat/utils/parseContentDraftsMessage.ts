@@ -14,6 +14,27 @@ const EDIT_URL_SYMBOLS = {
 	'edit_fragment_entry': 'code',
 };
 
+function encodeExternalReferenceCode(url: string) {
+	const match = url.match(/^(.*?externalReferenceCode=)(.*)$/);
+
+	if (!match) {
+		return url;
+	}
+
+	const [, prefix, externalReferenceCode] = match;
+
+	let decodedExternalReferenceCode = externalReferenceCode;
+
+	try {
+		decodedExternalReferenceCode = decodeURIComponent(
+			externalReferenceCode
+		);
+	}
+	catch {}
+
+	return prefix + encodeURIComponent(decodedExternalReferenceCode);
+}
+
 function getEditURLSymbol(url: string) {
 	for (const [urlPart, symbol] of Object.entries(EDIT_URL_SYMBOLS)) {
 		if (url.includes(urlPart)) {
@@ -44,7 +65,14 @@ export function parseContentDraftsMessage(markdown: string): {
 				return match;
 			}
 
-			drafts.push({editURL, symbol, title});
+			drafts.push({
+				editURL:
+					symbol === 'code'
+						? encodeExternalReferenceCode(editURL)
+						: editURL,
+				symbol,
+				title,
+			});
 
 			return '';
 		})

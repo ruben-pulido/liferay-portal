@@ -15,7 +15,9 @@ import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.portlet.url.builder.PortletURLBuilder;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.HttpComponentsUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,22 +33,24 @@ public class FragmentPortletUtil {
 		RequestBackedPortletURLFactory requestBackedPortletURLFactory =
 			RequestBackedPortletURLFactoryUtil.create(httpServletRequest);
 
-		return PortletURLBuilder.create(
-			requestBackedPortletURLFactory.createRenderURL(
-				FragmentPortletKeys.FRAGMENT)
-		).setMVCRenderCommandName(
-			"/fragment/edit_fragment_entry"
-		).setRedirect(
-			() -> {
-				ThemeDisplay themeDisplay =
-					(ThemeDisplay)httpServletRequest.getAttribute(
-						WebKeys.THEME_DISPLAY);
+		return HttpComponentsUtil.addParameter(
+			PortletURLBuilder.create(
+				requestBackedPortletURLFactory.createRenderURL(
+					FragmentPortletKeys.FRAGMENT)
+			).setMVCRenderCommandName(
+				"/fragment/edit_fragment_entry"
+			).setRedirect(
+				() -> {
+					ThemeDisplay themeDisplay =
+						(ThemeDisplay)httpServletRequest.getAttribute(
+							WebKeys.THEME_DISPLAY);
 
-				return themeDisplay.getURLCurrent();
-			}
-		).setParameter(
-			"externalReferenceCode", "EXTERNAL_REFERENCE_CODE"
-		).buildString();
+					return themeDisplay.getURLCurrent();
+				}
+			).buildString(),
+			PortalUtil.getPortletNamespace(FragmentPortletKeys.FRAGMENT) +
+				"externalReferenceCode",
+			"EXTERNAL_REFERENCE_CODE");
 	}
 
 	public static OrderByComparator<FragmentCollection>
