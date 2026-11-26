@@ -76,6 +76,19 @@ public class FragmentAIAssistantProductNavigationControlMenuEntryTest {
 
 	@Test
 	@TestInfo("LPD-111343")
+	public void testIsShowWithMVCRenderCommandName() throws Exception {
+		MockHttpServletRequest mockHttpServletRequest =
+			_getMockHttpServletRequest(TestPropsValues.getUser());
+
+		mockHttpServletRequest.setParameter(
+			"mvcRenderCommandName", "/fragment/edit_fragment_entry");
+
+		Assert.assertFalse(
+			_productNavigationControlMenuEntry.isShow(mockHttpServletRequest));
+	}
+
+	@Test
+	@TestInfo("LPD-111343")
 	public void testIsShowWithoutFragmentDisplayContext() throws Exception {
 		MockHttpServletRequest mockHttpServletRequest =
 			_getMockHttpServletRequest(TestPropsValues.getUser());
