@@ -13,6 +13,7 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.feature.flag.FeatureFlagManagerUtil;
 import com.liferay.portal.kernel.theme.PortletDisplay;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.product.navigation.control.menu.BaseJSPProductNavigationControlMenuEntry;
@@ -64,6 +65,8 @@ public class FragmentAIAssistantProductNavigationControlMenuEntry
 
 		PortletDisplay portletDisplay = themeDisplay.getPortletDisplay();
 
+		String namespace = portletDisplay.getNamespace();
+
 		if (!Objects.equals(
 				FragmentPortletKeys.FRAGMENT,
 				portletDisplay.getPortletName()) ||
@@ -73,7 +76,13 @@ public class FragmentAIAssistantProductNavigationControlMenuEntry
 			!FragmentPermission.contains(
 				themeDisplay.getPermissionChecker(),
 				themeDisplay.getScopeGroupId(),
-				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES)) {
+				FragmentActionKeys.MANAGE_FRAGMENT_ENTRIES) ||
+			Validator.isNotNull(
+				ParamUtil.getString(
+					httpServletRequest, namespace + "mvcPath")) ||
+			Validator.isNotNull(
+				ParamUtil.getString(
+					httpServletRequest, namespace + "mvcRenderCommandName"))) {
 
 			return false;
 		}
